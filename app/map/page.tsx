@@ -15,7 +15,7 @@ const KakaoMap = () => {
   useEffect(() => {
     const kakaoMapScript = document.createElement("script");
     kakaoMapScript.async = false;
-    kakaoMapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=f880e9e16f6a034ac4942453b1beefb0&autoload=false`;
+    kakaoMapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&autoload=false`;
     document.head.appendChild(kakaoMapScript);
 
     const onLoadKakaoAPI = () => {
@@ -48,7 +48,6 @@ const KakaoMap = () => {
 
   useEffect(() => {
     const { geolocation } = navigator;
-
     geolocation.getCurrentPosition(
       position => {
         // success.
@@ -76,6 +75,7 @@ const KakaoMap = () => {
       </div>
       <h1>{markerXY && markerXY[0]}</h1>
       <h1>{markerXY && markerXY[1]}</h1>
+      <h1>1wdsdasasdw</h1>
     </main>
   );
 };
