@@ -10,6 +10,7 @@ declare global {
 const KakaoMap = () => {
   const [lat, setLat] = useState(0);
   const [lng, setLng] = useState(0);
+  const [markerXY, setMarker] = useState<number[] | null>(null);
 
   useEffect(() => {
     const kakaoMapScript = document.createElement("script");
@@ -27,6 +28,17 @@ const KakaoMap = () => {
         };
 
         var map = new window.kakao.maps.Map(container, options);
+        var markerPosition = new window.kakao.maps.LatLng(lat, lng);
+        var marker = new window.kakao.maps.Marker({
+          position: markerPosition,
+        });
+        marker.setMap(map);
+        marker.setDraggable(true);
+
+        // 마커에서 마우스를 때면 마커 위치가 나옴
+        window.kakao.maps.event.addListener(marker, "mouseout", function () {
+          setMarker([marker.getPosition().getLat(), marker.getPosition().getLng()]);
+        });
       });
     };
     if (lat && lng) {
@@ -62,6 +74,8 @@ const KakaoMap = () => {
       <div className="w-full h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh]">
         <div id="map" style={{ width: "100%", height: "100%" }}></div>
       </div>
+      <h1>{markerXY && markerXY[0]}</h1>
+      <h1>{markerXY && markerXY[1]}</h1>
     </main>
   );
 };
