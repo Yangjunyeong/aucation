@@ -6,6 +6,9 @@ const AuctionDetail = () => {
       className="
     w-full
     h-full
+    flex
+    justify-center
+    items-center
     "
       style={{ backgroundColor: "var(--c-sky)" }}
     >
