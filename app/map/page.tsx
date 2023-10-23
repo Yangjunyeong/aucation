@@ -76,6 +76,7 @@ const KakaoMap = () => {
       </div>
       <h1>{markerXY && markerXY[0]}</h1>
       <h1>{markerXY && markerXY[1]}</h1>
+      <h1>1wdsdasasdw</h1>
     </main>
   );
 };
