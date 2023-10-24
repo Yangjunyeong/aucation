@@ -3,6 +3,7 @@ package com.example.aucation.chat.db.entity;
 import java.time.LocalDateTime;
 
 import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -23,7 +24,11 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@AttributeOverride(name = "id", column = @Column(name = "chat_partici_pk"))
+@AttributeOverrides({
+	@AttributeOverride(name = "id", column = @Column(name = "chat_partici_pk")),
+	@AttributeOverride(name="createdAt", column = @Column(name ="partici_join")),
+	@AttributeOverride(name="lastModifiedAt", column = @Column(name ="partici_exit")),
+})
 public class ChatParticipants extends BaseEntity {
 
 

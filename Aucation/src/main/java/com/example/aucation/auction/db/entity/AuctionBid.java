@@ -1,6 +1,5 @@
 package com.example.aucation.auction.db.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.AttributeOverride;
@@ -18,18 +17,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@AttributeOverride(name = "id",column = @Column(name="auction_bid_pk"))
+@AttributeOverride(name = "id", column = @Column(name = "auction_bid_pk"))
 public class AuctionBid extends BaseEntity {
 
 	private int AuctionBidPrice;
 	private LocalDateTime AuctionBidDatetime;
-
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -48,18 +45,18 @@ public class AuctionBid extends BaseEntity {
 	}
 
 	private void addAuction(Auction auction) {
-		if(this.auction!= null){
+		if (this.auction != null) {
 			this.auction.getAuctionBidList().remove(this);
 		}
-		this.auction=auction;
+		this.auction = auction;
 		auction.getAuctionBidList().add(this);
 	}
 
-	private void addMember(Member member){
-		if(this.member!= null){
+	private void addMember(Member member) {
+		if (this.member != null) {
 			this.member.getAuctionBidList().remove(this);
 		}
-		this.member=member;
+		this.member = member;
 		member.getAuctionBidList().add(this);
 	}
 

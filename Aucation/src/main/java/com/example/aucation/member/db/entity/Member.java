@@ -1,13 +1,17 @@
 package com.example.aucation.member.db.entity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -26,37 +30,47 @@ import com.example.aucation.like.db.entity.LikeAuction;
 import com.example.aucation.shop.db.entity.Shop;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-@Entity
+@Entity(name = "Member")
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@AttributeOverride(name = "id", column = @Column(name = "member_pk"))
+@AttributeOverrides({
+	@AttributeOverride(name = "id", column = @Column(name = "member_pk")),
+	@AttributeOverride(name="createdAt",column = @Column(name="member_created_at")),
+	@AttributeOverride(name="lastModifiedAt",column = @Column(name="member_update_at"))
+})
 public class Member extends BaseEntity {
 
 	@Column(unique = true)
-	private String MemberId;
+	private String memberId;
 
 	@Column
-	private String MemberPw;
+	private String memberPw;
 
 	@Column(unique = true)
-	private String MemberEmail;
+	private String memberEmail;
 
-	private int MemberPoint;
-	private String MemberNickname;
-	private String MemberBanned;
-	private String MemeberRefresh;
-	private String MemberFCM;
+	private int memberPoint;
+	private String memberNickname;
+	private String memberBanned;
+	private String memberRefresh;
+	private String memberFCM;
 
 	@Embedded
 	private Address address;
 
+	@Enumerated(EnumType.STRING)
+	private SocialType socialType;
+
 	@Column
-	private Role MemberRole;
+	private Role memberRole;
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<Follow> followList = new ArrayList<>();
@@ -91,5 +105,19 @@ public class Member extends BaseEntity {
 	@OneToOne
 	@JoinColumn(name = "shop_pk")
 	private Shop shop;
+
+	@Builder
+	public Member(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,
+		Long lastModifiedBy, boolean isDeleted, String memberId, String memberPw, String memberEmail,Role memberRole,SocialType socialType) {
+		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
+		this.memberId = memberId;
+		this.memberPw = memberPw;
+		this.memberEmail = memberEmail;
+		this.memberRole = memberRole;
+		this.socialType = socialType;
+	}
+	public void updateRefreshToken(String updateRefreshToken) {
+		this.memberRefresh = updateRefreshToken;
+	}
 
 }

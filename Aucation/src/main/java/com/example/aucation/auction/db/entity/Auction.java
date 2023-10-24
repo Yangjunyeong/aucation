@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,7 +29,10 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@AttributeOverride(name = "id",column = @Column(name="auction_pk"))
+@AttributeOverrides({
+	@AttributeOverride(name = "id",column = @Column(name="auction_pk")),
+	@AttributeOverride(name="createdAt",column = @Column(name="auction_created_at"))
+})
 public class Auction extends BaseEntity {
 
 

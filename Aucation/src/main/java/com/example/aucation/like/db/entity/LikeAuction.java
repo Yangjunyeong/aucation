@@ -3,6 +3,7 @@ package com.example.aucation.like.db.entity;
 import java.time.LocalDateTime;
 
 import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,7 +25,11 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@AttributeOverride(name = "id",column = @Column(name="like_pk"))
+@AttributeOverrides({
+	@AttributeOverride(name = "id",column = @Column(name="like_pk")),
+	@AttributeOverride(name="createdAt",column = @Column(name="like_creaetd_at"))
+})
+
 public class LikeAuction extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)

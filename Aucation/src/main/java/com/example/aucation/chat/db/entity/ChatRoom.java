@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,7 +21,11 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@AttributeOverride(name = "id", column = @Column(name = "chat_room_pk"))
+@AttributeOverrides({
+	@AttributeOverride(name = "id", column = @Column(name = "chat_room_pk")),
+	@AttributeOverride(name="createdAt", column = @Column(name ="chat_create")),
+	@AttributeOverride(name="lastModifiedAt", column = @Column(name ="chat_end")),
+})
 public class ChatRoom extends BaseEntity {
 
 	@Column
