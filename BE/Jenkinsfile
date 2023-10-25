@@ -20,59 +20,7 @@ pipeline {
             }
         }
 
-        stage('Docker stop'){
-            steps {
-                dir('BE'){
-                    sh 'echo "Docker Container Stop"'
-                    // sh 'docker-compose -f /var/jenkins_home/workspace/aucation-cicd/docker-compose.yml down'
-                }
-            }
-            post {
-                 failure {
-                     sh 'echo "Docker Fail"'
-                }
-            }
-        }
-
-        stage('RM Docker'){
-            steps {
-                // auc로 시작하는 이미지 찾아서 삭제함
-                sh '''
-                    result=$( docker images -f "reference=auc-back*" -q )
-                    if [ -n "$result" ]
-                    then
-                        docker rmi -f $(docker images -f "reference=auc-back*" -q)
-                    else
-                        echo "No such container images"
-                    fi
-                '''
-                sh '''
-                                    result=$( docker images -f "reference=auc-back*" -q )
-                                    if [ -n "$result" ]
-                                    then
-                                       docker rmi -f $(docker images -f "reference=auc-back*" -q)
-                                    else
-                                        echo "No such container images"
-                                    fi
-                                '''
-                // 안쓰는이미지 -> <none> 태그 이미지 찾아서 삭제함
-                sh '''
-                    result=$(docker images -f "dangling=true" -q)
-                    if [ -n "$result" ]
-                    then
-                        docker rmi -f $(docker images -f "dangling=true" -q)
-                    else
-                        echo "No such container images"
-                    fi
-                '''
-
-            }
-            post {
-                 failure {
-                     sh 'echo "Remove Fail"'
-                }
-            }
-        }
+        
         stage('Build Docker-Compose') {
                     steps {
 	           sh 'docker-compose -f /jenkins/workspace/back/docker-compose.yml build'
