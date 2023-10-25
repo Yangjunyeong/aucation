@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+
+    stages {
+        stage('Prepare') {
+            steps {
+                sh 'echo "Clonning Repository"'
+                git branch: 'back',
+                    url: 'https://lab.ssafy.com/s09-final/S09P31B104.git',
+                    credentialsId: '10191'
+            }
+            post {
+                success {
+                     sh 'echo "Successfully Cloned Repository MyNameis"'
+                 }
+                 failure {
+                     sh 'echo "Fail Cloned Repository"'
+                 }
+            }
+        }
+
+        
+        stage('Build Docker-Compose') {
+                    steps {
+	           sh 'docker compose -f /jenkins/workspace/back/docker-compose.yml build'
+                    }
+                }
+ 	stage('Up Docker-Compose') {
+                    steps {
+	           sh 'docker compose -f /jenkins/workspace/back/docker-compose.yml up -d'
+                    }
+                }
+    }
+}
