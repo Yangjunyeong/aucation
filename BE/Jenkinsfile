@@ -24,7 +24,7 @@ pipeline {
             steps {
                 dir('BE'){
                     sh 'echo "Docker Container Stop"'
-                    sh 'docker-compose -f /var/jenkins_home/workspace/aucation-cicd/docker-compose.yml down'
+                    # sh 'docker-compose -f /var/jenkins_home/workspace/aucation-cicd/docker-compose.yml down'
                 }
             }
             post {
