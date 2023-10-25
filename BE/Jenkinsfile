@@ -44,7 +44,7 @@ pipeline {
                     result=$( docker container ls -a --filter "name=auc-back*" -q )
                     if [ -n "$result" ]
                     then
-                        docker rm $(docker container ls -a --filter "name=auc-back*" -q)
+                        // docker rm $(docker container ls -a --filter "name=auc-back*" -q)
                     else
                         echo "No such containers"
                     fi
@@ -53,7 +53,7 @@ pipeline {
                                     result=$( docker container ls -a --filter "name=auc-back*" -q )
                                     if [ -n "$result" ]
                                     then
-                                        docker rm $(docker container ls -a --filter "name=auc-back*" -q)
+                                        //docker rm $(docker container ls -a --filter "name=auc-back*" -q)
                                     else
                                         echo "No such containers"
                                     fi
@@ -64,7 +64,7 @@ pipeline {
                     result=$( docker images -f "reference=auc-back*" -q )
                     if [ -n "$result" ]
                     then
-                        docker rmi -f $(docker images -f "reference=auc-back*" -q)
+                        //docker rmi -f $(docker images -f "reference=auc-back*" -q)
                     else
                         echo "No such container images"
                     fi
@@ -73,7 +73,7 @@ pipeline {
                                     result=$( docker images -f "reference=auc-back*" -q )
                                     if [ -n "$result" ]
                                     then
-                                        docker rmi -f $(docker images -f "reference=auc-back*" -q)
+                                       // docker rmi -f $(docker images -f "reference=auc-back*" -q)
                                     else
                                         echo "No such container images"
                                     fi
@@ -96,17 +96,15 @@ pipeline {
                 }
             }
         }
-        stage('Set Permissions') {
+        stage('Build Docker-Compose') {
                     steps {
-                        // 스크립트 파일에 실행 권한 추가
-                        sh 'chmod +x /var/jenkins_home/workspace/aucation-cicd/BE/start-prod.sh'
+	           sh 'docker-compose -f /var/jenkins_home/workspace/aucation-cicd/docker-compose.yml build'
                     }
                 }
-        stage('Execute start-prod.sh Script') {
-            steps {
-                // start-prod.sh 스크립트 실행
-                sh '/var/jenkins_home/workspace/aucation-cicd/BE/start-prod.sh'
-            }
-        }
+ 	stage('Up Docker-Compose') {
+                    steps {
+	           sh 'docker-compose -f /var/jenkins_home/workspace/aucation-cicd/docker-compose.yml up -d'
+                    }
+                }
     }
 }
