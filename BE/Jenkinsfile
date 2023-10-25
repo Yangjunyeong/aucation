@@ -41,7 +41,7 @@ pipeline {
                     result=$( docker images -f "reference=auc-back*" -q )
                     if [ -n "$result" ]
                     then
-                        //docker rmi -f $(docker images -f "reference=auc-back*" -q)
+                        docker rmi -f $(docker images -f "reference=auc-back*" -q)
                     else
                         echo "No such container images"
                     fi
@@ -50,7 +50,7 @@ pipeline {
                                     result=$( docker images -f "reference=auc-back*" -q )
                                     if [ -n "$result" ]
                                     then
-                                       // docker rmi -f $(docker images -f "reference=auc-back*" -q)
+                                       docker rmi -f $(docker images -f "reference=auc-back*" -q)
                                     else
                                         echo "No such container images"
                                     fi
