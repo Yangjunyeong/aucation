@@ -86,13 +86,13 @@ pipeline {
         stage('Set Permissions') {
                     steps {
                         // 스크립트 파일에 실행 권한 추가
-                        sh 'chmod +x /var/jenkinsDir/workspace/aucation-back/start-prod.sh'
+                        sh 'chmod +x /var/jenkins_home/workspace/aucation-back/start-prod.sh'
                     }
                 }
         stage('Execute start-prod.sh Script') {
             steps {
                 // start-prod.sh 스크립트 실행
-                sh '/var/jenkinsDir/workspace/aucation-back/start-prod.sh'
+                sh '/var/jenkins_home/workspace/aucation-back/start-prod.sh'
             }
         }
     }
