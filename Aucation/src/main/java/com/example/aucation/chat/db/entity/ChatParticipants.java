@@ -31,7 +31,6 @@ import lombok.experimental.SuperBuilder;
 })
 public class ChatParticipants extends BaseEntity {
 
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
 	private Member member;

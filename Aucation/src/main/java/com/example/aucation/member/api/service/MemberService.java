@@ -31,6 +31,8 @@ public class MemberService {
 
 	@Transactional
 	public void signup(SignupRequest signupRequest) {
+		validateMemberId(signupRequest.getMemberId());
+		validateMemberEmail(signupRequest.getMemberEmail());
 		Member member = Member.builder()
 			.memberId(signupRequest.getMemberId())
 			.memberPw(passwordEncoder.encode(signupRequest.getMemberPw()))
@@ -42,6 +44,7 @@ public class MemberService {
 	}
 
 	public EmailResponse verifyemail(String memberEmail) throws Exception {
+		validateMemberEmail(memberEmail);
 		String code = registerMail.sendSimpleMessage(memberEmail,"회원가입");
 		return EmailResponse.of(code);
 
@@ -51,5 +54,18 @@ public class MemberService {
 		if(memberRepository.existsByMemberNickname(memberNickname.getMemberNickname())) {
 			throw new DuplicateException(ApplicationError.DUPLICATE_NICKNAME);
 		}
+	}
+
+	private void validateMemberEmail(String memberEmail) {
+		if(memberRepository.existsByMemberEmail(memberEmail)) {
+			throw new DuplicateException(ApplicationError.DUPLICATE_MEMBER_EMAIL);
+		}
+	}
+
+	private void validateMemberId(String memberId) {
+		if(memberRepository.existsByMemberId(memberId)) {
+			throw new DuplicateException(ApplicationError.DUPLICATE_USERNAME);
+		}
+
 	}
 }

@@ -1,10 +1,17 @@
+server:
+  port: 8080
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-password: vlzk@@8462
+    key-store-type: PKCS12
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    #url: jdbc:mysql://localhost:3306/aucation?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    url: jdbc:mysql://k9b104.p.ssafy.io:3306/aucation?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/aucation?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    #url: jdbc:mysql://k9b104.p.ssafy.io:3306/aucation?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
-    password: q1w2e3r4!
+    password: root
 
   # spring data jpa ??
   jpa:
@@ -17,6 +24,17 @@ spring:
   mail:
     username: wodnr8462@naver.com
     password: vlzk@@8462
+
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: false
+  freemarker:
+    cache: false
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
 
 jwt:
   secretKey: myssafyislikeherewowwowwow123123123
