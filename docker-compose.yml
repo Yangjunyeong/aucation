@@ -24,7 +24,7 @@ services: # 서비스 정의를 시작합니다. 각 서비스는 별도의 컨�
     depends_on: # depends_on: 이 옵션은 서비스 간의 실행 순서와 의존성을 설정하는 데 사용, depends_on은 단순히 서비스의 실행 순서를 조정하고, 서비스가 실제로 준비되었는지를 보장하지는 않음
       - server
     networks: 
-      - talktopia_network #networks: 이 옵션은 서비스가 어떤 네트워크에 속하는지 정의하는 데 사용됩니다. 여러 서비스 간의 통신을 위해 사용되는 네트워크를 설정함
+      - auc_network #networks: 이 옵션은 서비스가 어떤 네트워크에 속하는지 정의하는 데 사용됩니다. 여러 서비스 간의 통신을 위해 사용되는 네트워크를 설정함
 networks:
-  talktopia_network:
+  auc_network:
     driver: bridge
