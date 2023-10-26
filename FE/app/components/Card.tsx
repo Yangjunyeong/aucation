@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import sellfinish from "@/app/images/sellfinish.png";
 import LikeBtn from "../detail/components/LikeBtn";
 import { BsFillPersonFill } from "react-icons/bs";
-
+import Image from "next/image";
 interface CardProps {
   cardImgUrl: string;
   likeCount: Number;
@@ -42,20 +42,27 @@ const Card: React.FC<CardProps> = ({
 
         {state == "2" ? (
           <div className="relative">
-            <img
+            <Image
+              width={295}
+              height={192}
               className="w-[295px] h-48 object-cover transition-transform transform duration-300 hover:scale-110"
               src={cardImgUrl}
               alt="Building Image"
               style={{ filter: "brightness(50%)" }}
             />
             <div className="absolute top-10 left-24">
-              <img src={sellfinish.src} alt="sellfinish" />
+              <Image 
+              width={295}
+              height={192}
+              src={sellfinish.src} alt="sellfinish" />
             </div>
           </div>
         ) : (
           <div className="relative">
-            <img
-              className="w-[295px] h-48 object-cover transition-transform transform duration-300 hover:scale-110"
+            <Image
+              width={295}
+              height={192}
+              className=" object-cover transition-transform transform duration-300 hover:scale-110"
               src={cardImgUrl}
               alt="Building Image"
             />

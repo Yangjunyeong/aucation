@@ -16,10 +16,12 @@ const config: Config = {
         customGray: "#646C76",
         customBgBlue: "#247eff",
         customBgLightBlue: "#D4E0FF",
+        mapCustom: '#fff'
       },
       textColor: {
         customGray: "#9EA6B2",
         customBlue: "#247eff",
+        myPageGray: "#7A7A7A",
       },
       borderColor: {
         customGray: "#9EA6B2",
