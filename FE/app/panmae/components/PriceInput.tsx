@@ -26,8 +26,8 @@ const PriceInput: React.FC<PriceInputProps> = ({ priceHandler }) => {
       type="text"
       className="
                 w-[80%]
-                ml-10
                 h-12
+                ml-10
                 border-2
                 border-gray-300
                 rounded-md
