@@ -6,7 +6,7 @@ pipeline {
                
         stage('Build Docker-Compose') {
                     steps {
-	           sh 'docker compose -f /var/jenkins_home/workspace/aucation-back/docker-compose.yml build'
+	           sh 'docker compose -f /var/test123/docker-compose.yml build'
                     }
                 }
  	stage('Up Docker-Compose') {
