@@ -8,6 +8,10 @@ public class AucationApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(AucationApplication.class, args);
+		System.out.println("나는 배고파요");
+		System.out.println("나는 배고파요");
+		System.out.println("나는 배고파요");
+		System.out.println("나는 배고파요");
 	}
 
 }
