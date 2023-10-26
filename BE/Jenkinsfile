@@ -8,7 +8,20 @@ pipeline {
                     }
                 }
 
-
+  stage('Docker stop'){
+            steps {
+                dir('BE'){
+                    sh 'echo "Docker Container Stop"'
+                    sh 'docker compose stop auc-back'
+                }
+ 
+            }
+            post {
+                 failure {
+                     sh 'echo "Docker Fail"'
+                }
+            }
+        }
 
 
  	stage('Up Docker-Compose') {
