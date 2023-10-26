@@ -8,13 +8,12 @@ pipeline {
                     }
                 }
 
-  stage('Docker stop'){
+  stage('Docker stop and rm'){
             steps {
-                dir('BE'){
                     sh 'echo "Docker Container Stop"'
                     sh 'docker stop auc-back'
-                }
- 
+		sh 'docker rm auc-back'
+		
             }
             post {
                  failure {
