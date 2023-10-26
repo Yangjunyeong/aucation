@@ -112,8 +112,10 @@ const AuctionDetail = () => {
 
       {/* 경매중인 상품 */}
       <div className="mt-16">
-        <span className="text-2xl font-bold">사용자01</span>{" "}
-        <span className="text-2xl font-sans">님의 경매중인 상품</span>
+        <div className="mb-3">
+          <span className="text-2xl font-bold">사용자01</span>{" "}
+          <span className="text-2xl font-sans">님의 경매중인 상품</span>
+        </div>
         <div className="flex flex-wrap gap-8">
           {dummyData.map((item, index) => (
             <Card
