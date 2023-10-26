@@ -33,7 +33,8 @@ const KakaoMap = () => {
           position: markerPosition,
         });
         marker.setMap(map);
-        marker.setDraggable(true);
+        // marker.setDraggable(true);
+        // 생성 페이지에서는 드래그 가능, 디테일 페이지에서는 마커 드래그 불가능
 
         // 마커에서 마우스를 때면 마커 위치가 나옴
         window.kakao.maps.event.addListener(marker, "mouseout", function () {
@@ -69,13 +70,13 @@ const KakaoMap = () => {
   }, []);
 
   return (
-    <main className="w-full flex flex-col items-center justify-center pt-4">
-      <div className="w-full h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh]">
-        <div id="map" style={{ width: "100%", height: "100%" }}></div>
+    <main className="w-full flex flex-col items-center justify-center">
+      <div className="w-[600px] h-[500px]">
+        <div id="map" style={{ width: "100%", height: "100%" }} className="rounded-2xl"></div>
       </div>
-      <h1>{markerXY && markerXY[0]}</h1>
+      {/* <h1>{markerXY && markerXY[0]}</h1>
       <h1>{markerXY && markerXY[1]}</h1>
-      <h1>1wdsdasasdw</h1>
+      <h1>1wdsdasasdw</h1> */}
     </main>
   );
 };
