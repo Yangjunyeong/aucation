@@ -108,12 +108,13 @@ public class Member extends BaseEntity {
 
 	@Builder
 	public Member(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,
-		Long lastModifiedBy, boolean isDeleted, String memberId, String memberPw, String memberEmail,Role memberRole,SocialType socialType) {
+		Long lastModifiedBy, boolean isDeleted, String memberId, String memberPw, String memberEmail,Role memberRole,SocialType socialType,String memberNickname) {
 		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
 		this.memberId = memberId;
 		this.memberPw = memberPw;
 		this.memberEmail = memberEmail;
 		this.memberRole = memberRole;
+		this.memberNickname = memberNickname;
 		this.socialType = socialType;
 	}
 	public void updateRefreshToken(String updateRefreshToken) {

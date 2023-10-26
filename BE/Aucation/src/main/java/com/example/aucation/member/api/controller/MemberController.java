@@ -29,8 +29,15 @@ public class MemberController {
 	private final MemberService memberService;
 
 	@PostMapping("/signup")
-	public ResponseEntity<Void> signup(Authentication authentication, @RequestBody SignupRequest signupRequest) {
+	public ResponseEntity<Void> signup(@RequestBody SignupRequest signupRequest) throws
+		Exception {
 		memberService.signup(signupRequest);
+		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/verification/id/{memberId}")
+	public ResponseEntity<Void> verifyId(@PathVariable("memberId") String memberId) throws Exception {
+		memberService.verifyId(memberId);
 		return ResponseEntity.ok().build();
 	}
 

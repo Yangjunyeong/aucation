@@ -27,13 +27,15 @@ public class MemberService {
 	private final RegisterMail registerMail;
 
 	@Transactional
-	public void signup(SignupRequest signupRequest) {
-		validateMemberId(signupRequest.getMemberId());
-		validateMemberEmail(signupRequest.getMemberEmail());
+	public void signup(SignupRequest signupRequest) throws Exception {
+		verifyId(signupRequest.getMemberId());
+		verifynick(signupRequest.getMemberNickname());
+		verifyemail(signupRequest.getMemberEmail());
 		Member member = Member.builder()
 			.memberId(signupRequest.getMemberId())
 			.memberPw(passwordEncoder.encode(signupRequest.getMemberPw()))
 			.memberEmail(signupRequest.getMemberEmail())
+			.memberNickname(signupRequest.getMemberNickname())
 			.memberRole(Role.CERTIFIED)
 			.socialType(SocialType.NORMAL)
 			.build();
@@ -44,7 +46,6 @@ public class MemberService {
 		validateMemberEmail(memberEmail);
 		String code = registerMail.sendSimpleMessage(memberEmail,"회원가입");
 		return EmailResponse.of(code);
-
 	}
 
 	public void verifynick(String memberNickname) {
@@ -59,9 +60,9 @@ public class MemberService {
 		}
 	}
 
-	private void validateMemberId(String memberId) {
+	public void verifyId(String memberId) {
 		if(memberRepository.existsByMemberId(memberId)) {
-			throw new DuplicateException(ApplicationError.DUPLICATE_USERNAME);
+			throw new DuplicateException(ApplicationError.DUPLICATE_USERID);
 		}
 
 	}
