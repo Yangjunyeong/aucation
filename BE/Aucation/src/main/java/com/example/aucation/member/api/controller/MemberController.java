@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.aucation.common.dto.EmailResponse;
-import com.example.aucation.member.api.dto.MemberEmailRequest;
-import com.example.aucation.member.api.dto.MemberNickRequest;
 import com.example.aucation.member.api.dto.SignupRequest;
 import com.example.aucation.member.api.service.MemberService;
 
@@ -31,15 +29,14 @@ public class MemberController {
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/verification/email")
-	public ResponseEntity<EmailResponse> verifyemail(@RequestBody MemberEmailRequest memberEmail) throws Exception {
-		return ResponseEntity.ok().body(memberService.verifyemail(memberEmail.getMemberEmail()));
+	@GetMapping("/verification/email/{email}")
+	public ResponseEntity<EmailResponse> verifyemail(@PathVariable("email") String memberEmial) throws Exception {
+		return ResponseEntity.ok().body(memberService.verifyemail(memberEmial));
 	}
 
-	@PostMapping("/verification/nickname")
-	public ResponseEntity<Void> verifynick(@RequestBody MemberNickRequest memberNickname) {
+		@GetMapping("/verification/nickname/{nickname}")
+	public ResponseEntity<Void> verifynick(@PathVariable("nickname") String memberNickname) {
 		memberService.verifynick(memberNickname);
 		return ResponseEntity.ok().build();
 	}
-
 }

@@ -56,7 +56,7 @@ public class SecurityConfig {
 			.mvcMatchers("/docs/index.html").permitAll()
 			.mvcMatchers(HttpMethod.POST,"/api/v1/members").permitAll()
 			.mvcMatchers("/api/v1/members/signup").permitAll()
-			.mvcMatchers(HttpMethod.POST,"/api/v1/members/verification/**").permitAll()
+			.mvcMatchers(HttpMethod.GET,"/api/v1/members/verification/**").permitAll()
 			.mvcMatchers("/ws/**").permitAll()
 			.anyRequest().authenticated()
 			.and()

@@ -14,8 +14,8 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SignupResponse {
 
-    private String MemberId;
-    private String MemberPw;
-    private String MemberEmail;
+    private String memberId;
+    private String memberPw;
+    private String memberEmail;
 
 }

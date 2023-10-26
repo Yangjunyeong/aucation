@@ -7,15 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.aucation.common.dto.EmailResponse;
 import com.example.aucation.common.error.ApplicationError;
 import com.example.aucation.common.error.DuplicateException;
-import com.example.aucation.common.error.NotFoundException;
 import com.example.aucation.common.service.RegisterMail;
-import com.example.aucation.member.api.dto.MemberNickRequest;
 import com.example.aucation.member.api.dto.SignupRequest;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.member.db.entity.Role;
 import com.example.aucation.member.db.entity.SocialType;
 import com.example.aucation.member.db.repository.MemberRepository;
-import com.sun.jdi.request.DuplicateRequestException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,8 +47,8 @@ public class MemberService {
 
 	}
 
-	public void verifynick(MemberNickRequest memberNickname) {
-		if(memberRepository.existsByMemberNickname(memberNickname.getMemberNickname())) {
+	public void verifynick(String memberNickname) {
+		if(memberRepository.existsByMemberNickname(memberNickname)) {
 			throw new DuplicateException(ApplicationError.DUPLICATE_NICKNAME);
 		}
 	}

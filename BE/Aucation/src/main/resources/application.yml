@@ -42,5 +42,5 @@ jwt:
     expiration: 8640000
   refreshToken:
     expiration: 126000000
-  tokenAuthorizationWhiteList: /api/v1/members/login, /api/v1/members/verification/email, /api/v1/members/verification/nickname
+  tokenAuthorizationWhiteList: /api/v1/members/login, /api/v1/members/verification/,
 
