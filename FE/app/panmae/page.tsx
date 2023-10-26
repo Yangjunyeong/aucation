@@ -12,6 +12,7 @@ const Panmae = () => {
   const [images, setImages] = useState<string[]>([]);
   const [imgFile, setImgFile] = useState<string | null>(null);
   const [productname, setProductname] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
 
   const imgRef = useRef<HTMLInputElement>(null);
   const saveImgFile = () => {
@@ -29,6 +30,10 @@ const Panmae = () => {
 
   const productnameHandler = (name: string) => {
     setProductname(name);
+  };
+
+  const categoryHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCategory(e.target.value);
   };
 
   return (
@@ -80,7 +85,7 @@ const Panmae = () => {
           </div>
         </div>
         <div className="border-b-2 border-black w-full"></div>
-        <div className="flex mt-10 w-full">
+        <div className="flex my-10 w-full min-h-[80px]">
           <h1 className="text-xl mt-3">
             상품명 <span className="text-red-500">*</span>
           </h1>
@@ -90,6 +95,27 @@ const Panmae = () => {
               <AiOutlineStop size={24} />
               <span>상품명을 입력해 주세요</span>
             </div>
+          </div>
+        </div>
+        <div className="border-b-2 border-black w-full mt-10"></div>
+        <div className="mt-10 w-full">
+          <div className="w-4/5 flex">
+            <label htmlFor="category" className="mr-10">
+              <h1 className="text-xl mt-3">
+                카테고리 <span className="text-red-500">*</span>
+              </h1>
+            </label>
+            <select name="category" id="category" onChange={categoryHandler} className="w-10 h-5">
+              <option value="javascript">JavaScript</option>
+              <option value="php">PHP</option>
+              <option value="java">Java</option>
+              <option value="golang">Golang</option>
+              <option value="python">Python</option>
+              <option value="c#">C#</option>
+              <option value="C++">C++</option>
+              <option value="erlang">Erlang</option>
+            </select>
+            <h1>{category}</h1>
           </div>
         </div>
       </div>

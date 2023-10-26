@@ -6,7 +6,6 @@ import Image from "next/image";
 import Star from "@/app/images/Star.png";
 
 import NavBtn from "./components/NavBtn";
-
 const Navbar: React.FC = () => {
   return (
     <div className="w-full h-28 flex flex-row items-center sticky top-0 z-50 bg-white px-32">
