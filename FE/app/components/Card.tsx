@@ -1,11 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import sellfinish from "@/app/images/sellfinish.png"
-import LikeBtn from "./LikeBtn";
+import sellfinish from "@/app/images/sellfinish.png";
+import LikeBtn from "../detail/components/LikeBtn";
 import { BsFillPersonFill } from "react-icons/bs";
-
-
 
 interface CardProps {
   cardImgUrl: string;
@@ -48,10 +46,10 @@ const Card: React.FC<CardProps> = ({
               className="w-[295px] h-48 object-cover transition-transform transform duration-300 hover:scale-110"
               src={cardImgUrl}
               alt="Building Image"
-              style={{ filter: 'brightness(50%)' }}
+              style={{ filter: "brightness(50%)" }}
             />
             <div className="absolute top-10 left-24">
-              <img src={sellfinish.src} alt="sellfinish"/>
+              <img src={sellfinish.src} alt="sellfinish" />
             </div>
           </div>
         ) : (
@@ -89,10 +87,18 @@ const Card: React.FC<CardProps> = ({
             </div>
           </div>
           <h2 className="font-extrabold text-xl mb-2">{title}</h2>
-          <p className="text-xl mb-2">
-            최고가 <span className="text-customBlue font-bold ml-1">{highestPrice.toString()}</span>
-            원
-          </p>
+
+          {state == "0" ? (
+            <p className="text-xl mb-2">
+              시작가 <span className="text-customBlue font-bold ml-1">{startPrice.toString()}</span>
+              원
+            </p>
+          ) : (
+            <p className="text-xl mb-2">
+              최고가{" "}
+              <span className="text-customBlue font-bold ml-1">{highestPrice.toString()}</span>원
+            </p>
+          )}
 
           <div className="flex flex-auto">
             <div className="bg-customBgLightBlue flex py-3 rounded-2xl">

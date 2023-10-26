@@ -1,28 +1,34 @@
-import type { Config } from 'tailwindcss'
+import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
       backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+        "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
-      backgroundColor:{
-        customBgBlue:'#247eff',
-        customBgLightBlue: '#D4E0FF'
+      backgroundColor: {
+        customGray: "#646C76",
+        customBgBlue: "#247eff",
+        customBgLightBlue: "#D4E0FF",
       },
-      textColor:{
-        customBlue:'#247eff',
-        
-      }
+      textColor: {
+        customGray: "#9EA6B2",
+        customBlue: "#247eff",
+      },
+      borderColor: {
+        customGray: "#9EA6B2",
+      },
+      fontSize: {
+        "27px": "27px",
+      },
     },
   },
   plugins: [],
-}
-export default config
+};
+export default config;

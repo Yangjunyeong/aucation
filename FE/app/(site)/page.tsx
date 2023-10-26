@@ -11,7 +11,7 @@ export default function Home() {
     setState(data.data);
   };
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="">
       <h1>awda</h1>
       {state}
       <button onClick={() => getHandler()}>버튼</button>
