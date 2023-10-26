@@ -1,4 +1,4 @@
-xversion: "3" #Compose 파일의 버전
+version: "3" #Compose 파일의 버전
 services: # 서비스 정의를 시작합니다. 각 서비스는 별도의 컨테이너로 실행
   server:
     image: auc-back:latest # 이미지 이름
