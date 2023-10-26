@@ -8,6 +8,8 @@ import { AiOutlineStop } from "react-icons/ai";
 import clsx from "clsx";
 import tempmap from "./map.png";
 import PriceInput from "./components/PriceInput";
+import StayMap from "../components/map/StayMap";
+import MoveMap from "../components/map/MoveMap";
 
 const Panmae = () => {
   const [imagecount, setImagecount] = useState(0);
@@ -149,8 +151,8 @@ const Panmae = () => {
           <h1 className="text-xl mr-10">
             거래지역 <span className="text-red-500">*</span>
           </h1>
-          <div className="w-[300px] h-[300px] mr-5 mb-5">
-            <Image src={tempmap} alt="거래지역" />
+          <div className="w-[600px] h-[500px] mr-5 mb-5">
+            <MoveMap />
           </div>
         </div>
         <div className="border-b-2 border-black w-full mt-5"></div>
