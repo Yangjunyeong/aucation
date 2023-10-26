@@ -6,10 +6,9 @@ import imageupload from "@/app/images/imageupload.png";
 import Input from "./components/Input";
 import { AiOutlineStop } from "react-icons/ai";
 import clsx from "clsx";
-import tempmap from "./map.png";
 import PriceInput from "./components/PriceInput";
-import StayMap from "../components/map/StayMap";
 import MoveMap from "../components/map/MoveMap";
+import CarouselMain from "../components/carousel/CarouselMain";
 
 const Panmae = () => {
   const [imagecount, setImagecount] = useState(0);
@@ -52,6 +51,15 @@ const Panmae = () => {
 
   return (
     <div className="w-full px-40 py-20">
+      <div className="h-[500px] w-[500px]">
+        <CarouselMain
+          images={[
+            "https://picsum.photos/190",
+            "https://picsum.photos/201",
+            "https://picsum.photos/202",
+          ]}
+        />
+      </div>
       <div
         className="
         h-full

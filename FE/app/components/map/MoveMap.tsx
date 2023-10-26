@@ -7,13 +7,12 @@ declare global {
   }
 }
 
-const MoveMap= () => {
+const MoveMap = () => {
   const [lat, setLat] = useState(0);
   const [lng, setLng] = useState(0);
   const [markerXY, setMarker] = useState<number[] | null>(null);
 
   useEffect(() => {
-  
     const kakaoMapScript = document.createElement("script");
     kakaoMapScript.async = false;
     kakaoMapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&autoload=false`;
