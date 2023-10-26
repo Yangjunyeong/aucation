@@ -6,10 +6,9 @@ import imageupload from "@/app/images/imageupload.png";
 import Input from "./components/Input";
 import { AiOutlineStop } from "react-icons/ai";
 import clsx from "clsx";
-import tempmap from "./map.png";
 import PriceInput from "./components/PriceInput";
-import StayMap from "../components/map/StayMap";
 import MoveMap from "../components/map/MoveMap";
+import CarouselMain from "../components/carousel/CarouselMain";
 
 const Panmae = () => {
   const [imagecount, setImagecount] = useState(0);
