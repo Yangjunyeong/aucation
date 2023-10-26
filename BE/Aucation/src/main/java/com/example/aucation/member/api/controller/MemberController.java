@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.aucation.common.dto.EmailResponse;
+import com.example.aucation.common.support.AuthorizedVariable;
 import com.example.aucation.member.api.dto.SignupRequest;
 import com.example.aucation.member.api.service.MemberService;
 
@@ -45,8 +46,8 @@ public class MemberController {
 	}
 
 	@GetMapping("/test")
-	public ResponseEntity<Void> test(Authentication authentication){
-		log.info(String.valueOf(authentication.getPrincipal()));
+	public ResponseEntity<Void> test(@AuthorizedVariable Long memberPk){
+		log.info(String.valueOf(memberPk));
 		return ResponseEntity.ok().build();
 	}
 }
