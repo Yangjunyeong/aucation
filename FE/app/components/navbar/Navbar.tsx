@@ -6,11 +6,8 @@ import Image from "next/image";
 import Star from "@/app/images/Star.png";
 
 import NavBtn from "./components/NavBtn";
-import { useRouter } from "next/router";
 
 const Navbar: React.FC = () => {
-  const router = useRouter();
-
   return (
     <div className="w-full h-28 flex flex-row items-center sticky top-0 z-50 bg-white px-32">
       <div className="w-1/4 ">
@@ -20,10 +17,11 @@ const Navbar: React.FC = () => {
         </Link>
       </div>
       <div className="flex flex-row">
-        <Link href={`/`}>
-          <a className={`ml-14 text-27px flex items-center font-semibold hover:underline`}>
-            경매 상품
-          </a>
+        <Link
+          href={`/`}
+          className={`ml-14 text-27px flex items-center font-semibold hover:underline`}
+        >
+          경매 상품
         </Link>
         <Link
           href={`/`}
