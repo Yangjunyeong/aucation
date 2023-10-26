@@ -12,7 +12,7 @@ pipeline {
             steps {
                 dir('BE'){
                     sh 'echo "Docker Container Stop"'
-                    sh 'docker compose stop auc-back'
+                    sh 'docker stop auc-back'
                 }
  
             }
