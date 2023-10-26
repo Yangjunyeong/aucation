@@ -8,7 +8,7 @@ public class AucationApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(AucationApplication.class, args);
-		System.out.println("asdasdasd");
+		System.out.println("asdasdasdfff");
 	}
 
 }
