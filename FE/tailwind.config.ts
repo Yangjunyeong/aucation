@@ -14,9 +14,12 @@ const config: Config = {
       },
       backgroundColor: {
         customGray: "#646C76",
+        customBgBlue: "#247eff",
+        customBgLightBlue: "#D4E0FF",
       },
       textColor: {
         customGray: "#9EA6B2",
+        customBlue: "#247eff",
       },
       borderColor: {
         customGray: "#9EA6B2",
