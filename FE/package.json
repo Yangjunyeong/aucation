@@ -16,6 +16,8 @@
     "react-hook-form": "^7.47.0",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.11.0",
+    "react-items-carousel": "^2.8.0",
+    "react-responsive-carousel": "^3.2.23",
     "recoil": "^0.7.7",
     "sharp": "^0.32.6"
   },
