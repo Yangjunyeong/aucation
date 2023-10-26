@@ -7,36 +7,24 @@ services: # 서비스 정의를 시작합니다. 각 서비스는 별도의 컨�
       context: ./BE/Aucation/ # 컨테이너와 호스트 간의 포트 매핑을 설정합니다. 																				# 컨테이너 내부의 포트를 호스트의 포트와 연결하여 외부에서 접근할 수 있게 함
 
     ports:
-        - 8011:8001  #외부 Port : 내부 Port
+        - 8001:8001  #외부 Port : 내부 Port
     environment: #environment:: 컨테이너 내부의 환경 변수를 설정합니다.
         - TZ=Asia/Seoul 
     networks:
       - auc_network
 
-  # client:
-  #   image: auc-front:latest
-  #   container_name: auc-front
-  #   build:
-  #     context: ./FE/Aucation
-  #     dockerfile: Dockerfile #굳이안써도됨
-  #   ports:
-  #     - 8002:3000
-  #   depends_on: # depends_on: 이 옵션은 서비스 간의 실행 순서와 의존성을 설정하는 데 사용, depends_on은 단순히 서비스의 실행 순서를 조정하고, 서비스가 실제로 준비되었는지를 보장하지는 않음
-  #     - server
-  #   networks: 
-  #     - auc_network #networks: 이 옵션은 서비스가 어떤 네트워크에 속하는지 정의하는 데 사용됩니다. 여러 서비스 간의 통신을 위해 사용되는 네트워크를 설정함
-  server2:
-    image: auc-back2:latest # 이미지 이름
-    container_name: auc-back2 # 컨테이너 이름
+  client:
+    image: auc-front:latest
+    container_name: auc-front
     build:
-      context: ./BE/Aucation/ # 컨테이너와 호스트 간의 포트 매핑을 설정합니다. 																				# 컨테이너 내부의 포트를 호스트의 포트와 연결하여 외부에서 접근할 수 있게 함
-
+      context: ./FE/
+      dockerfile: Dockerfile #굳이안써도됨
     ports:
-        - 8050:8001  #외부 Port : 내부 Port
-    environment: #environment:: 컨테이너 내부의 환경 변수를 설정합니다.
-        - TZ=Asia/Seoul 
-    networks:
-      - auc_network
+      - 3000:3000
+    depends_on: # depends_on: 이 옵션은 서비스 간의 실행 순서와 의존성을 설정하는 데 사용, depends_on은 단순히 서비스의 실행 순서를 조정하고, 서비스가 실제로 준비되었는지를 보장하지는 않음
+      - server
+    networks: 
+      - auc_network #networks: 이 옵션은 서비스가 어떤 네트워크에 속하는지 정의하는 데 사용됩니다. 여러 서비스 간의 통신을 위해 사용되는 네트워크를 설정함
 
 networks:
   auc_network:
