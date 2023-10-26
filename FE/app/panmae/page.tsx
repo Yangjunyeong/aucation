@@ -51,15 +51,6 @@ const Panmae = () => {
 
   return (
     <div className="w-full px-40 py-20">
-      <div className="h-[500px] w-[500px]">
-        <CarouselMain
-          images={[
-            "https://picsum.photos/190",
-            "https://picsum.photos/201",
-            "https://picsum.photos/202",
-          ]}
-        />
-      </div>
       <div
         className="
         h-full
