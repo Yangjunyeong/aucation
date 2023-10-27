@@ -10,4 +10,7 @@ public class AucationApplication {
 		SpringApplication.run(AucationApplication.class, args);
 	}
 
+
+
+
 }
