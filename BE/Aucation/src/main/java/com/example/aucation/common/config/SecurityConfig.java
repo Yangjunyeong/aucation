@@ -56,7 +56,8 @@ public class SecurityConfig {
 			.mvcMatchers("/docs/index.html").permitAll()
 			.mvcMatchers(HttpMethod.POST,"/api/v1/members").permitAll()
 			.mvcMatchers("/api/v1/members/signup").permitAll()
-			.mvcMatchers(HttpMethod.POST,"/api/v1/members/verification/**").permitAll()
+			.mvcMatchers(HttpMethod.GET,"/api/v1/members/verification/**").permitAll()
+			.mvcMatchers(HttpMethod.GET,"/api/v1/members/certification/**").permitAll()
 			.mvcMatchers("/ws/**").permitAll()
 			.anyRequest().authenticated()
 			.and()
@@ -69,7 +70,7 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfiguration() {
 		CorsConfiguration configuration =new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("http://localhost:8080","https://aucation.co.kr","https://www.aucation.co.kr"));
+		configuration.setAllowedOrigins(List.of("http://localhost:8001","https://aucation.co.kr","https://www.aucation.co.kr"));
 		configuration.addAllowedHeader("*");
 		configuration.setAllowedMethods(List.of(
 			HttpMethod.GET.name(),HttpMethod.PATCH.name(),HttpMethod.PUT.name(),HttpMethod.POST.name(),HttpMethod.OPTIONS.name()

@@ -53,6 +53,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
+		log.info(request.getRequestURI());
 		if(isNotRequiredJwtAuthencation(request)){
 			filterChain.doFilter(request,response);
 			return;
@@ -64,7 +65,6 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 			jwtService.extractMemberPk(accessToken);
 		}
 		if(refreshToken !=null && request.getRequestURI().equals(REISSUE_URI)){
-
 			Long memberPk = jwtService.extractMemberPkFromExpiredToken(accessToken);
 			jwtService.validateRefreshToken(refreshToken,memberPk);
 			reissueAccessToken(response,memberPk);
@@ -76,6 +76,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 	private void saveAccessTokenAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, String accessToken) throws
 		ServletException,
 		IOException {
+		log.info(String.valueOf(jwtService.extractMemberPk(accessToken)));
 		Member member = memberRepository.findById(jwtService.extractMemberPk(accessToken))
 			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 		saveAuthentication(member);

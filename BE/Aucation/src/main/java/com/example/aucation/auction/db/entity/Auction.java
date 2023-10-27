@@ -36,16 +36,16 @@ import lombok.experimental.SuperBuilder;
 public class Auction extends BaseEntity {
 
 
-	private long AuctionCumtomerPk;
+	private long auctionCumtomerPk;
 	private AuctionStatus auctionStatus;
-	private String AuctionTitle;
-	private String AuctionObjectName;
-	private String AuctionType;
-	private int AuctionStartPrice;
-	private int AuctionEndPrice;
-	private double AuctioMeetingLat;
-	private double AuctionMeetingLng;
-	private double AuctionDetail;
+	private String auctionTitle;
+	private String auctionObjectName;
+	private String auctionType;
+	private int auctionStartPrice;
+	private int auctionEndPrice;
+	private double auctioMeetingLat;
+	private double auctionMeetingLng;
+	private double auctionDetail;
 
 
 	@ManyToOne(fetch = FetchType.LAZY)
