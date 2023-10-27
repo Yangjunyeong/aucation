@@ -27,7 +27,7 @@ const AuthForm = () => {
     };
     axios({
       method: "post",
-      url: "/members/signup",
+      url: "/api/v1/members/signup",
       data: JSON.stringify(data),
       headers: {
         "Content-Type": "application/json",

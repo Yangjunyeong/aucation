@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
+  swcMinify: true,
   images: {
     remotePatterns: [
       {
@@ -15,8 +16,7 @@ const nextConfig = {
     return [
       {
         source: "/:path*",
-        destination: `https://auction.co.kr/api/v1/:path*`,
-        // destination: `https://aucation.co.kr:8001/:path*`,
+        destination: `https://aucation.co.kr:8001/:path*`,
       },
     ];
   },
