@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.aucation.common.dto.EmailResponse;
 import com.example.aucation.common.error.ApplicationError;
 import com.example.aucation.common.error.DuplicateException;
+import com.example.aucation.common.error.NotFoundException;
 import com.example.aucation.common.service.RegisterMail;
 import com.example.aucation.member.api.dto.SignupRequest;
 import com.example.aucation.member.db.entity.Member;
@@ -42,10 +43,15 @@ public class MemberService {
 		memberRepository.save(member);
 	}
 
-	public EmailResponse verifyemail(String memberEmail) throws Exception {
-		validateMemberEmail(memberEmail);
+	public EmailResponse cerifyemail(String memberEmail) throws Exception {
 		String code = registerMail.sendSimpleMessage(memberEmail,"회원가입");
 		return EmailResponse.of(code);
+	}
+
+	public void verifyemail(String memberEmail) {
+		if(memberRepository.existsByMemberEmail(memberEmail)) {
+			throw new DuplicateException(ApplicationError.DUPLICATE_MEMBER_EMAIL);
+		}
 	}
 
 	public void verifynick(String memberNickname) {

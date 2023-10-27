@@ -33,8 +33,8 @@ public enum ApplicationError {
     AWS_REKOGNITION_ERROR(HttpStatus.BAD_REQUEST, "A003", "REKOGNITION 에러가 발생했습니다."),
     DUPLICATE_USERID(HttpStatus.BAD_REQUEST, "U006","해당 아이디가 이미 존재합니다"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S001", "서버 내부 에러가 발생했습니다."),
-    DUPLICATE_MEMBER_EMAIL(HttpStatus.BAD_REQUEST,"U015","이메일이 중복했습니다");
-
+    DUPLICATE_MEMBER_EMAIL(HttpStatus.BAD_REQUEST,"U015","이메일이 중복했습니다"),
+    EXIST_EMAIL(HttpStatus.BAD_REQUEST, "U016","이미 가입한 이메일이 존재합니다." );
     private final HttpStatus status;
     private final String code;
     private final String message;
