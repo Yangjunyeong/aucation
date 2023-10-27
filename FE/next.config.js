@@ -15,7 +15,8 @@ const nextConfig = {
     return [
       {
         source: "/:path*",
-        destination: "http://192.168.31.161:80/:path*",
+        destination: `https://auction.co.kr/api/v1/:path*`,
+        // destination: `https://aucation.co.kr:8001/:path*`,
       },
     ];
   },

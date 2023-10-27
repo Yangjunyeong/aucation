@@ -4,9 +4,11 @@ import clsx from "clsx";
 interface InputProps {
   label: string;
   id: string;
+  change: (value: string) => void;
+  value: string;
 }
 
-const Input: React.FC<InputProps> = ({ label, id }) => {
+const Input: React.FC<InputProps> = ({ label, id, change, value }) => {
   return (
     <div>
       <label
@@ -23,11 +25,13 @@ const Input: React.FC<InputProps> = ({ label, id }) => {
       <div className="mt-2">
         <input
           id={id}
+          value={value}
+          onChange={e => change(e.target.value)}
           className={clsx(
             `
             form-input
             block
-            w-full
+            w-4/5
             rounded-md
             border-0
             py-1.5

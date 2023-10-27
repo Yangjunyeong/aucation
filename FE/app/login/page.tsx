@@ -10,13 +10,14 @@ export default function Home() {
     min-h-full
     flex-col
     justify-center
+    items-center
     py-12
     sm:px-6
     lg:px-8
     bg-gray-100
     "
     >
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="w-2/5">
         <Image alt="Logo" className="mx-auto w-auto" src={logo} />
         <h2
           className="mt-6
@@ -28,8 +29,8 @@ export default function Home() {
         >
           로그인
         </h2>
+        <AuthForm />
       </div>
-      <AuthForm />
     </div>
   );
 }
