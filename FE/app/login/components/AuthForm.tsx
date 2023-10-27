@@ -19,25 +19,26 @@ const AuthForm = () => {
   const [email, setEmail] = useState<string>("");
 
   const signUp = () => {
+    // const data = {
+    //   memberId: id,
+    //   memberPw: password,
+    //   memberEmail: email,
+    //   memberNickname: nickname,
+    // };
     const data = {
-      memberId: id,
-      memberPw: password,
-      memberEmail: email,
-      memberNickname: nickname,
+      memberId: "test",
+      memberPw: "test",
     };
     axios({
       method: "post",
-      url: "/api/v1/members/signup",
+      url: "/api/v1/members/login",
       data: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
     })
       .then(res => {
         console.log(res.data);
       })
       .catch(err => {
-        console.log(err);
+        console.log(err.response.data);
         console.log(123);
       });
     console.log(JSON.stringify(data, null, 2));
