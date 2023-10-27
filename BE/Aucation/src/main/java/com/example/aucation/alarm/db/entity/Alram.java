@@ -26,9 +26,9 @@ import lombok.experimental.SuperBuilder;
 @AttributeOverride(name = "id",column = @Column(name="alram_pk"))
 public class Alram extends BaseEntity {
 
-	private String alramBody;
+	private String AlramBody;
 	private AlarmType alramType;
-	private long alramTypePk;
+	private long AlramTypePk;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -39,9 +39,9 @@ public class Alram extends BaseEntity {
 		Long lastModifiedBy, boolean isDeleted, String alramBody, AlarmType alramType, long alramTypePk,
 		Member member) {
 		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
-		this.alramBody = alramBody;
+		this.AlramBody = alramBody;
 		this.alramType = alramType;
-		this.alramTypePk = alramTypePk;
+		this.AlramTypePk = alramTypePk;
 		addMember(member);
 	}
 
