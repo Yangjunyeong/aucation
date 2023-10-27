@@ -30,11 +30,11 @@ import lombok.NoArgsConstructor;
 
 public class Discount extends BaseEntity {
 
-	private String DiscountTitle;
-	private String DiscountObject;
-	private int DiscountAuction;
-	private String DiscountStatus;
-	private String DiscountDetail;
+	private String discountTitle;
+	private String discountObject;
+	private int discountAuction;
+	private String discountStatus;
+	private String discountDetail;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -45,11 +45,11 @@ public class Discount extends BaseEntity {
 		Long lastModifiedBy, boolean isDeleted, String discountTitle, String discountObject, int discountAuction,
 		String discountStatus, String discountDetail, Member member) {
 		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
-		DiscountTitle = discountTitle;
-		DiscountObject = discountObject;
-		DiscountAuction = discountAuction;
-		DiscountStatus = discountStatus;
-		DiscountDetail = discountDetail;
+		this.discountTitle = discountTitle;
+		this.discountObject = discountObject;
+		this.discountAuction = discountAuction;
+		this.discountStatus = discountStatus;
+		this.discountDetail = discountDetail;
 		addMember(member);
 	}
 
