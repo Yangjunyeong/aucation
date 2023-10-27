@@ -1,64 +1,121 @@
 "use client";
 
-import { FieldValues, useForm, SubmitHandler } from "react-hook-form";
 import { useState, useCallback, useEffect } from "react";
 import Input from "@/app/components/inputs/Input";
 import Button from "@/app/components/inputs/Button";
 import AuthSocialButton from "./AuthSocialButton";
-
-import { BsGithub, BsGoogle } from "react-icons/bs";
 import { RiKakaoTalkFill } from "react-icons/ri";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 type Variant = "LOGIN" | "REGISTER";
 
 const AuthForm = () => {
   const router = useRouter();
   const [variant, setVariant] = useState<Variant>("LOGIN");
+  const [id, setId] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [nickname, setNickname] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
 
-  const onSubmit: SubmitHandler<FieldValues> = data => {};
+  const signUp = () => {
+    const data = {
+      memberId: id,
+      memberPw: password,
+      memberEmail: email,
+      memberNickname: nickname,
+    };
+    axios({
+      method: "post",
+      url: "/members/signup",
+      data: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then(res => {
+        console.log(res.data);
+      })
+      .catch(err => {
+        console.log(err);
+        console.log(123);
+      });
+    console.log(JSON.stringify(data, null, 2));
+    // fetch("/api/v1/members/signup", {
+    //   method: "POST",
+    //   body: JSON.stringify(data),
+    // })
+    //   .then(res => {
+    //     if (res.ok) {
+    //       toast.success("회원가입 성공");
+    //       // router.push("/login");
+    //       console.log(res.json());
+    //     } else {
+    //       toast.error("회원가입 실패");
+    //       console.log(JSON.stringify(res, null, 2));
+    //     }
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
+  };
   const socialAction = (action: string) => {};
   const toggleVariant = () => {
     setVariant(variant == "LOGIN" ? "REGISTER" : "LOGIN");
   };
-  const test = () => {
-    const emailRegexp = new RegExp("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
-    console.log(emailRegexp.test("godzz733@nddaver.com"));
-  };
+
+  const onChangeId = useCallback((value: string) => {
+    setId(value);
+  }, []);
+
+  const onChangePassword = useCallback((value: string) => {
+    setPassword(value);
+  }, []);
+
+  const onChangeNickname = useCallback((value: string) => {
+    setNickname(value);
+  }, []);
+
+  const onChangeEmail = useCallback((value: string) => {
+    setEmail(value);
+  }, []);
+
   return (
     <div
       className="
     mt-8
-    sm:mx-auto
-    sm:w-full
-    sm:max-w-md"
+    w-full
+    "
     >
-      <button onClick={test}>awdawdawdawdawd</button>
       <div
         className="
         bg-white
         px-4
         py-8
         shadow
-        sm:rounded-lg
-        sm:px-10
+        flex-col
+        justify-center
+        items-center
         "
       >
-        <form
-          className="space-y-6"
-          onSubmit={() => {
-            console.log(1);
-          }}
-        >
-          {variant == "REGISTER" && <Input label="이름" id="name" />}
-          <Input label="이메일" id="email" />
-          <Input label="비밀번호" id="password" />
-          <div>
-            <Button fullWidth type="submit">
-              {variant == "LOGIN" ? "로그인" : "회원가입"}
-            </Button>
+        {variant == "REGISTER" && (
+          <div className="flex">
+            <Input label="아이디" id="name" change={onChangeId} value={id} />
+            <button onClick={() => {}} className="bg-[var(--c-sky)] hover:border-2">
+              중복 체크
+            </button>
           </div>
-        </form>
+        )}
+        {variant == "REGISTER" && (
+          <Input label="닉네임" id="nickname" change={onChangeNickname} value={nickname} />
+        )}
+        <Input label="이메일" id="email" change={onChangeEmail} value={email} />
+        <Input label="비밀번호" id="password" change={onChangePassword} value={password} />
+        <div>
+          <Button fullWidth onClick={signUp}>
+            {variant == "LOGIN" ? "로그인" : "회원가입"}
+          </Button>
+        </div>
         <div className="mt-6">
           <div className="relative">
             <div
