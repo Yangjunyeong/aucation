@@ -1,5 +1,5 @@
 server:
-  port: 8001
+  port: 8080
   ssl:
     key-store: classpath:keystore.p12
     key-store-password: vlzk@@8462
@@ -8,8 +8,7 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-
-#    url: jdbc:mysql://localhost:3306/aucation?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    #url: jdbc:mysql://localhost:3306/aucation?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     url: jdbc:mysql://k9b104.p.ssafy.io:3306/aucation?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
     password: q1w2e3r4!
@@ -43,5 +42,5 @@ jwt:
     expiration: 8640000
   refreshToken:
     expiration: 126000000
-  tokenAuthorizationWhiteList: /api/v1/members/login, /api/v1/members/verification/ , /api/v1/members/certification
+  tokenAuthorizationWhiteList: /api/v1/members/login, /api/v1/members/verification/email, /api/v1/members/verification/nickname
 

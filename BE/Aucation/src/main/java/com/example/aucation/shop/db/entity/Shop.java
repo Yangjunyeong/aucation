@@ -25,11 +25,11 @@ import lombok.experimental.SuperBuilder;
 @AttributeOverride(name = "id",column = @Column(name="shop_pk"))
 public class Shop extends BaseEntity {
 
-	private String shopName;
-	private String shopType;
-	private String shopTaxId;
-	private String shopInfo;
-	private String shopIsFood;
+	private String ShopName;
+	private String ShopType;
+	private String ShopTaxId;
+	private String ShopInfo;
+	private String ShopIsFood;
 
 	@OneToMany(mappedBy = "shop", cascade = CascadeType.PERSIST)
 	private List<Follow> followList = new ArrayList<>();
