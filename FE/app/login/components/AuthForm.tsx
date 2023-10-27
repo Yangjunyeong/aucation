@@ -15,73 +15,15 @@ type Variant = "LOGIN" | "REGISTER";
 const AuthForm = () => {
   const router = useRouter();
   const [variant, setVariant] = useState<Variant>("LOGIN");
-  const [isLoding, setIsLoading] = useState(false);
 
-  const toggleVariant = useCallback(() => {
-    if (variant == "LOGIN") {
-      setVariant("REGISTER");
-    } else {
-      setVariant("LOGIN");
-    }
-  }, [variant]);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FieldValues>({
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-    },
-  });
-
-  const onSubmit: SubmitHandler<FieldValues> = data => {
-    setIsLoading(true);
-    if (variant == "REGISTER") {
-      // axios
-      //   .post("/api/register", data)
-      //   .then(() => {
-      //     signIn("credentials", data);
-      //   })
-      //   .catch(() => {
-      //     toast.error("Failed to register");
-      //   })
-      //   .finally(() => setIsLoading(false));
-    }
-
-    if (variant == "LOGIN") {
-      // signIn("credentials", {
-      //   ...data,
-      //   redirect: false,
-      // })
-      //   .then(callback => {
-      //     if (callback?.error) {
-      //       toast.error("Invalid credentials");
-      //     }
-      //     if (callback?.ok && !callback?.error) {
-      //       toast.success("Logged in!");
-      //       router.push("/users");
-      //     }
-      //   })
-      //   .finally(() => setIsLoading(false));
-    }
+  const onSubmit: SubmitHandler<FieldValues> = data => {};
+  const socialAction = (action: string) => {};
+  const toggleVariant = () => {
+    setVariant(variant == "LOGIN" ? "REGISTER" : "LOGIN");
   };
-  const socialAction = (action: string) => {
-    setIsLoading(true);
-
-    // signIn(action, { redirect: false })
-    //   .then(callback => {
-    //     if (callback?.error) {
-    //       toast.error("Failed to login");
-    //     }
-
-    //     if (callback?.ok && !callback?.error) {
-    //       toast.success("Logged in!");
-    //     }
-    //   })
-    //   .finally(() => setIsLoading(false));
+  const test = () => {
+    const emailRegexp = new RegExp("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    console.log(emailRegexp.test("godzz733@nddaver.com"));
   };
   return (
     <div
@@ -91,6 +33,7 @@ const AuthForm = () => {
     sm:w-full
     sm:max-w-md"
     >
+      <button onClick={test}>awdawdawdawdawd</button>
       <div
         className="
         bg-white
@@ -101,28 +44,17 @@ const AuthForm = () => {
         sm:px-10
         "
       >
-        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          {variant == "REGISTER" && (
-            <Input label="이름" register={register} id="name" errors={errors} disabled={isLoding} />
-          )}
-          <Input
-            label="이메일"
-            register={register}
-            id="email"
-            errors={errors}
-            type="email"
-            disabled={isLoding}
-          />
-          <Input
-            label="비밀번호"
-            register={register}
-            id="password"
-            errors={errors}
-            type="password"
-            disabled={isLoding}
-          />
+        <form
+          className="space-y-6"
+          onSubmit={() => {
+            console.log(1);
+          }}
+        >
+          {variant == "REGISTER" && <Input label="이름" id="name" />}
+          <Input label="이메일" id="email" />
+          <Input label="비밀번호" id="password" />
           <div>
-            <Button disabled={isLoding} fullWidth type="submit">
+            <Button fullWidth type="submit">
               {variant == "LOGIN" ? "로그인" : "회원가입"}
             </Button>
           </div>
