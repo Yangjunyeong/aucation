@@ -8,10 +8,10 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    #url: jdbc:mysql://localhost:3306/aucation?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    url: jdbc:mysql://k9b104.p.ssafy.io:3306/aucation?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/aucation?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    #url: jdbc:mysql://k9b104.p.ssafy.io:3306/aucation?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
-    password: q1w2e3r4!
+    password: root
 
   # spring data jpa ??
   jpa:
@@ -42,5 +42,5 @@ jwt:
     expiration: 8640000
   refreshToken:
     expiration: 126000000
-  tokenAuthorizationWhiteList: /api/v1/members/login, /api/v1/members/verification/
+  tokenAuthorizationWhiteList: /api/v1/members/login, /api/v1/members/verification/ , /api/v1/members/certification
 
