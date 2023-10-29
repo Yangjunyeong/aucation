@@ -70,7 +70,7 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfiguration() {
 		CorsConfiguration configuration =new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("http://localhost:8001","https://aucation.co.kr","https://www.aucation.co.kr"));
+		configuration.setAllowedOrigins(List.of("https://localhost:8001","https://localhost:3000","http://localhost:3000","http://localhost:8001","https://aucation.co.kr","https://www.aucation.co.kr"));
 		configuration.addAllowedHeader("*");
 		configuration.setAllowedMethods(List.of(
 			HttpMethod.GET.name(),HttpMethod.PATCH.name(),HttpMethod.PUT.name(),HttpMethod.POST.name(),HttpMethod.OPTIONS.name()
