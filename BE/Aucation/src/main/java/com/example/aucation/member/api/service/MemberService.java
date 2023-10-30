@@ -9,6 +9,7 @@ import com.example.aucation.common.error.ApplicationError;
 import com.example.aucation.common.error.DuplicateException;
 import com.example.aucation.common.error.NotFoundException;
 import com.example.aucation.common.service.RegisterMail;
+import com.example.aucation.member.api.dto.MypageResponse;
 import com.example.aucation.member.api.dto.SignupRequest;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.member.db.entity.Role;
@@ -71,5 +72,14 @@ public class MemberService {
 			throw new DuplicateException(ApplicationError.DUPLICATE_USERID);
 		}
 
+	}
+
+	public MypageResponse mypage(Long memberPk) {
+		Member member = existsMemberPk(memberPk);
+		return MypageResponse.of(member);
+	}
+
+	private Member existsMemberPk(Long memberPk) {
+		return memberRepository.findById(memberPk).orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 	}
 }
