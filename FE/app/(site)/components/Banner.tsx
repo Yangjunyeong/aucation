@@ -22,9 +22,13 @@ const indicatorStyles: CSSProperties = {
 
 const Banner: React.FC = () => {
   const imgIdx = [1, 2, 3, 4];
+
   return (
     <div className="h-full">
       <Carousel
+        showThumbs={false}
+        autoPlay={true}
+        interval={7000}
         showArrows={true}
         infiniteLoop={true}
         showStatus={false}
@@ -34,6 +38,7 @@ const Banner: React.FC = () => {
               type="button"
               onClick={onClickHandler}
               title={label}
+              // 여기서 화살표의 모양을 수정하세요
               style={{ ...arrowStyles, left: 40, fontSize: 40, color: "white" }}
             >
               <div className="border-black  bg-black bg-opacity-10">{"<"}</div>

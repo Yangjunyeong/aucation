@@ -118,19 +118,7 @@ const AuctionDetail = () => {
         </div>
         <div className="flex flex-wrap gap-8">
           {dummyData.map((item, index) => (
-            <Card
-              key={index}
-              cardImgUrl={item.cardImgUrl}
-              likeCount={item.likeCount}
-              time={item.time}
-              state={item.state}
-              title={item.title}
-              highestPrice={item.highestPrice}
-              isLiked={item.isLiked}
-              nickname={item.nickname}
-              startPrice={item.startPrice}
-              isIndividual={item.isIndividual}
-            />
+            <Card key={index} item={item} />
           ))}
         </div>
       </div>

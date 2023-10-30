@@ -11,17 +11,21 @@ const config: Config = {
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        "main-floor": "url('./images/MainFloorImg.png')",
+        "custom-btn-gradient": "linear-gradient(170deg, #5bf, #51f)",
+        "custom-btn-gradient-hover": "linear-gradient(170deg, #4aa, #419)",
       },
       backgroundColor: {
         customGray: "#646C76",
         customBgBlue: "#247eff",
-        customBgLightBlue: "#D4E0FF",
-        mapCustom: '#fff'
+        customBgLightBlue: "#D4E0FF", // 중간 포인트 색
+        mapCustom: "#fff",
       },
       textColor: {
         customGray: "#9EA6B2",
         customBlue: "#247eff",
         myPageGray: "#7A7A7A",
+        customLightTextColor: "#646C76", // 연한 글자 색
       },
       borderColor: {
         customGray: "#9EA6B2",

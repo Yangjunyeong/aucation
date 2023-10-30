@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Star from "@/app/images/Star.png";
 
-import NavBtn from "./components/NavBtn";
+import NavBtn from "../button/MainBtn";
 const Navbar: React.FC = () => {
   return (
     <div className="w-full h-28 flex flex-row items-center sticky top-0 z-50 bg-white px-48">
@@ -31,11 +31,11 @@ const Navbar: React.FC = () => {
       </div>
 
       <div className="flex flex-row-reverse  justify-start w-full ">
-        <NavBtn>경매시작</NavBtn>
+        <NavBtn className="ml-14">경매시작</NavBtn>
         <Link href={`/`} className="ml-14 text-2xl flex items-center hover:underline">
           로그아웃
         </Link>
-        <Link href={`/`} className="ml-14 text-2xl flex items-center hover:underline">
+        <Link href={`/mypage`} className="ml-14 text-2xl flex items-center hover:underline">
           마이페이지
         </Link>
       </div>
