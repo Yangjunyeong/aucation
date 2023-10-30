@@ -1,10 +1,6 @@
 package com.example.aucation.member.api.controller;
 
-import java.nio.file.attribute.UserPrincipal;
-
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,13 +56,13 @@ public class MemberController {
 	}
 
 	@GetMapping("/test")
-	public ResponseEntity<Void> test(@AuthorizedVariable Long memberPk){
+	public ResponseEntity<Void> test(@AuthorizedVariable Long memberPk) {
 		log.info(String.valueOf(memberPk));
 		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping("/mypage")
-	public ResponseEntity<MypageResponse> mypage(@AuthorizedVariable Long memberPk){
+	public ResponseEntity<MypageResponse> mypage(@AuthorizedVariable Long memberPk) {
 		return ResponseEntity.ok().body(memberService.mypage(memberPk));
 	}
 }
