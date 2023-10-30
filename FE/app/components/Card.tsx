@@ -11,11 +11,10 @@ interface ItemType {
   likeCount: Number;
   time: string;
   state: string;
-
-  title: String;
+  title: string;
   highestPrice: Number;
   isLiked: boolean;
-  nickname: String;
+  nickname: string;
   startPrice: Number;
   isIndividual: boolean;
 }
