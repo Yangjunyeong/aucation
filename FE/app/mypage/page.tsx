@@ -66,10 +66,10 @@ const MyPage = () => {
             </div>
             <div>
               <div className="text-xl mt-3 rounded-2xl h-[140px] max-w-[800px] border border-customGray ml-8 px-4 py-3 overflow-y-auto">
-                안녕하세요 사용자01입니다. 가전제품을 전문적으로 경매합니다.
-                안녕하세요 사용자01입니다. 가전제품을 전문적으로 경매합니다.
-                안녕하세요 사용자01입니다. 가전제품을 전문적으로 경매합니다.
-                안녕하세요 사용자01입니다. 가전제품을 전문적으로 경매합니다.
+                안녕하세요 사용자01입니다. 가전제품을 전문적으로 경매합니다. 안녕하세요
+                사용자01입니다. 가전제품을 전문적으로 경매합니다. 안녕하세요 사용자01입니다.
+                가전제품을 전문적으로 경매합니다. 안녕하세요 사용자01입니다. 가전제품을 전문적으로
+                경매합니다.
               </div>
             </div>
             {/* 버튼 누르면 인풋창 및 확인버튼 출현 */}
@@ -111,27 +111,13 @@ const MyPage = () => {
           </span>
         </div>
         <div className="flex text-lg font-semibold text-center">
-          <span>최신순&nbsp;</span>| 
-          <span>&nbsp;인기순&nbsp;</span>|
-          <span>&nbsp;저가순&nbsp;</span>|
+          <span>최신순&nbsp;</span>|<span>&nbsp;인기순&nbsp;</span>|<span>&nbsp;저가순&nbsp;</span>|
           <span>&nbsp;고가순</span>
         </div>
       </div>
       <div className="flex flex-wrap gap-8 mt-4">
         {DummyUserData.map((item, index) => (
-          <Card
-            key={index}
-            cardImgUrl={item.cardImgUrl}
-            likeCount={item.likeCount}
-            time={item.time}
-            state={item.state}
-            title={item.title}
-            highestPrice={item.highestPrice}
-            isLiked={item.isLiked}
-            nickname={item.nickname}
-            startPrice={item.startPrice}
-            isIndividual={item.isIndividual}
-          />
+          <Card key={index} item={item} />
         ))}
       </div>
     </div>
