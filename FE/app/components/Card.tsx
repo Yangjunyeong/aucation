@@ -5,56 +5,59 @@ import sellfinish from "@/app/images/sellfinish.png";
 import LikeBtn from "../detail/components/LikeBtn";
 import { BsFillPersonFill } from "react-icons/bs";
 import Image from "next/image";
-interface CardProps {
+
+interface ItemType {
   cardImgUrl: string;
   likeCount: Number;
   time: string;
   state: string;
-  title: String;
+  title: string;
   highestPrice: Number;
   isLiked: boolean;
-  nickname: String;
+  nickname: string;
   startPrice: Number;
   isIndividual: boolean;
 }
 
-const Card: React.FC<CardProps> = ({
-  cardImgUrl,
-  likeCount,
-  time,
-  state,
-  title,
-  highestPrice,
-  isLiked,
-  nickname,
-  startPrice,
-  isIndividual,
-}) => {
+interface CardProps {
+  item: ItemType;
+}
+const Card: React.FC<CardProps> = ({ item }) => {
+  const {
+    cardImgUrl,
+    likeCount,
+    time,
+    state,
+    title,
+    highestPrice,
+    isLiked,
+    nickname,
+    startPrice,
+    isIndividual,
+  } = item;
   const [liked, setLiked] = useState<boolean>(isLiked);
   const handleLikeClicked = () => {
+    console.log(liked);
     setLiked(!liked);
   };
 
   return (
     <>
-      <div className="rounded-lg overflow-hidden shadow-lg bg-white">
+      <div className="rounded-lg overflow-hidden shadow-lg bg-white w-[295px]">
         {/* Image */}
 
         {state == "2" ? (
-          <div className="relative">
+          <div className="relative ">
             <Image
               width={295}
               height={192}
-              className="w-[295px] h-48 object-cover transition-transform transform duration-300 hover:scale-110"
+              className="object-cover transition-transform transform duration-300 hover:scale-110"
               src={cardImgUrl}
               alt="Building Image"
               style={{ filter: "brightness(50%)" }}
             />
-            <div className="absolute top-10 left-24">
-              <Image 
-              width={295}
-              height={192}
-              src={sellfinish.src} alt="sellfinish" />
+            <div className="absolute top-10 left-[22%]">
+              <Image width={160} height={192} src={sellfinish.src} alt="sellfinish" />
             </div>
           </div>
         ) : (

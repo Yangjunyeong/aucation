@@ -11,6 +11,7 @@ const nextConfig = {
         pathname: "/**",
       },
     ],
+    domains: ["cdn.thecolumnist.kr"],
   },
   async rewrites() {
     return [
