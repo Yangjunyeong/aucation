@@ -1,0 +1,7 @@
+server:
+  port: 7000
+#  ssl:
+#    key-store: classpath:keystore.p12
+#    key-store-password: ssafy
+#    key-store-type: PKCS12
+
