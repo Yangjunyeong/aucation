@@ -8,6 +8,7 @@ import { RiKakaoTalkFill } from "react-icons/ri";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+
 type Variant = "LOGIN" | "REGISTER";
 
 const AuthForm = () => {
@@ -18,48 +19,85 @@ const AuthForm = () => {
   const [nickname, setNickname] = useState<string>("");
   const [email, setEmail] = useState<string>("");
 
-  const signUp = () => {
-    // const data = {
-    //   memberId: id,
-    //   memberPw: password,
-    //   memberEmail: email,
-    //   memberNickname: nickname,
-    // };
+  const signOrlogin = () => {
+    if (variant == "LOGIN") {
+      login();
+    } else {
+      register();
+    }
+  };
+  const register = () => {
     const data = {
-      memberId: "test",
-      memberPw: "test",
+      memberId: id,
+      memberPw: password,
+      memberEmail: email,
+      memberNickname: nickname,
     };
+    axios({
+      method: "post",
+      url: "/api/v1/members/signup",
+      data: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then(res => {
+        console.log(res.data);
+        toast.success("회원가입 성공");
+      })
+      .catch(err => {
+        console.log(err.response.data);
+        toast.error(err.response.data.message);
+      });
+  };
+
+  const login = () => {
+    const data = {
+      memberId: email,
+      memberPw: password,
+    };
+    console.log(data);
     axios({
       method: "post",
       url: "/api/v1/members/login",
       data: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
       .then(res => {
-        console.log(res.data);
+        console.log(res.headers.authorization);
+        console.log(res.headers["authorization-refresh"]);
+        toast.success("로그인 성공");
+        // router.push("/");
       })
       .catch(err => {
         console.log(err.response.data);
-        console.log(123);
+        toast.error(err.response.data.message);
       });
-    console.log(JSON.stringify(data, null, 2));
-    // fetch("/api/v1/members/signup", {
-    //   method: "POST",
-    //   body: JSON.stringify(data),
-    // })
-    //   .then(res => {
-    //     if (res.ok) {
-    //       toast.success("회원가입 성공");
-    //       // router.push("/login");
-    //       console.log(res.json());
-    //     } else {
-    //       toast.error("회원가입 실패");
-    //       console.log(JSON.stringify(res, null, 2));
-    //     }
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
   };
+
+  const refresh = () => {
+    axios({
+      method: "post",
+      url: "/api/v1/members/reissue",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then(res => {
+        // console.log(res.headers.authorization);
+        // console.log(res.headers["authorization-refresh"]);
+        console.log(res);
+        toast.success("로그인 성공");
+        // router.push("/");
+      })
+      .catch(err => {
+        console.log(err.response.data);
+        // toast.error(err.response.data.message);
+      });
+  };
+
   const socialAction = (action: string) => {};
   const toggleVariant = () => {
     setVariant(variant == "LOGIN" ? "REGISTER" : "LOGIN");
@@ -88,6 +126,7 @@ const AuthForm = () => {
     w-full
     "
     >
+      <button onClick={refresh}>awdawdaw</button>
       <div
         className="
         bg-white
@@ -113,7 +152,7 @@ const AuthForm = () => {
         <Input label="이메일" id="email" change={onChangeEmail} value={email} />
         <Input label="비밀번호" id="password" change={onChangePassword} value={password} />
         <div>
-          <Button fullWidth onClick={signUp}>
+          <Button fullWidth onClick={signOrlogin}>
             {variant == "LOGIN" ? "로그인" : "회원가입"}
           </Button>
         </div>
