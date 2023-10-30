@@ -35,7 +35,7 @@ public class JwtService {
 
 	private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
 	private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
-	private static final String MEMBER_PK_CLAIM = "memberPk";
+	private static final String MEMBER_PK_CLAIM = "MemberPk";
 	private static final String BEARER = "Bearer ";
 	private static final String REMOVE = "";
 	private static final String ACCESS_TOKEN_HEADER = "Authorization";
@@ -84,10 +84,10 @@ public class JwtService {
 				.getClaim(MEMBER_PK_CLAIM)
 				.asLong();
 		} catch (Exception e) {
-			log.info(e.getMessage());
 			throw new JwtException(ApplicationError.INVALID_ACCESS_TOKEN);
 		}
 	}
+
 	public Long extractMemberPkFromExpiredToken(String accessToken) {
 		try {
 			DecodedJWT jwt = JWT.decode(accessToken);
@@ -98,7 +98,8 @@ public class JwtService {
 			throw new JwtException(ApplicationError.INVALID_ACCESS_TOKEN);
 		}
 	}
-	public void validateRefreshToken(String token, Long memberPk){
+
+	public void validateRefreshToken(String token, Long memberPk) {
 		log.info(token);
 		try {
 			JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
@@ -112,9 +113,10 @@ public class JwtService {
 
 	private void checkRefreshTokenExist(Long memberPk) {
 		log.info(String.valueOf(memberPk));
-		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+		Member member = memberRepository.findById(memberPk)
+			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 
-		if(member.getMemberRefresh()==null){
+		if (member.getMemberRefresh() == null) {
 
 			throw new JwtException(ApplicationError.UNAUTHORIZED_MEMBER);
 		}
@@ -126,10 +128,9 @@ public class JwtService {
 		response.setHeader(REFRESH_TOKEN_HEADER, refreshToken);
 	}
 
-
 	public String reissueRefreshToken(Long memberPk) {
 		String reissuedRefreshToken = issueRefreshToken();
-		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(
+		Member member = memberRepository.findById(memberPk).orElseThrow(() -> new NotFoundException(
 			ApplicationError.MEMBER_NOT_FOUND));
 		member.setMemberRefresh(reissuedRefreshToken);
 		memberRepository.save(member);
