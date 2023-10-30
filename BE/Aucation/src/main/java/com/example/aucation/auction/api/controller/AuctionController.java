@@ -1,6 +1,8 @@
 package com.example.aucation.auction.api.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,13 +23,12 @@ import lombok.extern.slf4j.Slf4j;
 public class AuctionController {
 
 
-	// private final AuctionService auctionService;
-	//
-	// @PostMapping("/register")
-	// private ResponseEntity<RegisterResponse> register(@AuthorizedVariable Long memberPk, @RequestBody RegisterRequest registerRequest){
-	// 	return ResponseEntity.ok().body(auctionService.register(memberPk,registerRequest));
+	private final AuctionService auctionService;
+
+	// @GetMapping("/place/{auctionPk}")
+	// private ResponseEntity<RegisterResponse> place(@AuthorizedVariable Long memberPk, @PathVariable("auctionPk")Long auctionPk){
+	// 	return ResponseEntity.ok().body(auctionService.place(memberPk,auctionPk));
 	//
 	// }
-
 
 }

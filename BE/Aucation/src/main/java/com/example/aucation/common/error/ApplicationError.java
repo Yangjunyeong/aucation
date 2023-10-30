@@ -14,8 +14,8 @@ public enum ApplicationError {
     WRONG_ACCESS(HttpStatus.BAD_REQUEST, "C004", "잘못된 접근입니다."),
     INVALID_TOKEN_TYPE(HttpStatus.BAD_REQUEST, "C005", "Token 타입이 올바르지 않습니다."),
     MAIL_SEND_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "C006", "메일 전송 요청에 실패했습니다."),
-    INVALID_ACCESS_TOKEN(HttpStatus.BAD_REQUEST, "C007", "Access Token이 유효하지 않습니다."),
-    INVALID_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, "C008", "Refresh Token이 유효하지 않습니다."),
+    INVALID_ACCESS_TOKEN(HttpStatus.FORBIDDEN, "C007", "Access Token이 유효하지 않습니다."),
+    INVALID_REFRESH_TOKEN(HttpStatus.FORBIDDEN, "C008", "Refresh Token이 유효하지 않습니다."),
 
     UNAUTHORIZED_MEMBER(HttpStatus.UNAUTHORIZED, "U001", "인증되지 않은 사용자입니다."),
     FORBIDDEN_MEMBER(HttpStatus.FORBIDDEN, "U002", "권한이 없는 사용자입니다."),
