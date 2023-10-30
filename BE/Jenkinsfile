@@ -1,6 +1,13 @@
 pipeline {
     agent any
     stages {
+
+stage('Copy Application Yaml') {
+                    steps {
+               sh 'sudo cp -r /home/ubuntu/resources /var/jenkinsDir/workspace/aucation-back/BE/Aucation/src/main'
+
+                    }
+                }
                
     stage('Build Docker-Compose') {
                     steps {
