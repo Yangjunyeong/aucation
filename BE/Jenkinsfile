@@ -2,12 +2,6 @@ pipeline {
     agent any
     stages {
 
-stage('Copy Application Yaml') {
-                    steps {
-               sh 'cp -r /var/jenkins_home/resources /var/jenkins_home/workspace/aucation-back/BE/Aucation/src/main'
-
-                    }
-                }
                
     stage('Build Docker-Compose') {
                     steps {
