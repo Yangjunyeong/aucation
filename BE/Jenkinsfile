@@ -4,7 +4,7 @@ pipeline {
 
 stage('Copy Application Yaml') {
                     steps {
-               sh 'cp -r /home/ubuntu/resources /var/jenkinsDir/workspace/aucation-back/BE/Aucation/src/main'
+               sh 'cp -r /resources /var/jenkinsDir/workspace/aucation-back/BE/Aucation/src/main'
 
                     }
                 }
