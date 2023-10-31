@@ -26,12 +26,11 @@ interface CarouselMainProps {
 
 const CarouselMain: React.FC<CarouselMainProps> = ({ images }) => {
   return (
-    <div className="h-full">
+    <div className="h-[600px] w-[750px] flex items-center justify-center">
       <Carousel
         showArrows={true}
         infiniteLoop={true}
         showStatus={false}
-        autoPlay={true}
         showThumbs={false}
         renderArrowPrev={(onClickHandler, hasPrev, label) =>
           hasPrev && (
