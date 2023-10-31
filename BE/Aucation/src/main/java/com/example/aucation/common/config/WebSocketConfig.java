@@ -46,6 +46,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 		return false;
 	}
 
+
 	// stomp가 아닌 websocket방식에서 쓰임
 	// @Override
 	// public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {

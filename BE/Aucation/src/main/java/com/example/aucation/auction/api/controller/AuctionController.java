@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.aucation.auction.api.dto.PlaceResponse;
 import com.example.aucation.auction.api.dto.RegisterRequest;
 import com.example.aucation.auction.api.dto.RegisterResponse;
 import com.example.aucation.auction.api.service.AuctionService;
@@ -22,13 +23,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AuctionController {
 
-
 	private final AuctionService auctionService;
 
-	// @GetMapping("/place/{auctionPk}")
-	// private ResponseEntity<RegisterResponse> place(@AuthorizedVariable Long memberPk, @PathVariable("auctionPk")Long auctionPk){
-	// 	return ResponseEntity.ok().body(auctionService.place(memberPk,auctionPk));
-	//
-	// }
+	@GetMapping("/place/{auctionUUID}")
+	private ResponseEntity<PlaceResponse> place(@AuthorizedVariable Long memberPk,
+		@PathVariable("auctionUUID") String auctionUUID) throws Exception {
+		return ResponseEntity.ok().body(auctionService.place(memberPk, auctionUUID));
+	}
 
+	@PostMapping("/register")
+	private ResponseEntity<Void> register(@AuthorizedVariable Long memberPk, @RequestBody RegisterRequest registerRequest){
+		auctionService.register(memberPk,registerRequest);
+		return ResponseEntity.ok().build();
+	}
 }

@@ -1,6 +1,9 @@
 package com.example.aucation.common.redis.dto;
 
 import java.time.LocalDateTime;
+import java.util.Set;
+
+import org.springframework.data.redis.core.ZSetOperations;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -12,14 +15,14 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SaveAuctionBIDRedis {
 
-	private String senderId;
-	private String price;
+	private String purchaseId;
+	private int lowPrice;
 	private LocalDateTime bidTime;
 
 	@Builder
-	public SaveAuctionBIDRedis(String senderId, String price, LocalDateTime bidTime) {
-		this.senderId = senderId;
-		this.price = price;
+	public SaveAuctionBIDRedis(String purchaseId, int lowPrice, LocalDateTime bidTime) {
+		this.purchaseId = purchaseId;
+		this.lowPrice = lowPrice;
 		this.bidTime = bidTime;
 	}
 }
