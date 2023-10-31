@@ -17,7 +17,7 @@ export default function Home() {
     bg-gray-100
     "
     >
-      <div className="w-2/5">
+      <div className="w-[35%]">
         <Image alt="Logo" className="mx-auto w-auto" src={logo} />
         <h2
           className="mt-6
