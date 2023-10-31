@@ -144,7 +144,7 @@ const MoveMap = () => {
       <div className="w-[600px] h-[500px]">
         <div id="map" style={{ width: "100%", height: "100%" }} className="rounded-2xl">
           {/* 왼쪽 위 어쩌고 */}
-          <div className="flex w-[210px] border-2 bg-opacity-70 border-gray-300 ml-3 absolute z-50 px-1 py-3 top-3 rounded-2xl text-sm bg-white">
+          <div className="flex w-[210px] border-2 bg-opacity-70 border-gray-300 ml-3 absolute z-40 px-1 py-3 top-3 rounded-2xl text-sm bg-white">
             <div>
               <p className="title font-bold ">지도중심기준 행정동 주소정보</p>
               <p id="centerAddr" className="font-light"></p>

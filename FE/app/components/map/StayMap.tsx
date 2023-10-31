@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 
 declare global {
@@ -16,6 +17,7 @@ const StayMap: React.FC<KakaoMapProp> = ({ inputLat, inputLag }) => {
   const [markerXY, setMarker] = useState<number[] | null>(null);
 
   useEffect(() => {
+    console.log("1111111111111111",inputLat);
     setLat(inputLat);
     setLng(inputLag);
   }, []);
@@ -23,7 +25,7 @@ const StayMap: React.FC<KakaoMapProp> = ({ inputLat, inputLag }) => {
   useEffect(() => {
     const kakaoMapScript = document.createElement("script");
     kakaoMapScript.async = false;
-    kakaoMapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&autoload=false`;
+    kakaoMapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}`;
     document.head.appendChild(kakaoMapScript);
 
     const onLoadKakaoAPI = () => {

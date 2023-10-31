@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import dummyData from "@/app/detail/components/DummyData";
-import Card from "@/app/components/Card";
+import Card from "@/app/components/Card/ColCard";
 import Carousel, { CarouselProps } from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { ButtonGroupProps } from "react-multi-carousel/lib/types";
