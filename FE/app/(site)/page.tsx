@@ -26,7 +26,7 @@ export default function Home() {
       </div>
       <div>
         <PopularBidList
-          title={"🛒 소상공인 할인제품"}
+          title={"🛒 역경매 상품"}
           className={"bg-customBgLightBlue"}
           moreShow={true}
         />

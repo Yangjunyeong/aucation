@@ -26,12 +26,15 @@ const Navbar: React.FC = () => {
           href={`/`}
           className="ml-14 text-27px whitespace-nowrap flex items-center hover:underline font-semibold"
         >
-          할인 상품
+          역경매 상품
         </Link>
       </div>
 
       <div className="flex flex-row-reverse  justify-start w-full ">
-        <NavBtn className="ml-14">경매시작</NavBtn>
+        <Link href={"/panmae"}>
+          <NavBtn className="ml-14 px-4">경매 올리기</NavBtn>
+        </Link>
+
         <Link href={`/`} className="ml-14 text-2xl flex items-center hover:underline">
           로그아웃
         </Link>
