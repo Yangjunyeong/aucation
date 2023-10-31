@@ -8,7 +8,7 @@ interface NavProps {
 const MainBtn: React.FC<NavProps> = ({ children, className }) => {
   return (
     <div
-      className={`text-2xl bg-custom-btn-gradient text-white px-4 py-3 rounded-full cursor-pointer hover:bg-custom-btn-gradient-hover ${className}`}
+      className={`text-2xl bg-custom-btn-gradient text-white py-3 rounded-full cursor-pointer hover:bg-custom-btn-gradient-hover ${className}`}
     >
       {children}
     </div>
