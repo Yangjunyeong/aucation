@@ -9,14 +9,15 @@ import map from "@/app/images/map.png";
 import { RiAuctionLine } from "react-icons/ri";
 import { BsFillPersonFill } from "react-icons/bs";
 import PriceBox from "./components/PriceBox";
-import KakaoMap from "@/app/map/page";
+import StayMap from "../components/map/StayMap";
 
 import productimg from "@/app/images/productimg.png";
-import Card from "@/app/components/Card";
+import ColCard from "@/app/components/Card/ColCard";
 import { useState } from "react";
-
+import DetailCarousel from "./components/DetailCarousel";
 // 더미데이터 임포트
 import dummyData from "./components/DummyData";
+import imageDataList from "./components/DummyImg";
 
 const AuctionDetail = () => {
   const startingPrice = "10,000";
@@ -25,8 +26,9 @@ const AuctionDetail = () => {
 
   const [isLiked, setIsLiked] = useState<boolean>(false);
   //좋아요 토글
-  const handleLikeClicked = () => {
-    setIsLiked(!isLiked);
+  const likeHandler = (value:boolean) => {
+    console.log("디테일 페이지 좋아요 버튼 클릭",isLiked);
+    setIsLiked(value);
   };
 
   return (
@@ -34,9 +36,7 @@ const AuctionDetail = () => {
       {/* 좋아요 버튼 및 뒤로가기 버튼 */}
       <div className="flex justify-between">
         <BackBtn />
-        <div onClick={handleLikeClicked}>
-          <LikeBtn isLiked={isLiked} />
-        </div>
+        <LikeBtn isLiked={isLiked} likeHandler={likeHandler} />
       </div>
 
       {/* 페이지 상단 타이틀 */}
@@ -72,17 +72,18 @@ const AuctionDetail = () => {
       {/* 상품 이미지 및 지도 */}
       <div className="flex flex-row mt-5">
         <div className="flex flex-1 flex-col">
-          <h2 className="text-2xl text-left mb-5 ">상품사진</h2>
-          <Image
+          <h2 className="text-2xl text-left mb-5">상품사진</h2>
+          <DetailCarousel imglist={imageDataList} />
+          {/* <Image
             alt="cell"
             className="rounded-xl object-cover relative, w-[600px] h-[500px]"
             src={cell}
-          />
+          /> */}
         </div>
         <div className="flex flex-1 flex-col">
           <h2 className="text-2xl text-left mb-5">거래 위치(협의가능)</h2>
           {/* <Image alt="map" className="rounded-2" src={map} style={{ position: 'relative', width: '600px', height: '500px' }}/> */}
-          <KakaoMap />
+          <StayMap inputLag={126.56} inputLat={33.45} />
         </div>
       </div>
 
@@ -118,7 +119,7 @@ const AuctionDetail = () => {
         </div>
         <div className="flex flex-wrap gap-8">
           {dummyData.map((item, index) => (
-            <Card key={index} item={item} />
+            <ColCard item={item} key={index} />
           ))}
         </div>
       </div>

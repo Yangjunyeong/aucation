@@ -10,6 +10,18 @@ const nextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.thecolumnist.kr",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.newspenguin.com",
+        port: "",
+        pathname: "/**",
+      },
     ],
     domains: ["cdn.thecolumnist.kr"],
   },

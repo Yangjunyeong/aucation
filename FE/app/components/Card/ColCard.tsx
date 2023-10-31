@@ -2,15 +2,15 @@
 
 import React, { useState } from "react";
 import sellfinish from "@/app/images/sellfinish.png";
-import LikeBtn from "../detail/components/LikeBtn";
+import LikeBtn from "../../detail/components/LikeBtn";
 import { BsFillPersonFill } from "react-icons/bs";
 import Image from "next/image";
+import ColCountDown from "./ColCountDown";
 
 interface ItemType {
   cardImgUrl: string;
   likeCount: Number;
-  time: string;
-  state: string;
+  auctionStartTime: Date;
   title: string;
   highestPrice: Number;
   isLiked: boolean;
@@ -26,8 +26,7 @@ const Card: React.FC<CardProps> = ({ item }) => {
   const {
     cardImgUrl,
     likeCount,
-    time,
-    state,
+    auctionStartTime,
     title,
     highestPrice,
     isLiked,
@@ -36,17 +35,24 @@ const Card: React.FC<CardProps> = ({ item }) => {
     isIndividual,
   } = item;
   const [liked, setLiked] = useState<boolean>(isLiked);
-  const likeHandler = () => {
-    console.log(liked);
-    setLiked(!liked);
+  const [state, setState] = useState<string>("");
+  const likeHandler = (value:boolean) => {
+    console.log("colCard.tsx에서 클릭", value);
+    setLiked(value);
   };
 
+  const stateHandler = (state: string) => {
+    setState(state);
+    console.log("--------------->", state);
+  };
+
+  const tmp = new Date()
   return (
     <>
       <div className="rounded-lg overflow-hidden shadow-lg bg-white w-[295px]">
         {/* Image */}
 
-        {state == "2" ? (
+        {state == "종료" ? (
           <div className="relative ">
             <Image
               width={295}
@@ -56,7 +62,7 @@ const Card: React.FC<CardProps> = ({ item }) => {
               alt="Building Image"
               style={{ filter: "brightness(50%)" }}
             />
-            <div className="absolute top-10 left-[22%]">
+            <div className="absolute top-10 left-[25%]">
               <Image width={160} height={192} src={sellfinish.src} alt="sellfinish" />
             </div>
           </div>
@@ -70,7 +76,7 @@ const Card: React.FC<CardProps> = ({ item }) => {
               alt="Building Image"
             />
             <div className="absolute top-2 right-2">
-              <LikeBtn likeHandler={likeHandler} isLiked={liked} />
+              <LikeBtn isLiked={liked} likeHandler={likeHandler} />
             </div>
           </div>
         )}
@@ -83,17 +89,10 @@ const Card: React.FC<CardProps> = ({ item }) => {
               <p className="text-sm">{likeCount.toString()}명 참여중</p>
             </div>
 
-            <div className="flex">
-              <p className="text-sm">
-                {state == "0" ? (
-                  <span className="text-customBlue font-bold">마감</span>
-                ) : state == "1" ? (
-                  <span>시작</span>
-                ) : (
-                  <span>종료</span>
-                )}{" "}
-                {time.toString()} {state == "2" ? <span></span> : <span>전</span>}
-              </p>
+            <div>
+              <div className="flex text-sm h-[20px]">
+                <ColCountDown currentTime={tmp} auctionStartTime={item.auctionStartTime} stateHandler={stateHandler} />
+              </div>
             </div>
           </div>
           <h2 className="font-extrabold text-xl mb-2">{title}</h2>
