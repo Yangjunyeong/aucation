@@ -320,7 +320,11 @@ const AuthForm = () => {
         justify-center
       "
       >
-        <button onClick={signOrlogin}>회원가입</button>
+        {variant == "LOGIN" ? (
+          <button onClick={signOrlogin}>로그인</button>
+        ) : (
+          <button onClick={signOrlogin}>회원가입</button>
+        )}
       </div>
       <div className="flex items-center justify-center text-gray-500 my-4">
         <div className="border-t border-gray-400 flex-grow"></div>
