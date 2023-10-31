@@ -18,7 +18,9 @@ const Button: React.FC<ButtonProps> = ({ onClick, children }) => {
         h-14
         p-4
         inline-block
-        w-[14%]
+        w-[20%]
+        text-center
+        align-middle
     "
     >
       <button onClick={onClick}>

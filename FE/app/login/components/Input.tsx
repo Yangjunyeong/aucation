@@ -8,11 +8,12 @@ interface InputProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   id: string;
   type: string;
+  verify?: boolean;
 }
 
-const Input: React.FC<InputProps> = ({ placeholder, value, onChange, id, type }) => {
+const Input: React.FC<InputProps> = ({ placeholder, value, onChange, id, type, verify }) => {
   return (
-    <div className="w-4/5">
+    <div className="w-full">
       <div className="">
         <input
           value={value}
@@ -37,7 +38,8 @@ const Input: React.FC<InputProps> = ({ placeholder, value, onChange, id, type })
             focus:ring-inset
             focus:ring-sky-200
             
-            h-14`
+            h-14`,
+            verify ? "ring-blue-200" : "ring-red-400"
           )}
         />
       </div>

@@ -9,6 +9,7 @@ import axios from "axios";
 import Input from "./Input";
 import Button from "./Button";
 import tw from "tailwind-styled-components";
+import { emailRegexp } from "@/app/utils/regexp";
 
 type Variant = "LOGIN" | "REGISTER";
 
@@ -20,6 +21,12 @@ const AuthForm = () => {
   const [nickname, setNickname] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [emailVerify, setEmailVerify] = useState<string>("");
+  const [verifyCode, setVerifyCode] = useState<string>("");
+  const [verify, setVerify] = useState<boolean>(false); // 인증요청 햇는지
+  const [verifyemail, setVerifyemail] = useState<boolean>(true); // 이메일 중복체크 햇는지
+  const [verifiedcode, setVerifiedcode] = useState<boolean>(true); // 인증번호 맞는지
+  const [verifynickname, setVerifynickname] = useState<boolean>(true);
+  const [verifyid, setVerifyid] = useState<boolean>(true);
 
   const signOrlogin = () => {
     if (variant == "LOGIN") {
@@ -55,10 +62,9 @@ const AuthForm = () => {
 
   const login = () => {
     const data = {
-      memberId: email,
+      memberId: id,
       memberPw: password,
     };
-    console.log(data);
     axios({
       method: "post",
       url: "/api/v1/members/login",
@@ -68,35 +74,14 @@ const AuthForm = () => {
       },
     })
       .then(res => {
-        console.log(res.headers.authorization);
-        console.log(res.headers["authorization-refresh"]);
+        localStorage.setItem("accessToken", res.headers.authorization);
+        localStorage.setItem("refreshToken", res.headers["authorization-refresh"]);
         toast.success("로그인 성공");
-        // router.push("/");
+        router.push("/");
       })
       .catch(err => {
         console.log(err.response.data);
         toast.error(err.response.data.message);
-      });
-  };
-
-  const refresh = () => {
-    axios({
-      method: "post",
-      url: "/api/v1/members/reissue",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then(res => {
-        // console.log(res.headers.authorization);
-        // console.log(res.headers["authorization-refresh"]);
-        console.log(res);
-        toast.success("로그인 성공");
-        // router.push("/");
-      })
-      .catch(err => {
-        console.log(err.response.data);
-        // toast.error(err.response.data.message);
       });
   };
 
@@ -111,14 +96,90 @@ const AuthForm = () => {
       .then(res => {
         console.log(res.data);
         toast.success("중복된 아이디가 없습니다");
+        setVerifyid(true);
       })
       .catch(err => {
         console.log(err.response.data);
         toast.error(err.response.data.message);
+        setVerifyid(false);
+      });
+  };
+  const nicknameCheck = () => {
+    axios({
+      method: "get",
+      url: `/api/v1/members/verification/nickname/${nickname}`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then(res => {
+        console.log(res.data);
+        toast.success("중복된 닉네임이 없습니다");
+        setVerifynickname(true);
+      })
+      .catch(err => {
+        console.log(err.response.data);
+        toast.error(err.response.data.message);
+        setVerifynickname(false);
+      });
+  };
+  const emailCheck = () => {
+    if (!emailRegexp.test(email)) {
+      toast.error("이메일 형식이 맞지 않습니다");
+      return;
+    }
+    axios({
+      method: "get",
+      url: `/api/v1/members/verification/email/${email}`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then(res => {
+        console.log(res.data);
+        toast.success("중복된 이메일이 없습니다");
+        setVerifyemail(true);
+      })
+      .catch(err => {
+        console.log(err.response.data);
+        toast.error("해당 이메일이 이미 존재합니다");
+        setVerifyemail(false);
       });
   };
 
-  const socialAction = (action: string) => {};
+  const certPushEmail = () => {
+    if (!emailRegexp.test(email)) {
+      toast.error("이메일 형식이 맞지 않습니다");
+      return;
+    }
+    axios({
+      method: "get",
+      url: `/api/v1/members/certification/email/${email}`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then(res => {
+        console.log(res.data);
+        setVerifyCode(res.data.code);
+        toast.success("인증번호가 발송되었습니다");
+        setVerify(true);
+      })
+      .catch(err => {
+        console.log(err.response.data);
+      });
+  };
+
+  const certEmail = () => {
+    if (emailVerify == verifyCode) {
+      setVerifiedcode(true);
+      toast.success("인증되었습니다");
+    } else {
+      toast.error("인증번호가 일치하지 않습니다");
+      setVerifiedcode(false);
+    }
+  };
+
   const toggleVariant = () => {
     setVariant(variant == "LOGIN" ? "REGISTER" : "LOGIN");
   };
@@ -148,6 +209,8 @@ const AuthForm = () => {
       className="
     mt-8
     w-full
+    flex-row
+    items-center
     "
     >
       <div className="my-5">
@@ -157,8 +220,15 @@ const AuthForm = () => {
         flex
       "
         >
-          <Input id="id" type="text" placeholder={"Ex:auction"} value={id} onChange={onChangeId} />
-          <Button onClick={idCheck}>중복확인</Button>
+          <Input
+            verify={verifyid}
+            id="id"
+            type="text"
+            placeholder={"Ex:auction"}
+            value={id}
+            onChange={onChangeId}
+          />
+          {variant == "REGISTER" && <Button onClick={idCheck}>중복확인</Button>}
         </div>
       </div>
       {variant == "REGISTER" && (
@@ -170,13 +240,14 @@ const AuthForm = () => {
             "
           >
             <Input
+              verify={verifyemail}
               id="email"
               type="email"
               placeholder={"Ex:abc@example.com"}
               value={email}
               onChange={onChangeEmail}
             />
-            <Button onClick={idCheck}>중복확인</Button>
+            <Button onClick={emailCheck}>중복확인</Button>
           </div>
         </div>
       )}
@@ -189,18 +260,91 @@ const AuthForm = () => {
             "
           >
             <Input
+              verify={verifiedcode}
               id="emailVerify"
               type="text"
               placeholder={""}
               value={emailVerify}
               onChange={onChangeEmailVerify}
             />
-            <Button onClick={idCheck}>확인</Button>
+            {verify == true ? (
+              <Button onClick={certEmail}>인증하기</Button>
+            ) : (
+              <Button onClick={certPushEmail}>인증요청</Button>
+            )}
           </div>
         </div>
       )}
-
-      <button onClick={toggleVariant}>회원가입 버튼</button>
+      {variant == "REGISTER" && (
+        <div className="my-5">
+          <Label htmlFor="nickname">닉네임</Label>
+          <div
+            className="
+              flex
+            "
+          >
+            <Input
+              verify={verifynickname}
+              id="nickname"
+              type="text"
+              placeholder={""}
+              value={nickname}
+              onChange={onChangeNickname}
+            />
+            <Button onClick={nicknameCheck}>확인</Button>
+          </div>
+        </div>
+      )}
+      <div className="my-5">
+        <Label htmlFor="nickname">비밀번호</Label>
+        <div
+          className="
+              flex
+            "
+        >
+          <Input
+            id="password"
+            type="password"
+            placeholder={""}
+            value={password}
+            onChange={onChangePassword}
+            verify={true}
+          />
+        </div>
+      </div>
+      <div
+        className="
+        mt-4
+        flex
+        items-center
+        justify-center
+      "
+      >
+        <button onClick={signOrlogin}>회원가입</button>
+      </div>
+      <div className="flex items-center justify-center text-gray-500 my-4">
+        <div className="border-t border-gray-400 flex-grow"></div>
+        <div className="border-t border-gray-400 flex-grow"></div>
+      </div>
+      {variant == "LOGIN" ? (
+        <div className="flex items-center justify-center">
+          <p>
+            계정이 없으신가요?{" "}
+            <button onClick={toggleVariant} className="font-bold text-xl ">
+              회원가입
+            </button>
+          </p>
+        </div>
+      ) : (
+        <div className="flex items-center justify-center">
+          <p>
+            이미 계정이 있나요?{" "}
+            <button onClick={toggleVariant} className="font-bold text-xl ">
+              로그인
+            </button>
+          </p>
+        </div>
+      )}
     </div>
   );
 };
