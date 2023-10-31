@@ -291,7 +291,7 @@ const AuthForm = () => {
               value={nickname}
               onChange={onChangeNickname}
             />
-            <Button onClick={nicknameCheck}>확인</Button>
+            <Button onClick={nicknameCheck}>중복확인</Button>
           </div>
         </div>
       )}
