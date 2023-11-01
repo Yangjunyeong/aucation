@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.example.aucation.auction.api.dto.BidResponse;
@@ -16,6 +17,8 @@ import com.example.aucation.auction.db.repository.AuctionHistoryRepository;
 import com.example.aucation.common.util.DateFormatPattern;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.messaging.simp.user.SimpSubscription;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Service;
 
 import com.example.aucation.auction.api.dto.BIDRequest;
@@ -42,26 +45,16 @@ public class AuctionBidService {
 	private final StringRedisTemplate stringRedisTemplate;
 
 	private final AuctionRepository auctionRepository;
+
 	private final MemberRepository memberRepository;
+
 	private final AuctionHistoryRepository auctionHistoryRepository;
+
 	private final AuctionBidRepository auctionBidRepository;
+
 	private final RedisTemplate<String, SaveAuctionBIDRedis> redisTemplate;
 
-
-
-
-	public int findhighPrice(String auctionPK) {
-		return 1;
-	}
-
-	public void isCharge(long memberPk, BIDRequest bidRequest, String auctionUUID) {
-		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
-		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID).orElseThrow(()-> new NotFoundException(ApplicationError.INTERNAL_SERVER_ERROR));
-		if(member.getMemberPoint()<=auction.getAuctionEndPrice()+bidRequest.getBidPoint()){
-			throw new BadRequestException(ApplicationError.INTERNAL_SERVER_ERROR);
-		}
-
-	}
+	private final SimpUserRegistry simpUserRegistry;
 
 	@Transactional
 	public BidResponse isService(long memberPk, String auctionUUID) throws Exception {
@@ -69,16 +62,16 @@ public class AuctionBidService {
 		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID).orElseThrow(()-> new Exception("히히하하"));
 
 		int firstPoint = member.getMemberPoint();
-		List<SaveAuctionBIDRedis> bids = redisTemplate.opsForList().range("auc-ing-ttl:"+auctionUUID, 0, -1);
+		List<SaveAuctionBIDRedis> bids = redisTemplate.opsForList().range("auc-ing-log:"+auctionUUID, 0, -1);
 		int bid = calculateValue(auction.getAuctionStartPrice());
-
+		int peopleCount = getNumberOfSubscribersInChannel(auctionUUID);
 		// Redis에 아무도 존재하지않다면 DB에서 일단 돈을 뺌 - Redis에 입찰목록에 넣어놓음
 		if(bids.isEmpty()){
-			return processFirstBid(member, firstPoint, bid, auction);
+			return processFirstBid(member, firstPoint, bid, auction,peopleCount);
 		}
 		// Redis에서 확인
 		else{
-			return processNotFirstBid(member, bids, firstPoint, bid, auction);
+			return processNotFirstBid(member, bids, firstPoint, bid, auction,peopleCount);
 		}
 	}
 
@@ -86,10 +79,10 @@ public class AuctionBidService {
 		redisTemplate.opsForList().rightPush(auctionUUID, content);
 	}
 
-	private BidResponse processFirstBid(Member member, int firstPoint, int bid, Auction auction) {
+	private BidResponse processFirstBid(Member member, int firstPoint, int bid, Auction auction,int peopleCount) {
 		firstPoint -= bid;
 		if(firstPoint <=0){
-			throw new NotFoundException(ApplicationError.MEMBER_NOT_FOUND);
+			throw new BadRequestException(ApplicationError.MEMBER_NOT_HAVE_MONEY);
 		}
 		member.updatePoint(firstPoint);
 		SaveAuctionBIDRedis saveAuctionBIDRedis = SaveAuctionBIDRedis.builder()
@@ -97,18 +90,18 @@ public class AuctionBidService {
 				.lowPrice(bid)
 				.purchasePk(member.getId())
 				.build();
-		saveBIDRedis(auction.getAuctionUUID(),saveAuctionBIDRedis);
+		saveBIDRedis("auc-ing-log:"+auction.getAuctionUUID(),saveAuctionBIDRedis);
 
 		return BidResponse.builder()
 				.firstUserPoint(firstPoint)
 				.firstBid(auction.getAuctionStartPrice())
-				.bidStatus(BIDStatus.FIRST_BID)
 				.firstUser(member.getMemberId())
+				.peopleCount(peopleCount)
+				.askPrice(bid)
 				.build();
 	}
 
-	private BidResponse processNotFirstBid(Member member, List<SaveAuctionBIDRedis> bids, int firstPoint, int bid,
-										   Auction auction) {
+	private BidResponse processNotFirstBid(Member member, List<SaveAuctionBIDRedis> bids, int firstPoint, int bid,Auction auction,int peopleCount) {
 		int count = 0;
 		Long memberPk = 0L;
 
@@ -120,6 +113,9 @@ public class AuctionBidService {
 		}
 
 		firstPoint -= (count + bid);
+		if(firstPoint <=0){
+			throw new BadRequestException(ApplicationError.MEMBER_NOT_HAVE_MONEY);
+		}
 		member.updatePoint(firstPoint);
 
 		Member secondUser = memberRepository.findById(memberPk).orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
@@ -130,7 +126,7 @@ public class AuctionBidService {
 				.lowPrice(count + bid)
 				.purchasePk(member.getId())
 				.build();
-		saveBIDRedis(auction.getAuctionUUID(), saveAuctionBIDRedis);
+		saveBIDRedis("auc-ing-log:"+auction.getAuctionUUID(), saveAuctionBIDRedis);
 
 		return BidResponse.builder()
 				.firstUserPoint(firstPoint)
@@ -138,7 +134,8 @@ public class AuctionBidService {
 				.firstUser(member.getMemberId())
 				.secondUser(secondUser.getMemberId())
 				.secondUserPoint(secondUserPoint)
-				.bidStatus(BIDStatus.NOT_FIRST_BID)
+				.peopleCount(peopleCount)
+				.askPrice(bid)
 				.build();
 	}
 
@@ -206,5 +203,18 @@ public class AuctionBidService {
 		log.info("*********************** REDIS LOG DATA DELETE DONE !!");
 
 		log.info("*********************** endAuction START !!");
+	}
+
+
+	public int getNumberOfSubscribersInChannel(String channelName) {
+		// 특정 채널에 대한 구독자 수를 세기 위해 "/topic/sub/" + auctionUUID와 같은 채널 이름을 지정
+		String channel = "/topic/sub/" + channelName;
+
+		// simpUserRegistry를 사용하여 해당 채널의 구독자 수를 가져옴
+		Set<SimpSubscription> sessionIds = simpUserRegistry.findSubscriptions(
+			subscription -> subscription.getDestination().equals(channel)
+		);
+		log.info(channelName);
+		return sessionIds.size();
 	}
 }

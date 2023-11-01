@@ -21,7 +21,9 @@ public class BidResponse {
 
 	private int	secondUserPoint;
 
-	private BIDStatus bidStatus;
+	private int askPrice;
+
+	private int peopleCount;
 	// {
 	//   "firstUser" : "jinseo",  // 최고입찰자
 	//   "firstBid" : 10,    // 최고입찰금
