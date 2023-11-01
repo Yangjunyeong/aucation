@@ -17,6 +17,9 @@ import { useState } from "react";
 
 // 더미데이터 임포트
 import dummyData from "./components/DummyData";
+import ReAuctionCheckout from "./components/ReAuctionCheckout";
+import Modal from "../components/Modal";
+import ModalContent from "./components/ModalContent";
 
 const AuctionDetail = () => {
   const startingPrice = "10,000";
@@ -24,9 +27,14 @@ const AuctionDetail = () => {
   const bidUnit = "1,000";
 
   const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   //좋아요 토글
   const handleLikeClicked = () => {
     setIsLiked(!isLiked);
+  };
+
+  const handleModalOpen = () => {
+    setIsModalOpen(!isModalOpen);
   };
 
   return (
@@ -104,24 +112,17 @@ const AuctionDetail = () => {
       <div className="mt-40">
         <h2 className="text-3xl font-bold">상품소개</h2>
         <div className="rounded-lg flex flex-row items-center p-6 bg-gray-100 border border-gray-400 mt-6">
-          <h2 className="text-1xl font-sans">
-            깨끗하게 썼고 하자 없음. 많은 참여 부탁드려요, 교환 환불 안돼요
-          </h2>
+          <h2 className="text-1xl font-sans">~~~ 이런상품을 원합니다</h2>
         </div>
       </div>
 
-      {/* 경매중인 상품 */}
-      <div className="mt-16">
-        <div className="mb-3">
-          <span className="text-2xl font-bold">사용자01</span>{" "}
-          <span className="text-2xl font-sans">님의 경매중인 상품</span>
-        </div>
-        <div className="flex flex-wrap gap-8">
-          {dummyData.map((item, index) => (
-            <Card key={index} item={item} />
-          ))}
-        </div>
-      </div>
+      <h1 className="mt-4 text-3xl font-bold"> 입찰 목록</h1>
+      <ReAuctionCheckout onClick={handleModalOpen} />
+      {isModalOpen && (
+        <Modal onClick={handleModalOpen}>
+          <ModalContent />
+        </Modal>
+      )}
     </div>
   );
 };
