@@ -29,8 +29,8 @@ const SelectBox: React.FC<OwnProps> = ({ categoryHandler }) => {
   ];
   return (
     <div className="w-4/5 flex">
-      <label htmlFor="category" className="mr-10">
-        <h1 className="text-2xl font-semibold my-3 mr-2">
+      <label htmlFor="category" className="w-[160px]">
+        <h1 className="text-2xl font-semibold my-3 ">
           카테고리 <span className="text-red-500">*</span>
         </h1>
       </label>
