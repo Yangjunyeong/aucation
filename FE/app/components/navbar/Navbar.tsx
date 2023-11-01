@@ -17,7 +17,7 @@ const Navbar: React.FC = () => {
       </div>
       <div className="flex flex-row w-auto">
         <Link
-          href={`/`}
+          href={`/auction`}
           className={`ml-14 text-27px whitespace-nowrap flex items-center font-semibold hover:underline`}
         >
           경매 상품
@@ -26,7 +26,7 @@ const Navbar: React.FC = () => {
           href={`/`}
           className="ml-14 text-27px whitespace-nowrap flex items-center hover:underline font-semibold"
         >
-          역경매 상품
+          할인 상품
         </Link>
       </div>
 

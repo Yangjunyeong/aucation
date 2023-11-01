@@ -31,7 +31,7 @@ const Input: React.FC<InputProps> = ({ productnameHandler }) => {
                 disabled:opacity-50
                 disabled:cursor-not-allowed
             "
-      placeholder="상품명을 입력하세요"
+      placeholder="제목을 입력하세요"
       value={text}
       onChange={inputHandler}
     />

@@ -14,6 +14,8 @@ const config: Config = {
         "main-floor": "url('./images/MainFloorImg.png')",
         "custom-btn-gradient": "linear-gradient(170deg, #5bf, #51f)",
         "custom-btn-gradient-hover": "linear-gradient(170deg, #4aa, #419)",
+        "custom-btn-gradient-red": "linear-gradient(170deg, #f43, #f15)",
+        "custom-btn-gradient-red-hover": "linear-gradient(170deg, #f73, #f56)",
       },
       backgroundColor: {
         customGray: "#646C76",

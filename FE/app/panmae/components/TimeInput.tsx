@@ -3,9 +3,10 @@ import React from "react";
 interface OwnProps {
   hourHandler: React.ChangeEventHandler<HTMLSelectElement>;
   minuterHandler: React.ChangeEventHandler<HTMLSelectElement>;
+  option: string;
 }
 
-const TimeInput: React.FC<OwnProps> = ({ hourHandler, minuterHandler }) => {
+const TimeInput: React.FC<OwnProps> = ({ hourHandler, minuterHandler, option }) => {
   const hourArray: number[] = Array.from({ length: 24 }, (_, i) => i);
   const minuteArray: number[] = Array.from({ length: 6 }, (_, i) => i * 10);
   return (
@@ -34,7 +35,7 @@ const TimeInput: React.FC<OwnProps> = ({ hourHandler, minuterHandler }) => {
           ))}
         </select>
         <label htmlFor="hour" className="ml-5 text-xl">
-          시간
+          {option !== "할인" ? <span>시간</span> : <span>시</span>}
         </label>
       </div>
       <div className="flex items-center">

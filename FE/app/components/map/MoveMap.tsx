@@ -1,16 +1,22 @@
 "use client";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 declare global {
   interface Window {
     kakao: any;
   }
 }
+interface OwnProps {
+  setTransActionLocation: (location: number[]) => void;
+}
 
-const MoveMap = () => {
+const MoveMap: React.FC<OwnProps> = ({ setTransActionLocation }) => {
   const [lat, setLat] = useState(0);
   const [lng, setLng] = useState(0);
-  const [markerXY, setMarker] = useState<number[] | null>(null);
+  const [markerXY, setMarker] = useState<number[]>([0, 0]);
+  const markerLocation = (location: number[]) => {
+    setTransActionLocation(location);
+  };
 
   useEffect(() => {
     const kakaoMapScript = document.createElement("script");
@@ -68,6 +74,12 @@ const MoveMap = () => {
       }
     );
   }, []);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    markerLocation(markerXY);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [markerXY]);
 
   return (
     <main className="w-full flex flex-col items-center justify-center">
