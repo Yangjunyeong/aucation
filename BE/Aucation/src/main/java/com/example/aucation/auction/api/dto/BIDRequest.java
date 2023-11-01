@@ -7,7 +7,6 @@ import lombok.Setter;
 @Setter
 public class BIDRequest {
 
-	private int memberPoint;
-	private int bidPoint;
+	private long memberPk;
 
 }
