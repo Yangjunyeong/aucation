@@ -1,5 +1,6 @@
 package com.example.aucation.auction.api.controller;
 
+import com.example.aucation.auction.db.entity.AuctionStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,5 +37,7 @@ public class AuctionController {
 		auctionService.register(memberPk,registerRequest);
 		return ResponseEntity.ok().build();
 	}
+
+
 
 }
