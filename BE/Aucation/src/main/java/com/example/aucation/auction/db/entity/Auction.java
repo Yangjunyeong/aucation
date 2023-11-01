@@ -19,6 +19,7 @@ import com.example.aucation.chat.db.entity.ChatRoom;
 import com.example.aucation.common.entity.BaseEntity;
 import com.example.aucation.like.db.entity.LikeAuction;
 import com.example.aucation.member.db.entity.Member;
+import com.example.aucation.photo.db.Photo;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -48,6 +49,7 @@ public class Auction extends BaseEntity {
 	private double auctionMeetingLng;
 	private String auctionDetail;
 	private LocalDateTime auctionStartDate;
+	private LocalDateTime auctionEndDate;
 
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -64,11 +66,14 @@ public class Auction extends BaseEntity {
 	@OneToMany(mappedBy = "auction", cascade = CascadeType.PERSIST)
 	private List<LikeAuction> likeAuctionList = new ArrayList<>();
 
+	@OneToMany(mappedBy = "auction", cascade = CascadeType.PERSIST)
+	private List<Photo> photoList = new ArrayList<>();
+
 	@Builder
 	public Auction(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,
 		Long lastModifiedBy, boolean isDeleted, String auctionUUID, AuctionStatus auctionStatus,
 		String auctionTitle, String auctionType, int auctionStartPrice, int auctionEndPrice,
-		double auctioMeetingLat, double auctionMeetingLng, String auctionDetail,LocalDateTime auctionStartDate,Member owner
+		double auctioMeetingLat, double auctionMeetingLng, String auctionDetail,LocalDateTime auctionStartDate, LocalDateTime auctionEndDate,Member owner
 			) {
 		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
 		this.auctionUUID = auctionUUID;
@@ -81,6 +86,7 @@ public class Auction extends BaseEntity {
 		this.auctionMeetingLng = auctionMeetingLng;
 		this.auctionDetail = auctionDetail;
 		this.auctionStartDate = auctionStartDate;
+		this.auctionEndDate = auctionEndDate;
 		setOwner(owner);
 	}
 

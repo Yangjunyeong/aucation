@@ -1,19 +1,26 @@
 package com.example.aucation.auction.api.controller;
 
+import java.io.IOException;
+import java.util.List;
+
 import com.example.aucation.auction.db.entity.AuctionStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.aucation.auction.api.dto.PlaceResponse;
 import com.example.aucation.auction.api.dto.RegisterRequest;
 import com.example.aucation.auction.api.dto.RegisterResponse;
 import com.example.aucation.auction.api.service.AuctionService;
 import com.example.aucation.common.support.AuthorizedVariable;
+import com.example.aucation.common.support.QueryStringVariable;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,11 +40,10 @@ public class AuctionController {
 	}
 
 	@PostMapping("/register")
-	private ResponseEntity<Void> register(@AuthorizedVariable Long memberPk, @RequestBody RegisterRequest registerRequest){
-		auctionService.register(memberPk,registerRequest);
+	private ResponseEntity<Void> register(@AuthorizedVariable Long memberPk,RegisterRequest registerRequest, @RequestPart(value="multipartFiles",required = false)
+	List<MultipartFile> multipartFiles) throws
+		IOException {
+		auctionService.register(memberPk,registerRequest,multipartFiles);
 		return ResponseEntity.ok().build();
 	}
-
-
-
 }

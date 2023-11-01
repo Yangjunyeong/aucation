@@ -45,6 +45,9 @@ dependencies {
 
     //Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    //AWS
+    implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.385'
 }
 
 tasks.named('test') {
