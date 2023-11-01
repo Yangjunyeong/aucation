@@ -1,5 +1,8 @@
 package com.example.aucation.auction.api.dto;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,30 +11,38 @@ import lombok.Setter;
 @Setter
 public class PlaceResponse {
 
-	private String memberNickname;
+	private long memberPk;
 	private int memberPoint;
-	private String auctionTitle;
-	private String auctionObjectName;
-	private int auctionStartPrice;
-	private int auctionEndPrice;
-	private String auctionDetail;
-	private double auctionMeetingLat;
-	private double auctionMeetingLng;
-	private String auctionUUID;
+	private String title;
+	private String detail;
+	private String ownerNickname;
+	private List<String> ownerPicture;
+	private long ownerPk;
+	private String ownerType;
+	private int nowPrice;
+	private int askPrice;
+	private LocalDateTime enterTime;
+	private LocalDateTime endTime;
+	private int headCnt;
+	private boolean isBid;
 
 	@Builder
-	public PlaceResponse(String memberNickname, int memberPoint, String auctionTitle, String auctionObjectName,
-		int auctionStartPrice, int auctionEndPrice, String auctionDetail, double auctionMeetingLat,
-		double auctionMeetingLng, String auctionUUID) {
-		this.memberNickname = memberNickname;
+	public PlaceResponse(long memberPk, int memberPoint, String title, String detail, String ownerNickname,
+		List<String> ownerPicture, long ownerPk, String ownerType, int nowPrice, int askPrice, LocalDateTime enterTime,
+		LocalDateTime endTime, int headCnt, boolean isBid) {
+		this.memberPk = memberPk;
 		this.memberPoint = memberPoint;
-		this.auctionTitle = auctionTitle;
-		this.auctionObjectName = auctionObjectName;
-		this.auctionStartPrice = auctionStartPrice;
-		this.auctionEndPrice = auctionEndPrice;
-		this.auctionDetail = auctionDetail;
-		this.auctionMeetingLat = auctionMeetingLat;
-		this.auctionMeetingLng = auctionMeetingLng;
-		this.auctionUUID = auctionUUID;
+		this.title = title;
+		this.detail = detail;
+		this.ownerNickname = ownerNickname;
+		this.ownerPicture = ownerPicture;
+		this.ownerPk = ownerPk;
+		this.ownerType = ownerType;
+		this.nowPrice = nowPrice;
+		this.askPrice = askPrice;
+		this.enterTime = enterTime;
+		this.endTime = endTime;
+		this.headCnt = headCnt;
+		this.isBid = isBid;
 	}
 }
