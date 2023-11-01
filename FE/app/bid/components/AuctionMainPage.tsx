@@ -1,17 +1,51 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AiOutlineArrowLeft, AiOutlineHeart } from "react-icons/ai";
 import { RiUserFill, RiTimerFlashLine } from "react-icons/ri";
 import { FaRegHandPaper } from "react-icons/fa";
 import productimg from "@/app/images/productimg.png";
 import dojang from "@/app/images/dojang.png";
-
+import { Stomp, CompatClient } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
 const AuctionMainPage = () => {
   const [heart, setHeart] = useState(0);
   const [userCount, setUserCount] = useState(12645);
   const [auctionTime, setAuctionTime] = useState("00:30:47");
   const [price, setPrice] = useState("1234억 5678만 9101원");
+  const client = useRef<CompatClient>();
+
+  // 웹소켓 연결 및 이벤트 핸들러 설정
+  // const connectToWebSocket = () => {
+  //   client.current = Stomp.over(() => {
+  //     const ws = new SockJS("/ws");
+  //     return ws;
+  //   });
+
+  //   client.current.connect({}, () => {
+  //     // 웹소켓 이벤트 핸들러 설정
+  //     client.current!.subscribe(`/pub/room/${id}`, jres => {
+  //       const receivedMessage = JSON.parse(res.body);
+  //       console.log(receivedMessage);
+  //     });
+  //   });
+  // };
+
+  // useEffect(() => {
+  //   connectToWebSocket();
+  // }, []);
+  // 엔터 누르면 메세지 전송
+  // const sendMessageHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+  //   if (message.trim() === "") return;
+  //   client.current.send(
+  //     `/sub/chat/${id}/sendMessage`,
+  //     {},
+  //     JSON.stringify({ message: message, userId, user: { userId: userId } })
+  //   );
+  //   setMessage("");
+  //   scroll();
+  // };
+
   return (
     <div
       className="
