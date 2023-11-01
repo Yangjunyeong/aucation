@@ -2,6 +2,7 @@
 const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
+  output: "standalone",
   images: {
     remotePatterns: [
       {
@@ -23,7 +24,6 @@ const nextConfig = {
         pathname: "/**",
       },
     ],
-    domains: ["cdn.thecolumnist.kr"],
   },
   async rewrites() {
     return [

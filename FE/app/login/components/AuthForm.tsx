@@ -80,8 +80,9 @@ const AuthForm = () => {
         router.push("/");
       })
       .catch(err => {
-        console.log(err.response.data);
-        toast.error(err.response.data.message);
+        console.log(err.data);
+        // console.log(err.response);
+        toast.error(err.data);
       });
   };
 
