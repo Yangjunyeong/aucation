@@ -7,8 +7,8 @@ interface OwnProps {
 
 const CarouselImages: React.FC<OwnProps> = ({ image }) => {
   return (
-    <div className="">
-      <Image src={image} alt="물건 사진" width={600} height={600} />
+    <div className="w-[500px] h-[600px] relative">
+      <Image src={image} alt="물건 사진" layout={"fill"} objectFit={"contain"} />
     </div>
   );
 };
