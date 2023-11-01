@@ -18,9 +18,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	// stomp 설정
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-
 		// 웹소켓, sockjs 클라이언트가 웹소켓 "핸드셰이크" 커넥션 생성 경로
-		registry.addEndpoint("/chat-server")
+		registry.addEndpoint("/auc-server")
 			// .setAllowedOrigins("*")
 			.setAllowedOriginPatterns("*")
 			.withSockJS();

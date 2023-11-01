@@ -19,7 +19,7 @@ import javax.persistence.OneToOne;
 import com.example.aucation.alarm.db.entity.Alram;
 import com.example.aucation.auction.db.entity.Auction;
 import com.example.aucation.auction.db.entity.AuctionBid;
-import com.example.aucation.auction.db.entity.AutionHistory;
+import com.example.aucation.auction.db.entity.AuctionHistory;
 import com.example.aucation.chat.db.entity.ChatMessage;
 import com.example.aucation.chat.db.entity.ChatParticipants;
 import com.example.aucation.common.entity.BaseEntity;
@@ -34,7 +34,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 @Entity(name = "Member")
 @Getter
@@ -90,17 +89,23 @@ public class Member extends BaseEntity {
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<LikeAuction> likeAuctionList = new ArrayList<>();
 
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-	private List<Auction> auctionList = new ArrayList<>();
+	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+	private List<Auction> auctionOwnerList = new ArrayList<>();
+
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+	private List<Auction> auctionCustomerList = new ArrayList<>();
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<AuctionBid> auctionBidList = new ArrayList<>();
 
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-	private List<AutionHistory> autionHistoryList = new ArrayList<>();
+	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+	private List<AuctionHistory> auctionHistoryOwnerList = new ArrayList<>();
 
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-	private List<Alram> alramList = new ArrayList<>();
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+	private List<AuctionHistory> auctionHistoryCustomerList = new ArrayList<>();
+
+//	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+//	private List<Alram> alramList = new ArrayList<>();
 
 	@OneToOne
 	@JoinColumn(name = "shop_pk")
@@ -120,5 +125,12 @@ public class Member extends BaseEntity {
 	public void updateRefreshToken(String updateRefreshToken) {
 		this.memberRefresh = updateRefreshToken;
 	}
+	public void updatePoint(int point) {
+		this.memberPoint=point;
+	}
 
+	public int updatePlusPoint(int count) {
+		this.memberPoint+=count;
+		return this.memberPoint;
+	}
 }

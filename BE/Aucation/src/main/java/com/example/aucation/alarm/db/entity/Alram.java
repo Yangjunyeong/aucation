@@ -30,9 +30,9 @@ public class Alram extends BaseEntity {
 	private AlarmType alramType;
 	private long alramTypePk;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn
-	private Member member;
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn
+//	private Member member;
 
 	@Builder
 	public Alram(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,
@@ -42,14 +42,14 @@ public class Alram extends BaseEntity {
 		this.alramBody = alramBody;
 		this.alramType = alramType;
 		this.alramTypePk = alramTypePk;
-		addMember(member);
+//		addMember(member);
 	}
 
-	private void addMember(Member member) {
-		if(this.member!=null){
-			this.member.getAlramList().remove(this);
-		}
-		this.member=member;
-		member.getAlramList().add(this);
-	}
+//	private void addMember(Member member) {
+//		if(this.member!=null){
+//			this.member.getAlramList().remove(this);
+//		}
+//		this.member=member;
+//		member.getAlramList().add(this);
+//	}
 }
