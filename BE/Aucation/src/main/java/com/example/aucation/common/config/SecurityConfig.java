@@ -59,7 +59,7 @@ public class SecurityConfig {
 			.mvcMatchers(HttpMethod.GET,"/api/v1/members/verification/**").permitAll()
 			.mvcMatchers(HttpMethod.GET,"/api/v1/members/certification/**").permitAll()
 			.mvcMatchers("/ws/**").permitAll()
-			.mvcMatchers("/auc-server/**").permitAll()
+			//.mvcMatchers("/auc-server/**").permitAll()
 			.anyRequest().authenticated()
 			.and()
 			.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class)
