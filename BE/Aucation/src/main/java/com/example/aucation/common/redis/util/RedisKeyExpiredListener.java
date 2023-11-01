@@ -45,7 +45,11 @@ public class RedisKeyExpiredListener extends KeyExpirationEventMessageListener {
             auctionBidService.startAuction(aucUuid);
         }else {
             log.info("*********************** 경매 종료 이벤트!!");
-            auctionBidService.endAuction(aucUuid);
+            try {
+                auctionBidService.endAuction(aucUuid);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
         log.info("*********************** REDIS EXPIRED EVENT END !!");
     }

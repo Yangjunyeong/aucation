@@ -49,13 +49,12 @@ public class AuctionService {
 		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 
 		return PlaceResponse.builder()
-			.memberNickname(auction.getMember().getMemberNickname())
+			.memberNickname(auction.getOwner().getMemberNickname())
 			.auctionDetail(auction.getAuctionDetail())
 			.auctionTitle(auction.getAuctionTitle())
-			.auctionMeetingLat(auction.getAuctioMeetingLat())
+			.auctionMeetingLat(auction.getAuctionMeetingLat())
 			.auctionMeetingLng(auction.getAuctionMeetingLng())
 			.auctionEndPrice(auction.getAuctionEndPrice())
-			.auctionObjectName(auction.getAuctionObjectName())
 			.memberPoint(member.getMemberPoint())
 			.build();
 	}
@@ -70,18 +69,16 @@ public class AuctionService {
 		String auctionUUID = PasswordGenerator.generate();
 		Auction auction = Auction.builder()
 			.auctionDetail(registerRequest.getAuctionDetail())
-			.auctionCumtomerPk(registerRequest.getAuctionCumtomerPk())
 			.auctionStatus(AuctionStatus.BID)
 			.auctionType(registerRequest.getAuctionType())
 			.auctionTitle(registerRequest.getAuctionTitle())
 			.auctioMeetingLat(registerRequest.getAuctioMeetingLat())
 			.auctionEndPrice(registerRequest.getAuctionEndPrice())
 			.auctionMeetingLng(registerRequest.getAuctionMeetingLng())
-			.auctionObjectName(registerRequest.getAuctionObjectName())
 			.auctionStartDate(registerRequest.getAuctionStartDate())
 			.auctionStartPrice(registerRequest.getAuctionStartPrice())
 			.auctionUUID(auctionUUID)
-			.member(member)
+			.owner(member)
 			.build();
 
 		auctionRepository.save(auction);
@@ -96,4 +93,5 @@ public class AuctionService {
 		stringRedisTemplate.opsForValue().set(key,"string");
 		stringRedisTemplate.expire(key, 30, TimeUnit.SECONDS);
 	}
+
 }

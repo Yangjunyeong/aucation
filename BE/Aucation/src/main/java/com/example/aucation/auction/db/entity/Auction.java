@@ -37,23 +37,26 @@ import lombok.experimental.SuperBuilder;
 })
 public class Auction extends BaseEntity {
 
-	private long auctionCumtomerPk;
+
 	private String auctionUUID;
 	private AuctionStatus auctionStatus;
 	private String auctionTitle;
-	private String auctionObjectName;
 	private String auctionType;
 	private int auctionStartPrice;
 	private int auctionEndPrice;
-	private double auctioMeetingLat;
+	private double auctionMeetingLat;
 	private double auctionMeetingLng;
 	private String auctionDetail;
 	private String auctionStartDate;
 
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn
-	private Member member;
+	@JoinColumn(name="auction_owner_pk")
+	private Member owner;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="auction_customer_pk")
+	private Member customer;
 
 	@OneToMany(mappedBy = "auction", cascade = CascadeType.PERSIST)
 	private List<AuctionBid> auctionBidList = new ArrayList<>();
@@ -61,41 +64,57 @@ public class Auction extends BaseEntity {
 	@OneToMany(mappedBy = "auction", cascade = CascadeType.PERSIST)
 	private List<LikeAuction> likeAuctionList = new ArrayList<>();
 
-	@OneToOne
-	@JoinColumn(name = "auction_chat_pk")
-	private ChatRoom chatRoom;
-
 	@Builder
 	public Auction(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,
-		Long lastModifiedBy, boolean isDeleted, long auctionCumtomerPk, String auctionUUID, AuctionStatus auctionStatus,
-		String auctionTitle, String auctionObjectName, String auctionType, int auctionStartPrice, int auctionEndPrice,
-		double auctioMeetingLat, double auctionMeetingLng, String auctionDetail,String auctionStartDate,Member member) {
+		Long lastModifiedBy, boolean isDeleted, String auctionUUID, AuctionStatus auctionStatus,
+		String auctionTitle, String auctionType, int auctionStartPrice, int auctionEndPrice,
+		double auctioMeetingLat, double auctionMeetingLng, String auctionDetail,String auctionStartDate,Member owner
+			,Member customer) {
 		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
-		this.auctionCumtomerPk = auctionCumtomerPk;
 		this.auctionUUID = auctionUUID;
 		this.auctionStatus = auctionStatus;
 		this.auctionTitle = auctionTitle;
-		this.auctionObjectName = auctionObjectName;
 		this.auctionType = auctionType;
 		this.auctionStartPrice = auctionStartPrice;
 		this.auctionEndPrice = auctionEndPrice;
-		this.auctioMeetingLat = auctioMeetingLat;
+		this.auctionMeetingLat = auctioMeetingLat;
 		this.auctionMeetingLng = auctionMeetingLng;
 		this.auctionDetail = auctionDetail;
 		this.auctionStartDate = auctionStartDate;
-		setMember(member);
+		setOwner(owner);
+		setCustomer(customer);
 	}
 
-	private void setMember(Member member) {
-		if(this.member != null) {
+	private void setOwner(Member owner) {
+		if(this.owner != null) {
 			// team에서 해당 Entity를 제거
-			this.member.getAuctionList().remove(this);
+			this.owner.getAuctionOwnerList().remove(this);
 		}
-
 		// 해당 member Entity에 파라미터로 들어온 team 연관 관계 설정
-		this.member = member;
-
+		this.owner = owner;
 		// 파라미터로 들어온 team Entity에 member 연관 관계 설정
-		member.getAuctionList().add(this);
+		owner.getAuctionOwnerList().add(this);
+	}
+
+	private void setCustomer(Member customer) {
+		if(this.customer != null) {
+			// team에서 해당 Entity를 제거
+			this.customer.getAuctionCustomerList().remove(this);
+		}
+		// 해당 member Entity에 파라미터로 들어온 team 연관 관계 설정
+		this.customer = customer;
+		// 파라미터로 들어온 team Entity에 member 연관 관계 설정
+		customer.getAuctionCustomerList().add(this);
+	}
+
+
+
+	public void updateAuctionToEnd(int endPrice, Member customer) {
+		this.auctionEndPrice = endPrice;
+		setCustomer(customer);
+	}
+
+	public void updateAuctionToEndCustomerIsNone(int auctionEndPrice) {
+		this.auctionEndPrice = auctionEndPrice;
 	}
 }

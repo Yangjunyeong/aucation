@@ -36,4 +36,5 @@ public class AuctionController {
 		auctionService.register(memberPk,registerRequest);
 		return ResponseEntity.ok().build();
 	}
+
 }
