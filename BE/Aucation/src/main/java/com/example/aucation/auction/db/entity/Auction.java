@@ -47,7 +47,7 @@ public class Auction extends BaseEntity {
 	private double auctionMeetingLat;
 	private double auctionMeetingLng;
 	private String auctionDetail;
-	private String auctionStartDate;
+	private LocalDateTime auctionStartDate;
 
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -68,7 +68,7 @@ public class Auction extends BaseEntity {
 	public Auction(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,
 		Long lastModifiedBy, boolean isDeleted, String auctionUUID, AuctionStatus auctionStatus,
 		String auctionTitle, String auctionType, int auctionStartPrice, int auctionEndPrice,
-		double auctioMeetingLat, double auctionMeetingLng, String auctionDetail,String auctionStartDate,Member owner
+		double auctioMeetingLat, double auctionMeetingLng, String auctionDetail,LocalDateTime auctionStartDate,Member owner
 			) {
 		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
 		this.auctionUUID = auctionUUID;

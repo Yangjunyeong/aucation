@@ -72,10 +72,10 @@ public class AuctionService {
 			.auctionStatus(AuctionStatus.BID)
 			.auctionType(registerRequest.getAuctionType())
 			.auctionTitle(registerRequest.getAuctionTitle())
-			.auctioMeetingLat(registerRequest.getAuctioMeetingLat())
-			.auctionEndPrice(registerRequest.getAuctionEndPrice())
+			.auctioMeetingLat(registerRequest.getAuctionMeetingLat())
 			.auctionMeetingLng(registerRequest.getAuctionMeetingLng())
-			.auctionStartDate(registerRequest.getAuctionStartDate())
+			.auctionEndPrice(0)
+			.auctionStartDate(LocalDateTime.now().plusMinutes(registerRequest.getAuctionStartAfterTime()))
 			.auctionStartPrice(registerRequest.getAuctionStartPrice())
 			.auctionUUID(auctionUUID)
 			.owner(member)
@@ -90,8 +90,8 @@ public class AuctionService {
 		// saveAuctionBIDRedisList.add(saveAuctionBIDRedis);
 		// saveBIDRedis(auctionUUID,saveAuctionBIDRedisList);
 		String key = "auc-pre:"+auctionUUID;
-		stringRedisTemplate.opsForValue().set(key,"string");
-		stringRedisTemplate.expire(key, 30, TimeUnit.SECONDS);
+		stringRedisTemplate.opsForValue().set(key,"This is a token for Prepared_Auction");
+		stringRedisTemplate.expire(key, registerRequest.getAuctionStartAfterTime(), TimeUnit.MINUTES);
 	}
 
 }

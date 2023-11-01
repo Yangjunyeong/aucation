@@ -10,15 +10,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RegisterRequest {
-	private long auctionCumtomerPk;
 	private String auctionStatus;
 	private String auctionTitle;
-	private String auctionObjectName;
 	private String auctionType;
 	private int auctionStartPrice;
-	private int auctionEndPrice;
-	private double auctioMeetingLat;
+	private double auctionMeetingLat;
 	private double auctionMeetingLng;
 	private String auctionDetail;
-	private String auctionStartDate;
+	private long auctionStartAfterTime;
 }
