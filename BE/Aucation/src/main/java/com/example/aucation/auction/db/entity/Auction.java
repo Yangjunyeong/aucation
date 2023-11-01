@@ -69,7 +69,7 @@ public class Auction extends BaseEntity {
 		Long lastModifiedBy, boolean isDeleted, String auctionUUID, AuctionStatus auctionStatus,
 		String auctionTitle, String auctionType, int auctionStartPrice, int auctionEndPrice,
 		double auctioMeetingLat, double auctionMeetingLng, String auctionDetail,String auctionStartDate,Member owner
-			,Member customer) {
+			) {
 		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
 		this.auctionUUID = auctionUUID;
 		this.auctionStatus = auctionStatus;
@@ -82,7 +82,6 @@ public class Auction extends BaseEntity {
 		this.auctionDetail = auctionDetail;
 		this.auctionStartDate = auctionStartDate;
 		setOwner(owner);
-		setCustomer(customer);
 	}
 
 	private void setOwner(Member owner) {
