@@ -108,7 +108,6 @@ const AuctionMainPage = () => {
         ml-6
     "
     >
-      <h1>awddwsdawdawdawddss</h1>
       <div
         className="
             flex
