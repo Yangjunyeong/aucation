@@ -9,7 +9,7 @@ import com.example.aucation.common.error.ApplicationError;
 import com.example.aucation.common.error.DuplicateException;
 import com.example.aucation.common.error.NotFoundException;
 import com.example.aucation.common.service.RegisterMail;
-import com.example.aucation.member.api.dto.MemberNickRequest;
+import com.example.aucation.member.api.dto.MypageResponse;
 import com.example.aucation.member.api.dto.SignupRequest;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.member.db.entity.Role;
@@ -29,6 +29,8 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final RegisterMail registerMail;
 
+	private static final String DEFAULT_IMAGE_URL="https://aucation-bucket.s3.ap-northeast-2.amazonaws.com/profile/bear.jpggi";
+
 	@Transactional
 	public void signup(SignupRequest signupRequest) {
 		validateMemberId(signupRequest.getMemberId());
@@ -37,7 +39,9 @@ public class MemberService {
 			.memberId(signupRequest.getMemberId())
 			.memberPw(passwordEncoder.encode(signupRequest.getMemberPw()))
 			.memberEmail(signupRequest.getMemberEmail())
-			.memberRole(Role.CERTIFIED)
+			.memberNickname(signupRequest.getMemberNickname())
+			.memberRole(Role.COMMON)
+			.imageURL(DEFAULT_IMAGE_URL)
 			.socialType(SocialType.NORMAL)
 			.build();
 		memberRepository.save(member);
@@ -67,5 +71,14 @@ public class MemberService {
 			throw new DuplicateException(ApplicationError.DUPLICATE_USERNAME);
 		}
 
+	}
+
+	public MypageResponse mypage(Long memberPk) {
+		Member member = existsMemberPk(memberPk);
+		return MypageResponse.of(member);
+	}
+
+	private Member existsMemberPk(Long memberPk) {
+		return memberRepository.findById(memberPk).orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 	}
 }
