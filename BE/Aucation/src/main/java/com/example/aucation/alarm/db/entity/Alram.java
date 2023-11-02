@@ -26,30 +26,30 @@ import lombok.experimental.SuperBuilder;
 @AttributeOverride(name = "id",column = @Column(name="alram_pk"))
 public class Alram extends BaseEntity {
 
-	private String alramBody;
+	private String AlramBody;
 	private AlarmType alramType;
-	private long alramTypePk;
+	private long AlramTypePk;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn
-	private Member member;
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn
+//	private Member member;
 
 	@Builder
 	public Alram(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,
 		Long lastModifiedBy, boolean isDeleted, String alramBody, AlarmType alramType, long alramTypePk,
 		Member member) {
 		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
-		this.alramBody = alramBody;
+		this.AlramBody = alramBody;
 		this.alramType = alramType;
 		this.alramTypePk = alramTypePk;
-		addMember(member);
+//		addMember(member);
 	}
 
-	private void addMember(Member member) {
-		if(this.member!=null){
-			this.member.getAlramList().remove(this);
-		}
-		this.member=member;
-		member.getAlramList().add(this);
-	}
+//	private void addMember(Member member) {
+//		if(this.member!=null){
+//			this.member.getAlramList().remove(this);
+//		}
+//		this.member=member;
+//		member.getAlramList().add(this);
+//	}
 }

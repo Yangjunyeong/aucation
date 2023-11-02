@@ -1,6 +1,5 @@
 package com.example.aucation.common.jwt.service;
 
-import java.time.Duration;
 import java.util.Date;
 import java.util.Optional;
 
@@ -8,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +19,6 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.aucation.common.error.ApplicationError;
 import com.example.aucation.common.error.JwtException;
 import com.example.aucation.common.error.NotFoundException;
-import com.example.aucation.common.jwt.repository.JwtRepository;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.member.db.repository.MemberRepository;
 
@@ -111,6 +111,18 @@ public class JwtService {
 
 	}
 
+	public boolean validateAccessToken(String token){
+		log.info(token);
+		try {
+			JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
+		} catch (Exception e) {
+			log.info(e.getMessage());
+			throw new JwtException(ApplicationError.INVALID_REFRESH_TOKEN);
+		}
+
+		return false;
+	}
+
 	private void checkRefreshTokenExist(Long memberPk) {
 		log.info(String.valueOf(memberPk));
 		Member member = memberRepository.findById(memberPk)
@@ -153,4 +165,5 @@ public class JwtService {
 			.withExpiresAt(new Date(new Date().getTime() + refreshTokenExpirationPeriod))
 			.sign(Algorithm.HMAC512(secretKey));
 	}
+
 }

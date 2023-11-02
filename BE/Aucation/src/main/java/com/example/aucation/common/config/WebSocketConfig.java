@@ -1,6 +1,10 @@
 package com.example.aucation.common.config;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -14,9 +18,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	// stomp 설정
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-
 		// 웹소켓, sockjs 클라이언트가 웹소켓 "핸드셰이크" 커넥션 생성 경로
-		registry.addEndpoint("/chat-server")
+		registry.addEndpoint("/auc-server")
 			// .setAllowedOrigins("*")
 			.setAllowedOriginPatterns("*")
 			.withSockJS();
@@ -35,12 +38,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 		config.enableSimpleBroker("/topic", "/queue");
 	}
 
-	// JSON을 객체로 변환
-	// @Override
-	// public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
-	// 	messageConverters.add(new MappingJackson2MessageConverter());
-	// 	return false;
-	// }
+	//JSON을 객체로 변환
+	@Override
+	public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
+		messageConverters.add(new MappingJackson2MessageConverter());
+		return false;
+	}
+
 
 	// stomp가 아닌 websocket방식에서 쓰임
 	// @Override

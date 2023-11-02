@@ -2,12 +2,7 @@ package com.example.aucation.auction.db.entity;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import com.example.aucation.common.entity.BaseEntity;
 import com.example.aucation.member.db.entity.Member;
@@ -20,11 +15,10 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@AttributeOverride(name = "id", column = @Column(name = "auction_bid_pk"))
-public class AuctionBid extends BaseEntity {
-
+public class AuctionBid{
+	@Id
+	private String auctionBidPk;
 	private int AuctionBidPrice;
 	private LocalDateTime AuctionBidDatetime;
 
@@ -37,9 +31,12 @@ public class AuctionBid extends BaseEntity {
 	private Auction auction;
 
 	@Builder
-	public AuctionBid(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,
-		Long lastModifiedBy, boolean isDeleted, Member member, Auction auction) {
-		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
+	public AuctionBid(String auctioBidPk, int auctionBidPrice, LocalDateTime auctionBidDatetime, Member member, Auction auction) {
+		this.auctionBidPk = auctioBidPk;
+		AuctionBidPrice = auctionBidPrice;
+		AuctionBidDatetime = auctionBidDatetime;
+		this.member = member;
+		this.auction = auction;
 		addMember(member);
 		addAuction(auction);
 	}
