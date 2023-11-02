@@ -38,7 +38,7 @@ public class MemberService {
 			.memberPw(passwordEncoder.encode(signupRequest.getMemberPw()))
 			.memberEmail(signupRequest.getMemberEmail())
 			.memberNickname(signupRequest.getMemberNickname())
-			.memberRole(Role.CERTIFIED)
+			.memberRole(Role.COMMON)
 			.socialType(SocialType.NORMAL)
 			.build();
 		memberRepository.save(member);

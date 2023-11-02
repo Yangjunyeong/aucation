@@ -8,15 +8,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import com.example.aucation.auction.api.dto.*;
+import com.querydsl.core.Tuple;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.aucation.auction.api.dto.PlaceResponse;
-import com.example.aucation.auction.api.dto.RegisterRequest;
-import com.example.aucation.auction.api.dto.RegisterResponse;
 import com.example.aucation.auction.db.entity.Auction;
 import com.example.aucation.auction.db.entity.AuctionStatus;
 import com.example.aucation.auction.db.repository.AuctionRepository;
@@ -36,7 +35,7 @@ public class AuctionService {
 
 	private final StringRedisTemplate stringRedisTemplate;
 
-	private final AuctionRepository auctionRepository;
+	private final AuctionRepository	 auctionRepository;
 
 	private final MemberRepository memberRepository;
 
@@ -94,4 +93,26 @@ public class AuctionService {
 		stringRedisTemplate.expire(key, registerRequest.getAuctionStartAfterTime(), TimeUnit.MINUTES);
 	}
 
+	public AuctionPreResponse getAuctionPreList(Long memberPk,int pageNum, AuctionSortRequest sortRequest) {
+		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+		if (pageNum<1){
+			pageNum =1;
+		}
+		System.out.println(sortRequest.toString());
+		AuctionPreResponse auctions = auctionRepository.searchPreAucToCondition(member,pageNum,sortRequest);
+		auctions.setNowTime(LocalDateTime.now());
+		return auctions;
+	}
+
+//	public List<AuctionIngResponse> getAuctionIngList(Long memberPk,int pageNum, AuctionSortRequest sortRequest) {
+//		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+//		List<Auction> auctions = auctionRepository.searchIngAucByCondition(member,pageNum,sortRequest);
+//		return null;
+//	}
+//
+//	public List<ReAuctionResponse> getReAuctionList(Long memberPk,int pageNum, AuctionSortRequest sortRequest) {
+//		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+//		List<Auction> auctions = auctionRepository.searchReAucByCondition(member,pageNum,sortRequest);
+//		return null;
+//	}
 }
