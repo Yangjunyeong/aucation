@@ -1,10 +1,12 @@
+./src/main/resources
+
 HELP.md
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-
+**/resources/**
 ### STS ###
 .apt_generated
 .classpath
@@ -35,3 +37,5 @@ out/
 
 ### VS Code ###
 .vscode/
+
+**/application.yml

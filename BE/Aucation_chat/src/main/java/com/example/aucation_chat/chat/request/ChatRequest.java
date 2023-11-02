@@ -1,4 +1,4 @@
-package com.example.aucation_chat.chat;
+package com.example.aucation_chat.chat.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatRoomContentRequest {  // 채팅방에 보낼 내용
+/** 채팅방에 보낼 내용 */
+public class ChatRequest {  
 	private String sender;
 	private String content;
 }
