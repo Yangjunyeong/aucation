@@ -11,7 +11,8 @@ import DummyUserData from "@/app/mypage/components/DummyUserData";
 import ColCard from "../components/Card/ColCard";
 import AuctionSell from "../components/Card/AuctionSell";
 import dummyData from "../detail/components/DummyData";
-import { read } from "node:fs";
+import AuctionBuy from "../components/Card/AuctionBuy";
+import LikeCard from "../components/Card/LikeCard"
 
 interface userData {
   profileImg: string;
@@ -21,6 +22,14 @@ interface userData {
   auctionStartTime: Date;
 }
 
+interface categoryLikeType {
+  // pk: number
+  category:string;
+  state:string;
+  title:string;
+  imgUrl:string;
+  isLiked:boolean;
+}
 const MyPage = () => {
   const [images, setImages] = useState<string>("");
   const [imgFile, setImgFile] = useState<string | null>(null);
@@ -40,7 +49,7 @@ const MyPage = () => {
     " 안녕하세요 사용자01입니다. 가전제품을 전문적으로 경매합니다. 안녕하세요 사용자01입니다. 가전제품을 전문적으로 경매합니다. 안녕하세요 사용자01입니다. 가전제품을 전문적으로 경매합니다. 안녕하세요 사용자01입니다. 가전제품을 전문적으로 경매합니다. 안녕하세요 사용자01입니다. 가전제품을 전문적으로 경매합니다."
   );
   const [username, setUsername] = useState<string>("사용자01");
-  const [category, setCategory] = useState<number>(0);
+  const [category, setCategory] = useState<string>("좋아요");
   const [itemsort, setItemsort] = useState<number>(0);
 
   const usernameHandler = (name: string) => {
@@ -67,10 +76,10 @@ const MyPage = () => {
     }
   };
 
-  const categoryHandler = (categoryNum: number) => {
-    console.log(categoryNum);
+  const categoryHandler = (value: string) => {
+    console.log(value);
     console.log("클릭");
-    setCategory(categoryNum);
+    setCategory(value);
   };
 
   const itemSortHandler = (itemsortNum: number) => {
@@ -100,7 +109,48 @@ const MyPage = () => {
     };
   };
 
-  //카테고리 상자 클릭 시 효과
+  // 좋아요 카테고리 클릭시 요청 및 데이터 저장
+  const [categoryLikedata, setCategoryLikedata] = useState<categoryLikeType[]>([
+    {
+      category: "경매",
+      state: "경매전",
+      title: "곰도리 팔아요",
+      imgUrl: "https://cdn.thecolumnist.kr/news/photo/202302/1885_4197_221.jpg",
+      isLiked: true,
+    },
+    {
+      category: "역경매",
+      state: "경매중",
+      title: "고라니 팔아요",
+      imgUrl: "https://cdn.newspenguin.com/news/photo/202001/317_1641_1348.png",
+      isLiked: true,
+    },
+    {
+      category: "경매",
+      state: "경매전",
+      title: "곰도리 팔아요",
+      imgUrl: "https://cdn.thecolumnist.kr/news/photo/202302/1885_4197_221.jpg",
+      isLiked: true,
+    },
+    {
+      category: "역경매",
+      state: "경매중",
+      title: "고라니 팔아요",
+      imgUrl: "https://cdn.newspenguin.com/news/photo/202001/317_1641_1348.png",
+      isLiked: true,
+    },
+  ])
+
+  const handleLike = (index: number, value: boolean) => {
+    const updatedData = [...categoryLikedata];
+    updatedData[index] = {
+      ...updatedData[index],
+      isLiked: value,
+    };
+    setCategoryLikedata(updatedData);
+    console.log('업데이트',updatedData)
+  };
+
 
   return (
     <div className="w-full px-80 py-20">
@@ -186,15 +236,30 @@ const MyPage = () => {
         <div
           className={clsx(
             "flex items-center justify-center flex-1",
-            category == 0 ? "text-blue-500" : "text-gray-700"
+            category == "경매판매" ? "text-blue-500" : "text-gray-700"
           )}
-          onClick={() => categoryHandler(0)}
+          onClick={() => categoryHandler("경매판매")}
         >
-          <div className="text-xl font-semibold ">매각상품</div>
+          <div className="text-xl font-semibold ">경매판매</div>
         </div>
         <div
-          className={clsx("flex flex-1", category == 1 ? "text-blue-500" : "text-gray-700")}
-          onClick={() => categoryHandler(1)}
+          className={clsx(
+            "flex flex-1",
+            category == "경매구매" ? "text-blue-500" : "text-gray-700"
+          )}
+          onClick={() => categoryHandler("경매구매")}
+        >
+          <div className="border-l h-20"></div>
+          <div className="flex items-center justify-center flex-1">
+            <p className="text-xl font-semibold ">경매구매</p>
+          </div>
+        </div>
+        <div
+          className={clsx(
+            "flex flex-1",
+            category == "좋아요" ? "border-blue-500 text-blue-500" : "text-gray-700"
+          )}
+          onClick={() => categoryHandler("좋아요")}
         >
           <div className="border-l h-20"></div>
           <div className="flex items-center justify-center flex-1">
@@ -204,16 +269,29 @@ const MyPage = () => {
         <div
           className={clsx(
             "flex flex-1",
-            category == 2 ? "border-blue-500 text-blue-500" : "text-gray-700"
+            category == "역경매판매" ? "border-blue-500 text-blue-500" : "text-gray-700"
           )}
-          onClick={() => categoryHandler(2)}
+          onClick={() => categoryHandler("역경매판매")}
         >
           <div className="border-l h-20"></div>
           <div className="flex items-center justify-center flex-1">
-            <p className="text-xl font-semibold ">낙찰상품</p>
+            <p className="text-xl font-semibold ">역경매 판매</p>
+          </div>
+        </div>
+        <div
+          className={clsx(
+            "flex flex-1",
+            category == "역경매구매" ? "border-blue-500 text-blue-500" : "text-gray-700"
+          )}
+          onClick={() => categoryHandler("역경매구매")}
+        >
+          <div className="border-l h-20"></div>
+          <div className="flex items-center justify-center flex-1">
+            <p className="text-xl font-semibold ">역경매 구매</p>
           </div>
         </div>
       </div>
+
       <div className="flex">
         <h2 className="font-semibold text-3xl mt-20">경매상품</h2>
         {/* 상품개수 바인딩 */}
@@ -264,11 +342,39 @@ const MyPage = () => {
           <ColCard key={index} item={item} />
         ))}
       </div>
-      <div>
+
+      {category == "경매판매" && <div>
         {dummyData.map((item, idx) => (
           <AuctionSell item={item} key={idx} />
         ))}
-      </div>
+      </div>}
+
+      {category == "경매구매" && <div>
+        {dummyData.map((item, idx) => (
+          <AuctionBuy item={item} key={idx} />
+        ))}
+      </div>}
+
+      {category == "좋아요" && <div className="flex flex-wrap justify-between">
+     
+        {categoryLikedata.map((item, idx) => (
+          <LikeCard item={item} key={idx} likeHandler={(value) => handleLike(idx, value)} />
+        ))}
+    
+      </div>}
+
+      {category == "역경매판매" && <div>
+        {dummyData.map((item, idx) => (
+          <AuctionSell item={item} key={idx} />
+        ))}
+      </div>}
+
+      {category == "역경매구매" && <div>
+        {dummyData.map((item, idx) => (
+          <AuctionSell item={item} key={idx} />
+        ))}
+      </div>}
+
     </div>
   );
 };
