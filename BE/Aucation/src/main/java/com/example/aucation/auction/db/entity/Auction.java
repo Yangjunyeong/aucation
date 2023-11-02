@@ -71,10 +71,10 @@ public class Auction extends BaseEntity {
 
 	@Builder
 	public Auction(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,
-		Long lastModifiedBy, boolean isDeleted, String auctionUUID, AuctionStatus auctionStatus,
-		String auctionTitle, String auctionType, int auctionStartPrice, int auctionEndPrice,
-		double auctioMeetingLat, double auctionMeetingLng, String auctionDetail,LocalDateTime auctionStartDate, LocalDateTime auctionEndDate,Member owner
-			) {
+				   Long lastModifiedBy, boolean isDeleted, String auctionUUID, AuctionStatus auctionStatus,
+				   String auctionTitle, String auctionType, int auctionStartPrice, int auctionEndPrice,
+				   double auctioMeetingLat, double auctionMeetingLng, String auctionDetail,LocalDateTime auctionStartDate, LocalDateTime auctionEndDate,Member owner
+	) {
 		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
 		this.auctionUUID = auctionUUID;
 		this.auctionStatus = auctionStatus;

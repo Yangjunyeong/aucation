@@ -55,7 +55,6 @@ public class Member extends BaseEntity {
 
 	@Column(unique = true)
 	private String memberEmail;
-
 	private int memberPoint;
 	private String memberNickname;
 	private String memberBanned;
@@ -71,6 +70,9 @@ public class Member extends BaseEntity {
 	@Column
 	private Role memberRole;
 
+	@OneToOne
+	@JoinColumn(name = "shop_pk")
+	private Shop shop;
 	@Column
 	private String imageURL;
 
@@ -110,9 +112,6 @@ public class Member extends BaseEntity {
 //	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 //	private List<Alram> alramList = new ArrayList<>();
 
-	@OneToOne
-	@JoinColumn(name = "shop_pk")
-	private Shop shop;
 
 	@Builder
 	public Member(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,

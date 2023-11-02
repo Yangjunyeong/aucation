@@ -72,8 +72,11 @@ public class QAuction extends EntityPathBase<Auction> {
 
     public final com.example.aucation.member.db.entity.QMember owner;
 
+<<<<<<< HEAD
+=======
     public final ListPath<com.example.aucation.photo.db.Photo, com.example.aucation.photo.db.QPhoto> photoList = this.<com.example.aucation.photo.db.Photo, com.example.aucation.photo.db.QPhoto>createList("photoList", com.example.aucation.photo.db.Photo.class, com.example.aucation.photo.db.QPhoto.class, PathInits.DIRECT2);
 
+>>>>>>> e409b1a2593f8ac367b97b6f8e2c2aba539dacf4
     public QAuction(String variable) {
         this(Auction.class, forVariable(variable), INITS);
     }
