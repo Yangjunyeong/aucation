@@ -152,8 +152,6 @@ const MoveMap = () => {
           </div>
         </div>
       </div>
-      {/* <h1>{markerXY && markerXY[0]}</h1>
-      <h1>{markerXY && markerXY[1]}</h1> */}
     </main>
   );
 };

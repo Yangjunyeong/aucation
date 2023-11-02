@@ -81,6 +81,7 @@ const AuthForm = () => {
       })
       .catch(err => {
         console.log(err.data);
+        // console.log(err);
         // console.log(err.response);
         toast.error(err.data);
       });
