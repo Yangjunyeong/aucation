@@ -55,6 +55,8 @@ public class QMember extends EntityPathBase<Member> {
     //inherited
     public final NumberPath<Long> id = _super.id;
 
+    public final StringPath imageURL = createString("imageURL");
+
     //inherited
     public final BooleanPath isDeleted = _super.isDeleted;
 
