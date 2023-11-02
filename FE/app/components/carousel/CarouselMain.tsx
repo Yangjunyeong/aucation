@@ -60,8 +60,8 @@ const CarouselMain: React.FC<CarouselMainProps> = ({ images }) => {
       >
         {images.map((img, idx) => {
           return (
-            <div className="flex items-center justify-center align-middle min-w-[600px]">
-              <CarouselImages key={idx} image={img} />
+            <div className="flex items-center justify-center align-middle min-w-[600px]" key={idx}>
+              <CarouselImages image={img} />
             </div>
           );
         })}
