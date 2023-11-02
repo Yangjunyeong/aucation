@@ -22,8 +22,9 @@ interface ItemType {
 
 interface CardProps {
   item: ItemType;
+  likeHandler:(pk:number,isLiked:boolean) => void;
 }
-const AuctionSell: React.FC<CardProps> = ({ item }) => {
+const AuctionSell: React.FC<CardProps> = ({ item,likeHandler }) => {
   const {
     cardImgUrl,
     likeCount,
@@ -38,10 +39,7 @@ const AuctionSell: React.FC<CardProps> = ({ item }) => {
   const [state, setState] = useState<string>("");
   const [liked, setLiked] = useState<boolean>(isLiked);
   const [nakchal, setNakchal] = useState<string>("낙찰")
-  const likeHandler = (value: boolean) => {
-    console.log(liked);
-    setLiked(value);
-  };
+
 
   const stateHandler = (state: string) => {
     setState(state);
@@ -57,10 +55,10 @@ const AuctionSell: React.FC<CardProps> = ({ item }) => {
         className={clsx(
           "flex rounded-lg overflow-hidden shadow-lg bg-white w-[1200px] h-[250px] mt-12 transition-transform transform duration-300 hover:scale-110",
           state == "경매종료"
-            ? "border-2 border-blue-600"
+            ? "border-2 border-red-500"
             : state == "경매시작"
-            ? ""
-            : "border-2 border-red-500"
+            ? "border-2 border-blue-600"
+            : ""
         )}
       >
         {/* 카드 이미지 */}
@@ -91,7 +89,7 @@ const AuctionSell: React.FC<CardProps> = ({ item }) => {
                 alt="Building Image"
               />
               <div className="absolute top-3 right-4">
-                <LikeBtn isLiked={liked} likeHandler={likeHandler} />
+                <LikeBtn isLiked={liked} likeHandler={()=>likeHandler} />
               </div>
             </div>
           </div>
@@ -100,13 +98,13 @@ const AuctionSell: React.FC<CardProps> = ({ item }) => {
           {/* 경매 상태 / 경매 마크 / 남은 시간 카운트*/}
           <div className="flex justify-between mt-3">
             <div className="flex gap-4 font-bold text-[16px] mt-[5px] ">
-              <div className="font-sans mt-[2px]">
-                {state === "경매시작" && <span>경매전</span>}
-                {state === "경매종료" && <span className="text-customBlue">경매중</span>}
-                {state === "종료" && <span className="text-red-500">경매완료</span>}
+              <div className="flex font-sans text-2xl items-center mt-[2px]">
+                {state === "경매시작" && <span className="text-customBlue">경매전</span>}
+                {state === "경매종료" && <span className="text-red-500">경매중</span>}
+                {state === "종료" && <span>경매완료</span>}
               </div>
 
-              <div className="rounded-full border-2 px-3  border-gray-500">경매</div>
+              <div className="flex mt-1 text-xl rounded-full border-2 px-3 items-center border-gray-500">경매</div>
             </div>
             <div className="mr-16 text-xl">
               <RowCountDown auctionStartTime={item.auctionStartTime} stateHandler={stateHandler} />
@@ -119,38 +117,38 @@ const AuctionSell: React.FC<CardProps> = ({ item }) => {
           </div>
 
           {/* 경매 시작가 */}
-          <div className="mt-5 text-[22px] font-semibold">
+          <div className="mt-5 text-[24px] font-semibold">
             경매시작가 :
             <span
-              className={clsx("text-3xl font-bold", state == "경매시작" ? "" : "text-customBlue")}
+              className={clsx("text-4xl font-bold", state == "종료" ? "" : "text-customBlue")}
             >
-              &nbsp;{startPrice.toString()} 원
+              &nbsp;{startPrice.toLocaleString()} <span className="text-black">원</span>
             </span>
           </div>
 
           {/* 경매 종료일 / 삭제버튼*/}
             {state === "경매시작" && (
-              <div className="flex mt-4 justify-between mr-20">
-                <div className="flex text-[22px] items-center">경매 시작일시 : <span>{auctionStartTime.toLocaleString()}</span></div>
-                <span className="border-2 rounded-lg border-red-600 text-red-500 text-2xl font-bold py-2 px-2">
+              <div className="flex mt-2 justify-between mr-20">
+                <div className="flex text-2xl items-center">경매 등록일 :&nbsp;<span className="text-[28px]">{auctionStartTime.toLocaleString()}</span></div>
+                <span className="border-2 rounded-lg border-black text-black text-2xl font-bold py-2 px-2">
                   삭제하기
                 </span>
               </div>
             )}
             
             {state === "경매종료" && (
-              <div className="flex mt-4 justify-between mr-20">
-              <div className="flex text-[22px] items-center">경매 종료일시 : <span>{auctionStartTime.toLocaleString()}</span></div>
-              <span className="border-2 rounded-lg border-black text-black text-2xl font-bold py-2 px-2">
+              <div className="flex mt-2 justify-between mr-20">
+              <div className="flex text-[22px] items-center">경매 등록일 :&nbsp;<span className="text-[28px]">{auctionStartTime.toLocaleString()}</span></div>
+              <span className="border-2 rounded-lg border-red-500 text-red-500 text-2xl font-bold py-2 px-4">
                 경매장 입장
               </span>
               </div>
 
             )}
             {state === "종료" && (
-                <div className="flex mt-4 justify-between mr-20">
-                  <div className="flex text-[22px] items-center text-red-500">경매 등록일 : <span>{auctionStartTime.toLocaleString()}</span></div>
-                  <div className="flex text-[22px] items-center">최종 입찰가&nbsp;&nbsp;<span className="font-bold text-red-500">{highestPrice.toString()} </span>원</div>
+                <div className="flex mt-2 justify-between mr-20">
+                  <div className="flex text-[22px] items-center text-red-500">경매 등록일 :&nbsp;<span className="text-[28px]">{auctionStartTime.toLocaleString()}</span></div>
+                  <div className="flex text-[22px] items-center">최종 입찰가&nbsp;&nbsp;<span className="font-bold text-red-500 w-[100px] flex-nowrap overflow-hidden text-ellipsis">{highestPrice.toLocaleString()}</span>원</div>
                   <span className="border-2 rounded-lg border-black text-black text-2xl font-bold py-2 px-2" onClick={clickHandler}>
                     채팅
                   </span>
