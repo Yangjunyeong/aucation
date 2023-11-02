@@ -24,6 +24,7 @@ public class BidResponse {
 	private int askPrice;
 
 	private int peopleCount;
+
 	// {
 	//   "askPrice":500 // 호가
 	//   "firstUser" : "jinseo",  // 최고입찰자
