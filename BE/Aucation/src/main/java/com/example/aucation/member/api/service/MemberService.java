@@ -54,8 +54,8 @@ public class MemberService {
 
 	}
 
-	public void verifynick(MemberNickRequest memberNickname) {
-		if(memberRepository.existsByMemberNickname(memberNickname.getMemberNickname())) {
+	public void verifynick(String memberNickname) {
+		if(memberRepository.existsByMemberNickname(memberNickname)) {
 			throw new DuplicateException(ApplicationError.DUPLICATE_NICKNAME);
 		}
 	}

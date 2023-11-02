@@ -1,5 +1,7 @@
 package com.example.aucation.member.api.controller;
 
+import com.example.aucation.member.api.dto.MemberEmailRequest;
+import com.example.aucation.member.api.dto.MemberNickRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,7 +40,7 @@ public class MemberController {
 
 	@PostMapping("/verification/nickname")
 	public ResponseEntity<Void> verifynick(@RequestBody MemberNickRequest memberNickname) {
-		memberService.verifynick(memberNickname);
+		memberService.verifynick(memberNickname.getMemberNickname());
 		return ResponseEntity.ok().build();
 	}
 
