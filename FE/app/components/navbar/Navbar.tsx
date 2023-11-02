@@ -1,12 +1,35 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Star from "@/app/images/Star.png";
-
+import { useRouter } from "next/navigation";
 import NavBtn from "../button/MainBtn";
 const Navbar: React.FC = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    console.log("네브바 내부");
+    const accessToken = localStorage.getItem("accessToken");
+    setTimeout(() => {
+      setIsLoggedIn(!!accessToken);
+    }, 1000);
+  }, []);
+
+  const handleLogout = () => {
+    // 로컬 스토리지에서 토큰 제거
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+
+    // 로그인 상태 업데이트
+    setIsLoggedIn(false);
+
+    // 홈페이지로 리디렉션
+    router.push("/");
+  };
+
   return (
     <div className="w-full h-28 flex flex-row items-center sticky top-0 z-50 bg-white px-48">
       <div className="w-1/4 ">
@@ -31,14 +54,27 @@ const Navbar: React.FC = () => {
       </div>
 
       <div className="flex flex-row-reverse  justify-start w-full ">
-        <Link href={"/panmae"}>
+        <Link href={isLoggedIn ? "/panmae" : "/login"}>
           <NavBtn className="ml-14 px-4">경매 올리기</NavBtn>
         </Link>
 
-        <Link href={`/`} className="ml-14 text-2xl flex items-center hover:underline">
-          로그아웃
-        </Link>
-        <Link href={`/mypage`} className="ml-14 text-2xl flex items-center hover:underline">
+        {isLoggedIn ? (
+          <a
+            onClick={handleLogout}
+            className="ml-14 text-2xl flex items-center hover:underline cursor-pointer"
+          >
+            로그아웃
+          </a>
+        ) : (
+          <Link href={`/login`} className="ml-14 text-2xl flex items-center hover:underline">
+            로그인
+          </Link>
+        )}
+
+        <Link
+          href={isLoggedIn ? "/mypage" : "/login"}
+          className="ml-14 text-2xl flex items-center hover:underline"
+        >
           마이페이지
         </Link>
       </div>

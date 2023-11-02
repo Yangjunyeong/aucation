@@ -18,6 +18,7 @@ const config: Config = {
         "custom-btn-gradient-red-hover": "linear-gradient(170deg, #f73, #f56)",
       },
       backgroundColor: {
+        cutomBasic: "#F8F9FB", // 커스텀 기본 색
         customGray: "#646C76",
         customBgBlue: "#247eff",
         customBgLightBlue: "#D4E0FF", // 중간 포인트 색
