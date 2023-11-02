@@ -74,7 +74,9 @@ public class AuctionBidService {
 		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID).orElseThrow(()-> new Exception("히히하하"));
 
 		//Owner가 member인지 판단하기
-		isOwnerBid(highPurchasePk,auction.getOwner().getId());
+		if(isOwnerBid(highPurchasePk,auction.getOwner().getId(),auctionUUID)){
+			return null;
+		}
 
 		// 지금 입찰하기위해서 돈이 충분한지 확인하기
 		int firstPoint = member.getMemberPoint();
@@ -313,10 +315,17 @@ public class AuctionBidService {
 		redisTemplate.opsForList().rightPush(auctionUUID, content);
 	}
 
-	private void isOwnerBid(Long highPurchasePk, Long ownerPk) {
+	private boolean isOwnerBid(Long highPurchasePk, Long ownerPk,String auctionUUID) {
 		if(Objects.equals(highPurchasePk, ownerPk)){
-			throw new BadRequestException(ApplicationError.OWNER_NOT_BID);
+			WebSocketErrorMessage webSocketErrorMessage = WebSocketErrorMessage.builder()
+				.errMessage(HIGH_BID_NO_BID)
+				.messageType(ERROR)
+				.memberPk(highPurchasePk)
+				.build();
+			template.convertAndSend("/topic/sub/" + auctionUUID, webSocketErrorMessage);
+			return true;
 		}
+		return false;
 	}
 
 	private boolean isHighBidOwner(Long highPurchasePk, Long ownerPk,String auctionUUID) {
