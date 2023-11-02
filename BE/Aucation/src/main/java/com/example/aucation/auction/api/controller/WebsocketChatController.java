@@ -39,6 +39,9 @@ public class WebsocketChatController {
 	public void streamText(@Payload BIDRequest bidRequest, @DestinationVariable("auctionUUID") String auctionUUID) throws
 			Exception {
 		BidResponse bidResponse = auctionBidService.isService(bidRequest.getMemberPk(),auctionUUID);
-		template.convertAndSend("/topic/sub/" + auctionUUID, bidResponse);
+		if (bidResponse != null) {
+			template.convertAndSend("/topic/sub/" + auctionUUID, bidResponse);
+		}
+
 	}
 }
