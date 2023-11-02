@@ -38,13 +38,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 		config.enableSimpleBroker("/topic", "/queue");
 	}
 
-	//
-	// //JSON을 객체로 변환
-	// @Override
-	// public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
-	// 	messageConverters.add(new MappingJackson2MessageConverter());
-	// 	return false;
-	// }
+	//JSON을 객체로 변환
+	@Override
+	public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
+		messageConverters.add(new MappingJackson2MessageConverter());
+		return false;
+	}
 
 
 	// stomp가 아닌 websocket방식에서 쓰임

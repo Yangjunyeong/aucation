@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 
 import com.example.aucation.auction.api.dto.BIDRequest;
 import com.example.aucation.auction.api.service.AuctionBidService;
+import com.example.aucation.common.support.AuthorizedVariable;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -47,6 +47,8 @@ public class SecurityConfig {
 			.formLogin().disable()
 			.httpBasic().disable()
 			.csrf().disable()
+			.csrf().ignoringAntMatchers("/auc-server/**")
+			.and()
 			.cors().configurationSource(corsConfiguration())
 			.and()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -71,7 +73,7 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfiguration() {
 		CorsConfiguration configuration =new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("https://localhost:8001","https://localhost:3000","http://localhost:3000","http://localhost:8001","https://aucation.co.kr","https://www.aucation.co.kr"));
+		configuration.setAllowedOrigins(List.of("http://192.168.129.110:8001","http://192.168.219.107","http://192.168.219.110","http://192.168.219.107:3000","http://192.168.219.110:3000","https://localhost:8001","https://localhost:3000","http://localhost:3000","http://localhost:8001","https://aucation.co.kr","https://www.aucation.co.kr"));
 		configuration.addAllowedHeader("*");
 		configuration.setAllowedMethods(List.of(
 			HttpMethod.GET.name(),HttpMethod.PATCH.name(),HttpMethod.PUT.name(),HttpMethod.POST.name(),HttpMethod.OPTIONS.name()
