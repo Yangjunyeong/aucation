@@ -82,10 +82,13 @@ public class AuctionService {
 		 	nowPrice = bids.get(0).getBidPrice();
 		 	askPrice = bids.get(0).getAskPrice();
 			headCnt = bids.get(0).getPeopleCount();
-			isBid= !Objects.equals(bids.get(0).getPurchasePk(), memberPk);
+			if(Objects.equals(bids.get(0).getPurchasePk(), memberPk)){
+				isBid=true;
+			}
 		}
 
 		log.info(auction.getOwner().getMemberId());
+
 		return PlaceResponse.builder()
 			.memberPoint(member.getMemberPoint())
 			.memberPk(memberPk)
@@ -98,7 +101,7 @@ public class AuctionService {
 			.endTime(auction.getAuctionStartDate().plusMinutes(30))
 			.ownerPicture(auction.getOwner().getImageURL())
 			.picture(UUIDImage)
-			.isBid(isBid)
+			.highBid(isBid)
 			.headCnt(headCnt)
 			.nowPrice(nowPrice)
 			.askPrice(askPrice)

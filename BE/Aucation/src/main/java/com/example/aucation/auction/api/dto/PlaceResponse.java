@@ -27,12 +27,12 @@ public class PlaceResponse {
 	private LocalDateTime enterTime;
 	private LocalDateTime endTime;
 	private int headCnt;
-	private boolean isBid;
+	private boolean highBid;
 
 	@Builder
 	public PlaceResponse(long memberPk, int memberPoint, String title, String detail, String ownerNickname,
 		List<String> picture, String ownerPicture, long ownerPk, Role ownerType, int nowPrice, int askPrice,
-		LocalDateTime enterTime, LocalDateTime endTime, int headCnt, boolean isBid) {
+		LocalDateTime enterTime, LocalDateTime endTime, int headCnt, boolean highBid) {
 		this.memberPk = memberPk;
 		this.memberPoint = memberPoint;
 		this.title = title;
@@ -47,6 +47,6 @@ public class PlaceResponse {
 		this.enterTime = enterTime;
 		this.endTime = endTime;
 		this.headCnt = headCnt;
-		this.isBid = isBid;
+		this.highBid = highBid;
 	}
 }
