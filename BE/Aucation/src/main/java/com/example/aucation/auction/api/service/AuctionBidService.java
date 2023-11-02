@@ -2,23 +2,27 @@ package com.example.aucation.auction.api.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.example.aucation.auction.api.dto.BidResponse;
+import com.example.aucation.auction.api.dto.WebSocketErrorMessage;
 import com.example.aucation.auction.db.entity.AuctionHistory;
-import com.example.aucation.auction.db.entity.AuctionStatus;
-import com.example.aucation.auction.db.entity.BIDStatus;
 import com.example.aucation.auction.db.repository.AuctionBidRepository;
 import com.example.aucation.auction.db.repository.AuctionHistoryRepository;
 import com.example.aucation.common.util.DateFormatPattern;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.user.SimpSubscription;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Service;
 
-import com.example.aucation.auction.api.dto.BIDRequest;
 import com.example.aucation.auction.db.entity.Auction;
 import com.example.aucation.auction.db.repository.AuctionRepository;
 import com.example.aucation.common.error.ApplicationError;
@@ -39,107 +43,193 @@ import static com.example.aucation.common.util.RangeValueCalculator.calculateVal
 @Slf4j
 public class AuctionBidService {
 
+	@Autowired
+	private SimpMessagingTemplate template; //특정 Broker로 메세지를 전달
+
 	private final StringRedisTemplate stringRedisTemplate;
 
 	private final AuctionRepository auctionRepository;
+
 	private final MemberRepository memberRepository;
+
 	private final AuctionHistoryRepository auctionHistoryRepository;
+
 	private final AuctionBidRepository auctionBidRepository;
+
 	private final RedisTemplate<String, SaveAuctionBIDRedis> redisTemplate;
 
+	private final SimpUserRegistry simpUserRegistry;
 
+	private static final String HAVE_NO_MONEY = "돈이 없습니다 빨리 충전해주세요";
 
+	private static final String HIGH_BID_NO_BID = "최고 입찰자입니다 당신은 지금 입찰하지못합니다.";
 
-	public int findhighPrice(String auctionPK) {
-		return 1;
-	}
+	private static final String ERROR = "error";
 
-	public void isCharge(long memberPk, BIDRequest bidRequest, String auctionUUID) {
-		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
-		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID).orElseThrow(()-> new NotFoundException(ApplicationError.INTERNAL_SERVER_ERROR));
-		if(member.getMemberPoint()<=auction.getAuctionEndPrice()+bidRequest.getBidPoint()){
-			throw new BadRequestException(ApplicationError.INTERNAL_SERVER_ERROR);
-		}
-
-	}
+	private static final String COMPLETE = "pass";
 
 	@Transactional
-	public BidResponse isService(long memberPk, String auctionUUID) throws Exception {
-		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+	public BidResponse isService(long highPurchasePk, String auctionUUID) throws Exception {
+		Member member = memberRepository.findById(highPurchasePk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID).orElseThrow(()-> new Exception("히히하하"));
 
+		//Owner가 member인지 판단하기
+		if(isOwnerBid(highPurchasePk,auction.getOwner().getId(),auctionUUID)){
+			return null;
+		}
+
+		// 지금 입찰하기위해서 돈이 충분한지 확인하기
 		int firstPoint = member.getMemberPoint();
-		List<SaveAuctionBIDRedis> bids = redisTemplate.opsForList().range("auc-ing-ttl:"+auctionUUID, 0, -1);
-		int bid = calculateValue(auction.getAuctionStartPrice());
 
-		// Redis에 아무도 존재하지않다면 DB에서 일단 돈을 뺌 - Redis에 입찰목록에 넣어놓음
+		//지금 현재 입찰중인 상황이 있는지 확인하기
+		List<SaveAuctionBIDRedis> bids = redisTemplate.opsForList().range("auc-ing-log:"+auctionUUID, 0, -1);
+
+		//지금 호가 알아보기
+		// int bid = calculateValue(auction.getAuctionStartPrice());
+		int peopleCount = getNumberOfSubscribersInChannel(auctionUUID);
+
+		//입찰자가 아무도 없다
 		if(bids.isEmpty()){
-			return processFirstBid(member, firstPoint, bid, auction);
+			return processFirstBid(member, firstPoint, calculateValue(auction.getAuctionStartPrice()) ,auction,peopleCount,auctionUUID);
 		}
-		// Redis에서 확인
+		// 입찰자가 한명이라도 존재한다.
 		else{
-			return processNotFirstBid(member, bids, firstPoint, bid, auction);
+			return processNotFirstBid(member, bids, firstPoint, auction,peopleCount,auctionUUID);
 		}
 	}
 
-	public void saveBIDRedis(String auctionUUID, SaveAuctionBIDRedis content){
-		redisTemplate.opsForList().rightPush(auctionUUID, content);
-	}
-
-	private BidResponse processFirstBid(Member member, int firstPoint, int bid, Auction auction) {
+	private BidResponse processFirstBid(Member member, int firstPoint, int bid, Auction auction,int peopleCount,String auctionUUID) {
+		//처음 입찰이니까 현재있는돈에서 입찰가를 뺀다 (금액을 지불한다)
 		firstPoint -= bid;
-		if(firstPoint <=0){
-			throw new NotFoundException(ApplicationError.MEMBER_NOT_FOUND);
+		//애초에 0이면 돈없으니까 빠꾸
+		if(firstPoint <0){
+			//throw new BadRequestException(ApplicationError.MEMBER_NOT_HAVE_MONEY);
+			WebSocketErrorMessage webSocketErrorMessage = WebSocketErrorMessage.builder()
+				.errMessage(HAVE_NO_MONEY)
+				.messageType(ERROR)
+				.memberPk(member.getId())
+				.build();
+			template.convertAndSend("/topic/sub/" + auctionUUID, webSocketErrorMessage);
 		}
-		member.updatePoint(firstPoint);
-		SaveAuctionBIDRedis saveAuctionBIDRedis = SaveAuctionBIDRedis.builder()
+		else {
+			//돈있으면 0원 저장하기.
+			member.updatePoint(firstPoint);
+			int curBid = calculateValue(auction.getAuctionStartPrice() + bid);
+			//Redis는
+			//1. 언제 입찰했는지
+			//2. 지금 최고가가 얼마인지
+			//3. 호가가 얼마인지
+			//4. 구매자가누구인지
+			//5. 현재 인원수가 몇명있는지
+			SaveAuctionBIDRedis saveAuctionBIDRedis = SaveAuctionBIDRedis.builder()
 				.bidTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern(DateFormatPattern.get())))
-				.lowPrice(bid)
+				.bidPrice(auction.getAuctionStartPrice() + bid)
+				.askPrice(curBid)
 				.purchasePk(member.getId())
+				.peopleCount(peopleCount)
 				.build();
-		saveBIDRedis(auction.getAuctionUUID(),saveAuctionBIDRedis);
+			saveBIDRedis("auc-ing-log:" + auction.getAuctionUUID(), saveAuctionBIDRedis);
 
-		return BidResponse.builder()
+			//무엇을 봐야하는가?
+			//1.firstPoint 	(현재 내 포인트 - 나)
+			//2.firstBid 	(현재 최고 입찰가 - 나)
+			//3.firstUser	(현재 최고 입찰자 - 나)
+			//4.ask		(현재 최고 입찰가 - 나)
+			return BidResponse.builder()
 				.firstUserPoint(firstPoint)
-				.firstBid(auction.getAuctionStartPrice())
-				.bidStatus(BIDStatus.FIRST_BID)
-				.firstUser(member.getMemberId())
+				.firstBid(auction.getAuctionStartPrice() + bid)
+				.firstUser(member.getId())
+				.secondUserPoint(0)
+				.secondUser(0)
+				.headCnt(peopleCount)
+				.askPrice(curBid)
+				.messageType(COMPLETE)
 				.build();
+		}
+		return null;
 	}
 
-	private BidResponse processNotFirstBid(Member member, List<SaveAuctionBIDRedis> bids, int firstPoint, int bid,
-										   Auction auction) {
-		int count = 0;
-		Long memberPk = 0L;
+	private BidResponse processNotFirstBid(Member member, List<SaveAuctionBIDRedis> bids, int firstPoint,Auction auction,int peopleCount,String auctionUUID) {
+
+		// 최고 입찰가와 최고 입찰자 현재 입찰가를 확인해야함
+		int highBidPrice = 0;
+		Long highPurchasePk = 0L;
 
 		for (SaveAuctionBIDRedis redisBids : bids) {
-			if (redisBids.getLowPrice() >= count) {
-				count = redisBids.getLowPrice();
-				memberPk = redisBids.getPurchasePk();
+			if (redisBids.getBidPrice() > highBidPrice) {
+				highBidPrice = redisBids.getBidPrice();
+				highPurchasePk = redisBids.getPurchasePk();
 			}
 		}
 
-		firstPoint -= (count + bid);
-		member.updatePoint(firstPoint);
+		//내가 최고 입찰자면 입찰 못합니다.
+		boolean isHighBidOwnr = isHighBidOwner(member.getId(),highPurchasePk,auctionUUID);
 
-		Member secondUser = memberRepository.findById(memberPk).orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
-		int secondUserPoint = secondUser.updatePlusPoint(count);
+		if(!isHighBidOwnr) {
+			//입찰하기전에 원래가격의 호가를 알아본다.
+			int preBid = calculateValue(highBidPrice);
 
-		SaveAuctionBIDRedis saveAuctionBIDRedis = SaveAuctionBIDRedis.builder()
-				.bidTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern(DateFormatPattern.get())))
-				.lowPrice(count + bid)
-				.purchasePk(member.getId())
-				.build();
-		saveBIDRedis(auction.getAuctionUUID(), saveAuctionBIDRedis);
+			//하지만 원래가격의호가+원래가격 => 다음 입찰을한다는 가정하의 호가가격임
+			int curBid = calculateValue((preBid + highBidPrice));
+			//입찰가+호가 보다 커야 입찰가능
+			firstPoint -= (highBidPrice + curBid);
 
-		return BidResponse.builder()
-				.firstUserPoint(firstPoint)
-				.firstBid(count + bid)
-				.firstUser(member.getMemberId())
-				.secondUser(secondUser.getMemberId())
-				.secondUserPoint(secondUserPoint)
-				.bidStatus(BIDStatus.NOT_FIRST_BID)
-				.build();
+			//입찰하지못하면 나가야함.
+			if (firstPoint < 0) {
+				//throw new BadRequestException(ApplicationError.MEMBER_NOT_HAVE_MONEY);
+				WebSocketErrorMessage webSocketErrorMessage = WebSocketErrorMessage.builder()
+					.errMessage(HAVE_NO_MONEY)
+					.messageType(ERROR)
+					.memberPk(member.getId())
+					.build();
+				template.convertAndSend("/topic/sub/" + auctionUUID, webSocketErrorMessage);
+			}
+			else {
+				//입찰할수있으니 저장함.
+				member.updatePoint(firstPoint);
+
+				//입찰할수있다는건 현재 제일 높은 입찰가의 돈을 돌려줘야함.
+				Member secondUser = memberRepository.findById(highPurchasePk)
+					.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+
+				//돈을 돌려주기로 선택.
+				int secondUserPoint = secondUser.updatePlusPoint(highBidPrice);
+
+				//Redis 에서 서장
+				//1. 입찰시간이 언제인지
+				//2. 지금 호가가 얼마인지
+				//3. 지금 최고 입찰가가 얼마인지
+				//4. 구매자가 누구인지
+				//5. 인원수가 몇명인지
+				SaveAuctionBIDRedis saveAuctionBIDRedis = SaveAuctionBIDRedis.builder()
+					.bidTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern(DateFormatPattern.get())))
+					.askPrice(curBid)
+					.bidPrice(curBid + highBidPrice)
+					.purchasePk(member.getId())
+					.peopleCount(peopleCount)
+					.build();
+				saveBIDRedis("auc-ing-log:" + auction.getAuctionUUID(), saveAuctionBIDRedis);
+
+				//무엇을 봐야하는가?
+				//1.firstPoint 	(현재 내 포인트 - 나)
+				//2.firstBid 	(현재 최고 입찰가 - 나)
+				//3.firstUser	(현재 최고 입찰자 - 나)
+				//4.secondUser (최고였던 입찰자 - 어떤누군가
+				//5.secondUserPoint (최고였던 입찰자의 모든 돈 - 어떤 누군가)
+				//6.ask		(현재 호가 - 나)
+				return BidResponse.builder()
+					.firstUserPoint(firstPoint)
+					.firstBid(highBidPrice + curBid)
+					.firstUser(member.getId())
+					.secondUser(secondUser.getId())
+					.secondUserPoint(secondUserPoint)
+					.headCnt(peopleCount)
+					.askPrice(curBid)
+					.messageType(COMPLETE)
+					.build();
+			}
+		}
+		return null;
 	}
 
 	public void startAuction(String aucUuid) {
@@ -198,7 +288,7 @@ public class AuctionBidService {
 		log.info("*********************** 입찰 내역 저장 성공 !!");
 
 		log.info("*********************** 경매 정보 저장 시도 !!");
-		auction.updateAuctionToEnd(auctionBidList.get(0).getLowPrice(),customer);
+		auction.updateAuctionToEnd(auctionBidList.get(0).getBidPrice(),customer);
 		log.info("*********************** 경매 정보 저장 성공 !!");
 
 		log.info("*********************** REDIS LOG DATA DELETE !!");
@@ -206,5 +296,50 @@ public class AuctionBidService {
 		log.info("*********************** REDIS LOG DATA DELETE DONE !!");
 
 		log.info("*********************** endAuction START !!");
+	}
+
+
+	public int getNumberOfSubscribersInChannel(String channelName) {
+		// 특정 채널에 대한 구독자 수를 세기 위해 "/topic/sub/" + auctionUUID와 같은 채널 이름을 지정
+		String channel = "/topic/sub/" + channelName;
+
+		// simpUserRegistry를 사용하여 해당 채널의 구독자 수를 가져옴
+		Set<SimpSubscription> sessionIds = simpUserRegistry.findSubscriptions(
+			subscription -> subscription.getDestination().equals(channel)
+		);
+		log.info(channelName);
+		return sessionIds.size();
+	}
+
+	public void saveBIDRedis(String auctionUUID, SaveAuctionBIDRedis content){
+		redisTemplate.opsForList().rightPush(auctionUUID, content);
+	}
+
+	private boolean isOwnerBid(Long highPurchasePk, Long ownerPk,String auctionUUID) {
+		if(Objects.equals(highPurchasePk, ownerPk)){
+			WebSocketErrorMessage webSocketErrorMessage = WebSocketErrorMessage.builder()
+				.errMessage(HIGH_BID_NO_BID)
+				.messageType(ERROR)
+				.memberPk(highPurchasePk)
+				.build();
+			template.convertAndSend("/topic/sub/" + auctionUUID, webSocketErrorMessage);
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isHighBidOwner(Long highPurchasePk, Long ownerPk,String auctionUUID) {
+		if(Objects.equals(highPurchasePk, ownerPk)){
+			//throw new DuplicateException(ApplicationError.DUPLICATE_NOT_BID);
+
+			WebSocketErrorMessage webSocketErrorMessage = WebSocketErrorMessage.builder()
+				.errMessage(HIGH_BID_NO_BID)
+				.messageType(ERROR)
+				.memberPk(highPurchasePk)
+				.build();
+			template.convertAndSend("/topic/sub/" + auctionUUID, webSocketErrorMessage);
+			return true;
+		}
+		return false;
 	}
 }

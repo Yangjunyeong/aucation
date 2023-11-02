@@ -1,25 +1,26 @@
 package com.example.aucation.auction.api.controller;
 
+import java.net.SocketException;
+
 import com.example.aucation.auction.api.dto.BidResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.user.SimpUserRegistry;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.aucation.auction.api.dto.BIDRequest;
 import com.example.aucation.auction.api.service.AuctionBidService;
-import com.example.aucation.common.redis.dto.SaveAuctionBIDRedis;
 import com.example.aucation.common.support.AuthorizedVariable;
-import com.example.aucation.member.db.entity.Member;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
+@Slf4j
 @RequiredArgsConstructor
 public class WebsocketChatController {
 
@@ -35,9 +36,12 @@ public class WebsocketChatController {
 
 	//일단 입찰 버튼을 누름
 	@MessageMapping("/send/register/{auctionUUID}")
-	public void streamText(@AuthorizedVariable long memberPk, @DestinationVariable("auctionUUID") String auctionUUID) throws
+	public void streamText(@Payload BIDRequest bidRequest, @DestinationVariable("auctionUUID") String auctionUUID) throws
 			Exception {
-		BidResponse bidResponse = auctionBidService.isService(memberPk,auctionUUID);
-		template.convertAndSend("/topic/sub/" + auctionUUID, bidResponse);
+		BidResponse bidResponse = auctionBidService.isService(bidRequest.getMemberPk(),auctionUUID);
+		if (bidResponse != null) {
+			template.convertAndSend("/topic/sub/" + auctionUUID, bidResponse);
+		}
+
 	}
 }

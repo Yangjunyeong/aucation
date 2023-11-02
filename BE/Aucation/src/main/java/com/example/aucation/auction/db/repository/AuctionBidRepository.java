@@ -32,7 +32,7 @@ public class AuctionBidRepository {
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 SaveAuctionBIDRedis auctionBid = auctionBIDList.get(i);
                 ps.setString(1, aucPk+"_"+i);
-                ps.setLong(2, auctionBid.getLowPrice());
+                ps.setLong(2, auctionBid.getBidPrice());
                 ps.setLong(3, aucPk);
                 ps.setLong(4, auctionBid.getPurchasePk());
                 ps.setTimestamp(5, Timestamp.valueOf(
