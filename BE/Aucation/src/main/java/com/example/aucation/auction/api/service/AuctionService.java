@@ -5,6 +5,8 @@ import static com.example.aucation.common.util.RangeValueCalculator.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -76,12 +78,11 @@ public class AuctionService {
 			 nowPrice = auction.getAuctionStartPrice();
 			 askPrice = calculateValue(nowPrice);
 		}else{
-			Optional<SaveAuctionBIDRedis> maxBid = bids.stream()
-				.max(Comparator.comparingInt(SaveAuctionBIDRedis::getBidPrice));
-		 	nowPrice = maxBid.get().getBidPrice();
-		 	askPrice = maxBid.get().getAskPrice();
-			headCnt = maxBid.get().getPeopleCount();
-			isBid= !Objects.equals(maxBid.get().getPurchasePk(), memberPk);
+			Collections.sort(bids);
+		 	nowPrice = bids.get(0).getBidPrice();
+		 	askPrice = bids.get(0).getAskPrice();
+			headCnt = bids.get(0).getPeopleCount();
+			isBid= !Objects.equals(bids.get(0).getPurchasePk(), memberPk);
 		}
 
 		log.info(auction.getOwner().getMemberId());
