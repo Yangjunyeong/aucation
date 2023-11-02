@@ -53,6 +53,7 @@ const CountDown: React.FC<StateCardProps> = ({ auctionStartTime,stateHandler }) 
     }, 1000);
 
     if (currentTime >= endTime) {
+      stateHandler("종료")
       clearInterval(timer);
     }
 
@@ -67,16 +68,20 @@ const CountDown: React.FC<StateCardProps> = ({ auctionStartTime,stateHandler }) 
   } else if (currentTime < endTime) {
     statusMessage = "경매종료";
   } else {
-    statusMessage = "종료";
+    statusMessage = "";
   }
 
   return (
     <div className="flex">
-      <div className={clsx(statusMessage == "경매시작" ? "text-red-500" : statusMessage == "경매종료" ? "text-customBlue" : "text-black")}>{statusMessage}</div>
+      <div className={clsx(statusMessage == "경매시작" ? "text-red-500" : statusMessage == "경매종료" ? "text-customBlue" : "text-black" )}>{statusMessage}</div>
+      
       {days > 0 && <div>{days}일</div>}
       {(days > 0 || hours > 0) && <div>&nbsp;{hours}시간 </div>}
       {(days > 0 || hours > 0 || minutes > 0) && <div>&nbsp;{minutes}분</div>}
       {(currentTime <= endTime) && <div>&nbsp;{seconds}초 전</div>}
+
+      {/* 경매일시 */}
+      {statusMessage == "" && <div>경매 일시 : {auctionStartTime.toLocaleString()}</div>} 
       
     </div>
   );

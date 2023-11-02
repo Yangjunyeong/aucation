@@ -4,14 +4,12 @@ import Image from "next/image";
 import BackBtn from "./components/BackBtn";
 import LikeBtn from "./components/LikeBtn";
 import profile from "@/app/images/bonobono.png";
-import cell from "@/app/images/sell.png";
-import map from "@/app/images/map.png";
+
 import { RiAuctionLine } from "react-icons/ri";
 import { BsFillPersonFill } from "react-icons/bs";
 import PriceBox from "./components/PriceBox";
 import StayMap from "../components/map/StayMap";
 
-import productimg from "@/app/images/productimg.png";
 import ColCard from "@/app/components/Card/ColCard";
 import { useState } from "react";
 import DetailCarousel from "./components/DetailCarousel";
@@ -27,7 +25,7 @@ const AuctionDetail = () => {
   const [isLiked, setIsLiked] = useState<boolean>(false);
   //좋아요 토글
   const likeHandler = (value:boolean) => {
-    console.log("디테일 페이지 좋아요 버튼 클릭",isLiked);
+    console.log("디테일 페이지 좋아요 버튼 클릭",value);
     setIsLiked(value);
   };
 

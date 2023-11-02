@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 interface StateCardProps {
-    currentTime: Date
-    auctionStartTime: Date;
-    stateHandler:(state:string) => void;
+  currentTime: Date
+  auctionStartTime: Date;
+  stateHandler:(state:string) => void;
 }
 
 interface TimeLeft {

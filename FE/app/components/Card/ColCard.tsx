@@ -21,6 +21,7 @@ interface ItemType {
 
 interface CardProps {
   item: ItemType;
+
 }
 const Card: React.FC<CardProps> = ({ item }) => {
   const {
@@ -34,17 +35,27 @@ const Card: React.FC<CardProps> = ({ item }) => {
     startPrice,
     isIndividual,
   } = item;
-  const [liked, setLiked] = useState<boolean>(isLiked);
   const [state, setState] = useState<string>("");
-  const likeHandler = (value:boolean) => {
-    console.log("colCard.tsx에서 클릭", value);
-    setLiked(value);
-  };
+  const [islike, setIsliked] = useState<boolean>(isLiked)
 
+  // 현재 경매 상태
   const stateHandler = (state: string) => {
     setState(state);
     console.log("--------------->", state);
   };
+
+  // 좋아요 상태
+  const likeHandler = (value:boolean) => {
+    setIsliked(value)
+    if (!value) {
+      // pk, isliked 담아서 좋아요 상태변경
+      console.log('싫어요', value)
+    } else {
+      // pk, isliked 담아서 좋아요 상태 변경
+      console.log('좋아요', value)
+    }
+  }
+ 
 
   const tmp = new Date()
   return (
@@ -76,7 +87,7 @@ const Card: React.FC<CardProps> = ({ item }) => {
               alt="Building Image"
             />
             <div className="absolute top-2 right-2">
-              <LikeBtn isLiked={liked} likeHandler={likeHandler} />
+              <LikeBtn isLiked={isLiked} likeHandler={likeHandler} />
             </div>
           </div>
         )}

@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import sellfinish from "@/app/images/sellfinish.png";
+import nakchalImg from "@/app/images/nakchal.png";
+import chatImg from "@/app/images/chatImg.png";
 import LikeBtn from "../../detail/components/LikeBtn";
-import { BsFillPersonFill } from "react-icons/bs";
 import Image from "next/image";
 import clsx from "clsx";
+
 import RowCountDown from "./RowCountDown";
+import Link from "next/link";
 
 interface ItemType {
   cardImgUrl: string;
@@ -23,7 +25,7 @@ interface ItemType {
 interface CardProps {
   item: ItemType;
 }
-const AuctionSell: React.FC<CardProps> = ({ item }) => {
+const AuctionBuy: React.FC<CardProps> = ({ item }) => {
   const {
     cardImgUrl,
     likeCount,
@@ -37,7 +39,7 @@ const AuctionSell: React.FC<CardProps> = ({ item }) => {
   } = item;
   const [state, setState] = useState<string>("");
   const [liked, setLiked] = useState<boolean>(isLiked);
-  const [nakchal, setNakchal] = useState<string>("낙찰")
+  const [nakchal, setNakchal] = useState<string>("완료");
   const likeHandler = (value: boolean) => {
     console.log(liked);
     setLiked(value);
@@ -49,22 +51,18 @@ const AuctionSell: React.FC<CardProps> = ({ item }) => {
   };
 
   const clickHandler = () => {
-    console.log('클릭')
-  }
+    console.log("클릭");
+  };
   return (
     <>
       <div
         className={clsx(
           "flex rounded-lg overflow-hidden shadow-lg bg-white w-[1200px] h-[250px] mt-12 transition-transform transform duration-300 hover:scale-110",
-          state == "경매종료"
-            ? "border-2 border-blue-600"
-            : state == "경매시작"
-            ? ""
-            : "border-2 border-red-500"
+          nakchal == "낙찰" ? "border-2 border-blue-600" : "border-2 border-red-500"
         )}
       >
         {/* 카드 이미지 */}
-        {state == "종료" ? (
+        {nakchal == "낙찰" ? (
           <div>
             <div className="relative w-[300px] h-[250px]">
               <Image
@@ -75,8 +73,8 @@ const AuctionSell: React.FC<CardProps> = ({ item }) => {
                 alt="Building Image"
                 style={{ filter: "brightness(50%)" }}
               />
-              <div className="absolute top-10 left-[25%]">
-                <Image width={160} height={192} src={sellfinish.src} alt="sellfinish" />
+              <div className="absolute top-10 left-[23%]">
+                <Image width={160} height={192} src={nakchalImg.src} alt="nakchal" />
               </div>
             </div>
           </div>
@@ -100,16 +98,21 @@ const AuctionSell: React.FC<CardProps> = ({ item }) => {
           {/* 경매 상태 / 경매 마크 / 남은 시간 카운트*/}
           <div className="flex justify-between mt-3">
             <div className="flex gap-4 font-bold text-[16px] mt-[5px] ">
-              <div className="font-sans mt-[2px]">
-                {state === "경매시작" && <span>경매전</span>}
-                {state === "경매종료" && <span className="text-customBlue">경매중</span>}
-                {state === "종료" && <span className="text-red-500">경매완료</span>}
-              </div>
-
               <div className="rounded-full border-2 px-3  border-gray-500">경매</div>
+              <div
+                className={clsx(
+                  "rounded-full border-2 px-3",
+                  nakchal == "낙찰"
+                    ? "border-blue-500 text-customBlue"
+                    : "border-red-500 text-red-500"
+                )}
+              >
+                {nakchal}
+              </div>
             </div>
             <div className="mr-16 text-xl">
-              <RowCountDown auctionStartTime={item.auctionStartTime} stateHandler={stateHandler} />
+              <span className="font-bold">등록일 :&nbsp;&nbsp;</span>
+              {auctionStartTime.toLocaleString()}
             </div>
           </div>
           {/* 카드 제목 */}
@@ -118,48 +121,39 @@ const AuctionSell: React.FC<CardProps> = ({ item }) => {
             제발 사주세요 사주세요피츄카 팔아요 제발 사
           </div>
 
+          {/* 판매자 */}
+          <div className="flex mt-3 text-[22px] font-semibold">
+            <div className="flex items-center">판매자 :&nbsp;</div>
+            <div>
+              <Link
+                href={"/mypage"}
+                className="text-customLightTextColor text-lg hover:underline"
+              >
+                <span className="text-3xl font-bold"> 한지우</span>
+              </Link>
+            </div>
+          </div>
+
           {/* 경매 시작가 */}
-          <div className="mt-5 text-[22px] font-semibold">
-            경매시작가 :
-            <span
-              className={clsx("text-3xl font-bold", state == "경매시작" ? "" : "text-customBlue")}
-            >
-              &nbsp;{startPrice.toString()} 원
-            </span>
+          <div className="text-xl mt-2">
+            경매 시작가 : <span className="text-2xl font-bold">{startPrice.toLocaleString()} 원</span>
           </div>
 
-          {/* 경매 종료일 / 삭제버튼*/}
-            {state === "경매시작" && (
-              <div className="flex mt-4 justify-between mr-20">
-                <div className="flex text-[22px] items-center">경매 시작일시 : <span>{auctionStartTime.toLocaleString()}</span></div>
-                <span className="border-2 rounded-lg border-red-600 text-red-500 text-2xl font-bold py-2 px-2">
-                  삭제하기
-                </span>
-              </div>
-            )}
-            
-            {state === "경매종료" && (
-              <div className="flex mt-4 justify-between mr-20">
-              <div className="flex text-[22px] items-center">경매 종료일시 : <span>{auctionStartTime.toLocaleString()}</span></div>
-              <span className="border-2 rounded-lg border-black text-black text-2xl font-bold py-2 px-2">
-                경매장 입장
-              </span>
-              </div>
-
-            )}
-            {state === "종료" && (
-                <div className="flex mt-4 justify-between mr-20">
-                  <div className="flex text-[22px] items-center text-red-500">경매 등록일 : <span>{auctionStartTime.toLocaleString()}</span></div>
-                  <div className="flex text-[22px] items-center">최종 입찰가&nbsp;&nbsp;<span className="font-bold text-red-500">{highestPrice.toString()} </span>원</div>
-                  <span className="border-2 rounded-lg border-black text-black text-2xl font-bold py-2 px-2" onClick={clickHandler}>
-                    채팅
-                  </span>
-                </div>
-            )}
+          {/* 낙찰일시 / 낙찰가 / 채팅 및 확정 버튼*/}
+          <div className="flex text-xl mt-3 mr-14 font-thin justify-between items-center">
+            <div>낙찰일시 : <span className="font-light">{auctionStartTime.toLocaleString()}</span></div>
+            <div>낙찰가 : <span className={clsx("font-bold", nakchal == "낙찰" ? "text-customBlue" : "text-red-500")}>{highestPrice.toLocaleString()}</span>&nbsp;원</div>
+            <div className="flex gap-6">
+              {nakchal == "낙찰" && <div className="flex border-2 px-4 py-1 rounded-lg">
+                <Image width={22} height={10} src={chatImg.src} alt="chat" /><span className="ml-1">채팅</span>
+                </div>}
+              <div className="border-2 px-5 py-1 rounded-lg">확정</div>
+            </div>
           </div>
+        </div>
       </div>
     </>
   );
 };
 
-export default AuctionSell;
+export default AuctionBuy;

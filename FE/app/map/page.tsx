@@ -53,9 +53,9 @@ const MoveMap = () => {
         searchAddrFromCoords(map.getCenter(), displayCenterInfo);
 
         // 지도를 클릭했을 때 클릭 위치 좌표에 대한 주소정보를 표시하도록 이벤트를 등록합니다
-        window.kakao.maps.event.addListener(map, "click", function (mouseEvent:any) {
+        window.kakao.maps.event.addListener(map, "click", function (mouseEvent: any) {
           setMarker([marker.getPosition().getLat(), marker.getPosition().getLng()]);
-          searchDetailAddrFromCoords(mouseEvent.latLng, function (result:any, status:any) {
+          searchDetailAddrFromCoords(mouseEvent.latLng, function (result: any, status: any) {
             if (status === window.kakao.maps.services.Status.OK) {
               var detailAddr = !!result[0].road_address
                 ? "<div>도로명주소 : " + result[0].road_address.address_name + "</div>"
@@ -86,18 +86,18 @@ const MoveMap = () => {
           searchAddrFromCoords(map.getCenter(), displayCenterInfo);
         });
 
-        function searchAddrFromCoords(coords:any, callback:any) {
+        function searchAddrFromCoords(coords: any, callback: any) {
           // 좌표로 행정동 주소 정보를 요청합니다
           geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);
         }
 
-        function searchDetailAddrFromCoords(coords:any, callback:any) {
+        function searchDetailAddrFromCoords(coords: any, callback: any) {
           // 좌표로 법정동 상세 주소 정보를 요청합니다
           geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
         }
 
         // 지도 좌측상단에 지도 중심좌표에 대한 주소정보를 표출하는 함수입니다
-        function displayCenterInfo(result:any, status:any) {
+        function displayCenterInfo(result: any, status: any) {
           if (status === window.kakao.maps.services.Status.OK) {
             var infoDiv = document.getElementById("centerAddr");
 
