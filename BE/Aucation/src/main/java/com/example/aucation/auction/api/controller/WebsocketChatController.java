@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 
 import com.example.aucation.auction.api.dto.BIDRequest;
 import com.example.aucation.auction.api.service.AuctionBidService;
+import com.example.aucation.common.support.AuthorizedVariable;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +32,10 @@ public class WebsocketChatController {
 
 	//일단 입찰 버튼을 누름
 	@MessageMapping("/send/register/{auctionUUID}")
-	public void streamText(@Payload BIDRequest bidRequest, @DestinationVariable("auctionUUID") String auctionUUID) throws
+	public void streamText(@AuthorizedVariable long memberPk, @Payload BIDRequest bidRequest, @DestinationVariable("auctionUUID") String auctionUUID) throws
 			Exception {
+		log.info(String.valueOf(BIDRequest.class));
+		log.info(String.valueOf(memberPk));
 		BidResponse bidResponse = auctionBidService.isService(bidRequest.getMemberPk(),auctionUUID);
 		template.convertAndSend("/topic/sub/" + auctionUUID, bidResponse);
 	}

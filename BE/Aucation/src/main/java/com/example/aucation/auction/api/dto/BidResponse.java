@@ -11,13 +11,13 @@ import lombok.Setter;
 @Builder
 public class BidResponse {
 
-	private String firstUser;
+	private long firstUser;
 
 	private int firstBid;
 
 	private int firstUserPoint;
 
-	private String secondUser;
+	private long secondUser;
 
 	private int	secondUserPoint;
 
