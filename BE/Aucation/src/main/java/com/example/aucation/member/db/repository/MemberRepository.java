@@ -10,11 +10,10 @@ import org.springframework.stereotype.Repository;
 import com.example.aucation.member.db.entity.Member;
 
 @Repository
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long>,MemberRepositoryCustom  {
 
 	@Query("SELECT c FROM Member c WHERE c.memberId = :MemberId")
 	Optional<Member> findByMemberId(String MemberId);
-
 
 	boolean existsByMemberNickname(String memberNickname);
 
