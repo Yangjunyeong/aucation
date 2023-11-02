@@ -71,6 +71,9 @@ public class Member extends BaseEntity {
 	@Column
 	private Role memberRole;
 
+	@Column
+	private String imageURL;
+
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<Follow> followList = new ArrayList<>();
 
@@ -113,7 +116,7 @@ public class Member extends BaseEntity {
 
 	@Builder
 	public Member(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,
-		Long lastModifiedBy, boolean isDeleted, String memberId, String memberPw, String memberEmail,Role memberRole,SocialType socialType,String memberNickname) {
+		Long lastModifiedBy, boolean isDeleted, String memberId, String memberPw, String memberEmail,Role memberRole,SocialType socialType,String memberNickname,String imageURL) {
 		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
 		this.memberId = memberId;
 		this.memberPw = memberPw;
@@ -121,6 +124,7 @@ public class Member extends BaseEntity {
 		this.memberRole = memberRole;
 		this.memberNickname = memberNickname;
 		this.socialType = socialType;
+		this.imageURL = imageURL;
 	}
 	public void updateRefreshToken(String updateRefreshToken) {
 		this.memberRefresh = updateRefreshToken;

@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.example.aucation.auction.api.dto.BidResponse;
+import com.example.aucation.auction.api.dto.WebSocketErrorMessage;
 import com.example.aucation.auction.db.entity.AuctionHistory;
 import com.example.aucation.auction.db.entity.AuctionStatus;
 import com.example.aucation.auction.db.entity.BIDStatus;
@@ -17,8 +18,11 @@ import com.example.aucation.auction.db.repository.AuctionBidRepository;
 import com.example.aucation.auction.db.repository.AuctionHistoryRepository;
 import com.example.aucation.common.error.DuplicateException;
 import com.example.aucation.common.util.DateFormatPattern;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.user.SimpSubscription;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Service;
@@ -45,6 +49,9 @@ import static com.example.aucation.common.util.RangeValueCalculator.calculateVal
 @Slf4j
 public class AuctionBidService {
 
+	@Autowired
+	private SimpMessagingTemplate template; //특정 Broker로 메세지를 전달
+
 	private final StringRedisTemplate stringRedisTemplate;
 
 	private final AuctionRepository auctionRepository;
@@ -58,6 +65,14 @@ public class AuctionBidService {
 	private final RedisTemplate<String, SaveAuctionBIDRedis> redisTemplate;
 
 	private final SimpUserRegistry simpUserRegistry;
+
+	private static final String HAVE_NO_MONEY = "돈이 없습니다 빨리 충전해주세요";
+
+	private static final String HIGH_BID_NO_BID = "최고 입찰자입니다 당신은 지금 입찰하지못합니다.";
+
+	private static final String ERROR = "error";
+
+	private static final String COMPLETE = "pass";
 
 	@Transactional
 	public BidResponse isService(long highPurchasePk, String auctionUUID) throws Exception {
@@ -79,20 +94,26 @@ public class AuctionBidService {
 
 		//입찰자가 아무도 없다
 		if(bids.isEmpty()){
-			return processFirstBid(member, firstPoint, calculateValue(auction.getAuctionStartPrice()) ,auction,peopleCount);
+			return processFirstBid(member, firstPoint, calculateValue(auction.getAuctionStartPrice()) ,auction,peopleCount,auctionUUID);
 		}
 		// 입찰자가 한명이라도 존재한다.
 		else{
-			return processNotFirstBid(member, bids, firstPoint, auction,peopleCount);
+			return processNotFirstBid(member, bids, firstPoint, auction,peopleCount,auctionUUID);
 		}
 	}
 
-	private BidResponse processFirstBid(Member member, int firstPoint, int bid, Auction auction,int peopleCount) {
+	private BidResponse processFirstBid(Member member, int firstPoint, int bid, Auction auction,int peopleCount,String auctionUUID) {
 		//처음 입찰이니까 현재있는돈에서 입찰가를 뺀다 (금액을 지불한다)
 		firstPoint -= bid;
 		//애초에 0이면 돈없으니까 빠꾸
 		if(firstPoint <0){
-			throw new BadRequestException(ApplicationError.MEMBER_NOT_HAVE_MONEY);
+			//throw new BadRequestException(ApplicationError.MEMBER_NOT_HAVE_MONEY);
+			WebSocketErrorMessage webSocketErrorMessage = WebSocketErrorMessage.builder()
+				.errMessage(HAVE_NO_MONEY)
+				.messageType(ERROR)
+				.memberPk(member.getId())
+				.build();
+			template.convertAndSend("/topic/sub/" + auctionUUID, webSocketErrorMessage);
 		}
 		//돈있으면 0원 저장하기.
 		member.updatePoint(firstPoint);
@@ -123,12 +144,13 @@ public class AuctionBidService {
 				.firstUser(member.getId())
 				.secondUserPoint(0)
 				.secondUser(0)
-				.peopleCount(peopleCount)
+				.headCnt(peopleCount)
 				.askPrice(curBid)
+				.messageType(COMPLETE)
 				.build();
 	}
 
-	private BidResponse processNotFirstBid(Member member, List<SaveAuctionBIDRedis> bids, int firstPoint,Auction auction,int peopleCount) {
+	private BidResponse processNotFirstBid(Member member, List<SaveAuctionBIDRedis> bids, int firstPoint,Auction auction,int peopleCount,String auctionUUID) {
 
 		// 최고 입찰가와 최고 입찰자 현재 입찰가를 확인해야함
 		int highBidPrice = 0;
@@ -141,7 +163,7 @@ public class AuctionBidService {
 			}
 		}
 		//내가 최고 입찰자면 입찰 못합니다.
-		isHighBidOwner(member.getId(),highPurchasePk);
+		isHighBidOwner(member.getId(),highPurchasePk,auctionUUID);
 
 		//입찰하기전에 원래가격의 호가를 알아본다.
 		int preBid = calculateValue(highBidPrice);
@@ -153,7 +175,13 @@ public class AuctionBidService {
 
 		//입찰하지못하면 나가야함.
 		if(firstPoint <0){
-			throw new BadRequestException(ApplicationError.MEMBER_NOT_HAVE_MONEY);
+			//throw new BadRequestException(ApplicationError.MEMBER_NOT_HAVE_MONEY);
+			WebSocketErrorMessage webSocketErrorMessage = WebSocketErrorMessage.builder()
+				.errMessage(HAVE_NO_MONEY)
+				.messageType(ERROR)
+				.memberPk(member.getId())
+				.build();
+			template.convertAndSend("/topic/sub/" + auctionUUID, webSocketErrorMessage);
 		}
 		
 		//입찰할수있으니 저장함.
@@ -193,8 +221,9 @@ public class AuctionBidService {
 				.firstUser(member.getId())
 				.secondUser(secondUser.getId())
 				.secondUserPoint(secondUserPoint)
-				.peopleCount(peopleCount)
+				.headCnt(peopleCount)
 				.askPrice(curBid)
+				.messageType(COMPLETE)
 				.build();
 	}
 
@@ -287,9 +316,16 @@ public class AuctionBidService {
 		}
 	}
 
-	private void isHighBidOwner(Long highPurchasePk, Long ownerPk) {
+	private void isHighBidOwner(Long highPurchasePk, Long ownerPk,String auctionUUID) {
 		if(Objects.equals(highPurchasePk, ownerPk)){
-			throw new DuplicateException(ApplicationError.DUPLICATE_NOT_BID);
+			//throw new DuplicateException(ApplicationError.DUPLICATE_NOT_BID);
+
+			WebSocketErrorMessage webSocketErrorMessage = WebSocketErrorMessage.builder()
+				.errMessage(HIGH_BID_NO_BID)
+				.messageType(ERROR)
+				.memberPk(highPurchasePk)
+				.build();
+			template.convertAndSend("/topic/sub/" + auctionUUID, webSocketErrorMessage);
 		}
 	}
 }

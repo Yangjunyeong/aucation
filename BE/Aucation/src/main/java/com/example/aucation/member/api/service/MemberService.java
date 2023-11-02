@@ -28,6 +28,8 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final RegisterMail registerMail;
 
+	private static final String DEFAULT_IMAGE_URL="https://aucation-bucket.s3.ap-northeast-2.amazonaws.com/profile/bear.jpggi";
+
 	@Transactional
 	public void signup(SignupRequest signupRequest) throws Exception {
 		verifyId(signupRequest.getMemberId());
@@ -38,7 +40,8 @@ public class MemberService {
 			.memberPw(passwordEncoder.encode(signupRequest.getMemberPw()))
 			.memberEmail(signupRequest.getMemberEmail())
 			.memberNickname(signupRequest.getMemberNickname())
-			.memberRole(Role.CERTIFIED)
+			.memberRole(Role.COMMON)
+			.imageURL(DEFAULT_IMAGE_URL)
 			.socialType(SocialType.NORMAL)
 			.build();
 		memberRepository.save(member);

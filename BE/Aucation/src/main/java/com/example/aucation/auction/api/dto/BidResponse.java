@@ -23,7 +23,9 @@ public class BidResponse {
 
 	private int askPrice;
 
-	private int peopleCount;
+	private int headCnt;
+
+	private String messageType;
 
 	// {
 	//   "askPrice":500 // 호가
