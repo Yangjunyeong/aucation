@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React, { Component } from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
@@ -15,7 +15,6 @@ export default function Home() {
   //   console.log(data);
   //   setState(data.data);
   // };
-
   return (
     <main className="px-48">
       <div>

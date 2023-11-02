@@ -1,32 +1,10 @@
 import React from "react";
+import { CategoryNameList } from "@/app/components/frontData/categoryNameList";
 interface OwnProps {
   categoryHandler: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
 const SelectBox: React.FC<OwnProps> = ({ categoryHandler }) => {
-  const CategoryNameList = [
-    "여성의류",
-    "남성의류",
-    "신발",
-    "가방/지갑",
-    "시계/쥬얼리",
-    "패션 엑서서리",
-    "디지털",
-    "가전제품",
-    "스포츠/레저",
-    "차량/오토바이",
-    "스타굿즈",
-    "장난감",
-    "예술/희귀/수집품",
-    "음반/악기",
-    "도서/티켓/문구",
-    "뷰티/미용",
-    "가구/인테러이",
-    "식품",
-    "유아/출산",
-    "반려동물용품",
-    "기타",
-  ];
   return (
     <div className="w-4/5 flex">
       <label htmlFor="category" className="w-[160px]">
