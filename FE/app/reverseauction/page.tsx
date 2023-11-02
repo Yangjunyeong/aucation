@@ -20,11 +20,12 @@ import dummyData from "./components/DummyData";
 import ReAuctionCheckout from "./components/ReAuctionCheckout";
 import Modal from "../components/Modal";
 import ModalContent from "./components/ModalContent";
+import StayMap from "../components/map/StayMap";
 
 const AuctionDetail = () => {
-  const startingPrice = "10,000";
-  const highestPrice = "50,000";
-  const bidUnit = "1,000";
+  const startingPrice = 10000;
+  const highestPrice = 50000;
+  const bidUnit = 1000;
 
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -90,7 +91,7 @@ const AuctionDetail = () => {
         <div className="flex flex-1 flex-col">
           <h2 className="text-2xl text-left mb-5">거래 위치(협의가능)</h2>
           {/* <Image alt="map" className="rounded-2" src={map} style={{ position: 'relative', width: '600px', height: '500px' }}/> */}
-          <KakaoMap />
+          <StayMap inputLag={127} inputLat={37} />
         </div>
       </div>
 
@@ -120,7 +121,12 @@ const AuctionDetail = () => {
       <ReAuctionCheckout onClick={handleModalOpen} />
       {isModalOpen && (
         <Modal onClick={handleModalOpen}>
-          <ModalContent />
+          <ModalContent
+            images={[
+              "https://cdn.thecolumnist.kr/news/photo/202302/1885_4197_221.jpg",
+              "https://cdn.thecolumnist.kr/news/photo/202302/1885_4197_221.jpg",
+            ]}
+          />
         </Modal>
       )}
     </div>

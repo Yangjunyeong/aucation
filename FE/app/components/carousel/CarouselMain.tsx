@@ -38,7 +38,7 @@ const CarouselMain: React.FC<CarouselMainProps> = ({ images }) => {
               type="button"
               onClick={onClickHandler}
               title={label}
-              style={{ ...arrowStyles, left: 40, fontSize: 40, color: "gray" }}
+              style={{ ...arrowStyles, left: 160, fontSize: 40, color: "gray" }}
             >
               <div className="border-black">{"<"}</div>
             </button>
@@ -50,7 +50,7 @@ const CarouselMain: React.FC<CarouselMainProps> = ({ images }) => {
               type="button"
               onClick={onClickHandler}
               title={label}
-              style={{ ...arrowStyles, right: 40, fontSize: 40, color: "gray" }}
+              style={{ ...arrowStyles, right: 160, fontSize: 40, color: "gray" }}
             >
               <div className="border-black">{">"}</div>
             </button>
@@ -59,7 +59,11 @@ const CarouselMain: React.FC<CarouselMainProps> = ({ images }) => {
         animationHandler="fade"
       >
         {images.map((img, idx) => {
-          return <CarouselImages key={idx} image={img} />;
+          return (
+            <div className="flex items-center justify-center align-middle min-w-[600px]" key={idx}>
+              <CarouselImages image={img} />
+            </div>
+          );
         })}
       </Carousel>
     </div>

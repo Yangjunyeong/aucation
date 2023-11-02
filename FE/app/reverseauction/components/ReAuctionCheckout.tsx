@@ -26,7 +26,7 @@ const ReAuctionCheckout: React.FC<ReAuctionCheckoutProps> = ({ onClick }) => {
         </button>
       </div>
       <div className="w-1/2 ml-2 p-4">
-        <span className="text-2xl text-blue-500">{price}</span>
+        <span className="text-3xl text-blue-500 font-bold">{price}</span>
         <span className="ml-3 text-2xl">제시</span>
         <div className="border-2 w-full border-gray-300"></div>
         <div className="break-all h-4/5 py-2">

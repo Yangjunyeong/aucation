@@ -15,13 +15,14 @@ import TimeInput from "./components/TimeInput";
 import { BsFillXCircleFill } from "react-icons/bs";
 import { callApi } from "../utils/api";
 import axios from "axios";
+import { set } from "react-hook-form";
 
 const Panmae = () => {
   const [imagecount, setImagecount] = useState(0);
   const [images, setImages] = useState<string[]>([]); // 이미지의 url 주소를 담는 state
-
+  const [imagefiles, setImagefiles] = useState<File[]>([]); // 이미지의 url 주소를 담는 state
   const [productname, setProductname] = useState<string>(""); // 삼품 이름을 저장
-  const [category, setCategory] = useState<string>(""); //
+  const [category, setCategory] = useState<string>("여성의류"); //
   const [option, setOption] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
   const [hour, setHour] = useState<number>(0);
@@ -47,6 +48,7 @@ const Panmae = () => {
         setImages([...images, reader.result]);
         setImagecount(imagecount + 1);
       }
+      setImagefiles([...imagefiles, file]);
     };
   };
   const deleteImg = (index: number) => {
@@ -98,11 +100,11 @@ const Panmae = () => {
     formData.append("auctionType", category);
     formData.append(
       "auctioMeetingLat",
-      transActionLocation ? transActionLocation[0].toString() : ""
+      transActionLocation ? transActionLocation[0].toString() : "37"
     );
     formData.append(
       "auctionMeetingLng",
-      transActionLocation ? transActionLocation[1].toString() : ""
+      transActionLocation ? transActionLocation[1].toString() : "126"
     );
     formData.append("auctionStartPrice", price.toString());
     formData.append("auctionDetail", description);
@@ -110,19 +112,16 @@ const Panmae = () => {
     if (discountPrice !== null) {
       formData.append("prodDiscountedPrice", discountPrice.toString());
     }
-    images.forEach((imageUrl, index) => {
-      formData.append("multipartFiles", imageUrl);
-      console.log(imageUrl);
+    imagefiles.forEach((image, index) => {
+      formData.append("multipartFiles", image);
     });
-    // callApi("post", "/auction/register", formData);
-    axios({
-      method: "POST",
-      url: "http://192.168.31.164:8001/api/v1/auction/register",
-      data: formData,
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("accessToken"),
-      },
-    });
+    callApi("post", "/auction/register", formData)
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   useEffect(() => {}, []);

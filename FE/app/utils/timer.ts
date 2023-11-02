@@ -1,5 +1,6 @@
 const calculateRemainingTime = (startTime: number, endTime: number) => {
   const remainingMilliseconds = endTime - startTime;
+  // console.log(endTime, startTime, remainingMilliseconds);
 
   const hours = Math.floor(remainingMilliseconds / 3600000);
   const minutes = Math.floor((remainingMilliseconds % 3600000) / 60000);

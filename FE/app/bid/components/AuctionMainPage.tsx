@@ -4,57 +4,71 @@ import { useEffect, useRef, useState } from "react";
 import { AiOutlineArrowLeft, AiOutlineHeart } from "react-icons/ai";
 import { RiUserFill, RiTimerFlashLine } from "react-icons/ri";
 import { FaRegHandPaper } from "react-icons/fa";
-import productimg from "@/app/images/productimg.png";
 import dojang from "@/app/images/dojang.png";
 import { Stomp, CompatClient } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import calculateRemainingTime from "@/app/utils/timer";
 import { useParams, useRouter } from "next/navigation";
+import { callApi } from "@/app/utils/api";
+import toast from "react-hot-toast";
+import Modal from "@/app/components/Modal";
+import ModalContent from "@/app/reverseauction/components/ModalContent";
+import { pricetoString } from "@/app/utils/pricecal";
 
 type auctionData = {
   memberPk: number; // 입찰을 위한 pk
   ownerPk: number;
   memberPoint: number;
-  title: String; // 경매 제목(품목이 없기 때문 제목으로 표시)
-  detail: String; // 경매 상품 설명
-  ownerNickname: String;
-  ownerPicture: String;
-  picture: string[]; // url 형식의 String을 list에 담아서 제공할 예정
-  ownerType: String; // ["소상공인", "개인"]
+  title: string; // 경매 제목(품목이 없기 때문 제목으로 표시)
+  detail: string; // 경매 상품 설명
+  ownerNickname: string;
+  ownerPicture: string;
+  picture: string[]; // url 형식의 string을 list에 담아서 제공할 예정
+  ownerType: string; // ["소상공인", "개인"]
   nowPrice: number; // 최고가 (입찰 없을 시 시작가로 대체)
   askPrice: number; // 입찰단위
   enterTime: number; // 시간 계산을 위해 서버시간 제공
   endTime: number; // 종료 시간
   headCnt: number; // 현재 접속자수
-  isBid: boolean; // 현재 자신이 최고가인 사람인지 여부
+  highBid: boolean; // 현재 자신이 최고가인 사람인지 여부
 };
 
 const AuctionMainPage = () => {
   const [datas, setDatas] = useState<auctionData>({
-    memberPk: 1, // 입찰을 위한 pk
-    ownerPk: 2,
-    memberPoint: 1,
+    memberPk: 0, // 입찰을 위한 pk
+    ownerPk: 0,
+    memberPoint: 0,
     title: "아이폰 14", // 경매 제목(품목이 없기 때문 제목으로 표시)
     detail: "상품 설명", // 경매 상품 설명
     ownerNickname: "test",
-    ownerPicture: "test",
-    picture: ["https://cdn.thecolumnist.kr/news/photo/202302/1885_4197_221.jpg"], // url 형식의 String을 list에 담아서 제공할 예정
+    ownerPicture: "https://cdn.thecolumnist.kr/news/photo/202302/1885_4197_221.jpg",
+    picture: [
+      "https://cdn.thecolumnist.kr/news/photo/202302/1885_4197_221.jpg",
+      "https://cdn.thecolumnist.kr/news/photo/202302/1885_4197_221.jpg",
+    ], // url 형식의 String을 list에 담아서 제공할 예정
     ownerType: "소상공인", // ["소상공인", "개인"]
     nowPrice: 10000, // 최고가 (입찰 없을 시 시작가로 대체)
     askPrice: 1, // 입찰단위
     enterTime: Date.now(), // 시간 계산을 위해 서버시간 제공
     endTime: Date.now(), // 종료 시간
-    headCnt: 1, // 현재 접속자수
-    isBid: true, // 현재 자신이 최고가인 사람인지 여부
+    headCnt: 0, // 현재 접속자수
+    highBid: false, // 현재 자신이 최고가인 사람인지 여부
   });
 
   const [remainTime, setRemainTime] = useState<string>("00:00:00"); // 남은 시간
+  const [isModal, setIsModal] = useState<boolean>(false); // 모달 여부
+  const [isBid, setIsBid] = useState<boolean>(false); // 입찰 여부
   const uuid = useParams().uuid;
+  const router = useRouter();
+
+  const modalHandler = () => {
+    setIsModal(!isModal);
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
       const startTime = Date.now(); // 종료 시간을 적절히 설정하세요
-      const endTime = new Date("2023-11-01T18:30:00"); // 현재 시간을 적절히 설정하세요
+      const endTime = new Date(datas.endTime); // 현재 시간을 적절히 설정하세요
 
       const remainingTime = calculateRemainingTime(startTime, endTime.getTime());
       setRemainTime(remainingTime);
@@ -65,32 +79,84 @@ const AuctionMainPage = () => {
 
   const client = useRef<CompatClient>();
 
-  let headers: any = null;
-
   // 웹소켓 연결 및 이벤트 핸들러 설정
   const connectToWebSocket = () => {
-    if (!headers) return;
+    if (client.current) {
+      client.current.deactivate();
+    }
+    if (!localStorage.getItem("accessToken")) {
+      return;
+    }
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    };
     client.current = Stomp.over(() => {
       const ws = new SockJS(`${process.env.NEXT_PUBLIC_SERVER_URL}/auc-server`);
       return ws;
     });
 
     client.current.connect(headers, () => {
-      // 웹소켓 이벤트 핸들러 설정
       client.current!.subscribe(`/topic/sub/${uuid}`, res => {
         console.log(JSON.parse(res.body));
+        const data = JSON.parse(res.body);
+        if (data.messageType == "error") {
+          if (data.memberPk == datas.memberPk) {
+            toast.error(data.errMessage);
+          }
+          return;
+        }
+        if (data.firstUser == datas.memberPk) {
+          setDatas((datas: auctionData) => {
+            return {
+              ...datas,
+              memberPoint: data.firstUserPoint,
+              nowPrice: data.firstBid,
+              highBid: true,
+              askPrice: data.askPrice,
+              headCnt: data.headCnt,
+            };
+          });
+        } else if (data.secondUser == datas.memberPk) {
+          setDatas((datas: auctionData) => {
+            return {
+              ...datas,
+              memberPoint: data.secondUserPoint,
+              nowPrice: data.firstBid,
+              highBid: false,
+              askPrice: data.askPrice,
+              headCnt: data.headCnt,
+            };
+          });
+        } else {
+          setDatas((datas: auctionData) => {
+            return {
+              ...datas,
+              nowPrice: data.firstBid,
+              askPrice: data.askPrice,
+              headCnt: data.headCnt,
+            };
+          });
+        }
       });
     });
   };
 
   useEffect(() => {
-    headers = {
-      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-    };
-    connectToWebSocket();
+    bidDataHandler();
   }, []);
+  useEffect(() => {
+    if (datas.memberPk != 0) {
+      connectToWebSocket();
+    }
+    setIsBid(datas.highBid);
+  }, [datas]);
 
   const bidHandler = () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) return;
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    };
     client.current!.send(
       `/app/send/register/${uuid}`,
       headers,
@@ -98,6 +164,40 @@ const AuctionMainPage = () => {
         memberPk: datas.memberPk,
       })
     );
+  };
+
+  const bidDataHandler = () => {
+    callApi("get", `/auction/place/${uuid}`, {})
+      .then(res => {
+        console.log(res.data);
+        setDatas((datas: auctionData) => {
+          return {
+            ...datas,
+            memberPk: res.data.memberPk,
+            ownerPk: res.data.ownerPk,
+            memberPoint: res.data.memberPoint,
+            title: res.data.title,
+            detail: res.data.detail,
+            ownerNickname: res.data.ownerNickname,
+            ownerPicture: res.data.ownerPicture,
+            picture: res.data.picture,
+            ownerType: res.data.ownerType,
+            nowPrice: res.data.nowPrice,
+            askPrice: res.data.askPrice,
+            enterTime: res.data.enterTime,
+            endTime: res.data.endTime,
+            headCnt: res.data.headCnt,
+            highBid: res.data.highBid,
+          };
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  const exitHandler = () => {
+    router.back();
   };
 
   return (
@@ -118,7 +218,9 @@ const AuctionMainPage = () => {
             items-center
         "
       >
-        <AiOutlineArrowLeft size="40"></AiOutlineArrowLeft>
+        <button onClick={exitHandler}>
+          <AiOutlineArrowLeft size="40"></AiOutlineArrowLeft>
+        </button>
         <div
           className="
             flex
@@ -132,7 +234,7 @@ const AuctionMainPage = () => {
             flex
             justify-between
             items-end
-            mt-6
+            mt-8
             mb-3
         "
       >
@@ -146,14 +248,16 @@ const AuctionMainPage = () => {
           <RiUserFill size="24"></RiUserFill>
           <p className="text-base px-2">{datas.headCnt}</p>
           <RiTimerFlashLine size="24"></RiTimerFlashLine>
-          <p className="text-base px-2">{remainTime}</p>
+          <div className="w-20">
+            <p className="text-base px-2">{remainTime}</p>
+          </div>
         </div>
       </div>
       <div
         className="
             flex
             justify-between
-            min-h-[35%]
+            min-h-[40%]
         "
       >
         <div
@@ -164,13 +268,15 @@ const AuctionMainPage = () => {
             min-h-full
           "
         >
-          <p className="mb-2">상품 사진</p>
+          <p className="mb-2 text-lg">상품 사진</p>
           <div
             className="
               relative
               w-full
               h-full
+              hover:cursor-pointer
             "
+            onClick={modalHandler}
           >
             <Image alt="상품사진" src={datas.picture[0]} fill></Image>
           </div>
@@ -182,7 +288,7 @@ const AuctionMainPage = () => {
             w-3/5
           "
         >
-          <p className="mb-2">상품 설명</p>
+          <p className="mb-2 text-lg">상품 설명</p>
           <div
             className="
                 p-4
@@ -191,6 +297,19 @@ const AuctionMainPage = () => {
                 bg-[var(--c-white)]
             "
           >
+            <div className="w-full h-1/5 p-3 flex">
+              <Image
+                src={datas.ownerPicture}
+                className="rounded-full"
+                width={60}
+                height={60}
+                alt="프로필"
+              />
+              <div className="ml-3">
+                <p>{datas.ownerType}</p>
+                <h1 className="text-2xl">{datas.ownerNickname}</h1>
+              </div>
+            </div>
             <p>{datas.detail}</p>
           </div>
         </div>
@@ -217,8 +336,8 @@ const AuctionMainPage = () => {
           className="text-5xl decoration-sky-200 mx-3 relative font-bold"
           style={{ color: "var(--c-blue)" }}
         >
-          {datas.nowPrice}원
-          {datas.isBid && (
+          {pricetoString(datas.nowPrice)}
+          {isBid && (
             <Image
               src={dojang}
               alt="낙찰"
@@ -247,7 +366,7 @@ const AuctionMainPage = () => {
       >
         <div className="w-[30%] ml-5">
           <p>입찰 단위</p>
-          <p className="text-3xl">{datas.askPrice}원</p>
+          <p className="text-3xl">{pricetoString(datas.askPrice)}</p>
         </div>
         <div
           className="
@@ -259,7 +378,7 @@ const AuctionMainPage = () => {
         ></div>
         <div className="w-[50%] ml-5">
           <p>보유 포인트</p>
-          <p className="text-3xl">{datas.memberPoint}원</p>
+          <p className="text-3xl">{pricetoString(datas.memberPoint)}</p>
         </div>
         {datas.memberPk != datas.ownerPk && (
           <div
@@ -274,6 +393,11 @@ const AuctionMainPage = () => {
           </div>
         )}
       </div>
+      {isModal && (
+        <Modal onClick={modalHandler}>
+          <ModalContent images={datas.picture} />
+        </Modal>
+      )}
     </div>
   );
 };
