@@ -13,8 +13,6 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import com.example.aucation.common.error.ApplicationError;
-import com.example.aucation.common.error.BadRequestException;
 import com.example.aucation.member.db.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -120,7 +118,7 @@ public class RegisterMail {
 
 		if(type.equals("회원가입")) {
 			memberRepository.findByMemberEmail(userEmail).ifPresent(user -> {
-				throw new BadRequestException(ApplicationError.EXIST_EMAIL);
+				throw new RuntimeException("유저가 이미 존재합니다.");
 			});
 			code = createKey(); // 랜덤 인증번호 생성
 			message = createMessage(userEmail); // 메일 발송

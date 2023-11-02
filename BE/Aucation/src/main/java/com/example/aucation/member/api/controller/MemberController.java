@@ -26,25 +26,18 @@ public class MemberController {
 	private final MemberService memberService;
 
 	@PostMapping("/signup")
-	public ResponseEntity<Void> signup(@RequestBody SignupRequest signupRequest) throws
-		Exception {
+	public ResponseEntity<Void> signup(@RequestBody SignupRequest signupRequest) {
 		memberService.signup(signupRequest);
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping("/certification/email/{email}")
-	public ResponseEntity<EmailResponse> cerifyemail(@PathVariable("email") String memberEmail) throws Exception {
-		return ResponseEntity.ok().body(memberService.cerifyemail(memberEmail));
+	@PostMapping("/verification/email")
+	public ResponseEntity<EmailResponse> verifyemail(@RequestBody MemberEmailRequest memberEmail) throws Exception {
+		return ResponseEntity.ok().body(memberService.verifyemail(memberEmail.getMemberEmail()));
 	}
 
-	@GetMapping("/verification/id/{memberId}")
-	public ResponseEntity<Void> verifyId(@PathVariable("memberId") String memberId) throws Exception {
-		memberService.verifyId(memberId);
-		return ResponseEntity.ok().build();
-	}
-
-	@GetMapping("/verification/nickname/{nickname}")
-	public ResponseEntity<Void> verifynick(@PathVariable("nickname") String memberNickname) {
+	@PostMapping("/verification/nickname")
+	public ResponseEntity<Void> verifynick(@RequestBody MemberNickRequest memberNickname) {
 		memberService.verifynick(memberNickname);
 		return ResponseEntity.ok().build();
 	}

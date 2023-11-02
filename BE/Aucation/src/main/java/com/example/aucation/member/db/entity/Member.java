@@ -122,7 +122,6 @@ public class Member extends BaseEntity {
 		this.memberPw = memberPw;
 		this.memberEmail = memberEmail;
 		this.memberRole = memberRole;
-		this.memberNickname = memberNickname;
 		this.socialType = socialType;
 		this.imageURL = imageURL;
 	}
