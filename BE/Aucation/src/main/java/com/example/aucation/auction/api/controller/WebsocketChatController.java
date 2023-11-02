@@ -32,10 +32,8 @@ public class WebsocketChatController {
 
 	//일단 입찰 버튼을 누름
 	@MessageMapping("/send/register/{auctionUUID}")
-	public void streamText(@AuthorizedVariable long memberPk, @Payload BIDRequest bidRequest, @DestinationVariable("auctionUUID") String auctionUUID) throws
+	public void streamText(@Payload BIDRequest bidRequest, @DestinationVariable("auctionUUID") String auctionUUID) throws
 			Exception {
-		log.info(String.valueOf(BIDRequest.class));
-		log.info(String.valueOf(memberPk));
 		BidResponse bidResponse = auctionBidService.isService(bidRequest.getMemberPk(),auctionUUID);
 		template.convertAndSend("/topic/sub/" + auctionUUID, bidResponse);
 	}
