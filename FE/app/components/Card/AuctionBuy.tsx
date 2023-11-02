@@ -39,7 +39,7 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
   } = item;
   const [state, setState] = useState<string>("");
   const [liked, setLiked] = useState<boolean>(isLiked);
-  const [nakchal, setNakchal] = useState<string>("완료");
+  const [nakchal, setNakchal] = useState<string>("낙찰");
   const likeHandler = (value: boolean) => {
     console.log(liked);
     setLiked(value);
@@ -136,7 +136,7 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
 
           {/* 경매 시작가 */}
           <div className="text-xl mt-2">
-            경매 시작가 : <span className="text-2xl font-bold">{startPrice.toLocaleString()} 원</span>
+            경매 시작가 : <span className="text-2xl font-bold text-customBlue">{startPrice.toLocaleString()} <span className="text-black">원</span></span>
           </div>
 
           {/* 낙찰일시 / 낙찰가 / 채팅 및 확정 버튼*/}
