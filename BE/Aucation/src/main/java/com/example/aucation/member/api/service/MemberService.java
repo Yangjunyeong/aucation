@@ -9,13 +9,14 @@ import com.example.aucation.common.error.ApplicationError;
 import com.example.aucation.common.error.DuplicateException;
 import com.example.aucation.common.error.NotFoundException;
 import com.example.aucation.common.service.RegisterMail;
+import com.example.aucation.member.api.dto.MemberPageRequest;
+import com.example.aucation.member.api.dto.MyPageRequest;
 import com.example.aucation.member.api.dto.MypageResponse;
 import com.example.aucation.member.api.dto.SignupRequest;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.member.db.entity.Role;
 import com.example.aucation.member.db.entity.SocialType;
 import com.example.aucation.member.db.repository.MemberRepository;
-import com.sun.jdi.request.DuplicateRequestException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +48,12 @@ public class MemberService {
 		memberRepository.save(member);
 	}
 
+	@Transactional
+	public MypageResponse mypage(Long memberPk,MemberPageRequest memberPageRequest) {
+		Member member = existsMemberPk(memberPk);
+		return memberRepository.searchMyAuctionPage(member,memberPageRequest);
+	}
+
 	public EmailResponse verifyemail(String memberEmail) throws Exception {
 		validateMemberEmail(memberEmail);
 		String code = registerMail.sendSimpleMessage(memberEmail,"회원가입");
@@ -71,11 +78,6 @@ public class MemberService {
 			throw new DuplicateException(ApplicationError.DUPLICATE_USERNAME);
 		}
 
-	}
-
-	public MypageResponse mypage(Long memberPk) {
-		Member member = existsMemberPk(memberPk);
-		return MypageResponse.of(member);
 	}
 
 	private Member existsMemberPk(Long memberPk) {

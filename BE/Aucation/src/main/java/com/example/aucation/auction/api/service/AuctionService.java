@@ -90,6 +90,7 @@ public class AuctionService {
 		return PlaceResponse.builder()
 			.memberPoint(member.getMemberPoint())
 			.memberPk(memberPk)
+			.myNickname(member.getMemberNickname())
 			.title(auction.getAuctionTitle())
 			.detail(auction.getAuctionDetail())
 			.ownerNickname(auction.getOwner().getMemberNickname())
