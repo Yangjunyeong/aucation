@@ -15,7 +15,7 @@ import Modal from "@/app/components/Modal";
 import ModalContent from "@/app/reverseauction/components/ModalContent";
 import { pricetoString } from "@/app/utils/pricecal";
 
-type auctionData = {
+export type auctionData = {
   memberPk: number; // 입찰을 위한 pk
   ownerPk: number;
   memberPoint: number;
@@ -84,18 +84,12 @@ const AuctionMainPage = () => {
     if (client.current) {
       client.current.deactivate();
     }
-    if (!localStorage.getItem("accessToken")) {
-      return;
-    }
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-    };
     client.current = Stomp.over(() => {
       const ws = new SockJS(`${process.env.NEXT_PUBLIC_SERVER_URL}/auc-server`);
       return ws;
     });
 
-    client.current.connect(headers, () => {
+    client.current.connect({}, () => {
       client.current!.subscribe(`/topic/sub/${uuid}`, res => {
         console.log(JSON.parse(res.body));
         const data = JSON.parse(res.body);
@@ -152,14 +146,9 @@ const AuctionMainPage = () => {
   }, [datas]);
 
   const bidHandler = () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) return;
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-    };
     client.current!.send(
       `/app/send/register/${uuid}`,
-      headers,
+      {},
       JSON.stringify({
         memberPk: datas.memberPk,
       })
@@ -331,9 +320,9 @@ const AuctionMainPage = () => {
         mx-6
       "
       >
-        <span className="text-3xl text-gray-400">최고가</span>{" "}
+        <span className="text-3xl text-gray-400">최고가</span>
         <span
-          className="text-5xl decoration-sky-200 mx-3 relative font-bold"
+          className="text-5xl decoration-sky-200 mx-3 relative font-bold min-w-[180px]"
           style={{ color: "var(--c-blue)" }}
         >
           {pricetoString(datas.nowPrice)}
@@ -341,7 +330,7 @@ const AuctionMainPage = () => {
             <Image
               src={dojang}
               alt="낙찰"
-              className="absolute lg:-top-20 lg:-right-24"
+              className="absolute -top-20 -right-24"
               width={150}
               height={150}
             ></Image>

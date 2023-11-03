@@ -3,18 +3,18 @@
 import { useState } from "react";
 
 interface InputProps {
-  chatHandler: (value: string, username: string) => void;
+  text: string;
+  setText: React.Dispatch<React.SetStateAction<string>>;
+  bidHandler: (text: string) => void;
 }
 
-const Input: React.FC<InputProps> = ({ chatHandler }) => {
-  const [text, setText] = useState("");
-
+const Input: React.FC<InputProps> = ({ text, setText, bidHandler }) => {
   const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
   };
   const sendHandler = (e: React.KeyboardEvent) => {
     if (e.key !== "Enter") return;
-    chatHandler(text, "현빈");
+    bidHandler(text);
     setText("");
   };
 
