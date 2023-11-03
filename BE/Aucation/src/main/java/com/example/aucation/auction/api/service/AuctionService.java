@@ -142,6 +142,13 @@ public class AuctionService {
 		}
 		AuctionPreResponse auctions = auctionRepository.searchPreAucToCondition(member,pageNum,sortRequest);
 		auctions.setNowTime(LocalDateTime.now());
+
+		for (AuctionPreResponseItem item : auctions.getItems()) {
+			List<Photo> photoList = photoService.getPhoto(item.getAuctionPk());
+			if(!photoList.isEmpty()){
+				item.setAuctionImg(photoList.get(0).getImgUrl());
+			}
+		}
 		return auctions;
 	}
 

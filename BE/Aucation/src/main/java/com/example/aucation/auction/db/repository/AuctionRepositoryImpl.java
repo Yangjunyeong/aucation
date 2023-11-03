@@ -12,8 +12,10 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -40,13 +42,23 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
         JPAQuery<AuctionPreResponseItem> query = queryFactory
                 .select(
                         Projections.bean(AuctionPreResponseItem.class,
-                                qAuction.id,
+                                qAuction.id.as("auctionPk"),
                                 qAuction.auctionTitle.as("auctionTitle"),
                                 qAuction.auctionStartPrice,
                                 qAuction.auctionStartDate.as("auctionStartTime"),
+                                qMember.memberNickname.as("auctionOwnerNickname"),
+                                qMember.memberRole.eq(Role.SHOP).as("auctionOwnerIsShop"),
                                 qLikeAuction.count().as(likeCnt),
-                                qMember.memberNickname.as("auctionOwnerNickname")
-//                                qMember.memberRole.as("test")
+                                new CaseBuilder()
+                                        .when(
+                                                JPAExpressions.selectOne()
+                                                        .from(qLikeAuction)
+                                                        .where(qLikeAuction.auction.eq(qAuction))
+                                                        .where(qLikeAuction.member.eq(member)) // Replace myUser with your user reference
+                                                        .exists()
+                                        )
+                                        .then(true)
+                                        .otherwise(false).as("isLike")
                         )
                 ).from(qAuction)
                 .where(qAuction.auctionStartDate.after(LocalDateTime.now()),
