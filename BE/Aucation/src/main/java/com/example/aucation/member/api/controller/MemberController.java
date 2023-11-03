@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.aucation.common.dto.EmailResponse;
 import com.example.aucation.common.support.AuthorizedVariable;
+import com.example.aucation.member.api.dto.MemberPageRequest;
 import com.example.aucation.member.api.dto.MypageResponse;
 import com.example.aucation.member.api.dto.SignupRequest;
 import com.example.aucation.member.api.service.MemberService;
@@ -56,8 +57,8 @@ public class MemberController {
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping("/mypage")
-	public ResponseEntity<MypageResponse> mypage(@AuthorizedVariable Long memberPk) {
-		return ResponseEntity.ok().body(memberService.mypage(memberPk));
+	@PostMapping("/mypage")
+	public ResponseEntity<MypageResponse> mypage(@AuthorizedVariable Long memberPk, @RequestBody MemberPageRequest memberPageRequest) {
+		return ResponseEntity.ok().body(memberService.mypage(memberPk,memberPageRequest));
 	}
 }
