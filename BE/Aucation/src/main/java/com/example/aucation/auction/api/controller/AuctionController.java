@@ -47,12 +47,12 @@ public class AuctionController {
 		return ResponseEntity.ok().body(auctionService.getAuctionPreList(memberPk,pageNum,sortRequest));
 	}
 
+	@PostMapping("/list/ing/{pageNum}")
+	private ResponseEntity<?> getAucIngList(@AuthorizedVariable Long memberPk, @PathVariable int pageNum, @RequestBody AuctionSortRequest sortRequest){
+		return ResponseEntity.ok().body(auctionService.getAuctionIngList(memberPk,pageNum,sortRequest));
+	}
+
 	// 추후 추가 개발
-//	@PostMapping("/list/ing/{pageNum}")
-//	private ResponseEntity<?> getAucIngList(@AuthorizedVariable Long memberPk, @PathVariable int pageNum, @RequestBody AuctionSortRequest sortRequest){
-//		return ResponseEntity.ok().body(auctionService.getAuctionIngList(memberPk,pageNum,sortRequest));
-//	}
-//
 //	@PostMapping("/list/reAuc/{pageNum}")
 //	private ResponseEntity<?> getReAucList(@AuthorizedVariable Long memberPk, @PathVariable int pageNum, @RequestBody AuctionSortRequest sortRequest){
 //		return ResponseEntity.ok().body(auctionService.getReAuctionList(memberPk,pageNum,sortRequest));

@@ -126,7 +126,7 @@ public class AuctionBidService {
 				.bidPrice(auction.getAuctionStartPrice() + bid)
 				.askPrice(curBid)
 				.purchasePk(member.getId())
-				.peopleCount(peopleCount)
+				.headCnt(peopleCount)
 				.build();
 			saveBIDRedis("auc-ing-log:" + auction.getAuctionUUID(), saveAuctionBIDRedis);
 
@@ -206,7 +206,7 @@ public class AuctionBidService {
 					.askPrice(curBid)
 					.bidPrice(curBid + highBidPrice)
 					.purchasePk(member.getId())
-					.peopleCount(peopleCount)
+					.headCnt(peopleCount)
 					.build();
 				saveBIDRedis("auc-ing-log:" + auction.getAuctionUUID(), saveAuctionBIDRedis);
 
