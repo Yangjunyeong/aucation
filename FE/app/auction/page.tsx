@@ -3,17 +3,16 @@ import React, { useState, useEffect, useRef } from "react";
 import clsx from "clsx";
 import HeaderTap from "./components/HeaderTap";
 import OrderTypeBtn from "./components/OrderTypeBtn";
-import { orderType } from "./components/type";
+import { orderType, searchType } from "./components/type";
 import { CategoryNameList } from "../components/frontData/categoryNameList";
-import { LuTriangle } from "react-icons/lu";
-import SearchTypeDropBtn from "./components/SearchTypeDropBtn";
+import DropdownButton from "../components/button/DropDownBtn";
+import SearchInput from "./components/SearchInput";
 
 const AuctionList = () => {
   const [selectedTap, setSelectedTap] = useState("경매중");
-  const [isShowToggle, setIsShowToggle] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("전체");
-
-  const dropdownRef = useRef<HTMLDivElement | null>(null); // 드롭다운 참조 추가
+  const [searchType, setSearchType] = useState<searchType>({ id: 0, typeName: "제목" });
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
 
   const tapList = ["경매중", "경매전", "삽니다"];
   const localCategoryList = ["전체", ...CategoryNameList];
@@ -31,32 +30,26 @@ const AuctionList = () => {
     { id: 3, typeName: "고가순" },
     { id: 4, typeName: "좋아요순" },
   ];
+  const searchTypeList: searchType[] = [
+    { id: 0, typeName: "제목" },
+    { id: 1, typeName: "판매자" },
+  ];
 
   const headerHandler = (tap: string) => {
     setSelectedTap(tap);
   };
 
-  const handleCategoryClick = (category: string) => {
-    setSelectedCategory(category);
-    setIsShowToggle(false);
+  const searchHandler = (keyword: string) => {
+    const searchFilters = {
+      auctionCatalog: selectedCategory,
+      auctionCondition: selectedOrderType.id,
+      searchType: searchType.id,
+      searchKeyword: keyword,
+    };
   };
-
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsShowToggle(false);
-      }
-    };
-
-    // 클릭 이벤트 리스너 추가
-    document.addEventListener("click", handleClickOutside);
-
-    // 컴포넌트 언마운트 시 이벤트 리스너 제거
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
-
+    console.log("검색어", searchKeyword);
+  }, [searchKeyword]);
   return (
     <div className="px-60 ">
       <div className="flex flex-row space-x-10 h-[100px] items-center">
@@ -73,42 +66,12 @@ const AuctionList = () => {
 
       <div className="flex flex-row h-[75px] items-center justify-between">
         <div className="flex flex-row space-x-8">
-          <div
-            onClick={() => setIsShowToggle(!isShowToggle)}
-            ref={dropdownRef}
-            className={clsx(
-              "text-xl font-semibold",
-              "border-2",
-              "border-customGray",
-              "rounded-3xl px-4 py-2",
-              "hover:cursor-pointer",
-              "flex flex-row items-center space-x-2",
-              "relative"
-            )}
-          >
-            <p>{selectedCategory}</p>
-            <LuTriangle
-              className={`transition-transform duration-300 ease-in-out transform ${
-                isShowToggle ? "rotate-180" : ""
-              }`}
-              size={20}
-            />
-            {isShowToggle && (
-              <div className="absolute top-full left-0 mt-2 w-[600px] rounded-md shadow-lg bg-white divide-y divide-gray-100">
-                <div className="grid grid-cols-3 gap-2 p-2">
-                  {localCategoryList.map((category, idx) => (
-                    <span
-                      key={idx}
-                      className="hover:bg-gray-200 hover:text-customBlue font-medium rounded cursor-pointer px-1 py-1"
-                      onClick={() => handleCategoryClick(category)}
-                    >
-                      {category}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          <DropdownButton
+            options={localCategoryList}
+            selectedOption={selectedCategory}
+            setSelectedOption={setSelectedCategory}
+            size="big"
+          />
           {orderTypeList.map(orderType => (
             <OrderTypeBtn
               key={orderType.id}
@@ -120,8 +83,19 @@ const AuctionList = () => {
         </div>
 
         <div className="flex flex-row space-x-8">
-          <SearchTypeDropBtn />
-          <div>검색어 입력</div>
+          <DropdownButton
+            options={searchTypeList.map(st => st.typeName)}
+            selectedOption={searchType.typeName}
+            setSelectedOption={(typeName: string) => {
+              const newSearchType = searchTypeList.find(st => st.typeName === typeName);
+              if (newSearchType) {
+                setSearchType(newSearchType);
+              }
+            }}
+            size="small"
+          />
+
+          <SearchInput searchHandler={searchHandler} setSearchKeyword={setSearchKeyword} />
         </div>
       </div>
       <div>카드 리스트 부분</div>
