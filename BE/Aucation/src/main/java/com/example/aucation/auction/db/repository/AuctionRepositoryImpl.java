@@ -1,6 +1,7 @@
 package com.example.aucation.auction.db.repository;
 
-import com.example.aucation.auction.api.dto.AuctionPreResponse;
+import com.example.aucation.auction.api.dto.AuctionIngResponseItem;
+import com.example.aucation.auction.api.dto.AuctionListResponse;
 import com.example.aucation.auction.api.dto.AuctionPreResponseItem;
 import com.example.aucation.auction.api.dto.AuctionSortRequest;
 import com.example.aucation.auction.db.entity.QAuction;
@@ -11,17 +12,13 @@ import com.example.aucation.member.db.entity.Role;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -36,7 +33,7 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
     private final QMember qMember = QMember.member;
     private final int COUNT_IN_PAGE = 15;
     @Override
-    public AuctionPreResponse searchPreAucToCondition(Member member, int pageNum, AuctionSortRequest searchCondition) {
+    public AuctionListResponse searchPreAucToCondition(Member member, int pageNum, AuctionSortRequest searchCondition) {
         // 여기서 가져올꺼임
         NumberPath<Long> likeCnt = Expressions.numberPath(Long.class,"likeCnt");
         JPAQuery<AuctionPreResponseItem> query = queryFactory
@@ -73,32 +70,70 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
         long count = query
                 .fetchCount();
 
-//        Sort sort = getSortByCondition(searchCondition.getAuctionCondition());
         Pageable pageable = PageRequest.of(pageNum - 1, COUNT_IN_PAGE);
         query.offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(getSortByCondition(searchCondition.getAuctionCondition(),likeCnt));
-        System.out.println(qAuction.auctionStartDate.before(LocalDateTime.now()));
         List<AuctionPreResponseItem> result = query.fetch();
+        double totalPage = Math.ceil((double) count/COUNT_IN_PAGE);
+        return AuctionListResponse.builder()
+                .currentPage(pageNum)
+                .totalPage(totalPage)
+                .preItems(result)
+                .build();
+}
+    @Override
+    public AuctionListResponse searchIngAucByCondition(Member member, int pageNum, AuctionSortRequest searchCondition) {
+        NumberPath<Long> likeCnt = Expressions.numberPath(Long.class,"likeCnt");
+        JPAQuery<AuctionIngResponseItem> query = queryFactory
+                .select(
+                        Projections.bean(AuctionIngResponseItem.class,
+                                qAuction.id.as("auctionPk"),
+                                qAuction.auctionUUID.as("auctionUUID"),
+                                qAuction.auctionTitle.as("auctionTitle"),
+                                qAuction.auctionStartPrice.as("auctionStartPrice"),
+                                qAuction.auctionEndDate.as("auctionEndTime"),
+                                qMember.memberNickname.as("auctionOwnerNickname"),
+                                qLikeAuction.count().as(likeCnt),
+                                new CaseBuilder()
+                                        .when(
+                                                JPAExpressions.selectOne()
+                                                        .from(qLikeAuction)
+                                                        .where(qLikeAuction.auction.eq(qAuction))
+                                                        .where(qLikeAuction.member.id.eq(member.getId())) // Replace myUser with your user reference
+                                                        .exists()
+                                        )
+                                        .then(true)
+                                        .otherwise(false).as("isLike")
+                        )
+                ).from(qAuction)
+                .where(qAuction.auctionStartDate.before(LocalDateTime.now())
+                                .and(qAuction.auctionEndDate.after(LocalDateTime.now())),
+                        keywordEq(searchCondition.getSearchType(), searchCondition.getSearchKeyword()),
+                        catalogEq(searchCondition.getAuctionCatalog())
+                ).leftJoin(qLikeAuction)
+                .on(qLikeAuction.auction.eq(qAuction))
+                .leftJoin(qMember)
+                .on(qAuction.owner.eq(qMember))
+                .groupBy(qAuction.id);
 
+        long count = query
+                .fetchCount();
 
-        System.out.println(count);
+        Pageable pageable = PageRequest.of(pageNum - 1, COUNT_IN_PAGE);
+        query.offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(getSortByCondition(searchCondition.getAuctionCondition(),likeCnt));
+        List<AuctionIngResponseItem> result = query.fetch();
 
         double totalPage = Math.ceil((double) count/COUNT_IN_PAGE);
-        AuctionPreResponse response =AuctionPreResponse.builder()
+        return AuctionListResponse.builder()
                 .currentPage(pageNum)
-                .totalPage((int) totalPage)
-                .items(result)
+                .totalPage(totalPage)
+                .ingItems(result)
                 .build();
-        System.out.println(response.toString());
-        return response;
+    }
 
-}
-//    @Override
-//    public List<Auction> searchIngAucByCondition(Member member, int pageNum, AuctionSortRequest searchCondition) {
-//        return null;
-//    }
-//
 //    @Override
 //    public List<Auction> searchReAucByCondition(Member member, int pageNum, AuctionSortRequest searchCondition) {
 //        // 여기서 가져올꺼임
@@ -106,7 +141,6 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
 //
 //        return null;
 //    }
-
 
     private BooleanExpression catalogEq(String catalog) {
         if (catalog == null) {

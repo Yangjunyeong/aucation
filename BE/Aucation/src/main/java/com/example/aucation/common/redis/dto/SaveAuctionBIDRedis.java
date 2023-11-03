@@ -20,15 +20,15 @@ public class SaveAuctionBIDRedis implements Comparable<SaveAuctionBIDRedis>,Seri
 	private int bidPrice;
 	private String bidTime;
 	private int askPrice;
-	private int peopleCount;
+	private int headCnt;
 
 	@Builder
-	public SaveAuctionBIDRedis(Long purchasePk, int bidPrice, String bidTime,int askPrice,int peopleCount) {
+	public SaveAuctionBIDRedis(Long purchasePk, int bidPrice, String bidTime,int askPrice,int headCnt) {
 		this.purchasePk = purchasePk;
 		this.bidPrice = bidPrice;
 		this.bidTime = bidTime;
 		this.askPrice = askPrice;
-		this.peopleCount = peopleCount;
+		this.headCnt = headCnt;
 	}
 
 	@Override

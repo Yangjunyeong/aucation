@@ -79,7 +79,7 @@ public class AuctionService {
 			Collections.sort(bids);
 		 	nowPrice = bids.get(0).getBidPrice();
 		 	askPrice = bids.get(0).getAskPrice();
-			headCnt = bids.get(0).getPeopleCount();
+			headCnt = bids.get(0).getHeadCnt();
 			if(Objects.equals(bids.get(0).getPurchasePk(), memberPk)){
 				isBid=true;
 			}
@@ -135,15 +135,15 @@ public class AuctionService {
 		stringRedisTemplate.expire(key, registerRequest.getAuctionStartAfterTime(), TimeUnit.MINUTES);
 	}
 
-	public AuctionPreResponse getAuctionPreList(Long memberPk,int pageNum, AuctionSortRequest sortRequest) {
+	public AuctionListResponse getAuctionPreList(Long memberPk,int pageNum, AuctionSortRequest sortRequest) {
 		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 		if (pageNum<1){
 			pageNum =1;
 		}
-		AuctionPreResponse auctions = auctionRepository.searchPreAucToCondition(member,pageNum,sortRequest);
+		AuctionListResponse auctions = auctionRepository.searchPreAucToCondition(member,pageNum,sortRequest);
 		auctions.setNowTime(LocalDateTime.now());
 
-		for (AuctionPreResponseItem item : auctions.getItems()) {
+		for (AuctionPreResponseItem item : auctions.getPreItems()) {
 			List<Photo> photoList = photoService.getPhoto(item.getAuctionPk());
 			if(!photoList.isEmpty()){
 				item.setAuctionImg(photoList.get(0).getImgUrl());
@@ -152,11 +152,27 @@ public class AuctionService {
 		return auctions;
 	}
 
-//	public List<AuctionIngResponse> getAuctionIngList(Long memberPk,int pageNum, AuctionSortRequest sortRequest) {
-//		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
-//		List<Auction> auctions = auctionRepository.searchIngAucByCondition(member,pageNum,sortRequest);
-//		return null;
-//	}
+	public AuctionListResponse getAuctionIngList(Long memberPk,int pageNum, AuctionSortRequest sortRequest) {
+		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+		AuctionListResponse auctions = auctionRepository.searchIngAucByCondition(member,pageNum,sortRequest);
+		for (AuctionIngResponseItem item : auctions.getIngItems()) {
+			List<Photo> photoList = photoService.getPhoto(item.getAuctionPk());
+			if(!photoList.isEmpty()){
+				item.setAuctionImg(photoList.get(0).getImgUrl());
+			}
+			List<SaveAuctionBIDRedis> bidList = redisTemplate.opsForList().range(item.getAuctionUUID()
+					,0,-1);
+			if(bidList ==null || bidList.isEmpty()){
+				item.setAuctionTopBidPrice(item.getAuctionStartPrice());
+				item.setAuctionCurCnt(0);
+				continue;
+			}
+			Collections.sort(bidList);
+			item.setAuctionTopBidPrice(bidList.get(0).getBidPrice());
+			item.setAuctionCurCnt(bidList.get(0).getHeadCnt());
+		}
+		return auctions;
+	}
 //
 //	public List<ReAuctionResponse> getReAuctionList(Long memberPk,int pageNum, AuctionSortRequest sortRequest) {
 //		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));

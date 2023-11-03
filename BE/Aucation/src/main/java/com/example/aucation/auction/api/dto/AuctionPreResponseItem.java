@@ -16,6 +16,5 @@ public class AuctionPreResponseItem{
     private boolean auctionOwnerIsShop;
     private String auctionOwnerNickname; //
     private LocalDateTime auctionStartTime;  //
-
     private String auctionImg;  //
 }
