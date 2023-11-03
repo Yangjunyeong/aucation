@@ -54,7 +54,10 @@ const Panmae = () => {
   const deleteImg = (index: number) => {
     const updatedImages = [...images];
     updatedImages.splice(index, 1);
+    const updatedImageFiles = [...imagefiles];
+    updatedImageFiles.splice(index, 1);
     setImages(updatedImages);
+    setImagefiles(updatedImageFiles);
     setImagecount(imagecount - 1);
   };
   const productnameHandler = (name: string) => {

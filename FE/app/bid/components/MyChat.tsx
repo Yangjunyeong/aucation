@@ -5,14 +5,17 @@ interface MyChatProps {
   user: string;
   myname: string;
   chat: string;
+  userImg: string;
+  isOwner: boolean;
 }
 
-const MyChat: React.FC<MyChatProps> = ({ user, myname, chat }) => {
+const MyChat: React.FC<MyChatProps> = ({ user, myname, chat, userImg, isOwner }) => {
   return (
     <div className="flex justify-end items-center py-3 px-2 w-full">
       <div className="flex items-center">
         <div className="mr-3 flex items-end flex-col">
           <p className="">{user}</p>
+          {isOwner && <p className="text-xs text-gray-400">판매자</p>}
           <div
             className={clsx(
               `
@@ -27,7 +30,7 @@ const MyChat: React.FC<MyChatProps> = ({ user, myname, chat }) => {
             </div>
           </div>
         </div>
-        <RoundedImg src="https://picsum.photos/200" alt="" />
+        <RoundedImg src={userImg} alt="이미지" />
       </div>
     </div>
   );
