@@ -274,8 +274,22 @@ public class AuctionBidService {
 		Member customer = memberRepository.findById(auctionBidList.get(0).getPurchasePk())
 				.orElseThrow(()->new Exception("member 없음"));
 		log.info("*********************** 입찰 거래 내역 저장 시도 !!");
+
+		log.info("*********************** 입찰 시간 확인 !!");
+		int topPrice = 0;
+		for (int i = 0; i < auctionBidList.size(); i++) {
+			if(LocalDateTime.parse(auctionBidList.get(i).getBidTime()
+							, DateTimeFormatter.ofPattern(DateFormatPattern.get()))
+					.isBefore(auction.getAuctionEndDate())){
+				topPrice = i;
+				break;
+			}
+		}
+		log.info("*********************** 입찰 시간 확인 완료!!");
+
+		log.info("*********************** 입찰 거래 내역 저장 시도 !!");
 		AuctionHistory auctionHistory = AuctionHistory.builder()
-				.historyDateTime(LocalDateTime.parse(auctionBidList.get(0).getBidTime(), DateTimeFormatter.ofPattern(DateFormatPattern.get())))
+				.historyDateTime(LocalDateTime.parse(auctionBidList.get(topPrice).getBidTime(), DateTimeFormatter.ofPattern(DateFormatPattern.get())))
 				.owner(auction.getOwner())
 				.customer(customer)
 				.auction(auction)
@@ -288,8 +302,9 @@ public class AuctionBidService {
 		log.info("*********************** 입찰 내역 저장 성공 !!");
 
 		log.info("*********************** 경매 정보 저장 시도 !!");
-		auction.updateAuctionToEnd(auctionBidList.get(0).getBidPrice(),customer);
+		auction.updateAuctionToEnd(auctionBidList.get(topPrice).getBidPrice(),customer);
 		log.info("*********************** 경매 정보 저장 성공 !!");
+
 
 		log.info("*********************** REDIS LOG DATA DELETE !!");
 		redisTemplate.delete(key);
