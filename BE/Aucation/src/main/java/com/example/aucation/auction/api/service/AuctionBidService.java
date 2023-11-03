@@ -240,7 +240,7 @@ public class AuctionBidService {
 
 		stringRedisTemplate.opsForValue().set(key,"This key is prepared Key");
 		// 경매시간 30분으로 고정
-		stringRedisTemplate.expire(key, 30, TimeUnit.MINUTES);
+		stringRedisTemplate.expire(key, 1, TimeUnit.MINUTES);
 		log.info("*********************** startAuction END !!");
 	}
 
@@ -271,8 +271,8 @@ public class AuctionBidService {
 			Collections.sort(auctionBidList);
 		}
 		log.info("*********************** 경매 낙찰자 있음 !!");
-		Member customer = memberRepository.findById(auctionBidList.get(0).getPurchasePk())
-				.orElseThrow(()->new Exception("member 없음"));
+
+
 		log.info("*********************** 입찰 거래 내역 저장 시도 !!");
 
 		log.info("*********************** 입찰 시간 확인 !!");
@@ -288,6 +288,10 @@ public class AuctionBidService {
 		log.info("*********************** 입찰 시간 확인 완료!!");
 
 		log.info("*********************** 입찰 거래 내역 저장 시도 !!");
+
+		Member customer = memberRepository.findById(auctionBidList.get(topPrice).getPurchasePk())
+				.orElseThrow(()->new Exception("member 없음"));
+
 		AuctionHistory auctionHistory = AuctionHistory.builder()
 				.historyDateTime(LocalDateTime.parse(auctionBidList.get(topPrice).getBidTime(), DateTimeFormatter.ofPattern(DateFormatPattern.get())))
 				.owner(auction.getOwner())
@@ -305,6 +309,10 @@ public class AuctionBidService {
 		auction.updateAuctionToEnd(auctionBidList.get(topPrice).getBidPrice(),customer);
 		log.info("*********************** 경매 정보 저장 성공 !!");
 
+		Member owner = auction.getOwner();
+		owner.setMemberPoint(owner.getMemberPoint() + auctionBidList.get(topPrice).getBidPrice());
+
+		memberRepository.save(owner);
 
 		log.info("*********************** REDIS LOG DATA DELETE !!");
 		redisTemplate.delete(key);
