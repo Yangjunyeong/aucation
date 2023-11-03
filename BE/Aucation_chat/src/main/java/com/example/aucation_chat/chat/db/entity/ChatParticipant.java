@@ -40,8 +40,7 @@ public class ChatParticipant {
 	private LocalDateTime particiJoin;
 
 	// 퇴장시간
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "particiExit")
+	@Column(name = "partici_exit", columnDefinition = "TIMESTAMP")
 	private LocalDateTime particiExit;
 
 	// @ManyToOne(fetch = FetchType.LAZY)
@@ -51,7 +50,7 @@ public class ChatParticipant {
 	private long memberPk;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="chat_pk")
+	@JoinColumn
 	private ChatRoom chatRoom;
 
 	// private void setMember(Member member){

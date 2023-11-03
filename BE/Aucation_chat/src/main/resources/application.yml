@@ -1,9 +1,10 @@
 server:
   port: 9001
-#  ssl:
-#    key-store: classpath:keystore.p12
-#    key-store-password: vlzk@@8462
-#    key-store-type: PKCS12
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-password: vlzk@@8462
+    key-store-type: PKCS12
+
 
 spring:
   datasource:

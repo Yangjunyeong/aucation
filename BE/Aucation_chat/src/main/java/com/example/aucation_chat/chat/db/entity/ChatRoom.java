@@ -42,8 +42,7 @@ public class ChatRoom {
 	@Column(name="chat_create")
 	private LocalDateTime chatCreate = LocalDateTime.now();
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "chat_end")
+	@Column(name = "chat_end", columnDefinition = "TIMESTAMP")
 	private LocalDateTime chatEnd;
 
 	////////////////////////////////////////////////////

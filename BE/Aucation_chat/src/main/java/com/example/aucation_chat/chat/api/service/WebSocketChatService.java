@@ -26,12 +26,13 @@ import lombok.extern.slf4j.Slf4j;
 public class WebSocketChatService {
 
 	private final MemberRepository memberRepository;
+
 	@Autowired
 	private final RedisTemplate<String, RedisChatMessage> redisTemplate;
 
 	public RedisChatMessage saveChat(ChatRequest chatRequest, String sessionId){
 		// request에 담긴 member pk 로 정보들
-		Member member = memberRepository.findByMember_pk(chatRequest.getMemberPk())
+		Member member = memberRepository.findByMemberPk(chatRequest.getMemberPk())
 			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 		String nickname = member.getMemberNickname();
 		String imageURL = member.getImageURL();

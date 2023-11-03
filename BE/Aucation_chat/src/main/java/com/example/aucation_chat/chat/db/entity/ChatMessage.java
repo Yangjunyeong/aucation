@@ -31,15 +31,14 @@ public class ChatMessage {
 	@Column(name = "message_content")
 	private String messageContent;
 
-	@CreatedDate
-	@Column(name = "message_time")
+	@Column(name = "message_time", columnDefinition = "TIMESTAMP(3)")
 	private LocalDateTime messageTime;
 
 	@Column(name="member_pk")
 	private long memberPk;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="chat_pk")
+	@JoinColumn
 	private ChatRoom chatRoom;
 
 	private void setChatRoom(ChatRoom chatRoom){
