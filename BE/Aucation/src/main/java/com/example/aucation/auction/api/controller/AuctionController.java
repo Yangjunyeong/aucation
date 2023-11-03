@@ -36,7 +36,7 @@ public class AuctionController {
 	}
 
 	@PostMapping("/register")
-	private ResponseEntity<Void> register(@AuthorizedVariable Long memberPk,RegisterRequest registerRequest, @RequestPart(value="multipartFiles",required = false)
+	private ResponseEntity<Void> register(@AuthorizedVariable Long memberPk,RegisterRequest registerRequest, @RequestPart(value="multipartFiles")
 	List<MultipartFile> multipartFiles) throws
 		IOException {
 		auctionService.register(memberPk,registerRequest,multipartFiles);
