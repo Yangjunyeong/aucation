@@ -9,10 +9,10 @@ import java.util.List;
 @Data
 public class AuctionPreResponseItem{
     private long auctionPk;
-    private boolean isLike; //
+    private Boolean isLike; //
     private long likeCnt;   //
     private String auctionTitle; //
-    private int auctionStartPrice; //
+    private Integer auctionStartPrice; //
     private boolean auctionOwnerIsShop;
     private String auctionOwnerNickname; //
     private LocalDateTime auctionStartTime;  //
