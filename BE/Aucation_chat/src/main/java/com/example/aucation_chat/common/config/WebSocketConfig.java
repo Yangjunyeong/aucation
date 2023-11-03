@@ -31,7 +31,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 		// /app 경로로 시작하는 stomp메세지의 destination헤더는 @Controller객체의 @MesssageMapping 메소드로 라우팅.
 		// 애플리케이션(서버)로 와야되는 주소의 맨 앞에 붙는 거라고 생각하면 됨
-		config.setApplicationDestinationPrefixes("/app");
+		config.setApplicationDestinationPrefixes("/pub");
 
 		// /topic, /queue로 시작하는 destination헤더를 가진 메세지를 브로커로 라우팅
 		// 해당 경로를 subscribe하는 클라이언트에게 메세지 전달
