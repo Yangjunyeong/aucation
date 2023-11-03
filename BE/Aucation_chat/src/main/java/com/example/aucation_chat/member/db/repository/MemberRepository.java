@@ -10,5 +10,5 @@ import com.example.aucation_chat.member.db.entity.Member;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member,Long> {
-	Optional<Member> findByMember_pk(long memberPk);
+	Optional<Member> findByMemberPk(long memberPk);
 }

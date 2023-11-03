@@ -1,21 +1,10 @@
 package com.example.aucation_chat.member.db.entity;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,7 +24,9 @@ import lombok.Setter;
 // })
 public class Member{
 	@Id
-	private long member_pk;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "member_pk")
+	private long memberPk;
 
 	@Column(unique = true)
 	private String memberId;
@@ -69,9 +60,9 @@ public class Member{
 	// private Shop shop;
 
 	@Builder
-	public Member(long member_pk, String memberId, String memberPw, String memberEmail, int memberPoint,
+	public Member(long memberPk, String memberId, String memberPw, String memberEmail, int memberPoint,
 		String memberNickname, String memberBanned, String memberRefresh, String imageURL) {
-		this.member_pk = member_pk;
+		this.memberPk = memberPk;
 		this.memberId = memberId;
 		this.memberPw = memberPw;
 		this.memberEmail = memberEmail;
