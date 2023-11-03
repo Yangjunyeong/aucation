@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 
 
 @NoArgsConstructor
-@RequiredArgsConstructor
 @Getter
 public class ChatResponse {
 	String memberNickname;	// 보낸사람 닉네임

@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class RedisChatMessage {
 	private long memberPk; // 보낸사람 Pk
 	private String memberNickname; // 보낸사람 닉네임
