@@ -48,6 +48,7 @@ spring:
         3.34.50.200:6478,
         3.36.93.23:6379,
         3.36.93.23:6378
+    password: 9ower3ulPassForClu$7erC*nn=c7
     lettuce:
       pool:
         max-active: 10
