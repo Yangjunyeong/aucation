@@ -44,7 +44,7 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
                         Projections.bean(AuctionPreResponseItem.class,
                                 qAuction.id.as("auctionPk"),
                                 qAuction.auctionTitle.as("auctionTitle"),
-                                qAuction.auctionStartPrice,
+                                qAuction.auctionStartPrice.as("auctionStartPrice"),
                                 qAuction.auctionStartDate.as("auctionStartTime"),
                                 qMember.memberNickname.as("auctionOwnerNickname"),
                                 qMember.memberRole.eq(Role.SHOP).as("auctionOwnerIsShop"),
@@ -54,7 +54,7 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
                                                 JPAExpressions.selectOne()
                                                         .from(qLikeAuction)
                                                         .where(qLikeAuction.auction.eq(qAuction))
-                                                        .where(qLikeAuction.member.eq(member)) // Replace myUser with your user reference
+                                                            .where(qLikeAuction.member.id.eq(member.getId())) // Replace myUser with your user reference
                                                         .exists()
                                         )
                                         .then(true)
@@ -142,5 +142,8 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
              return new OrderSpecifier<>(Order.DESC, qAuction.auctionStartDate);
         }
     }
+
+
+    
 
 }
