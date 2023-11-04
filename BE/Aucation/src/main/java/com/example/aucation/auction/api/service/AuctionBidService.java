@@ -89,7 +89,7 @@ public class AuctionBidService {
 		int peopleCount = getNumberOfSubscribersInChannel(auctionUUID);
 
 		//입찰자가 아무도 없다
-		if(bids.isEmpty()){
+		if(bids == null || bids.isEmpty()){
 			return processFirstBid(member, firstPoint, calculateValue(auction.getAuctionStartPrice()) ,auction,peopleCount,auctionUUID);
 		}
 		// 입찰자가 한명이라도 존재한다.
@@ -98,6 +98,7 @@ public class AuctionBidService {
 		}
 	}
 
+
 	private BidResponse processFirstBid(Member member, int firstPoint, int bid, Auction auction,int peopleCount,String auctionUUID) {
 		//처음 입찰이니까 현재있는돈에서 입찰가를 뺀다 (금액을 지불한다)
 		firstPoint -= bid;
@@ -105,10 +106,10 @@ public class AuctionBidService {
 		if(firstPoint <0){
 			//throw new BadRequestException(ApplicationError.MEMBER_NOT_HAVE_MONEY);
 			WebSocketErrorMessage webSocketErrorMessage = WebSocketErrorMessage.builder()
-				.errMessage(HAVE_NO_MONEY)
-				.messageType(ERROR)
-				.memberPk(member.getId())
-				.build();
+					.errMessage(HAVE_NO_MONEY)
+					.messageType(ERROR)
+					.memberPk(member.getId())
+					.build();
 			template.convertAndSend("/topic/sub/" + auctionUUID, webSocketErrorMessage);
 		}
 		else {
@@ -122,12 +123,12 @@ public class AuctionBidService {
 			//4. 구매자가누구인지
 			//5. 현재 인원수가 몇명있는지
 			SaveAuctionBIDRedis saveAuctionBIDRedis = SaveAuctionBIDRedis.builder()
-				.bidTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern(DateFormatPattern.get())))
-				.bidPrice(auction.getAuctionStartPrice() + bid)
-				.askPrice(curBid)
-				.purchasePk(member.getId())
-				.headCnt(peopleCount)
-				.build();
+					.bidTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern(DateFormatPattern.get())))
+					.bidPrice(auction.getAuctionStartPrice() + bid)
+					.askPrice(curBid)
+					.purchasePk(member.getId())
+					.headCnt(peopleCount)
+					.build();
 			saveBIDRedis("auc-ing-log:" + auction.getAuctionUUID(), saveAuctionBIDRedis);
 
 			//무엇을 봐야하는가?
@@ -136,15 +137,15 @@ public class AuctionBidService {
 			//3.firstUser	(현재 최고 입찰자 - 나)
 			//4.ask		(현재 최고 입찰가 - 나)
 			return BidResponse.builder()
-				.firstUserPoint(firstPoint)
-				.firstBid(auction.getAuctionStartPrice() + bid)
-				.firstUser(member.getId())
-				.secondUserPoint(0)
-				.secondUser(0)
-				.headCnt(peopleCount)
-				.askPrice(curBid)
-				.messageType(COMPLETE)
-				.build();
+					.firstUserPoint(firstPoint)
+					.firstBid(auction.getAuctionStartPrice() + bid)
+					.firstUser(member.getId())
+					.secondUserPoint(0)
+					.secondUser(0)
+					.headCnt(peopleCount)
+					.askPrice(curBid)
+					.messageType(COMPLETE)
+					.build();
 		}
 		return null;
 	}
@@ -155,33 +156,32 @@ public class AuctionBidService {
 		int highBidPrice = 0;
 		Long highPurchasePk = 0L;
 
-		for (SaveAuctionBIDRedis redisBids : bids) {
-			if (redisBids.getBidPrice() > highBidPrice) {
-				highBidPrice = redisBids.getBidPrice();
-				highPurchasePk = redisBids.getPurchasePk();
-			}
-		}
+		Collections.sort(bids);
+
+		highBidPrice = bids.get(0).getBidPrice();
+		highPurchasePk =bids.get(0).getPurchasePk();
 
 		//내가 최고 입찰자면 입찰 못합니다.
-		boolean isHighBidOwnr = isHighBidOwner(member.getId(),highPurchasePk,auctionUUID);
+		boolean isHighBidOwner = isHighBidOwner(member.getId(),highPurchasePk,auctionUUID);
 
-		if(!isHighBidOwnr) {
+		if(!isHighBidOwner) {
 			//입찰하기전에 원래가격의 호가를 알아본다.
-			int preBid = calculateValue(highBidPrice);
+			int preBid = bids.get(0).getAskPrice();
 
 			//하지만 원래가격의호가+원래가격 => 다음 입찰을한다는 가정하의 호가가격임
-			int curBid = calculateValue((preBid + highBidPrice));
+			int curBid = calculateValue(preBid + highBidPrice);
+
 			//입찰가+호가 보다 커야 입찰가능
-			firstPoint -= (highBidPrice + curBid);
+			firstPoint -= (highBidPrice + preBid);
 
 			//입찰하지못하면 나가야함.
 			if (firstPoint < 0) {
 				//throw new BadRequestException(ApplicationError.MEMBER_NOT_HAVE_MONEY);
 				WebSocketErrorMessage webSocketErrorMessage = WebSocketErrorMessage.builder()
-					.errMessage(HAVE_NO_MONEY)
-					.messageType(ERROR)
-					.memberPk(member.getId())
-					.build();
+						.errMessage(HAVE_NO_MONEY)
+						.messageType(ERROR)
+						.memberPk(member.getId())
+						.build();
 				template.convertAndSend("/topic/sub/" + auctionUUID, webSocketErrorMessage);
 			}
 			else {
@@ -190,7 +190,7 @@ public class AuctionBidService {
 
 				//입찰할수있다는건 현재 제일 높은 입찰가의 돈을 돌려줘야함.
 				Member secondUser = memberRepository.findById(highPurchasePk)
-					.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+						.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 
 				//돈을 돌려주기로 선택.
 				int secondUserPoint = secondUser.updatePlusPoint(highBidPrice);
@@ -202,12 +202,12 @@ public class AuctionBidService {
 				//4. 구매자가 누구인지
 				//5. 인원수가 몇명인지
 				SaveAuctionBIDRedis saveAuctionBIDRedis = SaveAuctionBIDRedis.builder()
-					.bidTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern(DateFormatPattern.get())))
-					.askPrice(curBid)
-					.bidPrice(curBid + highBidPrice)
-					.purchasePk(member.getId())
-					.headCnt(peopleCount)
-					.build();
+						.bidTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern(DateFormatPattern.get())))
+						.askPrice(curBid)
+						.bidPrice(preBid + highBidPrice)
+						.purchasePk(member.getId())
+						.headCnt(peopleCount)
+						.build();
 				saveBIDRedis("auc-ing-log:" + auction.getAuctionUUID(), saveAuctionBIDRedis);
 
 				//무엇을 봐야하는가?
@@ -218,19 +218,20 @@ public class AuctionBidService {
 				//5.secondUserPoint (최고였던 입찰자의 모든 돈 - 어떤 누군가)
 				//6.ask		(현재 호가 - 나)
 				return BidResponse.builder()
-					.firstUserPoint(firstPoint)
-					.firstBid(highBidPrice + curBid)
-					.firstUser(member.getId())
-					.secondUser(secondUser.getId())
-					.secondUserPoint(secondUserPoint)
-					.headCnt(peopleCount)
-					.askPrice(curBid)
-					.messageType(COMPLETE)
-					.build();
+						.firstUserPoint(firstPoint)
+						.firstBid(highBidPrice + preBid)
+						.firstUser(member.getId())
+						.secondUser(secondUser.getId())
+						.secondUserPoint(secondUserPoint)
+						.headCnt(peopleCount)
+						.askPrice(curBid)
+						.messageType(COMPLETE)
+						.build();
 			}
 		}
 		return null;
 	}
+
 
 	public void startAuction(String aucUuid) {
 		log.info("*********************** startAuction START !!");
@@ -240,7 +241,7 @@ public class AuctionBidService {
 
 		stringRedisTemplate.opsForValue().set(key,"This key is prepared Key");
 		// 경매시간 30분으로 고정
-		stringRedisTemplate.expire(key, 1, TimeUnit.MINUTES);
+		stringRedisTemplate.expire(key, 3, TimeUnit.MINUTES);
 		log.info("*********************** startAuction END !!");
 	}
 
@@ -250,7 +251,7 @@ public class AuctionBidService {
 		log.info("*********************** endAuction START !!");
 
 		Auction auction = auctionRepository.findByAuctionUUID(aucUuid)
-				.orElseThrow(()-> new Exception("Auction이 없습니다"));
+				.orElseThrow(()-> new Exception("Auction don't exist!!"));
 		// 경매 내역을 가지는 redis key 값
 		String key = "auc-ing-log:" + aucUuid;
 
@@ -260,6 +261,7 @@ public class AuctionBidService {
 		// 최고가 판별 ( 최고가 + 가장 먼저 입찰한 사용자)
 		if(auctionBidList == null){
 			log.info("*********************** NULL !!");
+			return;
 		}
 		
 		if(auctionBidList.size()<1){
