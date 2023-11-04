@@ -103,7 +103,7 @@ public class AuctionService {
 			.highBid(isBid)
 			.headCnt(headCnt)
 			.nowPrice(nowPrice)
-			.askPrice(askPrice)
+			.askPrice(nowPrice)
 			.build();
 	}
 
