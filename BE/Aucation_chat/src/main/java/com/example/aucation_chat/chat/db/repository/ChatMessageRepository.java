@@ -10,4 +10,6 @@ import com.example.aucation_chat.chat.db.entity.ChatMessage;
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
 	List<ChatMessage> findByChatRoom_ChatPk(long chatPk);
 
+	List<ChatMessage> findTop50ByChatRoom_ChatPk_OrderByMessageTimeDesc(long chatPk);
+
 }

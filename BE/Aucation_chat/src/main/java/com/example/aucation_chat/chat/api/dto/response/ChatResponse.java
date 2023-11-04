@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 
 @NoArgsConstructor
 @Getter
+/**
+ * 채팅방에서 구독자에게 브로드캐스팅하는 메세지 dto
+ * */
 public class ChatResponse {
 	String memberNickname;	// 보낸사람 닉네임
 	String messageContent;		// 채팅 내용
