@@ -11,7 +11,7 @@ public class RangeValueCalculator {
         int[] bounds = {1000, 5000, 10000, 25000, 50000, 100000, 500000, 1000000,10000000,100000000,1000000000};
 
         for (int i = 0; i < ranges.length; i++) {
-            if (input <= bounds[i]) {
+            if (input < bounds[i]) {
                 return ranges[i];
             }
         }
