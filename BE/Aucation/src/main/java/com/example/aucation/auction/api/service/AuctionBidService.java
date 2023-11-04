@@ -78,6 +78,13 @@ public class AuctionBidService {
 			return null;
 		}
 
+		// 경매 시작 시간 이전 or 이후 error 발생
+		if(LocalDateTime.now().isBefore(auction.getAuctionStartDate())){
+			throw new Exception("경매 시간 이전");
+		}else if(LocalDateTime.now().isAfter(auction.getAuctionEndDate())){
+			throw new Exception("경매 시간 이후");
+		}
+
 		// 지금 입찰하기위해서 돈이 충분한지 확인하기
 		int firstPoint = member.getMemberPoint();
 
@@ -143,7 +150,7 @@ public class AuctionBidService {
 					.secondUserPoint(0)
 					.secondUser(0)
 					.headCnt(peopleCount)
-					.askPrice(curBid)
+					.askPrice(auction.getAuctionStartPrice() + curBid)
 					.messageType(COMPLETE)
 					.build();
 		}
@@ -224,7 +231,7 @@ public class AuctionBidService {
 						.secondUser(secondUser.getId())
 						.secondUserPoint(secondUserPoint)
 						.headCnt(peopleCount)
-						.askPrice(curBid)
+						.askPrice(highBidPrice + curBid)
 						.messageType(COMPLETE)
 						.build();
 			}
