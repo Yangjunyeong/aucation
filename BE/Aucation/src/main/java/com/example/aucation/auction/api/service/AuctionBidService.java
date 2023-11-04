@@ -231,7 +231,7 @@ public class AuctionBidService {
 						.secondUser(secondUser.getId())
 						.secondUserPoint(secondUserPoint)
 						.headCnt(peopleCount)
-						.askPrice(highBidPrice + curBid)
+						.askPrice(highBidPrice + preBid + curBid)
 						.messageType(COMPLETE)
 						.build();
 			}
