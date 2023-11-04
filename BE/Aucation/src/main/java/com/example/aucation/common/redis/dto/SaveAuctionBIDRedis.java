@@ -38,7 +38,7 @@ public class SaveAuctionBIDRedis implements Comparable<SaveAuctionBIDRedis>,Seri
 
 		// lowPrice가 같은 경우에는 bidTime을 비교
 		if (priceComparison == 0) {
-			return this.bidTime.compareTo(otherBid.bidTime);
+			return LocalDateTime.parse(this.bidTime).isBefore(LocalDateTime.parse(otherBid.bidTime)) ? 1 : -1;
 		}
 		// lowPrice가 큰 것을 우선으로 정렬
 		return -priceComparison;

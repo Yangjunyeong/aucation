@@ -25,7 +25,8 @@ import lombok.NoArgsConstructor;
 @AttributeOverride(name = "id",column = @Column(name="auction_history_pk"))
 public class AuctionHistory extends BaseEntity {
 
-	private LocalDateTime HistoryDateTime;
+	private LocalDateTime historyDateTime;
+	private LocalDateTime historyDoneDateTime;
 
 	@OneToOne
 	@JoinColumn(name="auction_pk")
@@ -43,9 +44,11 @@ public class AuctionHistory extends BaseEntity {
 
 	@Builder
 	public AuctionHistory(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,
-						  Long lastModifiedBy, boolean isDeleted, LocalDateTime historyDateTime, Auction auction, Member owner,Member customer) {
+						  Long lastModifiedBy, boolean isDeleted, LocalDateTime historyDateTime, Auction auction
+							, Member owner,Member customer, LocalDateTime historyDoneDateTime) {
 		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
-		HistoryDateTime = historyDateTime;
+		this.historyDateTime = historyDateTime;
+		this.historyDoneDateTime = historyDoneDateTime;
 		this.auction = auction;
 		addOwner(owner);
 		addCustomer(customer);
