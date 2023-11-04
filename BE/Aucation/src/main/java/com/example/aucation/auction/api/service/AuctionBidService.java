@@ -124,7 +124,7 @@ public class AuctionBidService {
 			//5. 현재 인원수가 몇명있는지
 			SaveAuctionBIDRedis saveAuctionBIDRedis = SaveAuctionBIDRedis.builder()
 					.bidTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern(DateFormatPattern.get())))
-					.bidPrice(auction.getAuctionStartPrice() + bid)
+					.bidPrice(auction.getAuctionStartPrice())
 					.askPrice(curBid)
 					.purchasePk(member.getId())
 					.headCnt(peopleCount)
