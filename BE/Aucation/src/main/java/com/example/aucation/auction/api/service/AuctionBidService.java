@@ -101,7 +101,7 @@ public class AuctionBidService {
 
 	private BidResponse processFirstBid(Member member, int firstPoint, int bid, Auction auction,int peopleCount,String auctionUUID) {
 		//처음 입찰이니까 현재있는돈에서 입찰가를 뺀다 (금액을 지불한다)
-		firstPoint -= bid;
+		firstPoint -= auction.getAuctionStartPrice();
 		//애초에 0이면 돈없으니까 빠꾸
 		if(firstPoint <0){
 			//throw new BadRequestException(ApplicationError.MEMBER_NOT_HAVE_MONEY);
@@ -115,7 +115,7 @@ public class AuctionBidService {
 		else {
 			//돈있으면 0원 저장하기.
 			member.updatePoint(firstPoint);
-			int curBid = calculateValue(auction.getAuctionStartPrice() + bid);
+			int curBid = calculateValue(auction.getAuctionStartPrice());
 			//Redis는
 			//1. 언제 입찰했는지
 			//2. 지금 최고가가 얼마인지
@@ -138,7 +138,7 @@ public class AuctionBidService {
 			//4.ask		(현재 최고 입찰가 - 나)
 			return BidResponse.builder()
 					.firstUserPoint(firstPoint)
-					.firstBid(auction.getAuctionStartPrice() + bid)
+					.firstBid(auction.getAuctionStartPrice())
 					.firstUser(member.getId())
 					.secondUserPoint(0)
 					.secondUser(0)
