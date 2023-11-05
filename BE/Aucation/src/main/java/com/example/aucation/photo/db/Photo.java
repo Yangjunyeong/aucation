@@ -30,7 +30,6 @@ import lombok.NoArgsConstructor;
 })
 public class Photo extends BaseEntity {
 
-
 	@Column(name = "img_url")
 	private String imgUrl;
 

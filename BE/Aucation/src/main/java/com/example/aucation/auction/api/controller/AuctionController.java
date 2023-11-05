@@ -57,4 +57,12 @@ public class AuctionController {
 //	private ResponseEntity<?> getReAucList(@AuthorizedVariable Long memberPk, @PathVariable int pageNum, @RequestBody AuctionSortRequest sortRequest){
 //		return ResponseEntity.ok().body(auctionService.getReAuctionList(memberPk,pageNum,sortRequest));
 //	}
+
+	@GetMapping("/{auctionPk}")
+	private ResponseEntity<?> getDetail(@AuthorizedVariable Long memberPk,
+										@PathVariable Long auctionPk) throws Exception {
+		return ResponseEntity.ok().body(auctionService.getDetailInfoByAuctionPk(memberPk,auctionPk));
+	}
+
+
 }

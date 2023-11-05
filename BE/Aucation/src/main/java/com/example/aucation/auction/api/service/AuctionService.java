@@ -156,6 +156,82 @@ public class AuctionService {
 
 		return auctions;
 	}
+
+	public AuctionDetailResponse getDetailInfoByAuctionPk(Long memberPk, Long auctionPk) throws Exception {
+		log.info("********************** getDetailInfoByAuctionPk start");
+		LocalDateTime nowTime =LocalDateTime.now();
+		AuctionDetailResponse auctionDetailResponse = auctionRepository.searchDetailAucToPk(auctionPk, memberPk);
+		if(auctionDetailResponse == null){
+			log.error("********************** AUCTION NO EXIST");
+			throw new Exception("Auction no exist");
+		}
+
+		auctionDetailResponse.setNowTime(nowTime);
+
+		log.info("********************** 경매 사진 가져오기 시도");
+		List<String> auctionPhotoUrl = new ArrayList<>();
+		List<Photo> auctionPhotos = photoService.getPhoto(auctionPk);
+		for(Photo p : auctionPhotos){
+			auctionPhotoUrl.add(p.getImgUrl());
+		}
+		auctionDetailResponse.setAuctionPhoto(auctionPhotoUrl);
+		log.info("********************** 경매 사진 가져오기 및 설정 성공, 사진 수 ={}", auctionPhotoUrl.size());
+
+		if(auctionDetailResponse.getAuctionStatus().equals(AuctionStatus.REVERSE_BID)){
+			log.info("********************** 역경매 정보 설정 시도");
+			
+			// 추후 개발예정
+
+			log.info("********************** 역경매 정보 설정 완료");
+			return auctionDetailResponse;
+		}
+		log.info("********************** 경매 상태 지정");
+		if(nowTime.isBefore(auctionDetailResponse.getAuctionStartTime())){
+			log.info("********************** 경매 상태 = {}","경매 전");
+			auctionDetailResponse.setIsAction(0);
+
+			log.info("********************** 경매 예상 호가 설정 시도");
+			auctionDetailResponse.setAuctionAskPrice(
+					calculateValue(auctionDetailResponse.getAuctionStartPrice()));
+			log.info("********************** 경매 예상 호가 설정 성공, 호가 = {}",
+					auctionDetailResponse.getAuctionAskPrice());
+		}else if(nowTime.isAfter(auctionDetailResponse.getAuctionStartTime())
+				&& nowTime.isBefore(auctionDetailResponse.getAuctionEndTime())){
+			log.info("********************** 경매 상태 = {}","경매 중");
+			auctionDetailResponse.setIsAction(1);
+
+			log.info("********************** 경매 입찰 내역 가져오기 시도");
+			List<SaveAuctionBIDRedis> bids = redisTemplate.opsForList().range(
+					"auc-ing-log:"+auctionDetailResponse.getAuctionUUID(),0,-1);
+			log.info("********************** 경매 입찰 내역 가져오기 성공");
+			if(bids == null || bids.isEmpty()){
+				log.info("********************** 경매 입찰 존재하지 않음");
+				auctionDetailResponse.setAuctionTopPrice(auctionDetailResponse.getAuctionStartPrice());
+				auctionDetailResponse.setAuctionAskPrice(
+						calculateValue(auctionDetailResponse.getAuctionTopPrice()));
+				log.info("********************** 경매 초기값 설정 완료. 현재가 = {}, 호가 ={}",
+						auctionDetailResponse.getAuctionTopPrice(), auctionDetailResponse.getAuctionAskPrice());
+			}else{
+				log.info("********************** 경매 입찰 존재");
+
+				log.info("********************** 경매 현재값 설정 시도");
+				Collections.sort(bids);
+				auctionDetailResponse.setAuctionTopPrice(bids.get(0).getBidPrice());
+				auctionDetailResponse.setAuctionAskPrice(bids.get(0).getAskPrice());
+				auctionDetailResponse.setAuctionCurCnt(bids.get(0).getHeadCnt());
+				log.info("********************** 경매 현재값 설정 완료. 현재 최고가 = {}, 호가 ={}, 참여자 ={}",
+						auctionDetailResponse.getAuctionTopPrice(),
+						auctionDetailResponse.getAuctionAskPrice(),
+						auctionDetailResponse.getAuctionCurCnt());
+			}
+		}else{
+			auctionDetailResponse.setIsAction(-1);
+			log.info("********************** 경매 상태 = {}","경매 완료");
+		}
+		log.info("********************** 경매 상태 지정 완료");
+		log.info("********************** getDetailInfoByAuctionPk end");
+		return auctionDetailResponse;
+	}
 //
 //	public List<ReAuctionResponse> getReAuctionList(Long memberPk,int pageNum, AuctionSortRequest sortRequest) {
 //		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
