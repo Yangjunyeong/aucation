@@ -1,7 +1,6 @@
 package com.example.aucation_chat.chat.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Controller;
 
 import com.example.aucation_chat.common.redis.dto.RedisChatMessage;
 import com.example.aucation_chat.chat.api.dto.request.ChatRequest;
-import com.example.aucation_chat.chat.api.dto.response.ChatResponse;
 import com.example.aucation_chat.chat.api.service.WebSocketChatService;
 
 import lombok.RequiredArgsConstructor;
@@ -40,13 +38,13 @@ public class WebSocketChat {
 		System.out.println("session id: " + sessionId);
 		System.out.println("subscribe 주소: /topic/sub/"+sessionId);
 
-		/***** redis에 메세지 저장 *****/
-		RedisChatMessage message = webSocketChatService.saveChat(chatRequest, sessionId);
+		/***** redis에 메세지 저장 후 redis에 저장되는 메세지 객체 리턴*****/
+		RedisChatMessage message = webSocketChatService.saveAndReturn(chatRequest, sessionId);
 
 		/**** chat response 생성 ****/
-		ChatResponse response = webSocketChatService.makeResponse(message);
+		// ChatResponse response = webSocketChatService.makeResponse(message);
 
 		// 특정 sessionId를 가지는 채팅방에 broad casting
-		template.convertAndSend("/topic/sub/" + sessionId, response);
+		template.convertAndSend("/topic/sub/" + sessionId, message);
 	}
 }

@@ -30,7 +30,11 @@ public class WebSocketChatService {
 	@Autowired
 	private final RedisTemplate<String, RedisChatMessage> redisTemplate;
 
-	public RedisChatMessage saveChat(ChatRequest chatRequest, String sessionId){
+	/** redis에 메세지 저장 후 redis에 저장되는 메세지 객체 리턴
+	 *  @param chatRequest  웹소켓 채팅에서 온 객체
+	 * @param sessionId = auctionUUID
+	 * */
+	public RedisChatMessage saveAndReturn(ChatRequest chatRequest, String sessionId){
 		// request에 담긴 member pk 로 정보들
 		Member member = memberRepository.findByMemberPk(chatRequest.getMemberPk())
 			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
