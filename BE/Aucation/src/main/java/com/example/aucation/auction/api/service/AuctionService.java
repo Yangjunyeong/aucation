@@ -11,10 +11,13 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import com.example.aucation.auction.api.dto.*;
+import com.example.aucation.like.db.entity.LikeAuction;
+import com.example.aucation.like.db.repository.LikeAuctionRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.relational.core.sql.Like;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,6 +49,8 @@ public class AuctionService {
 	private final AuctionRepository	 auctionRepository;
 
 	private final MemberRepository memberRepository;
+
+	private final LikeAuctionRepository likeAuctionRepository;
 
 	private final RedisTemplate<String, SaveAuctionBIDRedis> redisTemplate;
 
@@ -232,6 +237,38 @@ public class AuctionService {
 		log.info("********************** getDetailInfoByAuctionPk end");
 		return auctionDetailResponse;
 	}
+
+	@Transactional
+	public void setLikeAuction(Long memberPk, Long auctionPk) throws Exception {
+		log.info("********************** setLikeAuction() 시작");
+		Member member = memberRepository.findById(memberPk)
+				.orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+		Auction auction = auctionRepository.findById(auctionPk)
+				.orElseThrow(()-> new Exception("AUCTION NO EXIST"));
+
+		likeAuctionRepository.findByAuctionAndMember(auction,member)
+						.ifPresentOrElse(
+								likeAuction->{
+									log.info("********************** 좋아요 존재 O");
+									likeAuctionRepository.delete(likeAuction);
+									log.info("********************** memberPk : {} -> auctionPk : {} 좋아요 설정 취소"
+											,memberPk,auctionPk);
+								},
+								()->{
+									log.info("********************** 좋아요 존재 X");
+									likeAuctionRepository.save(LikeAuction
+													.builder()
+													.member(member)
+													.auction(auction)
+													.build());
+									log.info("********************** memberPk : {} -> auctionPk : {} 좋아요 설정"
+											,memberPk,auctionPk);
+								}
+						);
+		log.info("********************** setLikeAuction() 완료");
+	}
+
+
 //
 //	public List<ReAuctionResponse> getReAuctionList(Long memberPk,int pageNum, AuctionSortRequest sortRequest) {
 //		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));

@@ -3,6 +3,7 @@ package com.example.aucation.auction.api.controller;
 import com.example.aucation.auction.api.dto.AuctionSortRequest;
 import java.io.IOException;
 import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -64,5 +65,10 @@ public class AuctionController {
 		return ResponseEntity.ok().body(auctionService.getDetailInfoByAuctionPk(memberPk,auctionPk));
 	}
 
+	@GetMapping("/like/{auctionPk}")
+	private ResponseEntity<?> likeAuction(@AuthorizedVariable Long memberPk, @PathVariable Long auctionPk) throws Exception {
+		auctionService.setLikeAuction(memberPk,auctionPk);
+		return ResponseEntity.ok().build();
+	}
 
 }
