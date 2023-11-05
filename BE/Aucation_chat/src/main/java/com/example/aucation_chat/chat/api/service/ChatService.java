@@ -42,7 +42,7 @@ public class ChatService {
 		// auctionUUID가 있는지 검사 (지금은 못함)
 
 		// redis에서 채팅 내역 빼오기
-		List<RedisChatMessage> redisChatMessages = redisTemplate.opsForList().range(auctionUUID, 0, -1);
+		List<RedisChatMessage> redisChatMessages = redisTemplate.opsForList().range("chat-auc:"+auctionUUID, 0, -1);
 
 		// 채팅 내역 있으면 반환
 		if (redisChatMessages != null) {
@@ -59,7 +59,7 @@ public class ChatService {
 				.orElseThrow(() -> new NotFoundException(
 					ApplicationError.CHATTING_ROOM_NOT_FOUND));
 
-			List<ChatMessage> chatList = chatMessageRepository.findByChatRoom_ChatPk(searchedChat.getChatPk());
+			List<ChatMessage> chatList = chatMessageRepository.findTop50ByChatRoom_ChatPk_OrderByMessageTimeDesc(searchedChat.getChatPk());
 
 			// 2. MySQL 에도 없음 => 새로 만들어진 채팅방이라는 뜻
 			if (chatList == null)
@@ -82,7 +82,7 @@ public class ChatService {
 				// MySQL데이터를 Redis로 옮기는 과정
 				RedisChatMessage temp = RedisChatMessage.builder()
 					.memberPk(chatList.get(i).getMemberPk())
-					.messageContnet(chatList.get(i).getMessageContent())
+					.messageContent(chatList.get(i).getMessageContent())
 					.memberNickname(member.getMemberNickname())
 					.messageTime(messageTime)
 					.imageURL(member.getImageURL())
@@ -91,7 +91,7 @@ public class ChatService {
 				dbToRedisChats.add(temp);
 				// redisTemplate.opsForList().rightPush(auctionUUID, temp);
 			}
-			redisTemplate.opsForList().rightPushAll(auctionUUID, dbToRedisChats);
+			redisTemplate.opsForList().rightPushAll("chat-auc:"+auctionUUID, dbToRedisChats);
 			return dbToRedisChats;
 		} // Read-Through 끝
 

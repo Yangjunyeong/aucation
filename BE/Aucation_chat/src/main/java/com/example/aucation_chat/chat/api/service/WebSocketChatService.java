@@ -48,12 +48,12 @@ public class WebSocketChatService {
 		RedisChatMessage message = RedisChatMessage.builder()
 			.memberPk(chatRequest.getMemberPk())
 			.memberNickname(nickname)
-			.messageContnet(chatRequest.getContent())
+			.messageContent(chatRequest.getContent())
 			.imageURL(imageURL)
 			.messageTime(messageTime)
 			.build();
 
-		redisTemplate.opsForList().rightPush(sessionId, message);
+		redisTemplate.opsForList().rightPush("chat-auc:"+sessionId, message);
 
 		return message;
 	}
@@ -62,7 +62,7 @@ public class WebSocketChatService {
 		// message에서 memberPK 빼고 만들어 response로 반환
 		ChatResponse response = ChatResponse.builder()
 			.memberNickname(message.getMemberNickname())
-			.messageContent(message.getMessageContnet())
+			.messageContent(message.getMessageContent())
 			.imageURL(message.getImageURL())
 			.messageTime(message.getMessageTime())
 			.build();
