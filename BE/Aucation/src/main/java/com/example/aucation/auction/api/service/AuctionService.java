@@ -11,6 +11,8 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import com.example.aucation.auction.api.dto.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -48,6 +50,8 @@ public class AuctionService {
 	private final RedisTemplate<String, SaveAuctionBIDRedis> redisTemplate;
 
 	private final PhotoService photoService;
+	private final int COUNT_IN_PAGE = 15;
+
 
 	@Transactional
 	public PlaceResponse place(Long memberPk, String auctionUUID) throws Exception {
@@ -140,37 +144,16 @@ public class AuctionService {
 		if (pageNum<1){
 			pageNum =1;
 		}
-		AuctionListResponse auctions = auctionRepository.searchPreAucToCondition(member,pageNum,sortRequest);
-		auctions.setNowTime(LocalDateTime.now());
-
-		for (AuctionPreResponseItem item : auctions.getPreItems()) {
-			List<Photo> photoList = photoService.getPhoto(item.getAuctionPk());
-			if(!photoList.isEmpty()){
-				item.setAuctionImg(photoList.get(0).getImgUrl());
-			}
-		}
+		Pageable pageable = PageRequest.of(pageNum - 1, COUNT_IN_PAGE);
+		AuctionListResponse auctions = auctionRepository.searchPreAucToCondition(member,pageNum,sortRequest,pageable);
 		return auctions;
 	}
 
 	public AuctionListResponse getAuctionIngList(Long memberPk,int pageNum, AuctionSortRequest sortRequest) {
 		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
-		AuctionListResponse auctions = auctionRepository.searchIngAucByCondition(member,pageNum,sortRequest);
-		for (AuctionIngResponseItem item : auctions.getIngItems()) {
-			List<Photo> photoList = photoService.getPhoto(item.getAuctionPk());
-			if(!photoList.isEmpty()){
-				item.setAuctionImg(photoList.get(0).getImgUrl());
-			}
-			List<SaveAuctionBIDRedis> bidList = redisTemplate.opsForList().range(item.getAuctionUUID()
-					,0,-1);
-			if(bidList ==null || bidList.isEmpty()){
-				item.setAuctionTopBidPrice(item.getAuctionStartPrice());
-				item.setAuctionCurCnt(0);
-				continue;
-			}
-			Collections.sort(bidList);
-			item.setAuctionTopBidPrice(bidList.get(0).getBidPrice());
-			item.setAuctionCurCnt(bidList.get(0).getHeadCnt());
-		}
+		Pageable pageable = PageRequest.of(pageNum - 1, COUNT_IN_PAGE);
+		AuctionListResponse auctions = auctionRepository.searchIngAucByCondition(member,pageNum,sortRequest, pageable);
+
 		return auctions;
 	}
 //

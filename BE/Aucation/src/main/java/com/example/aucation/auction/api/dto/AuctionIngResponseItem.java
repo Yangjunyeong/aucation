@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Data
 public class AuctionIngResponseItem {
     private Boolean isLike;    //
-    private long likeCnt;  //
+    private Long likeCnt;  //
     private long auctionPk;   //
     private String auctionUUID;   //
     private String auctionTitle;  //
