@@ -5,10 +5,12 @@ import com.example.aucation.auction.api.dto.AuctionListResponse;
 import com.example.aucation.auction.api.dto.AuctionPreResponseItem;
 import com.example.aucation.auction.api.dto.AuctionSortRequest;
 import com.example.aucation.auction.db.entity.QAuction;
+import com.example.aucation.common.redis.dto.SaveAuctionBIDRedis;
 import com.example.aucation.like.db.entity.QLikeAuction;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.member.db.entity.QMember;
 import com.example.aucation.member.db.entity.Role;
+import com.example.aucation.photo.db.QPhoto;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -19,9 +21,11 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -31,9 +35,12 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
     private final QAuction qAuction = QAuction.auction;
     private final QLikeAuction qLikeAuction = QLikeAuction.likeAuction;
     private final QMember qMember = QMember.member;
-    private final int COUNT_IN_PAGE = 15;
+    private final QPhoto qPhoto = QPhoto.photo;
+    private final RedisTemplate<String, SaveAuctionBIDRedis> redisTemplate;
+
     @Override
-    public AuctionListResponse searchPreAucToCondition(Member member, int pageNum, AuctionSortRequest searchCondition) {
+    public AuctionListResponse searchPreAucToCondition(Member member, int pageNum,
+                                                       AuctionSortRequest searchCondition, Pageable pageable) {
         // 여기서 가져올꺼임
         NumberPath<Long> likeCnt = Expressions.numberPath(Long.class,"likeCnt");
         JPAQuery<AuctionPreResponseItem> query = queryFactory
@@ -45,13 +52,14 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
                                 qAuction.auctionStartDate.as("auctionStartTime"),
                                 qMember.memberNickname.as("auctionOwnerNickname"),
                                 qMember.memberRole.eq(Role.SHOP).as("auctionOwnerIsShop"),
-                                qLikeAuction.count().as(likeCnt),
+                                qLikeAuction.countDistinct().as(likeCnt),
+                                qPhoto.imgUrl.min().as("auctionImg"),
                                 new CaseBuilder()
                                         .when(
                                                 JPAExpressions.selectOne()
                                                         .from(qLikeAuction)
                                                         .where(qLikeAuction.auction.eq(qAuction))
-                                                            .where(qLikeAuction.member.id.eq(member.getId())) // Replace myUser with your user reference
+                                                            .where(qLikeAuction.member.eq(member)) // Replace myUser with your user reference
                                                         .exists()
                                         )
                                         .then(true)
@@ -65,25 +73,28 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
                 .on(qLikeAuction.auction.eq(qAuction))
                 .leftJoin(qMember)
                 .on(qAuction.owner.eq(qMember))
-                .groupBy(qAuction.id);
+                .leftJoin(qPhoto)
+                .on(qPhoto.auction.eq(qAuction))
+                .groupBy(qAuction);
 
         long count = query
                 .fetchCount();
 
-        Pageable pageable = PageRequest.of(pageNum - 1, COUNT_IN_PAGE);
         query.offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(getSortByCondition(searchCondition.getAuctionCondition(),likeCnt));
         List<AuctionPreResponseItem> result = query.fetch();
-        double totalPage = Math.ceil((double) count/COUNT_IN_PAGE);
+        double totalPage = Math.ceil((double) count/pageable.getPageSize());
         return AuctionListResponse.builder()
+                .nowTime(LocalDateTime.now())
                 .currentPage(pageNum)
                 .totalPage(totalPage)
                 .preItems(result)
                 .build();
 }
     @Override
-    public AuctionListResponse searchIngAucByCondition(Member member, int pageNum, AuctionSortRequest searchCondition) {
+    public AuctionListResponse searchIngAucByCondition(Member member, int pageNum,
+                                                       AuctionSortRequest searchCondition, Pageable pageable) {
         NumberPath<Long> likeCnt = Expressions.numberPath(Long.class,"likeCnt");
         JPAQuery<AuctionIngResponseItem> query = queryFactory
                 .select(
@@ -94,44 +105,65 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
                                 qAuction.auctionStartPrice.as("auctionStartPrice"),
                                 qAuction.auctionEndDate.as("auctionEndTime"),
                                 qMember.memberNickname.as("auctionOwnerNickname"),
-                                qLikeAuction.count().as(likeCnt),
+                                qLikeAuction.countDistinct().as(likeCnt),
+                                qPhoto.imgUrl.min().as("auctionImg"),
                                 new CaseBuilder()
                                         .when(
                                                 JPAExpressions.selectOne()
                                                         .from(qLikeAuction)
                                                         .where(qLikeAuction.auction.eq(qAuction))
-                                                        .where(qLikeAuction.member.id.eq(member.getId())) // Replace myUser with your user reference
+                                                        .where(qLikeAuction.member.eq(member)) // Replace myUser with your user reference
                                                         .exists()
                                         )
                                         .then(true)
                                         .otherwise(false).as("isLike")
                         )
-                ).from(qAuction)
+                )
+                .from(qAuction)
                 .where(qAuction.auctionStartDate.before(LocalDateTime.now())
                                 .and(qAuction.auctionEndDate.after(LocalDateTime.now())),
                         keywordEq(searchCondition.getSearchType(), searchCondition.getSearchKeyword()),
                         catalogEq(searchCondition.getAuctionCatalog())
-                ).leftJoin(qLikeAuction)
+                )
+                .leftJoin(qLikeAuction)
                 .on(qLikeAuction.auction.eq(qAuction))
                 .leftJoin(qMember)
                 .on(qAuction.owner.eq(qMember))
-                .groupBy(qAuction.id);
+                .leftJoin(qPhoto)
+                .on(qPhoto.auction.eq(qAuction))
+                .groupBy(qAuction);
 
         long count = query
                 .fetchCount();
 
-        Pageable pageable = PageRequest.of(pageNum - 1, COUNT_IN_PAGE);
         query.offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(getSortByCondition(searchCondition.getAuctionCondition(),likeCnt));
         List<AuctionIngResponseItem> result = query.fetch();
 
-        double totalPage = Math.ceil((double) count/COUNT_IN_PAGE);
+        double totalPage = Math.ceil((double) count/pageable.getPageSize());
+
+
+        for (AuctionIngResponseItem item : result) {
+            List<SaveAuctionBIDRedis> bidList = redisTemplate.opsForList().range(item.getAuctionUUID()
+                    ,0,-1);
+            if(bidList ==null || bidList.isEmpty()){
+                item.setAuctionTopBidPrice(item.getAuctionStartPrice());
+                item.setAuctionCurCnt(0);
+                continue;
+            }
+            Collections.sort(bidList);
+            item.setAuctionTopBidPrice(bidList.get(0).getBidPrice());
+            item.setAuctionCurCnt(bidList.get(0).getHeadCnt());
+        }
+
         return AuctionListResponse.builder()
+                .nowTime(LocalDateTime.now())
                 .currentPage(pageNum)
                 .totalPage(totalPage)
                 .ingItems(result)
                 .build();
+
     }
 
 //    @Override

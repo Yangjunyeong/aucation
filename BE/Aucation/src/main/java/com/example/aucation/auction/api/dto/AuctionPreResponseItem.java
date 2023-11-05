@@ -10,7 +10,7 @@ import java.util.List;
 public class AuctionPreResponseItem{
     private long auctionPk;
     private Boolean isLike; //
-    private long likeCnt;   //
+    private Long likeCnt;   //
     private String auctionTitle; //
     private Integer auctionStartPrice; //
     private boolean auctionOwnerIsShop;
