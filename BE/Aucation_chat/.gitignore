@@ -1,4 +1,5 @@
-**/resources
+**/resources/*
+**/application.yml
 
 HELP.md
 .gradle
