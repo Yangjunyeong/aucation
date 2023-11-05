@@ -44,13 +44,15 @@ public class RedisConfig {
 		LettuceClientConfiguration clientConfiguration = LettuceClientConfiguration.builder()
 			.clientOptions(ClusterClientOptions.builder()
 				.topologyRefreshOptions(ClusterTopologyRefreshOptions.builder()
-					.refreshPeriod(Duration.ofMinutes(1)) // 1분마다 master의 down감지
+					// .refreshPeriod(Duration.ofMinutes(1)) // 1분마다 master의 down감지
 					.enableAdaptiveRefreshTrigger()
 					.enablePeriodicRefresh(true)  // master가 종료되고 slave가 master로 승격되어 서비스를 계속
 					.build())
 				.build())
 
 			.readFrom(ReadFrom.REPLICA_PREFERRED) // 복제본 노드에서 읽지만 사용할 수없는 경우 마스터에서 읽음.
+			.commandTimeout(Duration.ofSeconds(5)) // 더 많이 허용되는 시간초과 까지의 시간
+			// .useSsl()
 			.build();
 
 		// 모든 클러스터 노드들 정보를 넣는다.
@@ -73,10 +75,10 @@ public class RedisConfig {
 		return redisTemplate;
 	}
 
-	@Bean
-	public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory){
-		RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
-		redisMessageListenerContainer.setConnectionFactory(redisConnectionFactory);
-		return redisMessageListenerContainer;
-	}
+	// @Bean
+	// public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory){
+	// 	RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
+	// 	redisMessageListenerContainer.setConnectionFactory(redisConnectionFactory);
+	// 	return redisMessageListenerContainer;
+	// }
 }
