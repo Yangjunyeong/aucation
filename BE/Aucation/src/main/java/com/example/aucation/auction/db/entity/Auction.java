@@ -69,6 +69,12 @@ public class Auction extends BaseEntity {
 	@OneToMany(mappedBy = "auction", cascade = CascadeType.PERSIST)
 	private List<Photo> photoList = new ArrayList<>();
 
+	public List<String> getPhotoUrlList(){
+		List<String> photoList = new ArrayList<>();
+		this.photoList.stream().map(photo -> photoList.add(photo.getImgUrl()));
+		return photoList;
+	}
+
 	@Builder
 	public Auction(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,
 				   Long lastModifiedBy, boolean isDeleted, String auctionUUID, AuctionStatus auctionStatus,
