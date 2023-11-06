@@ -71,4 +71,5 @@ public class AuctionController {
 		return ResponseEntity.ok().build();
 	}
 
+
 }

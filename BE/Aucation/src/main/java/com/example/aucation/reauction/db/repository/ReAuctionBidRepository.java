@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface ReAuctionBidRepository  extends JpaRepository<ReAuctionBid,Long> {
 
-    Optional<ReAuctionBid> findById(Long reAucBidPk);
+    Optional<ReAuctionBid> findById(ReAuctionBid reAuctionBid);
     ReAuctionBid findByIdAndMemberId(Long reAucBidPk, Long memberPk);
 
 }
