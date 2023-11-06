@@ -54,29 +54,14 @@ public class WebSocketChatService {
 			.messageTime(messageTime)
 			.build();
 
-		// sessionID로 하는 key가 redis에 있는지에 검사 후 TTL 설정
-		// setTTL(sessionId);
 		redisTemplate.opsForList().rightPush("chat-auc:"+sessionId, message);
-
+		setTTL(sessionId); // 첫 push 였다면 TTL 설정
 		return message;
 	}
 
 	private void setTTL(String sessionId) {
-		if(!redisTemplate.hasKey("chat-auc"+ sessionId)) {
-			// redisTemplate.opsForList().set("chat-auc:"+sessionId);
+		if(redisTemplate.opsForList().size("chat-auc:"+sessionId)==1) { // O(1)시간에 .size() 수행
 			redisTemplate.expire("chat-auc:" + sessionId, 30, TimeUnit.MINUTES); // 30분 TTL설정
 		}
-	}
-
-	public ChatResponse makeResponse(RedisChatMessage message) {
-		// message에서 memberPK 빼고 만들어 response로 반환
-		ChatResponse response = ChatResponse.builder()
-			.memberNickname(message.getMemberNickname())
-			.messageContent(message.getMessageContent())
-			.imageURL(message.getImageURL())
-			.messageTime(message.getMessageTime())
-			.build();
-
-		return response;
 	}
 }

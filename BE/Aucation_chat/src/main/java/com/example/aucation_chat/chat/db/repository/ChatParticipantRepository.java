@@ -9,4 +9,5 @@ import com.example.aucation_chat.chat.db.entity.ChatParticipant;
 
 public interface ChatParticipantRepository extends JpaRepository<ChatParticipant, Long> {
 	List<ChatParticipant> findByChatRoom_ChatPk(long chatPk);
+	Optional<ChatParticipant> findByChatRoom_ChatPkAndAndMemberPk(long chatPk, long memberPk);
 }
