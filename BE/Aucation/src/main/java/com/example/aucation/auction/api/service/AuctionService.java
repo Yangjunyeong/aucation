@@ -122,26 +122,52 @@ public class AuctionService {
 			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 		String auctionUUID = PasswordGenerator.generate();
 
-		Auction auction = Auction.builder()
-			.auctionDetail(registerRequest.getAuctionDetail())
-			.auctionStatus(AuctionStatus.BID)
-			.auctionType(registerRequest.getAuctionType())
-			.auctionTitle(registerRequest.getAuctionTitle())
-			.auctioMeetingLat(registerRequest.getAuctionMeetingLat())
-			.auctionMeetingLng(registerRequest.getAuctionMeetingLng())
-			.auctionEndPrice(0)
-			.auctionStartDate(LocalDateTime.now().plusMinutes(registerRequest.getAuctionStartAfterTime()))
-			.auctionStartPrice(registerRequest.getAuctionStartPrice())
-			.auctionUUID(auctionUUID)
-			.owner(member)
-			.build();
+		//경매라면
+		if(registerRequest.getAuctionStatus().equals(AuctionStatus.BID)){
+			Auction auction = Auction.builder()
+				.auctionDetail(registerRequest.getAuctionDetail())
+				.auctionStatus(AuctionStatus.BID)
+				.auctionType(registerRequest.getAuctionType())
+				.auctionTitle(registerRequest.getAuctionTitle())
+				.auctioMeetingLat(registerRequest.getAuctionMeetingLat())
+				.auctionMeetingLng(registerRequest.getAuctionMeetingLng())
+				.auctionEndPrice(0)
+				.auctionStartDate(LocalDateTime.now().plusMinutes(registerRequest.getAuctionStartAfterTime()))
+				.auctionEndDate(LocalDateTime.now().plusMinutes(registerRequest.getAuctionStartAfterTime()).plusMinutes(30))
+				.auctionStartPrice(registerRequest.getAuctionStartPrice())
+				.auctionUUID(auctionUUID)
+				.owner(member)
+				.build();
+			auctionRepository.save(auction);
+			photoService.upload(multipartFiles, auctionUUID);
+			String key = "auc-pre:" + auctionUUID;
+			stringRedisTemplate.opsForValue().set(key, "This is a token for Prepared_Auction");
+			stringRedisTemplate.expire(key, registerRequest.getAuctionStartAfterTime(), TimeUnit.MINUTES);
 
-		auctionRepository.save(auction);
+		}
+		//역 경매라면
+		else if(registerRequest.getAuctionStatus().equals(AuctionStatus.REVERSE_BID)) {
+			Auction auction = Auction.builder()
+				.auctionDetail(registerRequest.getAuctionDetail())
+				.auctionStatus(AuctionStatus.REVERSE_BID)
+				.auctionType(registerRequest.getAuctionType())
+				.auctionTitle(registerRequest.getAuctionTitle())
+				.auctioMeetingLat(registerRequest.getAuctionMeetingLat())
+				.auctionMeetingLng(registerRequest.getAuctionMeetingLng())
+				.auctionEndPrice(0)
+				.auctionStartDate(LocalDateTime.now())
+				.auctionEndDate(LocalDateTime.now().plusMinutes(registerRequest.getAuctionStartAfterTime()))
+				.auctionStartPrice(registerRequest.getAuctionStartPrice())
+				.auctionUUID(auctionUUID)
+				.owner(member)
+				.build();
+			auctionRepository.save(auction);
+			photoService.upload(multipartFiles, auctionUUID);
+			String key = "auc-pre:" + auctionUUID;
+			stringRedisTemplate.opsForValue().set(key, "This is a token for Prepared_Auction");
+			stringRedisTemplate.expire(key, registerRequest.getAuctionStartAfterTime(), TimeUnit.MINUTES);
+		}
 
-		photoService.upload(multipartFiles, auctionUUID);
-		String key = "auc-pre:" + auctionUUID;
-		stringRedisTemplate.opsForValue().set(key, "This is a token for Prepared_Auction");
-		stringRedisTemplate.expire(key, registerRequest.getAuctionStartAfterTime(), TimeUnit.MINUTES);
 	}
 
 	public AuctionListResponse getAuctionPreList(Long memberPk,int pageNum, AuctionSortRequest sortRequest) {

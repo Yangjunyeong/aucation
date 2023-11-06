@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RegisterRequest {
-	private String auctionStatus;
+	private AuctionStatus auctionStatus;
 	private String auctionTitle;
 	private String auctionType;
 	private double auctionMeetingLat;
