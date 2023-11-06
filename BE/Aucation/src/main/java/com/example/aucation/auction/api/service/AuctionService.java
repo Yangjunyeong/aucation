@@ -83,11 +83,11 @@ public class AuctionService {
 
 		if(bids.isEmpty()){
 			 nowPrice = auction.getAuctionStartPrice();
-			 askPrice = calculateValue(nowPrice);
+			 askPrice = nowPrice;
 		}else{
 			Collections.sort(bids);
 		 	nowPrice = bids.get(0).getBidPrice();
-		 	askPrice = bids.get(0).getAskPrice();
+		 	askPrice = nowPrice + bids.get(0).getAskPrice();
 			headCnt = bids.get(0).getHeadCnt();
 			if(Objects.equals(bids.get(0).getPurchasePk(), memberPk)){
 				isBid=true;
@@ -112,7 +112,7 @@ public class AuctionService {
 			.highBid(isBid)
 			.headCnt(headCnt)
 			.nowPrice(nowPrice)
-			.askPrice(nowPrice)
+			.askPrice(askPrice)
 			.build();
 	}
 
