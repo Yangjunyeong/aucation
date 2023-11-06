@@ -93,4 +93,17 @@ public class MemberService {
 		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 		return null;
 	}
+
+	public EmailResponse cerifyemail(String memberEmail) throws Exception {
+		String code = registerMail.sendSimpleMessage(memberEmail,"회원가입");
+		return EmailResponse.of(code);
+	}
+	public void verifyId(String memberId) {
+		if(memberRepository.existsByMemberId(memberId)) {
+			throw new DuplicateException(ApplicationError.DUPLICATE_USERNAME);
+		}
+
+	}
+
+
 }
