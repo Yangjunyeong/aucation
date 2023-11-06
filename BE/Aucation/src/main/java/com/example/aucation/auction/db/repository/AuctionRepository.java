@@ -23,4 +23,6 @@ public interface AuctionRepository extends JpaRepository<Auction,Long>, AuctionR
 //	List<Auction> searchReAucByCondition(int pageNum, AuctionSortRequest sortRequest);
 
 	AuctionDetailResponse searchDetailAucToPk(Long auctionPk, Long memberPk);
+
+    AuctionDetailResponse searchDetailReAucToPk(Long auctionPk, Long memberPk);
 }

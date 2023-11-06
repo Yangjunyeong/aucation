@@ -38,14 +38,11 @@ public class Photo extends BaseEntity {
 	@JoinColumn(name="auction_pk")
 	private Auction auction;
 
-	private PhotoStatus photoStatus;
-
 	@Builder
 	public Photo(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,
 		Long lastModifiedBy, boolean isDeleted, String imgUrl, Auction auction, PhotoStatus photoStatus) {
 		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
 		this.imgUrl = imgUrl;
 		this.auction = auction;
-		this.photoStatus = photoStatus;
 	}
 }

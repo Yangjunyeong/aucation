@@ -64,7 +64,8 @@ public enum ApplicationError {
     OWNER_NOT_BID(HttpStatus.BAD_REQUEST,"B001" ,"당신은 판매자입니다 입찰할수 없습니다"),
     DUPLICATE_NOT_BID(HttpStatus.BAD_REQUEST, "B002","당신은 현재 최고 입찰자입니다 또 입찰할수없습니다." ),
     EXIST_IMPUID(HttpStatus.BAD_REQUEST,"P001","UID가 존재합니다"),
-    CLOSE_THE_AUCTION(HttpStatus.BAD_REQUEST,"P002" ,"이미 닫힌 옥션입니다. 죄송합니다 나가주세요");
+    CLOSE_THE_AUCTION(HttpStatus.BAD_REQUEST,"P002" ,"이미 닫힌 옥션입니다. 죄송합니다 나가주세요"),
+    NOT_EXIST_AUCTION(HttpStatus.BAD_REQUEST,"P003" ,"존재하지 않은 옥션입니다.");;
     private final HttpStatus status;
     private final String code;
     private final String message;
