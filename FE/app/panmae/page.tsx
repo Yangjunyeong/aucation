@@ -125,6 +125,7 @@ const Panmae = () => {
     callApi("post", "/auction/register", formData)
       .then(res => {
         console.log(res);
+        router.push("/");
       })
       .catch(err => {
         console.log(err);
