@@ -9,6 +9,8 @@ import { useParams } from "next/navigation";
 import { CompatClient, Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import axios from "axios";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 type userData = {
   memberPk: number;
@@ -25,6 +27,7 @@ interface Chat {
 }
 
 const AuctionChat = () => {
+  const router = useRouter();
   const [userDatas, setUserDatas] = useState<userData>({
     memberPk: 0,
     ownerNickname: "",
@@ -38,14 +41,15 @@ const AuctionChat = () => {
   const client = useRef<CompatClient>();
   const connectToWebSocket = () => {
     if (client.current) {
-      client.current.deactivate();
+      // client.current.deactivate();
+      return;
     }
     client.current = Stomp.over(() => {
       const ws = new SockJS(`${process.env.NEXT_PUBLIC_SERVER_URL}/chat-server`);
       return ws;
     });
 
-    client.current.connect({}, () => {
+    client.current.connect({ memberPK: userDatas.memberPk }, () => {
       client.current!.subscribe(`/topic/sub/${uuid}`, res => {
         console.log(JSON.parse(res.body));
         const data = JSON.parse(res.body);
@@ -58,7 +62,7 @@ const AuctionChat = () => {
   const bidHandler = (text: string) => {
     client.current!.send(
       `/pub/multichat/${uuid}`,
-      {},
+      { memberPK: userDatas.memberPk },
       JSON.stringify({
         memberPk: userDatas.memberPk,
         content: text,
@@ -78,13 +82,13 @@ const AuctionChat = () => {
   };
 
   useEffect(() => {
-    const foo = async () => {
-      await getChatHandler();
-      await scroll();
-    };
-    foo();
-    bidDataHandler();
-    connectToWebSocket();
+    // const foo = async () => {
+    //   await getChatHandler();
+    //   await scroll();
+    // };
+    // foo();
+    // bidDataHandler();
+    // connectToWebSocket();
   }, []);
 
   const bidDataHandler = () => {
@@ -102,7 +106,10 @@ const AuctionChat = () => {
         });
       })
       .catch(err => {
-        console.log(err);
+        if (err.response.data.code == "P002") {
+          toast.error(err.response.data.message);
+          router.push("/");
+        }
       });
   };
 

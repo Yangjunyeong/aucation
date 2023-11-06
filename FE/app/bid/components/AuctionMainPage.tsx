@@ -64,7 +64,6 @@ const AuctionMainPage = () => {
   const modalHandler = () => {
     setIsModal(!isModal);
   };
-
   useEffect(() => {
     const timer = setInterval(() => {
       const startTime = Date.now(); // 종료 시간을 적절히 설정하세요
@@ -82,7 +81,8 @@ const AuctionMainPage = () => {
   // 웹소켓 연결 및 이벤트 핸들러 설정
   const connectToWebSocket = () => {
     if (client.current) {
-      client.current.deactivate();
+      // client.current.disconnect();
+      return;
     }
     client.current = Stomp.over(() => {
       const ws = new SockJS(`${process.env.NEXT_PUBLIC_SERVER_URL}/auc-server`);
@@ -93,11 +93,24 @@ const AuctionMainPage = () => {
       client.current!.subscribe(`/topic/sub/${uuid}`, res => {
         console.log(JSON.parse(res.body));
         const data = JSON.parse(res.body);
+        if (data.headCnt != null) {
+          setDatas((datas: auctionData) => {
+            return {
+              ...datas,
+              headCnt: data.headCnt,
+            };
+          });
+          return;
+        }
         if (data.messageType == "error") {
           if (data.memberPk == datas.memberPk) {
             toast.error(data.errMessage);
+            return;
+          } else if (data.code == "P002") {
+            toast.error(data.message);
+            router.push("/");
+            return;
           }
-          return;
         }
         if (data.firstUser == datas.memberPk) {
           setDatas((datas: auctionData) => {
@@ -107,7 +120,6 @@ const AuctionMainPage = () => {
               nowPrice: data.firstBid,
               highBid: true,
               askPrice: data.askPrice,
-              headCnt: data.headCnt,
             };
           });
         } else if (data.secondUser == datas.memberPk) {
@@ -118,7 +130,6 @@ const AuctionMainPage = () => {
               nowPrice: data.firstBid,
               highBid: false,
               askPrice: data.askPrice,
-              headCnt: data.headCnt,
             };
           });
         } else {
@@ -127,11 +138,18 @@ const AuctionMainPage = () => {
               ...datas,
               nowPrice: data.firstBid,
               askPrice: data.askPrice,
-              headCnt: data.headCnt,
             };
           });
         }
       });
+      client.current!.send(
+        `/app/send/register/${uuid}`,
+        {},
+        JSON.stringify({
+          message: "입장",
+          memberPk: datas.memberPk,
+        })
+      );
     });
   };
 
@@ -151,6 +169,7 @@ const AuctionMainPage = () => {
       {},
       JSON.stringify({
         memberPk: datas.memberPk,
+        message: "입찰",
       })
     );
   };
@@ -181,7 +200,10 @@ const AuctionMainPage = () => {
         });
       })
       .catch(err => {
-        console.log(err);
+        if (err.response.data.code == "P002") {
+          toast.error(err.response.data.message);
+          router.push("/");
+        }
       });
   };
 

@@ -38,6 +38,11 @@ import { userInfo } from "os";
 // 페이지 네이션
 import Pagination from "react-js-pagination";
 import "../auction/components/Paging.css";
+import Script from "next/script";
+import { NextPage } from "next";
+import { RequestPayParams, RequestPayResponse } from "iamport-typings";
+import toast from "react-hot-toast";
+
 interface userData {
   profileImg: string;
   nickname: string;
@@ -62,7 +67,7 @@ interface categoryLikeType {
   imgUrl: string;
   isLiked: boolean;
 }
-const MyPage = () => {
+const MyPage: NextPage = () => {
   // 프로필 이미지/ 네임 / 인포
   const router = useRouter();
   const [images, setImages] = useState<string>("");
@@ -229,39 +234,45 @@ const MyPage = () => {
   // 마이페이지 조회 핸들러
   const fetchMypage = (value: any) => {};
   // 마이페이지 결제 핸들러
+
   const cashHandler = (value: any) => {
-    let tmp = 37345;
-    const merchant_uid = "57008833-33040g" + tmp;
-    tmp += 1;
+    if (!window.IMP) return;
+    const { IMP } = window;
+    const impkey = `${process.env.NEXT_PUBLIC_IAMPORT_IMP}`;
+    IMP.init(impkey);
     const data = {
       pg: "kakaopay.TC0ONETIME",
       pay_method: "card",
-      merchant_uid: merchant_uid,
+      merchant_uid: `mid_${new Date().getTime()}`,
       name: "테스트 상f점",
       amount: 1004,
       buyer_email: "tdest@navedr.com",
       buyer_name: "코드쿡",
       buyer_tel: "010-1234-5678",
-      buyer_addr: "서울특d별시",
+      buyer_addr: "서울특별시",
       buyer_postcode: "123-456",
     };
-    // useEffect(() => {
-    //   // const iamportOne = document.createElement("script");
-    //   // iamportOne.async = false;
-    //   // iamportOne.src = `https://cdn.iamport.kr/v1/iamport.js`;
-    //   // document.head.appendChild(iamportOne);
-    //   // var IMP = window.IMP;
-    //   // IMP.init("impXXXXXXXXX");
-    // }, []);
+    const callback = (response: RequestPayResponse) => {
+      const { success, error_msg } = response;
+      console.log(response);
+      if (success) {
+        toast.success("결제 성공");
+        callApi("post", "/verifyIamport", {
+          amount: response.paid_amount,
+        })
+          .then(res => {
+            console.log(res.data);
+          })
+          .catch(err => {
+            console.log(JSON.stringify(data, null, 2));
+            console.log(err);
+          });
+      } else {
+        toast.error(`결제 실패: ${error_msg}`);
+      }
+    };
 
-    callApi("post", "verifyIamport", data)
-      .then(res => {
-        console.log(res.data);
-      })
-      .catch(err => {
-        console.log(JSON.stringify(data, null, 2));
-        console.log(err);
-      });
+    IMP.request_pay(data, callback);
   };
 
   // 좋아요 버튼 누를경우 pk, IsLiked값을 post로 전달
@@ -306,6 +317,10 @@ const MyPage = () => {
 
   return (
     <div className="w-full px-80 py-20">
+      <Script
+        src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"
+        strategy="beforeInteractive"
+      />
       {/* 프로필 영역 */}
       {/* 결제 */}
       <div className="border-2" onClick={cashHandler}>
