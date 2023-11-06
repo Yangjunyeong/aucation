@@ -17,7 +17,11 @@ import { callApi } from "../utils/api";
 import axios from "axios";
 import { set } from "react-hook-form";
 
+import { useRouter } from "next/navigation";
+
 const Panmae = () => {
+  const router = useRouter();
+
   const [imagecount, setImagecount] = useState(0);
   const [images, setImages] = useState<string[]>([]); // 이미지의 url 주소를 담는 state
   const [imagefiles, setImagefiles] = useState<File[]>([]); // 이미지의 url 주소를 담는 state
@@ -127,7 +131,15 @@ const Panmae = () => {
       });
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    // 브라우저에서 로컬 스토리지에 접근하여 토큰 확인
+    const accessToken = window.localStorage.getItem("accessToken");
+
+    // 토큰이 없는 경우 로그인 페이지로 리다이렉션
+    if (!accessToken) {
+      router.push("/login");
+    }
+  }, [router]);
 
   return (
     <div className="w-full px-60 py-20">
@@ -215,6 +227,7 @@ const Panmae = () => {
 
         <div className="border-b-2 border-black w-full mt-10"></div>
 
+            {/* 카테고리 선택 박스 */}
         <div className="my-10 w-full mx-4">
           <SelectBox categoryHandler={categoryHandler} />
         </div>

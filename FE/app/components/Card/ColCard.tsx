@@ -21,7 +21,6 @@ interface ItemType {
 
 interface CardProps {
   item: ItemType;
-
 }
 const Card: React.FC<CardProps> = ({ item }) => {
   const {
@@ -36,7 +35,7 @@ const Card: React.FC<CardProps> = ({ item }) => {
     isIndividual,
   } = item;
   const [state, setState] = useState<string>("");
-  const [islike, setIsliked] = useState<boolean>(isLiked)
+  const [islike, setIsliked] = useState<boolean>(isLiked);
 
   // 현재 경매 상태
   const stateHandler = (state: string) => {
@@ -45,19 +44,18 @@ const Card: React.FC<CardProps> = ({ item }) => {
   };
 
   // 좋아요 상태
-  const likeHandler = (value:boolean) => {
-    setIsliked(value)
+  const likeHandler = (value: boolean) => {
+    setIsliked(value);
     if (!value) {
       // pk, isliked 담아서 좋아요 상태변경
-      console.log('싫어요', value)
+      console.log("싫어요", value);
     } else {
       // pk, isliked 담아서 좋아요 상태 변경
-      console.log('좋아요', value)
+      console.log("좋아요", value);
     }
-  }
- 
+  };
 
-  const tmp = new Date()
+  const tmp = new Date();
   return (
     <>
       <div className="rounded-lg overflow-hidden shadow-lg bg-white w-[295px]">
@@ -102,7 +100,11 @@ const Card: React.FC<CardProps> = ({ item }) => {
 
             <div>
               <div className="flex text-sm h-[20px]">
-                <ColCountDown currentTime={tmp} auctionStartTime={item.auctionStartTime} stateHandler={stateHandler} />
+                <ColCountDown
+                  currentTime={tmp}
+                  auctionStartTime={item.auctionStartTime}
+                  stateHandler={stateHandler}
+                />
               </div>
             </div>
           </div>

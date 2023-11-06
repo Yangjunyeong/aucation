@@ -1,9 +1,13 @@
 "use client";
 
 import Image from "next/image";
+<<<<<<< Updated upstream
 import { useRef, useState, useEffect } from "react";
+=======
+import { useEffect, useRef, useState } from "react";
+>>>>>>> Stashed changes
 import defaultprofile from "@/app/images/defaultprofile.png";
-
+import { useRouter } from "next/navigation";
 import clsx from "clsx";
 import Input from "./components/Input";
 // 카드 더미데이터
@@ -12,11 +16,15 @@ import ColCard from "../components/Card/ColCard";
 import AuctionSell from "../components/Card/AuctionSell";
 import dummyData from "../detail/components/DummyData";
 import AuctionBuy from "../components/Card/AuctionBuy";
+<<<<<<< Updated upstream
 import LikeCard from "../components/Card/LikeCard"
 // 역경매 판매
 import ReAuctionSell from "../components/Card/ReAuctionSell";
 // 역경매 구매
 // import ReAuctionBuy from "../components/Card/ReAuctionBuy";
+=======
+import LikeCard from "../components/Card/LikeCard";
+>>>>>>> Stashed changes
 
 interface userData {
   profileImg: string;
@@ -28,13 +36,14 @@ interface userData {
 
 interface categoryLikeType {
   // pk: number
-  category:string;
-  state:string;
-  title:string;
-  imgUrl:string;
-  isLiked:boolean;
+  category: string;
+  state: string;
+  title: string;
+  imgUrl: string;
+  isLiked: boolean;
 }
 const MyPage = () => {
+  const router = useRouter();
   const [images, setImages] = useState<string>("");
   const [imgFile, setImgFile] = useState<string | null>(null);
   const imgRef = useRef<HTMLInputElement>(null);
@@ -92,8 +101,9 @@ const MyPage = () => {
       imgUrl: "https://cdn.newspenguin.com/news/photo/202001/317_1641_1348.png",
       isLiked: true,
     },
-  ])
+  ]);
 
+<<<<<<< Updated upstream
 
   const usernameHandler = (name: string) => {
     setUsername(name);
@@ -210,7 +220,26 @@ const MyPage = () => {
     setDetailCategory("전체")
   }, [category,sellOrBuy])
 
+=======
+  const handleLike = (index: number, value: boolean) => {
+    const updatedData = [...categoryLikedata];
+    updatedData[index] = {
+      ...updatedData[index],
+      isLiked: value,
+    };
+    setCategoryLikedata(updatedData);
+    console.log("업데이트", updatedData);
+  };
+  useEffect(() => {
+    // 브라우저에서 로컬 스토리지에 접근하여 토큰 확인
+    const accessToken = window.localStorage.getItem("accessToken");
+>>>>>>> Stashed changes
 
+    // 토큰이 없는 경우 로그인 페이지로 리다이렉션
+    if (!accessToken) {
+      router.push("/login");
+    }
+  }, [router]);
 
   return (
     <div className="w-full px-80 py-20">
@@ -414,6 +443,7 @@ const MyPage = () => {
         ))}
       </div>
 
+<<<<<<< Updated upstream
       {/* 경매 - 판매 */}
       {category == "경매" && sellOrBuy == "판매" && <div>
         {dummyData.map((item, idx) => (
@@ -448,17 +478,51 @@ const MyPage = () => {
 
 
 
+=======
+      {category == "경매판매" && (
+        <div>
+          {dummyData.map((item, idx) => (
+            <AuctionSell item={item} key={idx} />
+          ))}
+        </div>
+      )}
 
-      {category == "좋아요" && <div className="flex flex-wrap justify-between">
-     
-        {categoryLikedata.map((item, idx) => (
-          <LikeCard item={item} key={idx} likeHandler={(value) => handleLike(idx, value)} />
-        ))}
-    
-      </div>}
+      {category == "경매구매" && (
+        <div>
+          {dummyData.map((item, idx) => (
+            <AuctionBuy item={item} key={idx} />
+          ))}
+        </div>
+      )}
+>>>>>>> Stashed changes
 
+      {category == "좋아요" && (
+        <div className="flex flex-wrap justify-between">
+          {categoryLikedata.map((item, idx) => (
+            <LikeCard item={item} key={idx} likeHandler={value => handleLike(idx, value)} />
+          ))}
+        </div>
+      )}
 
+<<<<<<< Updated upstream
 
+=======
+      {category == "역경매판매" && (
+        <div>
+          {dummyData.map((item, idx) => (
+            <AuctionSell item={item} key={idx} />
+          ))}
+        </div>
+      )}
+>>>>>>> Stashed changes
+
+      {category == "역경매구매" && (
+        <div>
+          {dummyData.map((item, idx) => (
+            <AuctionSell item={item} key={idx} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
