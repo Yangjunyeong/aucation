@@ -122,8 +122,8 @@ const Panmae = () => {
     imagefiles.forEach((image, index) => {
       formData.append("multipartFiles", image);
     });
-    
-    callApi("post", "/auction/register",{formData})
+
+    callApi("post", "/auction/register", formData)
       .then(res => {
         console.log(res);
         router.push("/");
@@ -131,7 +131,6 @@ const Panmae = () => {
       .catch(err => {
         console.log(err);
       });
-      
   };
 
   useEffect(() => {
