@@ -22,8 +22,8 @@ import lombok.RequiredArgsConstructor;
 public class WebSocketChat {
 
 	@Autowired
-	private SimpMessagingTemplate template; //특정 Broker로 메세지를 전달
-	private WebSocketChatService webSocketChatService;
+	private final SimpMessagingTemplate template; //특정 Broker로 메세지를 전달
+	private final WebSocketChatService webSocketChatService;
 
 	// 클라이언트가 send 하는 경로
 	//stompConfig에서 설정한 applicationDestinationPrefixes와 @MessageMapping 경로가 병합됨

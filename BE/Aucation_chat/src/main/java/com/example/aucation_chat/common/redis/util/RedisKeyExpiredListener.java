@@ -1,5 +1,7 @@
 // package com.example.aucation_chat.common.redis.util;
 //
+// import java.util.List;
+//
 // import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.data.redis.connection.Message;
 // import org.springframework.data.redis.connection.MessageListener;
@@ -7,6 +9,8 @@
 // import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 // import org.springframework.stereotype.Component;
 //
+// import com.example.aucation_chat.chat.api.service.ChatService;
+// import com.example.aucation_chat.common.redis.dto.RedisChatMessage;
 //
 // import lombok.extern.slf4j.Slf4j;
 //
@@ -23,7 +27,7 @@
 // 	}
 //
 // 	@Autowired
-// 	// private AuctionBidService auctionBidService;
+// 	private ChatService chatService;
 //
 // 	/**
 // 	 *
@@ -38,17 +42,9 @@
 //
 // 		String[] keyInfo = key.split(":");
 // 		String aucUuid = keyInfo[1];
-// 		String[] aucInfo = keyInfo[0].split("-");
+// 		// String[] aucInfo = keyInfo[0].split("-");
 //
-// 		if(aucInfo[1].equals("pre")){
-// 			log.info("*********************** 경매 시작 이벤트!!");
-// 		}else {
-// 			log.info("*********************** 경매 종료 이벤트!!");
-// 			try {
-// 			} catch (Exception e) {
-// 				throw new RuntimeException(e);
-// 			}
-// 		}
+// 		List<RedisChatMessage> chatList =
 // 		log.info("*********************** REDIS EXPIRED EVENT END !!");
 // 	}
 // }

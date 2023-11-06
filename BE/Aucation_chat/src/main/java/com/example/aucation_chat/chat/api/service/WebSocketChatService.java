@@ -3,6 +3,7 @@ package com.example.aucation_chat.chat.api.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -53,9 +54,18 @@ public class WebSocketChatService {
 			.messageTime(messageTime)
 			.build();
 
+		// sessionID로 하는 key가 redis에 있는지에 검사 후 TTL 설정
+		// setTTL(sessionId);
 		redisTemplate.opsForList().rightPush("chat-auc:"+sessionId, message);
 
 		return message;
+	}
+
+	private void setTTL(String sessionId) {
+		if(!redisTemplate.hasKey("chat-auc"+ sessionId)) {
+			// redisTemplate.opsForList().set("chat-auc:"+sessionId);
+			redisTemplate.expire("chat-auc:" + sessionId, 30, TimeUnit.MINUTES); // 30분 TTL설정
+		}
 	}
 
 	public ChatResponse makeResponse(RedisChatMessage message) {
