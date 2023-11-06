@@ -2,7 +2,6 @@ package com.example.aucation.auction.db.repository;
 
 import com.example.aucation.auction.api.dto.*;
 import com.example.aucation.auction.db.entity.QAuction;
-import com.example.aucation.auction.db.entity.QReAuctionBid;
 import com.example.aucation.common.redis.dto.SaveAuctionBIDRedis;
 import com.example.aucation.like.db.entity.QLikeAuction;
 import com.example.aucation.member.db.entity.Member;
@@ -31,7 +30,6 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
     private final JPAQueryFactory queryFactory;
     private final QAuction qAuction = QAuction.auction;
     private final QLikeAuction qLikeAuction = QLikeAuction.likeAuction;
-    private final QReAuctionBid qReAuctionBid = QReAuctionBid.reAuctionBid;
     private final QMember qMember = QMember.member;
     private final QPhoto qPhoto = QPhoto.photo;
     private final RedisTemplate<String, SaveAuctionBIDRedis> redisTemplate;
@@ -185,6 +183,14 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
                                 qAuction.auctionEndDate.as("auctionEndTime"),
                                 qLikeAuction.countDistinct().as(likeCnt),
                                 new CaseBuilder()
+                                        .when(qAuction.auctionStartDate.after(LocalDateTime.now()))
+                                        .then(0)
+                                        .when(qAuction.auctionStartDate.before(LocalDateTime.now())
+                                                .and(qAuction.auctionEndDate.after(LocalDateTime.now())))
+                                        .then(1)
+                                        .otherwise(-1)
+                                        .as("isAction"),
+                                new CaseBuilder()
                                         .when(
                                                 JPAExpressions.selectOne()
                                                         .from(qLikeAuction)
@@ -229,6 +235,14 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
                                 qAuction.auctionEndDate.as("auctionEndTime"),
                                 qAuction.owner.id.eq(memberPk).as("isOwner"),
                                 qLikeAuction.countDistinct().as(likeCnt),
+                                new CaseBuilder()
+                                        .when(qAuction.auctionStartDate.after(LocalDateTime.now()))
+                                        .then(0)
+                                        .when(qAuction.auctionStartDate.before(LocalDateTime.now())
+                                                .and(qAuction.auctionEndDate.after(LocalDateTime.now())))
+                                        .then(1)
+                                        .otherwise(-1)
+                                        .as("isAction"),
                                 new CaseBuilder()
                                         .when(
                                                 JPAExpressions.selectOne()

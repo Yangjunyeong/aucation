@@ -1,6 +1,5 @@
 package com.example.aucation.member.db.entity;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,7 @@ import javax.persistence.OneToOne;
 import com.example.aucation.auction.db.entity.Auction;
 import com.example.aucation.auction.db.entity.AuctionBid;
 import com.example.aucation.auction.db.entity.AuctionHistory;
-import com.example.aucation.auction.db.entity.ReAuctionBid;
+import com.example.aucation.reauction.db.entity.ReAuctionBid;
 import com.example.aucation.common.entity.BaseEntity;
 import com.example.aucation.discount.db.entity.Discount;
 import com.example.aucation.discount.db.entity.DiscountHistory;

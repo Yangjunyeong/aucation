@@ -1,4 +1,4 @@
-package com.example.aucation.auction.api.dto;
+package com.example.aucation.reauction.api.dto;
 
 import com.example.aucation.auction.db.entity.AuctionStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;

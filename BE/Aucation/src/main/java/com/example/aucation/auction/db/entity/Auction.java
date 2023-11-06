@@ -19,12 +19,12 @@ import com.example.aucation.like.db.entity.LikeAuction;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.photo.db.Photo;
 
+import com.example.aucation.reauction.db.entity.ReAuctionBid;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

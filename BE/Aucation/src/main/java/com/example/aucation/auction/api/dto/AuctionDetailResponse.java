@@ -1,6 +1,7 @@
 package com.example.aucation.auction.api.dto;
 
 import com.example.aucation.auction.db.entity.AuctionStatus;
+import com.example.aucation.reauction.api.dto.ReAucBidResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
@@ -40,8 +41,7 @@ public class AuctionDetailResponse {
     /// 경매  ///
 
     private Boolean isOwner;  //
-    private Integer reAucBidCnt;
-    private Integer reAucTopBidPrice;
+    private int reAucBidCnt;
     private ReAucBidResponse myReAucBidResponse;            // isOwner : false 인 경우
     private List<ReAucBidResponse> reAucBidResponses = new ArrayList<>();  // true 인 경우
 
