@@ -14,6 +14,7 @@ import com.example.aucation.auction.api.dto.*;
 import com.example.aucation.common.error.BadRequestException;
 import com.example.aucation.like.db.entity.LikeAuction;
 import com.example.aucation.like.db.repository.LikeAuctionRepository;
+import com.example.aucation.photo.db.PhotoStatus;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -71,7 +72,7 @@ public class AuctionService {
 
 		List<SaveAuctionBIDRedis> bids = redisTemplate.opsForList().range("auc-ing-log:"+auctionUUID, 0, -1);
 
-		List<Photo> photoList = photoService.getPhoto(auction.getId());
+		List<Photo> photoList = photoService.getPhoto(auction.getId(), PhotoStatus.AUCTION_PHOTO);
 
 		List<String> UUIDImage = new ArrayList<>();
 
@@ -142,7 +143,7 @@ public class AuctionService {
 				.owner(member)
 				.build();
 			auctionRepository.save(auction);
-			photoService.upload(multipartFiles, auctionUUID);
+			photoService.upload(multipartFiles, auctionUUID, false);
 			String key = "auc-pre:" + auctionUUID;
 			stringRedisTemplate.opsForValue().set(key, "This is a token for Prepared_Auction");
 			stringRedisTemplate.expire(key, registerRequest.getAuctionStartAfterTime(), TimeUnit.MINUTES);
@@ -165,7 +166,7 @@ public class AuctionService {
 				.owner(member)
 				.build();
 			auctionRepository.save(auction);
-			photoService.upload(multipartFiles, auctionUUID);
+			photoService.upload(multipartFiles, auctionUUID,false);
 		}
 
 	}
@@ -201,7 +202,7 @@ public class AuctionService {
 
 		log.info("********************** 경매 사진 가져오기 시도");
 		List<String> auctionPhotoUrl = new ArrayList<>();
-		List<Photo> auctionPhotos = photoService.getPhoto(auctionPk);
+		List<Photo> auctionPhotos = photoService.getPhoto(auctionPk,PhotoStatus.AUCTION_PHOTO);
 		for(Photo p : auctionPhotos){
 			auctionPhotoUrl.add(p.getImgUrl());
 		}
