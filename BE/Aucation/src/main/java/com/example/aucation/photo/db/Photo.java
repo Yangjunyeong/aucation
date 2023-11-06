@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.example.aucation.auction.db.entity.Auction;
+import com.example.aucation.auction.db.entity.AuctionStatus;
 import com.example.aucation.common.entity.BaseEntity;
 import com.example.aucation.member.db.entity.Member;
 
@@ -37,11 +38,14 @@ public class Photo extends BaseEntity {
 	@JoinColumn(name="auction_pk")
 	private Auction auction;
 
+	private PhotoStatus photoStatus;
+
 	@Builder
 	public Photo(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,
-		Long lastModifiedBy, boolean isDeleted, String imgUrl, Auction auction) {
+		Long lastModifiedBy, boolean isDeleted, String imgUrl, Auction auction, PhotoStatus photoStatus) {
 		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
 		this.imgUrl = imgUrl;
 		this.auction = auction;
+		this.photoStatus = photoStatus;
 	}
 }
