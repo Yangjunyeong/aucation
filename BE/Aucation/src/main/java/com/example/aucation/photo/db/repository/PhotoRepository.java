@@ -11,5 +11,5 @@ import com.example.aucation.photo.db.Photo;
 
 @Repository
 public interface PhotoRepository extends JpaRepository<Photo,Long> {
-	Optional<List<Photo>> findByAuctionIdAndPhotoStatus(long auctionPk, PhotoStatus photoStatus);
+	Optional<List<Photo>> findByAuctionId(long auctionPk);
 }

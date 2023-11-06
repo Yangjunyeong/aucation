@@ -168,6 +168,7 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
         JPAQuery<AuctionDetailResponse> query = queryFactory
                 .select(
                         Projections.bean(AuctionDetailResponse.class,
+                                qAuction.id.as("auctionPk"),
                                 qAuction.auctionUUID.as("auctionUUID"),
                                 qAuction.auctionStatus.as("auctionStatus"),
                                 qAuction.auctionType.as("auctionType"),
@@ -181,6 +182,67 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
                                 qAuction.auctionStartDate.as("auctionStartTime"),
                                 qAuction.auctionEndDate.as("auctionEndTime"),
                                 qLikeAuction.countDistinct().as(likeCnt),
+                                new CaseBuilder()
+                                        .when(qAuction.auctionStartDate.after(LocalDateTime.now()))
+                                        .then(0)
+                                        .when(qAuction.auctionStartDate.before(LocalDateTime.now())
+                                                .and(qAuction.auctionEndDate.after(LocalDateTime.now())))
+                                        .then(1)
+                                        .otherwise(-1)
+                                        .as("isAction"),
+                                new CaseBuilder()
+                                        .when(
+                                                JPAExpressions.selectOne()
+                                                        .from(qLikeAuction)
+                                                        .where(qLikeAuction.auction.eq(qAuction))
+                                                        .where(qLikeAuction.member.id.eq(memberPk)) // Replace myUser with your user reference
+                                                        .exists()
+                                        )
+                                        .then(true)
+                                        .otherwise(false)
+                                        .as("isLike")
+                        )
+                )
+                .from(qAuction)
+                .where(qAuction.id.eq(auctionPk))
+                .leftJoin(qLikeAuction)
+                .on(qLikeAuction.auction.eq(qAuction))
+                .leftJoin(qMember)
+                .on(qAuction.owner.eq(qMember))
+                .groupBy(qAuction);
+
+        AuctionDetailResponse result = query.fetchOne();
+        return result;
+    }
+
+    @Override
+    public AuctionDetailResponse searchDetailReAucToPk(Long auctionPk, Long memberPk) {
+        NumberPath<Long> likeCnt = Expressions.numberPath(Long.class,"likeCnt");
+        JPAQuery<AuctionDetailResponse> query = queryFactory
+                .select(
+                        Projections.bean(AuctionDetailResponse.class,
+                                qAuction.id.as("auctionPk"),
+                                qAuction.auctionStatus.as("auctionStatus"),
+                                qAuction.auctionType.as("auctionType"),
+                                qAuction.auctionTitle.as("auctionTitle"),
+                                qMember.memberNickname.as("auctionOwnerNickname"),
+                                qMember.imageURL.as("auctionOwnerPhoto"),
+                                qAuction.auctionMeetingLat.as("auctionMeetingLat"),
+                                qAuction.auctionMeetingLng.as("auctionMeetingLng"),
+                                qAuction.auctionStartPrice.as("auctionStartPrice"),
+                                qAuction.auctionDetail.as("auctionInfo"),
+                                qAuction.auctionStartDate.as("auctionStartTime"),
+                                qAuction.auctionEndDate.as("auctionEndTime"),
+                                qAuction.owner.id.eq(memberPk).as("isOwner"),
+                                qLikeAuction.countDistinct().as(likeCnt),
+                                new CaseBuilder()
+                                        .when(qAuction.auctionStartDate.after(LocalDateTime.now()))
+                                        .then(0)
+                                        .when(qAuction.auctionStartDate.before(LocalDateTime.now())
+                                                .and(qAuction.auctionEndDate.after(LocalDateTime.now())))
+                                        .then(1)
+                                        .otherwise(-1)
+                                        .as("isAction"),
                                 new CaseBuilder()
                                         .when(
                                                 JPAExpressions.selectOne()
@@ -248,12 +310,5 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
              return new OrderSpecifier<>(Order.DESC, qAuction.auctionStartDate);
         }
     }
-
-    private DateTimeExpression getNowTimeByNow(LocalDateTime nowTime){
-        return null;
-    }
-
-
-
 
 }

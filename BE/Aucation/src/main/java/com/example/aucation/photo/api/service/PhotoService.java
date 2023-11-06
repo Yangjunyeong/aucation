@@ -44,7 +44,7 @@ public class PhotoService {
 
 	final String dirName = "profile";
 
-	public void upload(List<MultipartFile> files, String auctionUUID, boolean isBid) throws IOException {
+	public void upload(List<MultipartFile> files, String auctionUUID) throws IOException {
 		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID).orElseThrow(()->new BadRequestException(
 			ApplicationError.AWS_S3_SAVE_ERROR));
 
@@ -61,7 +61,6 @@ public class PhotoService {
 			Photo profileImg = Photo.builder()
 				.imgUrl(uploadImageUrl)
 				.auction(auction)
-				.photoStatus(isBid?PhotoStatus.AUCTION_BID_PHOTO:PhotoStatus.AUCTION_PHOTO)
 				.build();
 			photoRepository.save(profileImg);
 		}
@@ -91,8 +90,8 @@ public class PhotoService {
 		}
 	}
 
-	public List<Photo> getPhoto(long auctionPk, PhotoStatus photoStatus) {
-		return photoRepository.findByAuctionIdAndPhotoStatus(auctionPk, photoStatus)
+	public List<Photo> getPhoto(long auctionPk) {
+		return photoRepository.findByAuctionId(auctionPk)
 				.orElseThrow(()-> new NotFoundException(ApplicationError.AWS_S3_SAVE_ERROR));
 	}
 }

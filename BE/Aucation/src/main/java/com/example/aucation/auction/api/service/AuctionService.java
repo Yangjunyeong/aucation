@@ -11,15 +11,19 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import com.example.aucation.auction.api.dto.*;
+import com.example.aucation.auction.db.entity.AuctionBid;
+import com.example.aucation.reauction.api.dto.ReAucBidResponse;
+import com.example.aucation.reauction.api.service.ReAucBidPhotoService;
+import com.example.aucation.reauction.db.entity.ReAucBidPhoto;
+import com.example.aucation.reauction.db.entity.ReAuctionBid;
+import com.example.aucation.reauction.db.repository.ReAuctionBidRepository;
 import com.example.aucation.common.error.BadRequestException;
 import com.example.aucation.like.db.entity.LikeAuction;
 import com.example.aucation.like.db.repository.LikeAuctionRepository;
-import com.example.aucation.photo.db.PhotoStatus;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.relational.core.sql.Like;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,10 +53,12 @@ public class AuctionService {
 	private final StringRedisTemplate stringRedisTemplate;
 
 	private final AuctionRepository	 auctionRepository;
+	private final ReAuctionBidRepository reAuctionBidRepository;
 
 	private final MemberRepository memberRepository;
 
 	private final LikeAuctionRepository likeAuctionRepository;
+	private final ReAucBidPhotoService reAucBidPhotoService;
 
 	private final RedisTemplate<String, SaveAuctionBIDRedis> redisTemplate;
 
@@ -72,7 +78,7 @@ public class AuctionService {
 
 		List<SaveAuctionBIDRedis> bids = redisTemplate.opsForList().range("auc-ing-log:"+auctionUUID, 0, -1);
 
-		List<Photo> photoList = photoService.getPhoto(auction.getId(), PhotoStatus.AUCTION_PHOTO);
+		List<Photo> photoList = photoService.getPhoto(auction.getId());
 
 		List<String> UUIDImage = new ArrayList<>();
 
@@ -143,7 +149,7 @@ public class AuctionService {
 				.owner(member)
 				.build();
 			auctionRepository.save(auction);
-			photoService.upload(multipartFiles, auctionUUID, false);
+			photoService.upload(multipartFiles, auctionUUID);
 			String key = "auc-pre:" + auctionUUID;
 			stringRedisTemplate.opsForValue().set(key, "This is a token for Prepared_Auction");
 			stringRedisTemplate.expire(key, registerRequest.getAuctionStartAfterTime(), TimeUnit.MINUTES);
@@ -166,7 +172,7 @@ public class AuctionService {
 				.owner(member)
 				.build();
 			auctionRepository.save(auction);
-			photoService.upload(multipartFiles, auctionUUID,false);
+			photoService.upload(multipartFiles, auctionUUID);
 		}
 
 	}
@@ -189,78 +195,110 @@ public class AuctionService {
 		return auctions;
 	}
 
+	@Transactional
 	public AuctionDetailResponse getDetailInfoByAuctionPk(Long memberPk, Long auctionPk) throws Exception {
 		log.info("********************** getDetailInfoByAuctionPk start");
 		LocalDateTime nowTime =LocalDateTime.now();
-		AuctionDetailResponse auctionDetailResponse = auctionRepository.searchDetailAucToPk(auctionPk, memberPk);
-		if(auctionDetailResponse == null){
-			log.error("********************** AUCTION NO EXIST");
-			throw new Exception("Auction no exist");
+
+		Auction auction = auctionRepository.findById(auctionPk)
+				.orElseThrow(()->new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
+
+		AuctionDetailResponse auctionDetailResponse = null;
+		if(auction.getAuctionStatus().equals(AuctionStatus.REVERSE_BID)){
+			log.info("********************** 역경매 정보 설정 시도");
+			auctionDetailResponse = auctionRepository.searchDetailReAucToPk(auctionPk, memberPk);
+			List<ReAuctionBid> reAuctionBids = auction.getReAuctionBidList();
+			if(auctionDetailResponse.getIsOwner()){
+				List<ReAucBidResponse> reAucBidResponses = new ArrayList<>();
+				log.info("********************** reAuctionBids size() : {}",reAuctionBids.size());
+				for(ReAuctionBid bid : reAuctionBids){
+					reAucBidResponses.add(ReAucBidResponse.builder()
+									.bidDetail(bid.getReAucBidDetail())
+									.bidPhotos(reAucBidPhotoService.getPhoto(bid))
+									.bidPrice(bid.getReAucBidPrice())
+									.customerPk(bid.getMember().getId())
+									.customerNickName(bid.getMember().getMemberNickname())
+									.customerPhoto(bid.getMember().getImageURL())
+							.build());
+				}
+				auctionDetailResponse.setReAucBidResponses(reAucBidResponses);
+			}else{
+				ReAuctionBid reAuctionBid = reAuctionBidRepository.findByIdAndMemberId(auctionPk,memberPk);
+				if(reAuctionBid != null){
+					auctionDetailResponse.setMyReAucBidResponse(
+							ReAucBidResponse.builder()
+									.bidDetail(reAuctionBid.getReAucBidDetail())
+									.bidPhotos(reAucBidPhotoService.getPhoto(reAuctionBid))
+									.bidPrice(reAuctionBid.getReAucBidPrice())
+									.customerPk(reAuctionBid.getMember().getId())
+									.customerNickName(reAuctionBid.getMember().getMemberNickname())
+									.customerPhoto(reAuctionBid.getMember().getImageURL())
+									.build()
+					);
+				}
+			}
+			auctionDetailResponse.setReAucBidCnt(reAuctionBids.size());
+			Integer lowPrice = Integer.MAX_VALUE;
+			for(ReAuctionBid bid:reAuctionBids){
+				lowPrice = lowPrice > bid.getReAucBidPrice()? bid.getReAucBidPrice() : lowPrice;
+			}
+			auctionDetailResponse.setAuctionTopPrice(lowPrice.equals(Integer.MAX_VALUE)?null:lowPrice);
+
+			log.info("********************** 역경매 정보 설정 완료");
+		}else{
+			log.info("********************** 경매 정보 설정 시도");
+			auctionDetailResponse = auctionRepository.searchDetailAucToPk(auctionPk, memberPk);
+			if(nowTime.isBefore(auctionDetailResponse.getAuctionStartTime())){
+				log.info("********************** 경매 상태 = {}","경매 전");
+
+				log.info("********************** 경매 예상 호가 설정 시도");
+				auctionDetailResponse.setAuctionAskPrice(
+						calculateValue(auctionDetailResponse.getAuctionStartPrice()));
+				log.info("********************** 경매 예상 호가 설정 성공, 호가 = {}",
+						auctionDetailResponse.getAuctionAskPrice());
+			}else if(nowTime.isAfter(auctionDetailResponse.getAuctionStartTime())
+					&& nowTime.isBefore(auctionDetailResponse.getAuctionEndTime())){
+				log.info("********************** 경매 상태 = {}","경매 중");
+
+				log.info("********************** 경매 입찰 내역 가져오기 시도");
+				List<SaveAuctionBIDRedis> bids = redisTemplate.opsForList().range(
+						"auc-ing-log:"+auctionDetailResponse.getAuctionUUID(),0,-1);
+				log.info("********************** 경매 입찰 내역 가져오기 성공");
+				if(bids == null || bids.isEmpty()){
+					log.info("********************** 경매 입찰 존재하지 않음");
+					auctionDetailResponse.setAuctionTopPrice(auctionDetailResponse.getAuctionStartPrice());
+					auctionDetailResponse.setAuctionAskPrice(
+							calculateValue(auctionDetailResponse.getAuctionTopPrice()));
+					log.info("********************** 경매 초기값 설정 완료. 현재가 = {}, 호가 ={}",
+							auctionDetailResponse.getAuctionTopPrice(), auctionDetailResponse.getAuctionAskPrice());
+				}else{
+					log.info("********************** 경매 입찰 존재");
+
+					log.info("********************** 경매 현재값 설정 시도");
+					Collections.sort(bids);
+					auctionDetailResponse.setAuctionTopPrice(bids.get(0).getBidPrice());
+					auctionDetailResponse.setAuctionAskPrice(bids.get(0).getAskPrice());
+					auctionDetailResponse.setAuctionCurCnt(bids.get(0).getHeadCnt());
+					log.info("********************** 경매 현재값 설정 완료. 현재 최고가 = {}, 호가 ={}, 참여자 ={}",
+							auctionDetailResponse.getAuctionTopPrice(),
+							auctionDetailResponse.getAuctionAskPrice(),
+							auctionDetailResponse.getAuctionCurCnt());
+				}
+			}else{
+				log.info("********************** 경매 상태 = {}","경매 완료");
+			}
+			log.info("********************** 경매 정보 설정 완료");
 		}
-
-		auctionDetailResponse.setNowTime(nowTime);
-
 		log.info("********************** 경매 사진 가져오기 시도");
 		List<String> auctionPhotoUrl = new ArrayList<>();
-		List<Photo> auctionPhotos = photoService.getPhoto(auctionPk,PhotoStatus.AUCTION_PHOTO);
+		List<Photo> auctionPhotos = photoService.getPhoto(auctionPk);
 		for(Photo p : auctionPhotos){
 			auctionPhotoUrl.add(p.getImgUrl());
 		}
 		auctionDetailResponse.setAuctionPhoto(auctionPhotoUrl);
 		log.info("********************** 경매 사진 가져오기 및 설정 성공, 사진 수 ={}", auctionPhotoUrl.size());
 
-		if(auctionDetailResponse.getAuctionStatus().equals(AuctionStatus.REVERSE_BID)){
-			log.info("********************** 역경매 정보 설정 시도");
-			
-			// 추후 개발예정
-
-			log.info("********************** 역경매 정보 설정 완료");
-			return auctionDetailResponse;
-		}
-		log.info("********************** 경매 상태 지정");
-		if(nowTime.isBefore(auctionDetailResponse.getAuctionStartTime())){
-			log.info("********************** 경매 상태 = {}","경매 전");
-			auctionDetailResponse.setIsAction(0);
-
-			log.info("********************** 경매 예상 호가 설정 시도");
-			auctionDetailResponse.setAuctionAskPrice(
-					calculateValue(auctionDetailResponse.getAuctionStartPrice()));
-			log.info("********************** 경매 예상 호가 설정 성공, 호가 = {}",
-					auctionDetailResponse.getAuctionAskPrice());
-		}else if(nowTime.isAfter(auctionDetailResponse.getAuctionStartTime())
-				&& nowTime.isBefore(auctionDetailResponse.getAuctionEndTime())){
-			log.info("********************** 경매 상태 = {}","경매 중");
-			auctionDetailResponse.setIsAction(1);
-
-			log.info("********************** 경매 입찰 내역 가져오기 시도");
-			List<SaveAuctionBIDRedis> bids = redisTemplate.opsForList().range(
-					"auc-ing-log:"+auctionDetailResponse.getAuctionUUID(),0,-1);
-			log.info("********************** 경매 입찰 내역 가져오기 성공");
-			if(bids == null || bids.isEmpty()){
-				log.info("********************** 경매 입찰 존재하지 않음");
-				auctionDetailResponse.setAuctionTopPrice(auctionDetailResponse.getAuctionStartPrice());
-				auctionDetailResponse.setAuctionAskPrice(
-						calculateValue(auctionDetailResponse.getAuctionTopPrice()));
-				log.info("********************** 경매 초기값 설정 완료. 현재가 = {}, 호가 ={}",
-						auctionDetailResponse.getAuctionTopPrice(), auctionDetailResponse.getAuctionAskPrice());
-			}else{
-				log.info("********************** 경매 입찰 존재");
-
-				log.info("********************** 경매 현재값 설정 시도");
-				Collections.sort(bids);
-				auctionDetailResponse.setAuctionTopPrice(bids.get(0).getBidPrice());
-				auctionDetailResponse.setAuctionAskPrice(bids.get(0).getAskPrice());
-				auctionDetailResponse.setAuctionCurCnt(bids.get(0).getHeadCnt());
-				log.info("********************** 경매 현재값 설정 완료. 현재 최고가 = {}, 호가 ={}, 참여자 ={}",
-						auctionDetailResponse.getAuctionTopPrice(),
-						auctionDetailResponse.getAuctionAskPrice(),
-						auctionDetailResponse.getAuctionCurCnt());
-			}
-		}else{
-			auctionDetailResponse.setIsAction(-1);
-			log.info("********************** 경매 상태 = {}","경매 완료");
-		}
-		log.info("********************** 경매 상태 지정 완료");
+		auctionDetailResponse.setNowTime(nowTime);
 		log.info("********************** getDetailInfoByAuctionPk end");
 		return auctionDetailResponse;
 	}

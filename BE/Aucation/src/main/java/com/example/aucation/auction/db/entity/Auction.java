@@ -19,12 +19,12 @@ import com.example.aucation.like.db.entity.LikeAuction;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.photo.db.Photo;
 
+import com.example.aucation.reauction.db.entity.ReAuctionBid;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -67,11 +67,8 @@ public class Auction extends BaseEntity {
 	@OneToMany(mappedBy = "auction", cascade = CascadeType.PERSIST)
 	private List<Photo> photoList = new ArrayList<>();
 
-	public List<String> getPhotoUrlList(){
-		List<String> photoList = new ArrayList<>();
-		this.photoList.stream().map(photo -> photoList.add(photo.getImgUrl()));
-		return photoList;
-	}
+	@OneToMany(mappedBy = "auction", cascade = CascadeType.PERSIST)
+	private List<ReAuctionBid> reAuctionBidList = new ArrayList<>();
 
 	@Builder
 	public Auction(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,
