@@ -20,6 +20,7 @@ import javax.persistence.OneToOne;
 import com.example.aucation.auction.db.entity.Auction;
 import com.example.aucation.auction.db.entity.AuctionBid;
 import com.example.aucation.auction.db.entity.AuctionHistory;
+import com.example.aucation.auction.db.entity.ReAuctionBid;
 import com.example.aucation.common.entity.BaseEntity;
 import com.example.aucation.discount.db.entity.Discount;
 import com.example.aucation.discount.db.entity.DiscountHistory;
@@ -102,6 +103,8 @@ public class Member extends BaseEntity {
 	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
 	private List<AuctionHistory> auctionHistoryCustomerList = new ArrayList<>();
 
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	private List<ReAuctionBid> reAuctionBidList = new ArrayList<>();
 	//	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	//	private List<Alram> alramList = new ArrayList<>();
 

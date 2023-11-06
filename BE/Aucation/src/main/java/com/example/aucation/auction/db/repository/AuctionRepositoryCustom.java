@@ -22,4 +22,6 @@ public interface AuctionRepositoryCustom {
 
     AuctionDetailResponse searchDetailAucToPk(Long auctionPk, Long memberPk);
 
+    AuctionDetailResponse searchDetailReAucToPk(Long auctionPk, Long memberPk);
+
 }
