@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.example.aucation.discount.db.entity.Discount;
+import com.example.aucation.discount.db.repository.DiscountRepository;
 import com.example.aucation.photo.db.PhotoStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -42,7 +44,7 @@ public class PhotoService {
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
 
-	final String dirName = "profile";
+	final String dirName = "auction";
 
 	public void upload(List<MultipartFile> files, String auctionUUID) throws IOException {
 		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID).orElseThrow(()->new BadRequestException(
@@ -67,12 +69,12 @@ public class PhotoService {
 
 
 	}
-	private String putS3(File uploadFile, String fileName) {
+	public String putS3(File uploadFile, String fileName) {
 		amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile)
 			.withCannedAcl(CannedAccessControlList.PublicRead));
 		return amazonS3Client.getUrl(bucket, fileName).toString();
 	}
-	private Optional<File> convertToFile(MultipartFile file) throws IOException, FileNotFoundException {
+	public Optional<File> convertToFile(MultipartFile file) throws IOException, FileNotFoundException {
 		File uploadFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
 		FileOutputStream fos = new FileOutputStream(uploadFile);
 		fos.write(file.getBytes());
@@ -80,7 +82,7 @@ public class PhotoService {
 		return Optional.of(uploadFile);
 	}
 
-	private void removeFile(File targetFile) {
+	public void removeFile(File targetFile) {
 		if (targetFile.exists()) {
 			if (targetFile.delete()) {
 				log.info("파일이 삭제되었습니다.");
