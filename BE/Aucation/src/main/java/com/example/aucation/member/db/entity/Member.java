@@ -77,8 +77,11 @@ public class Member extends BaseEntity {
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<Follow> followList = new ArrayList<>();
 
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-	private List<Discount> discountList = new ArrayList<>();
+	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+	private List<Discount> discountOwnerList = new ArrayList<>();
+
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+	private List<Discount> discountCustomerList = new ArrayList<>();
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<DiscountHistory> discountHistoryList = new ArrayList<>();
