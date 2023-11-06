@@ -139,7 +139,7 @@ public class AuctionService {
 				.owner(member)
 				.build();
 			auctionRepository.save(auction);
-			photoService.upload(multipartFiles, auctionUUID);
+			photoService.upload(multipartFiles, auctionUUID, false);
 			String key = "auc-pre:" + auctionUUID;
 			stringRedisTemplate.opsForValue().set(key, "This is a token for Prepared_Auction");
 			stringRedisTemplate.expire(key, registerRequest.getAuctionStartAfterTime(), TimeUnit.MINUTES);
@@ -162,7 +162,7 @@ public class AuctionService {
 				.owner(member)
 				.build();
 			auctionRepository.save(auction);
-			photoService.upload(multipartFiles, auctionUUID);
+			photoService.upload(multipartFiles, auctionUUID,false);
 			String key = "auc-pre:" + auctionUUID;
 			stringRedisTemplate.opsForValue().set(key, "This is a token for Prepared_Auction");
 			stringRedisTemplate.expire(key, registerRequest.getAuctionStartAfterTime(), TimeUnit.MINUTES);

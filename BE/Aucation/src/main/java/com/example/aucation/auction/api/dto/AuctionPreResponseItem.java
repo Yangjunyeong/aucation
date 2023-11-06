@@ -1,10 +1,8 @@
 package com.example.aucation.auction.api.dto;
 
-import com.example.aucation.photo.db.Photo;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 public class AuctionPreResponseItem{
