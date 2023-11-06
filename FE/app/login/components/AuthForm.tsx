@@ -311,7 +311,7 @@ const AuthForm = () => {
             value={password}
             onChange={onChangePassword}
             verify={true}
-            // onEnter={signOrlogin}
+            onEnter={signOrlogin}
           />
         </div>
       </div>
