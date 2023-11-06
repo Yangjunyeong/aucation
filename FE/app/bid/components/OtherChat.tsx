@@ -11,12 +11,14 @@ interface OtherChatProps {
 
 const OtherChat: React.FC<OtherChatProps> = ({ user, myname, chat, userImg, isOwner }) => {
   return (
-    <div className="flex justify-start items-center py-3 px-2">
+    <div className="flex justify-start items-center py-3 px-2 w-full">
       <div className="flex items-center">
         <RoundedImg src={userImg} alt="이미지" />
-        <div className="ml-3">
-          {isOwner && <p className="text-xs text-gray-400">판매자</p>}
-          <p className="">{user}</p>
+        <div className="ml-3 flex items-start flex-col">
+          <div className="flex items-center">
+            <p className="">{user}</p>
+            {isOwner && <p className="text-xs text-gray-400 ml-2">판매자</p>}
+          </div>
           <div
             className={clsx(
               `

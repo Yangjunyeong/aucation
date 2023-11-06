@@ -227,7 +227,7 @@ const Panmae = () => {
 
         <div className="border-b-2 border-black w-full mt-10"></div>
 
-            {/* 카테고리 선택 박스 */}
+        {/* 카테고리 선택 박스 */}
         <div className="my-10 w-full mx-4">
           <SelectBox categoryHandler={categoryHandler} />
         </div>

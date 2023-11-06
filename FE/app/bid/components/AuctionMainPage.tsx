@@ -354,7 +354,7 @@ const AuctionMainPage = () => {
       "
       >
         <div className="w-[30%] ml-5">
-          <p>입찰 단위</p>
+          <p>다음 입찰가</p>
           <p className="text-3xl">{pricetoString(datas.askPrice)}</p>
         </div>
         <div

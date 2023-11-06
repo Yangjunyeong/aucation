@@ -8,6 +8,7 @@ import { callApi } from "@/app/utils/api";
 import { useParams } from "next/navigation";
 import { CompatClient, Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import axios from "axios";
 
 type userData = {
   memberPk: number;
@@ -32,7 +33,6 @@ const AuctionChat = () => {
   });
   const [chats, setChats] = useState<Chat[]>([]);
   const [message, setMessage] = useState<string>("");
-  const chatHandler = (value: string, username: string) => {};
   const uuid = useParams().uuid;
   const rapperDiv = useRef<HTMLInputElement>(null);
   const client = useRef<CompatClient>();
@@ -107,17 +107,11 @@ const AuctionChat = () => {
   };
 
   const getChatHandler = () => {
-    callApi("get", `/chat/enter/${uuid}`, {})
+    axios
+      .get(`/api/v2/chat/enter/${uuid}`)
       .then(res => {
-        setChats((chat: Chat[]) => {
-          return {
-            ...chat,
-            memberNickname: res.data.memberNickname,
-            messageContent: res.data.messageContent,
-            imageURL: res.data.imageURL,
-            messageTime: res.data.messageTime,
-          };
-        });
+        setChats(res.data);
+        console.log(res.data);
       })
       .catch(err => {
         console.log(err);

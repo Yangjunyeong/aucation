@@ -14,8 +14,10 @@ const MyChat: React.FC<MyChatProps> = ({ user, myname, chat, userImg, isOwner })
     <div className="flex justify-end items-center py-3 px-2 w-full">
       <div className="flex items-center">
         <div className="mr-3 flex items-end flex-col">
-          <p className="">{user}</p>
-          {isOwner && <p className="text-xs text-gray-400">판매자</p>}
+          <div className="flex items-center">
+            {isOwner && <p className="text-xs text-gray-400 mr-2">판매자</p>}
+            <p className="">{user}</p>
+          </div>
           <div
             className={clsx(
               `
