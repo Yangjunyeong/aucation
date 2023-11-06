@@ -7,7 +7,6 @@ import LikeBtn from "../../detail/components/LikeBtn";
 import Image from "next/image";
 import clsx from "clsx";
 
-import RowCountDown from "./RowCountDown";
 import Link from "next/link";
 
 interface ItemType {
@@ -25,7 +24,7 @@ interface ItemType {
 interface CardProps {
   item: ItemType;
 }
-const AuctionBuy: React.FC<CardProps> = ({ item }) => {
+const DiscountBuy: React.FC<CardProps> = ({ item }) => {
   const {
     cardImgUrl,
     likeCount,
@@ -156,4 +155,4 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
   );
 };
 
-export default AuctionBuy;
+export default DiscountBuy;
