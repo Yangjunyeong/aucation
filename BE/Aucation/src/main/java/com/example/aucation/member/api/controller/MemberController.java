@@ -2,6 +2,8 @@ package com.example.aucation.member.api.controller;
 
 import com.example.aucation.member.api.dto.MemberEmailRequest;
 import com.example.aucation.member.api.dto.MemberNickRequest;
+
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.aucation.common.dto.EmailResponse;
 import com.example.aucation.common.support.AuthorizedVariable;
 import com.example.aucation.member.api.dto.MemberPageRequest;
+import com.example.aucation.member.api.dto.MypageLikeResponse;
 import com.example.aucation.member.api.dto.MypageResponse;
 import com.example.aucation.member.api.dto.SignupRequest;
 import com.example.aucation.member.api.service.MemberService;
@@ -57,8 +60,17 @@ public class MemberController {
 		return ResponseEntity.ok().build();
 	}
 
+	//마이페이지
 	@PostMapping("/mypage")
 	public ResponseEntity<MypageResponse> mypage(@AuthorizedVariable Long memberPk, @RequestBody MemberPageRequest memberPageRequest) {
 		return ResponseEntity.ok().body(memberService.mypage(memberPk,memberPageRequest));
 	}
+
+	//마이페이지 좋아요 게시글
+	@PostMapping("/mypage/like")
+	public ResponseEntity<MypageLikeResponse> mypageLike(@AuthorizedVariable Long memberPk) {
+		return ResponseEntity.ok().body(memberService.mypageLike(memberPk));
+	}
+
+	//마이페이지 할인 게시글
 }

@@ -2,6 +2,8 @@ package com.example.aucation.member.api.dto;
 
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,13 +13,27 @@ import lombok.Setter;
 @Builder
 public class MemberPageRequest {
 
-	private String productType;
 
-	private String productStatus;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	//0: 경매, 1: 역경매
+	private int productType;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	//0: 판매, 1: 구매
+	private int productStatus;
 
-	private String auctionStatus;
-
-	private String productFilter;
+	//경매
+	//0: 경매전,	1: 경매중, 	2: 경매확정
+	//4: 낙찰,	5:	경매 완료
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	//역경매
+	//0: 입찰중,	1: 낙찰		2:거래완료
+	//4: 예약중,	5: 구매완료
+	private int auctionStatus;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	//0: 최신수, 1: 인기순, 2: 저가순, 3: 고가순
+	private int productFilter;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private int myPageNum;
 
 	//받아야하는 값
 

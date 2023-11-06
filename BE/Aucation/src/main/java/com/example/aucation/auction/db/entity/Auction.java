@@ -13,9 +13,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
-import com.example.aucation.chat.db.entity.ChatRoom;
 import com.example.aucation.common.entity.BaseEntity;
 import com.example.aucation.like.db.entity.LikeAuction;
 import com.example.aucation.member.db.entity.Member;
