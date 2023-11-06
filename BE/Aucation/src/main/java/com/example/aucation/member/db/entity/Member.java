@@ -132,4 +132,8 @@ public class Member extends BaseEntity {
 		this.memberPoint += count;
 		return this.memberPoint;
 	}
+
+	public void updateMemberStatus() {
+		this.memberRole = Role.SHOP;
+	}
 }
