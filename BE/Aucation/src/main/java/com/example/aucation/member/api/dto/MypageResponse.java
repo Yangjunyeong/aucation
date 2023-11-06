@@ -1,9 +1,23 @@
 package com.example.aucation.member.api.dto;
 
-import com.example.aucation.member.db.entity.Member;
+import java.util.List;
 
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
 public class MypageResponse {
-	public static MypageResponse of(Member member) {
-		return new MypageResponse();
+
+	private int currentPage;
+
+	private int totalPage;
+
+	private List<MypageItemsResponse> MypageItems;
+
+	@Builder
+	public MypageResponse(int currentPage, int totalPage, List<MypageItemsResponse> mypageItems) {
+		this.currentPage = currentPage;
+		this.totalPage = totalPage;
+		MypageItems = mypageItems;
 	}
 }

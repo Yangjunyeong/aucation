@@ -1,5 +1,6 @@
 package com.example.aucation.member.db.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +17,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import com.example.aucation.alarm.db.entity.Alram;
 import com.example.aucation.auction.db.entity.Auction;
 import com.example.aucation.auction.db.entity.AuctionBid;
 import com.example.aucation.auction.db.entity.AuctionHistory;
-import com.example.aucation.chat.db.entity.ChatMessage;
-import com.example.aucation.chat.db.entity.ChatParticipants;
 import com.example.aucation.common.entity.BaseEntity;
 import com.example.aucation.discount.db.entity.Discount;
 import com.example.aucation.discount.db.entity.DiscountHistory;
@@ -42,8 +40,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AttributeOverrides({
 	@AttributeOverride(name = "id", column = @Column(name = "member_pk")),
-	@AttributeOverride(name="createdAt",column = @Column(name="member_created_at")),
-	@AttributeOverride(name="lastModifiedAt",column = @Column(name="member_update_at"))
+	@AttributeOverride(name = "createdAt", column = @Column(name = "member_created_at")),
+	@AttributeOverride(name = "lastModifiedAt", column = @Column(name = "member_update_at"))
 })
 public class Member extends BaseEntity {
 
@@ -85,11 +83,6 @@ public class Member extends BaseEntity {
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<DiscountHistory> discountHistoryList = new ArrayList<>();
 
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-	private List<ChatMessage> chatMessageList = new ArrayList<>();
-
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-	private List<ChatParticipants> chatParticipantsList = new ArrayList<>();
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<LikeAuction> likeAuctionList = new ArrayList<>();
@@ -109,13 +102,13 @@ public class Member extends BaseEntity {
 	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
 	private List<AuctionHistory> auctionHistoryCustomerList = new ArrayList<>();
 
-//	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-//	private List<Alram> alramList = new ArrayList<>();
-
+	//	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	//	private List<Alram> alramList = new ArrayList<>();
 
 	@Builder
 	public Member(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,
-		Long lastModifiedBy, boolean isDeleted, String memberId, String memberPw, String memberEmail,Role memberRole,SocialType socialType,String memberNickname,String imageURL) {
+		Long lastModifiedBy, boolean isDeleted, String memberId, String memberPw, String memberEmail, Role memberRole,
+		SocialType socialType, String memberNickname, String imageURL) {
 		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
 		this.memberId = memberId;
 		this.memberPw = memberPw;
@@ -124,15 +117,17 @@ public class Member extends BaseEntity {
 		this.socialType = socialType;
 		this.imageURL = imageURL;
 	}
+
 	public void updateRefreshToken(String updateRefreshToken) {
 		this.memberRefresh = updateRefreshToken;
 	}
+
 	public void updatePoint(int point) {
-		this.memberPoint=point;
+		this.memberPoint = point;
 	}
 
 	public int updatePlusPoint(int count) {
-		this.memberPoint+=count;
+		this.memberPoint += count;
 		return this.memberPoint;
 	}
 }
