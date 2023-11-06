@@ -144,10 +144,10 @@ const ReAuctionSell: React.FC<CardProps> = ({ item }) => {
                 <span className="text-[28px]">{auctionStartTime.toLocaleString()}</span>
               </div>
               <div className="flex gap-5">
-                <span className="border-2 rounded-lg border-red-500 text-red-500 text-2xl font-bold py-2 px-2">
+                <span className="border-2 rounded-lg border-red-500 text-red-500 text-2xl font-bold py-1 px-2">
                   삭제하기
                 </span>
-                <span className="border-2 rounded-lg text-black border-black text-2xl font-bold py-2 px-2">
+                <span className="border-2 rounded-lg text-black border-black text-2xl font-bold py-1 px-2">
                   입찰보기
                 </span>
               </div>

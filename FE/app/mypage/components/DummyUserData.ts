@@ -16,7 +16,7 @@ const DummyUserData: DummyUserData[] = [
 {
     cardImgUrl: "https://cdn.thecolumnist.kr/news/photo/202302/1885_4197_221.jpg",
     likeCount: 100,
-    auctionStartTime: new Date("2023-11-01T14:32:30"),
+    auctionStartTime: new Date("2023-11-03T14:32:30"),
     title: "상품 제목 1",
     highestPrice: 50000,
     isLiked: true,
