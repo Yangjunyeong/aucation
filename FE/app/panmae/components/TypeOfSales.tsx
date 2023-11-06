@@ -33,8 +33,8 @@ const RadioButton: React.FC<RadioButtonProps> = ({ id, name, value, checked, onC
 
 const TypeOfSales: React.FC<OwnProps> = ({ option, optionHandler }) => {
   const radioOptions = [
-    { id: "bid", value: "경매", label: "경매" },
-    { id: "reversebid", value: "역경매", label: "역경매" },
+    { id: "bid", value: "BID", label: "경매" },
+    { id: "reversebid", value: "REVERSE_BID", label: "역경매" },
     { id: "discount", value: "할인", label: "할인" },
   ];
 
