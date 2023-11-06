@@ -75,10 +75,10 @@ public class RedisConfig {
 		return redisTemplate;
 	}
 
-	// @Bean
-	// public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory){
-	// 	RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
-	// 	redisMessageListenerContainer.setConnectionFactory(redisConnectionFactory);
-	// 	return redisMessageListenerContainer;
-	// }
+	@Bean
+	public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory){
+		RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
+		redisMessageListenerContainer.setConnectionFactory(redisConnectionFactory);
+		return redisMessageListenerContainer;
+	}
 }

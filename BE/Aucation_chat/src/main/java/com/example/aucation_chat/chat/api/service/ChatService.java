@@ -4,6 +4,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -45,67 +46,60 @@ public class ChatService {
 		List<RedisChatMessage> redisChatMessages = redisTemplate.opsForList().range("chat-auc:"+auctionUUID, 0, -1);
 
 		// 채팅 내역 있으면 반환
-		if (redisChatMessages != null) {
+		if (!redisChatMessages.isEmpty()) {
 			return redisChatMessages;
 		}
 		// ------ cache hit miss => read-through --------
 		else {
-
-			/*
-				1. MySQL에서 chatMessage들 가져오기
-				- auctionUUID로 chatPk 찾아서 chatPk로 chat_message 테이블 조회
-			*/
-			ChatRoom searchedChat = chatRoomRepository.findByChatSession(auctionUUID)
-				.orElseThrow(() -> new NotFoundException(
-					ApplicationError.CHATTING_ROOM_NOT_FOUND));
-
-			List<ChatMessage> chatList = chatMessageRepository.findTop50ByChatRoom_ChatPk_OrderByMessageTimeDesc(searchedChat.getChatPk());
-
-			// 2. MySQL 에도 없음 => 새로 만들어진 채팅방이라는 뜻
-			if (chatList == null)
-				return null;
-
-			// 3. MySQL에 있음 => Redis에 저장 후 반환
-			List<RedisChatMessage> dbToRedisChats = new ArrayList<>(); // MySQL에서 redis에 들어갈 채팅메세지들
-
-			// chat entity -> redis -> 저장&반환
-			for (int i = chatList.size() - 1; i > 0; i--) { //DB에서 보낸시간 기반 내림차순해서 가져왔기 때문에 뒤에서부터 조회해 오름차순으로 넣어야함
-
-				// message의 memberPk로 닉네임 찾아야함
-				Member member = memberRepository.findByMemberPk(chatList.get(i).getMemberPk())
-					.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
-
-				// 보낸시간을 string으로 바꾸어야 함
-				String messageTime = chatList.get(i).getMessageTime()
-					.format(DateTimeFormatter.ofPattern(DateFormatPattern.get()));
-
-				// MySQL데이터를 Redis로 옮기는 과정
-				RedisChatMessage temp = RedisChatMessage.builder()
-					.memberPk(chatList.get(i).getMemberPk())
-					.messageContent(chatList.get(i).getMessageContent())
-					.memberNickname(member.getMemberNickname())
-					.messageTime(messageTime)
-					.imageURL(member.getImageURL())
-					.build();
-
-				dbToRedisChats.add(temp);
-				// redisTemplate.opsForList().rightPush(auctionUUID, temp);
-			}
-			redisTemplate.opsForList().rightPushAll("chat-auc:"+auctionUUID, dbToRedisChats);
-			return dbToRedisChats;
+			return readThrough(auctionUUID);
 		} // Read-Through 끝
 
-		// List<ChatResponse> res = new ArrayList<>();
-		// for(RedisChatMessage message : redisChatMessages){
-		// 	ChatResponse temp = ChatResponse.builder()
-		// 		.memberNickname(message.getMemberNickname())
-		// 		.messageContent(message.getMessageContnet())
-		// 		.imageURL(message.getImageURL())
-		// 		.messageTime(message.getMessageTime())
-		// 		.build();
-		// 	res.add(temp);
-		// }
-		// return res;
+	}
+
+	private List<RedisChatMessage> readThrough(String auctionUUID) {
+    /*
+		1. MySQL에서 chatMessage들 가져오기
+		- auctionUUID로 chatPk 찾아서 chatPk로 chat_message 테이블 조회
+	*/
+		ChatRoom searchedChat = chatRoomRepository.findByChatSession(auctionUUID)
+			.orElseThrow(() -> new NotFoundException(
+				ApplicationError.CHATTING_ROOM_NOT_FOUND));
+
+		List<ChatMessage> chatList = chatMessageRepository.findTop50ByChatRoom_ChatPk_OrderByMessageTimeDesc(searchedChat.getChatPk());
+
+		// 2. MySQL 에도 없음 => 새로 만들어진 채팅방이라는 뜻
+		if (chatList.isEmpty())
+			return null;
+
+		// 3. MySQL에 있음 => Redis에 저장 후 반환
+		List<RedisChatMessage> dbToRedisChats = new ArrayList<>(); // MySQL에서 redis에 들어갈 채팅메세지들
+
+		// chat entity -> redis -> 저장&반환
+		for (int i = chatList.size() - 1; i > 0; i--) { //DB에서 보낸시간 기반 내림차순해서 가져왔기 때문에 뒤에서부터 조회해 오름차순으로 넣어야함
+
+			// message의 memberPk로 닉네임 찾아야함
+			Member member = memberRepository.findByMemberPk(chatList.get(i).getMemberPk())
+				.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+
+			// 보낸시간을 string으로 바꾸어야 함
+			String messageTime = chatList.get(i).getMessageTime()
+				.format(DateTimeFormatter.ofPattern(DateFormatPattern.get()));
+
+			// MySQL데이터를 Redis로 옮기는 과정
+			RedisChatMessage temp = RedisChatMessage.builder()
+				.memberPk(chatList.get(i).getMemberPk())
+				.messageContent(chatList.get(i).getMessageContent())
+				.memberNickname(member.getMemberNickname())
+				.messageTime(messageTime)
+				.imageURL(member.getImageURL())
+				.build();
+
+			dbToRedisChats.add(temp);
+			// redisTemplate.opsForList().rightPush(auctionUUID, temp);
+		}
+		redisTemplate.opsForList().rightPushAll("chat-auc:"+ auctionUUID, dbToRedisChats);
+		redisTemplate.expire("chat-auc:"+auctionUUID, 30, TimeUnit.MINUTES); // 30분 TTL설정
+		return dbToRedisChats;
 	}
 
 }
