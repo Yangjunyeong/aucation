@@ -23,9 +23,9 @@ public class ChatController {
 
 	private final ChatService chatService;
 
-	@GetMapping("/enter/{auctionUUID}")
-	public ResponseEntity<List<RedisChatMessage>> enter (@PathVariable String auctionUUID) {
-		List<RedisChatMessage> chatList = chatService.enter(auctionUUID);
+	@GetMapping("/enter/{auctionUUID}/{memberPk}")
+	public ResponseEntity<List<RedisChatMessage>> enter (@PathVariable String auctionUUID, @PathVariable long memberPk) {
+		List<RedisChatMessage> chatList = chatService.enter(auctionUUID, memberPk);
 		return ResponseEntity.ok().body(chatList);
 	}
 
