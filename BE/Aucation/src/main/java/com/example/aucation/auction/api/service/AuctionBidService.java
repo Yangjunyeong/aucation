@@ -46,6 +46,8 @@ public class AuctionBidService {
 	@Autowired
 	private SimpMessagingTemplate template; //특정 Broker로 메세지를 전달
 
+	private final AuctionService auctionService;
+
 	private final StringRedisTemplate stringRedisTemplate;
 
 	private final AuctionRepository auctionRepository;
@@ -72,6 +74,8 @@ public class AuctionBidService {
 	public BidResponse isService(long highPurchasePk, String auctionUUID) throws Exception {
 		Member member = memberRepository.findById(highPurchasePk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID).orElseThrow(()-> new Exception("히히하하"));
+
+		auctionService.isExistAuction(auction);
 
 		//Owner가 member인지 판단하기
 		if(isOwnerBid(highPurchasePk,auction.getOwner().getId(),auctionUUID)){

@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import com.example.aucation.auction.api.dto.*;
+import com.example.aucation.common.error.BadRequestException;
 import com.example.aucation.like.db.entity.LikeAuction;
 import com.example.aucation.like.db.repository.LikeAuctionRepository;
 import com.example.aucation.photo.db.PhotoStatus;
@@ -63,6 +64,8 @@ public class AuctionService {
 	public PlaceResponse place(Long memberPk, String auctionUUID) throws Exception {
 		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID)
 			.orElseThrow(() -> new Exception("auction이 없습니다"));
+
+		isExistAuction(auction);
 
 		Member member = memberRepository.findById(memberPk)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
@@ -164,9 +167,6 @@ public class AuctionService {
 				.build();
 			auctionRepository.save(auction);
 			photoService.upload(multipartFiles, auctionUUID,false);
-			String key = "auc-pre:" + auctionUUID;
-			stringRedisTemplate.opsForValue().set(key, "This is a token for Prepared_Auction");
-			stringRedisTemplate.expire(key, registerRequest.getAuctionStartAfterTime(), TimeUnit.MINUTES);
 		}
 
 	}
@@ -295,6 +295,11 @@ public class AuctionService {
 		log.info("********************** setLikeAuction() 완료");
 	}
 
+	public void isExistAuction(Auction auction) {
+		if(auction.getAuctionEndDate().isBefore(LocalDateTime.now())){
+			throw new BadRequestException(ApplicationError.CLOSE_THE_AUCTION);
+		}
+	}
 
 //
 //	public List<ReAuctionResponse> getReAuctionList(Long memberPk,int pageNum, AuctionSortRequest sortRequest) {
