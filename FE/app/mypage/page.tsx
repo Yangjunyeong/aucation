@@ -16,6 +16,8 @@ import UpdateBtn from "./components/UpdateBtn";
 // 카테고리 박스
 import CategoryBox from "./components/CategoryBox";
 
+// 정렬 타입
+import { orderType } from "../auction/components/type";
 // 카드 더미데이터
 import DummyUserData from "@/app/mypage/components/DummyUserData";
 import dummyData from "../detail/components/DummyData";
@@ -33,6 +35,9 @@ import DiscountBuy from "../components/Card/DiscountBuy";
 import { callApi } from "../utils/api";
 import { userInfo } from "os";
 
+// 페이지 네이션
+import Pagination from "react-js-pagination";
+import "../auction/components/Paging.css";
 interface userData {
   profileImg: string;
   nickname: string;
@@ -78,12 +83,12 @@ const MyPage = () => {
   const [thirdCategory, setThirdCategory] = useState<string | null>("예약중");
   const categories: any = {
     경매: {
-      판매: ["경매전", "경매중", "경매완료"],
-      구매: ["경매낙찰", "구매완료"],
+      판매: ["경매전", "경매중", "경매확정"],
+      구매: ["낙찰", "경매완료"],
     },
     역경매: {
       판매: ["입찰중", "낙찰", "거래완료"],
-      구매: ["경매중", "입찰완료", "경매종료"],
+      구매: ["예약중", "구매완료"],
     },
     할인: {
       판매: ["판매중", "예약중", "판매완료"],
@@ -91,8 +96,80 @@ const MyPage = () => {
     },
     좋아요: ["좋아요"],
   };
+  // 카테고리 매핑
+  const categoryMap: { [key: string]: number } = {
+    경매: 0,
+    역경매: 1,
+    할인: 2,
+    좋아요: 3,
+  };
+  const secondCategoryMap: { [key: string]: number } = {
+    판매: 0,
+    구매: 1,
+  };
+  const firstThirdCategoryMap: { [key: string]: number } = {
+    경매전: 0,
+    경매중: 1,
+    경매확정: 2,
+    낙찰: 4,
+    경매완료: 5,
+  };
+  const secondThirdCategoryMap: { [key: string]: number } = {
+    입찰중: 0,
+    낙찰: 1,
+    거래완료: 2,
+    예약중: 4,
+    구매완료: 5,
+  };
+  // 요소 정렬
+  const itemsortList: orderType[] = [
+    { id: 0, typeName: "최신순" },
+    { id: 1, typeName: "인기순" },
+    { id: 2, typeName: "저가순" },
+    { id: 3, typeName: "고가순" },
+  ];
+
   const [itemsort, setItemsort] = useState<number>(0);
-  console.log(categories.경매);
+  // 현재 페이지
+  const [pageNumber, setPageNumber] = useState<number>(1);
+
+  // 카테고리 번호로 매핑
+  const categoriesToNum = () => {
+    const productType: number = categoryMap[category];
+    const productStatus: number = secondCategoryMap[secondCategory];
+
+    // 카테고리가 경매일때 3번재 카테고리 매핑
+    let auctionStatus = "";
+    if (category == "경매") {
+      const auctionStatus: number = thirdCategory ? firstThirdCategoryMap[thirdCategory] : 0;
+      // 카테고리가 역경매일때 3번째 카테고리 매핑
+    } else if (category == "역경매") {
+      const auctionStatus: number = thirdCategory ? secondThirdCategoryMap[thirdCategory] : 0;
+    }
+    const data = {
+      productType: productType,
+      productStatus: productStatus,
+      auctionStatus: 0,
+      productFilter: 0,
+      myPageNum: pageNumber,
+    };
+    console.log(
+      "API요청 -> productType:",
+      productType,
+      "productStatus",
+      productStatus,
+      "auctionStatus",
+      auctionStatus
+    );
+    callApi("post", "members/mypage", data)
+      .then(res => {
+        console.log(res.data);
+      })
+      .catch(err => {
+        console.log(JSON.stringify(data, null, 2));
+        console.log(err);
+      });
+  };
 
   // 이미지 업로드
   const handleImageUpload = (imageFile: File) => {
@@ -143,9 +220,48 @@ const MyPage = () => {
     setThirdCategory(value);
   };
 
+  // 요소 정렬
   const itemSortHandler = (itemsortNum: number) => {
     console.log(itemsortNum, "클릭");
     setItemsort(itemsortNum);
+  };
+
+  // 마이페이지 조회 핸들러
+  const fetchMypage = (value: any) => {};
+  // 마이페이지 결제 핸들러
+  const cashHandler = (value: any) => {
+    let tmp = 37345;
+    const merchant_uid = "57008833-33040g" + tmp;
+    tmp += 1;
+    const data = {
+      pg: "kakaopay.TC0ONETIME",
+      pay_method: "card",
+      merchant_uid: merchant_uid,
+      name: "테스트 상f점",
+      amount: 1004,
+      buyer_email: "tdest@navedr.com",
+      buyer_name: "코드쿡",
+      buyer_tel: "010-1234-5678",
+      buyer_addr: "서울특d별시",
+      buyer_postcode: "123-456",
+    };
+    // useEffect(() => {
+    //   // const iamportOne = document.createElement("script");
+    //   // iamportOne.async = false;
+    //   // iamportOne.src = `https://cdn.iamport.kr/v1/iamport.js`;
+    //   // document.head.appendChild(iamportOne);
+    //   // var IMP = window.IMP;
+    //   // IMP.init("impXXXXXXXXX");
+    // }, []);
+
+    callApi("post", "verifyIamport", data)
+      .then(res => {
+        console.log(res.data);
+      })
+      .catch(err => {
+        console.log(JSON.stringify(data, null, 2));
+        console.log(err);
+      });
   };
 
   // 좋아요 버튼 누를경우 pk, IsLiked값을 post로 전달
@@ -154,12 +270,21 @@ const MyPage = () => {
     console.log("좋아요 ");
   };
 
+  // 페이지
+  const handlePageChange = (page: number) => {
+    setPageNumber(page);
+    console.log(page);
+  };
+
   useEffect(() => {
     // 브라우저에서 로컬 스토리지에 접근하여 토큰 확인
     const accessToken = window.localStorage.getItem("accessToken");
     // 토큰이 없는 경우 로그인 페이지로 리다이렉션
     if (!accessToken) {
       router.push("/login");
+    } else {
+      // 토큰이 있다면 마이페이지 조회
+      // fetchMypage()
     }
   }, [router]);
 
@@ -169,6 +294,8 @@ const MyPage = () => {
     } else {
       thirdCategoryHandler("좋아요");
     }
+
+    categoriesToNum();
   }, [category, secondCategory]);
   // 1번 카테고리 변경 시 2번 카테고리 초기화
   useEffect(() => {
@@ -180,6 +307,10 @@ const MyPage = () => {
   return (
     <div className="w-full px-80 py-20">
       {/* 프로필 영역 */}
+      {/* 결제 */}
+      <div className="border-2" onClick={cashHandler}>
+        결제하셈
+      </div>
       <div>
         <div className="border-t-2 border-gray-400"></div>
         <div className="flex">
@@ -301,27 +432,9 @@ const MyPage = () => {
           >
             최신순&nbsp;
           </span>
-          |
-          <span
-            className={clsx(itemsort == 1 ? "text-blue-500" : "")}
-            onClick={() => itemSortHandler(1)}
-          >
-            &nbsp;인기순&nbsp;
-          </span>
-          |
-          <span
-            className={clsx(itemsort == 2 ? "text-blue-500" : "")}
-            onClick={() => itemSortHandler(2)}
-          >
-            &nbsp;저가순&nbsp;
-          </span>
-          |
-          <span
-            className={clsx(itemsort == 3 ? "text-blue-500" : "")}
-            onClick={() => itemSortHandler(3)}
-          >
-            &nbsp;고가순
-          </span>
+          {itemsortList.map((item, idx) => (
+            <CategoryBox key={idx} name={item.typeName} categoryHandler={() => itemSortHandler} />
+          ))}
         </div>
       </div>
 
@@ -392,6 +505,19 @@ const MyPage = () => {
           ))}
         </div>
       )} */}
+
+      {/* 페이지 네이션 */}
+      <div className="flex justify-center mt-4">
+        <Pagination
+          activePage={pageNumber}
+          itemsCountPerPage={5}
+          totalItemsCount={999}
+          pageRangeDisplayed={5}
+          prevPageText={"‹"}
+          nextPageText={"›"}
+          onChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 };
