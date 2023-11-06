@@ -9,9 +9,23 @@ interface InputProps {
   id: string;
   type: string;
   verify?: boolean;
+  // onEnter?: () => void;
 }
 
-const Input: React.FC<InputProps> = ({ placeholder, value, onChange, id, type, verify }) => {
+const Input: React.FC<InputProps> = ({
+  placeholder,
+  value,
+  onChange,
+  id,
+  type,
+  verify,
+  // onEnter,
+}) => {
+  // const loginHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  //   if (e.key === "Enter" && onEnter) {
+  //     onEnter();
+  //   }
+  // };
   return (
     <div className="w-full">
       <div className="">
@@ -21,6 +35,7 @@ const Input: React.FC<InputProps> = ({ placeholder, value, onChange, id, type, v
           placeholder={placeholder}
           id={id}
           type={type}
+          // onKeyDown={e => loginHandler(e)}
           className={clsx(
             `
             block

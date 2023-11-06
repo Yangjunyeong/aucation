@@ -1,8 +1,8 @@
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
-import React,{useEffect, useState} from 'react'
-interface LikeBtnProps{
-  isLiked:boolean;
-  likeHandler:(state:boolean) => void;
+import React, { useEffect, useState } from "react";
+interface LikeBtnProps {
+  isLiked: boolean;
+  likeHandler: (state: boolean) => void;
 }
 
 const LikeBtn: React.FC<LikeBtnProps> = ({ isLiked, likeHandler }) => {
@@ -12,13 +12,17 @@ const LikeBtn: React.FC<LikeBtnProps> = ({ isLiked, likeHandler }) => {
   //   likeHandler(!isliked)
   // }
   return (
-      <div className="bg-white" style={{ backgroundColor: "rgba(255, 255, 255, 0)" }} onClick={()=> likeHandler(!isLiked)}>
-          {isLiked ? (
-              <AiFillHeart size={30} color="red" style={{ cursor: "pointer" }} />
-          ) : (
-              <AiOutlineHeart size={30} color="red" style={{ cursor: "pointer" }} />
-          )}
-      </div>
+    <div
+      className="bg-white z-10"
+      style={{ backgroundColor: "rgba(255, 255, 255, 0)" }}
+      onClick={() => likeHandler(!isLiked)}
+    >
+      {isLiked ? (
+        <AiFillHeart size={30} color="red" style={{ cursor: "pointer" }} />
+      ) : (
+        <AiOutlineHeart size={30} color="red" style={{ cursor: "pointer" }} />
+      )}
+    </div>
   );
 };
 

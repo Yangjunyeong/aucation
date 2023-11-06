@@ -56,6 +56,7 @@ const nextConfig = {
   swcMinify: true,
   output: "standalone",
   images: {
+    domains: [],
     remotePatterns: [
       {
         protocol: "https",

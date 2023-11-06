@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import clsx from "clsx";
 import HeaderTap from "./components/HeaderTap";
 import OrderTypeBtn from "./components/OrderTypeBtn";
@@ -7,22 +7,34 @@ import { orderType, searchType } from "./components/type";
 import { CategoryNameList } from "../components/frontData/categoryNameList";
 import DropdownButton from "../components/button/DropDownBtn";
 import SearchInput from "./components/SearchInput";
+import { callApi } from "../utils/api";
+import Pagination from "react-js-pagination";
+import "./components/Paging.css";
+import { AuctionData, AuctionItem } from "../utils/cardType";
+import AuctionListCard from "../components/Card/AutionListCard";
+import dummyData from "./components/dummyData";
 
 const AuctionList = () => {
-  const [selectedTap, setSelectedTap] = useState("경매중");
-  const [selectedCategory, setSelectedCategory] = useState<string>("전체");
-  const [searchType, setSearchType] = useState<searchType>({ id: 0, typeName: "제목" });
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
-
-  const tapList = ["경매중", "경매전", "삽니다"];
-  const localCategoryList = ["전체", ...CategoryNameList];
+  const [selectedTap, setSelectedTap] = useState("경매중"); // 상단 탭, 경매 유형
+  const [selectedCategory, setSelectedCategory] = useState<string>("전체"); // 카테고리
+  const [searchType, setSearchType] = useState<searchType>({ id: 0, typeName: "제목" }); // 검색유형
+  const [searchKeyword, setSearchKeyword] = useState<string>(""); // 검색키워드
   const [selectedOrderType, setSelectedOrderType] = useState<orderType>({
     id: 1,
     typeName: "최신순",
+  }); // 정렬기준
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [data, setData] = useState<AuctionData>({
+    nowTime: null, // 현재 시간
+    currentPage: 0, // 현재 페이지
+    totalPage: 0, // 총 페이지
+    items: [], // 경매 아이템 목록
   });
-  const searchCondition = useState({
-    selectedCategory: selectedCategory,
-  });
+  const [totalItemsCount, setTotalItemsCount] = useState(0); // 전체 아이템 수
+  const tmp = new Date();
+
+  const tapList = ["경매중", "경매전", "삽니다"];
+  const localCategoryList = ["전체", ...CategoryNameList];
 
   const orderTypeList: orderType[] = [
     { id: 1, typeName: "최신순" },
@@ -35,23 +47,44 @@ const AuctionList = () => {
     { id: 1, typeName: "판매자" },
   ];
 
+  const handlePageChange = (page: number) => {
+    setPageNumber(page);
+    console.log(page);
+  };
+
   const headerHandler = (tap: string) => {
     setSelectedTap(tap);
   };
 
-  const searchHandler = (keyword: string) => {
+  const fetchAuctionData = useCallback(async () => {
     const searchFilters = {
-      auctionCatalog: selectedCategory,
+      auctionCatalog: selectedCategory !== "전체" ? selectedCategory : null,
       auctionCondition: selectedOrderType.id,
       searchType: searchType.id,
-      searchKeyword: keyword,
+      searchKeyword: searchKeyword,
     };
-  };
+    console.log(searchFilters);
+    callApi("post", `/auction/list/pre/${pageNumber}`, searchFilters)
+      .then(response => {
+        console.log("데이터", response);
+        setData(response.data);
+      })
+      .catch(error => {
+        console.log("데이터", error);
+      });
+  }, [selectedCategory, selectedOrderType.id, searchType.id, searchKeyword, pageNumber]);
+
   useEffect(() => {
-    console.log("검색어", searchKeyword);
-  }, [searchKeyword]);
+    fetchAuctionData();
+  }, [fetchAuctionData]);
+
+  const handleSearch = (keyword: string) => {
+    setSearchKeyword(keyword); // 상태 업데이트
+    fetchAuctionData(); // 데이터 가져오기
+  };
+
   return (
-    <div className="px-60 ">
+    <div className="px-48 ">
       <div className="flex flex-row space-x-10 h-[100px] items-center">
         <div className="font-black text-5xl">경매 상품</div>
         {tapList.map((tap: string, idx) => (
@@ -95,11 +128,30 @@ const AuctionList = () => {
             size="small"
           />
 
-          <SearchInput searchHandler={searchHandler} setSearchKeyword={setSearchKeyword} />
+          <SearchInput searchHandler={handleSearch} setSearchKeyword={setSearchKeyword} />
         </div>
       </div>
-      <div>카드 리스트 부분</div>
-      <div>페이지 네이션</div>
+      <div className="grid grid-cols-5 gap-x-6 gap-y-10">
+        {/* {data.items.map(item => (
+          <div key={item.auctionPk} className="h-full bg-white p-4 shadow rounded-lg">
+            <AuctionListCard item={item} nowTime={nowTime}/>
+          </div>
+        ))} */}
+        {dummyData.map(item => (
+          <div key={item.auctionPk} className="shadow-lg h-[450px] rounded-lg">
+            <AuctionListCard item={item} nowTime={tmp} />
+          </div>
+        ))}
+      </div>
+      <Pagination
+        activePage={pageNumber}
+        itemsCountPerPage={15}
+        totalItemsCount={450}
+        pageRangeDisplayed={5}
+        prevPageText={"‹"}
+        nextPageText={"›"}
+        onChange={handlePageChange}
+      />
     </div>
   );
 };

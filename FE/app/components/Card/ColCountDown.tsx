@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 interface StateCardProps {
-  currentTime: Date
+  currentTime: Date;
   auctionStartTime: Date;
-  stateHandler:(state:string) => void;
+  stateHandler: (state: string) => void;
 }
 
 interface TimeLeft {
@@ -13,7 +13,7 @@ interface TimeLeft {
   seconds: number;
 }
 
-const CountDown: React.FC<StateCardProps> = ({ auctionStartTime,stateHandler,currentTime }) => {
+const CountDown: React.FC<StateCardProps> = ({ auctionStartTime, stateHandler, currentTime }) => {
   const [nowtime, setNowtime] = useState(currentTime);
   const endTime = new Date(auctionStartTime.getTime() + 1 * 60 * 60 * 1000);
 
@@ -31,7 +31,7 @@ const CountDown: React.FC<StateCardProps> = ({ auctionStartTime,stateHandler,cur
       days: Math.floor(difference / (1000 * 60 * 60 * 24)),
       hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
       minutes: Math.floor((difference / (1000 * 60)) % 60),
-      seconds: Math.floor((difference / 1000) % 60)
+      seconds: Math.floor((difference / 1000) % 60),
     };
 
     return timeLeft;
@@ -41,18 +41,18 @@ const CountDown: React.FC<StateCardProps> = ({ auctionStartTime,stateHandler,cur
 
   useEffect(() => {
     const timer = setInterval(() => {
-        const tmp = nowtime
-        tmp.setSeconds(nowtime.getSeconds() + 1)
-        setNowtime(tmp);
-        setTimeLeft(calcTime());
-        if (nowtime < auctionStartTime) {
-            stateHandler("경매시작")
-        } else if (nowtime < endTime) {
-            stateHandler("경매종료")
-        } else {
-            stateHandler("종료")
-        }
-        }, 1000);
+      const tmp = nowtime;
+      tmp.setSeconds(nowtime.getSeconds() + 1);
+      setNowtime(tmp);
+      setTimeLeft(calcTime());
+      if (nowtime < auctionStartTime) {
+        stateHandler("경매시작");
+      } else if (nowtime < endTime) {
+        stateHandler("경매종료");
+      } else {
+        stateHandler("종료");
+      }
+    }, 1000);
 
     if (nowtime >= endTime) {
       clearInterval(timer);
@@ -74,11 +74,21 @@ const CountDown: React.FC<StateCardProps> = ({ auctionStartTime,stateHandler,cur
 
   return (
     <span className="flex w-[155px] justify-end">
-      <div className={clsx(statusMessage == "경매시작" ? "text-red-500" : statusMessage == "경매종료" ? "text-customBlue" : "text-black")}>{statusMessage}</div>
+      <div
+        className={clsx(
+          statusMessage == "경매시작"
+            ? "text-red-500"
+            : statusMessage == "경매종료"
+            ? "text-customBlue"
+            : "text-black"
+        )}
+      >
+        {statusMessage}
+      </div>
       {days > 0 && <div>{days}:</div>}
       {(days > 0 || hours > 0) && <div>&nbsp;{hours}&nbsp;:</div>}
       {(days > 0 || hours > 0 || minutes > 0) && <div>&nbsp;{minutes}&nbsp;:</div>}
-      {(nowtime <= endTime) && <div>&nbsp;{seconds} 전</div>}
+      {nowtime <= endTime && <div>&nbsp;{seconds} 전</div>}
     </span>
   );
 };
