@@ -53,6 +53,7 @@ const AuthForm = () => {
       .then(res => {
         console.log(res.data);
         toast.success("회원가입 성공");
+        login();
       })
       .catch(err => {
         console.log(err.response.data);
