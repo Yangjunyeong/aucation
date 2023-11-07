@@ -131,9 +131,10 @@ public class WebSocketChatService {
 		return message;
 	}
 
-	private void setTTL(String redisKeyBase, String sessionId) {
-		if (redisTemplate.opsForList().size(redisKeyBase + sessionId) == 1) { // O(1)시간에 .size() 수행
-			redisTemplate.expire(redisKeyBase + sessionId, 30, TimeUnit.MINUTES); // 30분 TTL설정
+	private void setTTL(String redisKeyBase, String session) {
+		if (redisTemplate.opsForList().size(redisKeyBase + session) == 1) { // O(1)시간에 .size() 수행
+			redisTemplate.opsForValue(); // ex:redisKeyBase:session
+			redisTemplate.expire(redisKeyBase + session, 30, TimeUnit.MINUTES); // 30분 TTL설정
 		}
 	}
 
