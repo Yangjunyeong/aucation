@@ -122,7 +122,6 @@ const Panmae = () => {
     imagefiles.forEach((image, index) => {
       formData.append("multipartFiles", image);
     });
-
     callApi("post", "/auction/register", formData)
       .then(res => {
         console.log(res);

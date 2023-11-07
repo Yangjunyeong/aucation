@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import clsx from "clsx";
 interface StateCardProps {
   currentTime: Date;
@@ -13,11 +13,16 @@ interface TimeLeft {
   seconds: number;
 }
 
-const AuctionCountDown: React.FC<StateCardProps> = ({ auctionEndTime, stateHandler, currentTime }) => {
-  const [nowtime, setNowtime] = useState(currentTime);
+const AuctionCountDown: React.FC<StateCardProps> = ({
+  auctionEndTime,
+  stateHandler,
+  currentTime,
+}) => {
+  const [nowtime, setNowtime] = useState(new Date(currentTime));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const endTime = new Date(auctionEndTime);
 
-  const calcTime = (): TimeLeft => {
+  const calcTime = useCallback((): TimeLeft => {
     let difference: number;
     if (nowtime < endTime) {
       difference = endTime.getTime() - nowtime.getTime();
@@ -33,7 +38,7 @@ const AuctionCountDown: React.FC<StateCardProps> = ({ auctionEndTime, stateHandl
     };
 
     return timeLeft;
-  };
+  }, [endTime, nowtime]);
 
   const [timeLeft, setTimeLeft] = useState(calcTime());
 
@@ -46,7 +51,7 @@ const AuctionCountDown: React.FC<StateCardProps> = ({ auctionEndTime, stateHandl
       if (nowtime < endTime) {
         stateHandler("경매종료");
       } else {
-        stateHandler("종료");
+        stateHandler("마감");
       }
     }, 1000);
 
@@ -55,7 +60,7 @@ const AuctionCountDown: React.FC<StateCardProps> = ({ auctionEndTime, stateHandl
     }
 
     return () => clearInterval(timer);
-  }, [endTime, nowtime]);
+  }, [calcTime, endTime, nowtime, stateHandler]);
 
   const { days, hours, minutes, seconds } = timeLeft;
 
@@ -63,13 +68,14 @@ const AuctionCountDown: React.FC<StateCardProps> = ({ auctionEndTime, stateHandl
   if (nowtime < endTime) {
     statusMessage = "경매종료";
   } else {
-    statusMessage = "종료";
+    statusMessage = "경매마감";
   }
 
   return (
-    <span className="flex w-[155px] justify-end">
+    <span className="flex w-full justify-start">
       <div
         className={clsx(
+          "pr-2",
           statusMessage == "경매시작"
             ? "text-red-500"
             : statusMessage == "경매종료"
@@ -82,7 +88,7 @@ const AuctionCountDown: React.FC<StateCardProps> = ({ auctionEndTime, stateHandl
       {days > 0 && <div>{days}:</div>}
       {(days > 0 || hours > 0) && <div>&nbsp;{hours}&nbsp;:</div>}
       {(days > 0 || hours > 0 || minutes > 0) && <div>&nbsp;{minutes}&nbsp;:</div>}
-      {nowtime <= endTime && <div>&nbsp;{seconds} 전</div>}
+      {nowtime <= endTime && <div>&nbsp;{seconds}초 전</div>}
     </span>
   );
 };

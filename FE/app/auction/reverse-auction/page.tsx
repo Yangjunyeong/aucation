@@ -1,26 +1,29 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import clsx from "clsx";
-import HeaderTap from "./components/HeaderTap";
-import OrderTypeBtn from "./components/OrderTypeBtn";
-import { orderType, searchType } from "./components/type";
-import { CategoryNameList } from "../components/frontData/categoryNameList";
-import DropdownButton from "../components/button/DropDownBtn";
-import SearchInput from "./components/SearchInput";
-import { callApi } from "../utils/api";
+import HeaderTap from "../components/HeaderTap";
+import OrderTypeBtn from "../components/OrderTypeBtn";
+import { orderType, searchType } from "../components/type";
+import { CategoryNameList } from "../../components/frontData/categoryNameList";
+import DropdownButton from "../../components/button/DropDownBtn";
+import SearchInput from "../components/SearchInput";
+import { callApi } from "../../utils/api";
 import Pagination from "react-js-pagination";
-import "./components/Paging.css";
-import { AuctionData, AuctionItem } from "../utils/cardType";
-import AuctionListCard from "../components/Card/AutionListCard";
-import dummyData from "./components/dummyData";
+import "../components/Paging.css";
+import { AuctionData, AuctionItem } from "../../utils/cardType";
+import AuctionListCard from "../../components/Card/AutionListCard";
+import dummyData from "../components/dummyData";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import PacmanLoader from "react-spinners/PacmanLoader";
 
 type PageParams = {
   headerTap: string;
 };
 
 const AuctionList = ({ params }: { params: PageParams }) => {
-  const [selectedTap, setSelectedTap] = useState("경매중"); // 상단 탭, 경매 유형
+  const router = useRouter();
+  const [selectedTap, setSelectedTap] = useState("삽니다"); // 상단 탭, 경매 유형
   const [selectedCategory, setSelectedCategory] = useState<string>("전체"); // 카테고리
   const [searchType, setSearchType] = useState<searchType>({ id: 0, typeName: "제목" }); // 검색유형
   const [searchKeyword, setSearchKeyword] = useState<string>(""); // 검색키워드
@@ -28,6 +31,7 @@ const AuctionList = ({ params }: { params: PageParams }) => {
     id: 1,
     typeName: "최신순",
   }); // 정렬기준
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [data, setData] = useState<AuctionData>({
     nowTime: null, // 현재 시간
@@ -60,9 +64,24 @@ const AuctionList = ({ params }: { params: PageParams }) => {
 
   const headerHandler = (tap: string) => {
     setSelectedTap(tap);
+    switch (tap) {
+      case "경매중":
+        router.push("/auction/holding");
+        break;
+      case "경매전":
+        router.push("/auction/before");
+        break;
+      case "삽니다":
+        router.push("/auction/reverse-auction");
+        break;
+      default:
+        // 기본 경우, 추가 처리가 필요하다면 여기에 작성
+        break;
+    }
   };
 
-  const fetchAuctionData = useCallback(async () => {
+  const fetchAuctionData = useCallback(() => {
+    setIsLoading(true);
     const searchFilters = {
       auctionCatalog: selectedCategory !== "전체" ? selectedCategory : null,
       auctionCondition: selectedOrderType.id,
@@ -70,7 +89,7 @@ const AuctionList = ({ params }: { params: PageParams }) => {
       searchKeyword: searchKeyword,
     };
     console.log(searchFilters);
-    callApi("post", `/auction/list/ing/${pageNumber}`, searchFilters)
+    callApi("post", `/auction/list/pre/${pageNumber}`, searchFilters)
       .then(response => {
         console.log("데이터", response.data);
         setData(response.data);
@@ -79,6 +98,9 @@ const AuctionList = ({ params }: { params: PageParams }) => {
       .catch(error => {
         console.log(searchFilters);
         console.log("데이터", error);
+      })
+      .finally(() => {
+        setIsLoading(false); // 데이터 로딩 완료
       });
   }, [selectedCategory, selectedOrderType.id, searchType.id, searchKeyword, pageNumber]);
 
@@ -139,27 +161,32 @@ const AuctionList = ({ params }: { params: PageParams }) => {
           <SearchInput searchHandler={handleSearch} setSearchKeyword={setSearchKeyword} />
         </div>
       </div>
-      <div className="grid grid-cols-5 gap-x-6 gap-y-10">
-        {data.ingItems &&
-          data.ingItems.map(item => (
-            <div key={item.auctionPk} className="shadow-lg h-[450px] rounded-lg">
-              <AuctionListCard item={item} nowTime={data.nowTime} />
-            </div>
-          ))}
-        {!data.ingItems && (
-          <Image
-            src={"/assets/images/noResults.png}"}
-            alt="검색 결과가 없어요"
-            width={1536}
-            height={700}
-          />
-        )}
-        {/* {dummyData.map(item => (
+      {/* {dummyData.map(item => (
           <div key={item.auctionPk} className="shadow-lg h-[450px] rounded-lg">
             <AuctionListCard item={item} nowTime={tmp} />
           </div>
         ))} */}
-      </div>
+      {isLoading ? (
+        <div className="flex justify-center items-center">
+          <PacmanLoader color="#247eff" size={150} speedMultiplier={1} />
+        </div>
+      ) : data.ingItems.length > 0 ? (
+        <div className="grid grid-cols-5 gap-x-6 gap-y-10">
+          {data.ingItems.map(item => (
+            <div key={item.auctionPk} className="shadow-lg h-[450px] rounded-lg">
+              <AuctionListCard item={item} nowTime={data.nowTime} />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <Image
+          src="/assets/images/noResults.png"
+          alt="검색 결과가 없어요"
+          width={1536}
+          height={400} // 여기서 통일된 높이를 사용하세요
+        />
+      )}
+
       <Pagination
         activePage={pageNumber}
         itemsCountPerPage={15}

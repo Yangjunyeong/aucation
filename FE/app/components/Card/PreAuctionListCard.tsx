@@ -6,12 +6,12 @@ import LikeBtn from "../../detail/components/LikeBtn";
 import { BsFillPersonFill } from "react-icons/bs";
 import Image from "next/image";
 import ColCountDown from "./ColCountDown";
-import { AuctionItem } from "@/app/utils/cardType";
+import { PreAuctionItem } from "@/app/utils/cardType";
 import formatKoreanCurrency from "@/app/utils/formatKoreanCurrency";
 import { callApi } from "@/app/utils/api";
 import AuctionCountDown from "./AuctionCountDown";
 interface CardProps {
-  item: AuctionItem;
+  item: PreAuctionItem;
   nowTime: Date | null;
 }
 
@@ -53,20 +53,16 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
       </div>
       {/* 본문 */}
       <div className="h-1/2 px-3 py-2">
-        <div className="flex items-center justify-between text-customLightTextColor">
+        <div className="flex items-center justify-between h-1/6 text-customLightTextColor">
           <p> 좋아요: {likeCount} 개</p>
-          <p> 참여자: {item.auctionCurCnt} 명</p>
         </div>
 
-        <div className="flex items-center justify-between h-1/5 font-extrabold text-2xl overflow-hidden">
+        <div className="flex items-center justify-between h-1/4 font-extrabold text-2xl overflow-hidden">
           <p> {item.auctionTitle}</p>
         </div>
 
-        <div className="flex items-center justify-between h-1/6 font-bold text-xl">
-          <p> 시작가:{formatKoreanCurrency(item.auctionStartPrice)}</p>
-        </div>
-        <div className="flex items-center justify-between h-1/6 font-bold text-xl">
-          <p> 입찰가:{formatKoreanCurrency(item.auctionTopBidPrice)}</p>
+        <div className="flex items-center justify-between h-1/5 font-bold text-2xl">
+          <p> {formatKoreanCurrency(item.auctionStartPrice)}</p>
         </div>
 
         <div className="flex items-center h-1/5 w-full border-2 rounded-3xl bg-customBgLightBlue text-lg">
@@ -84,7 +80,7 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
         <div className="flex items-center justify-between h-1/6">
           <AuctionCountDown
             currentTime={nowTime!}
-            auctionEndTime={item.auctionEndTime}
+            auctionEndTime={item.auctionStartTime}
             stateHandler={auctionStateHandler}
           />
           {/* <p>

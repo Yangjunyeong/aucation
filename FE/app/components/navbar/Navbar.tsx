@@ -40,7 +40,7 @@ const Navbar: React.FC = () => {
       </div>
       <div className="flex flex-row w-auto">
         <Link
-          href={`/auction`}
+          href={`/auction/holding`}
           className={`ml-14 text-27px whitespace-nowrap flex items-center font-semibold hover:underline`}
         >
           경매 상품
