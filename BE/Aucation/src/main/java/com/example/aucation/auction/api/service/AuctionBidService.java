@@ -13,6 +13,8 @@ import com.example.aucation.auction.api.dto.WebSocketErrorMessage;
 import com.example.aucation.auction.db.entity.AuctionHistory;
 import com.example.aucation.auction.db.repository.AuctionBidRepository;
 import com.example.aucation.auction.db.repository.AuctionHistoryRepository;
+import com.example.aucation.common.entity.HistoryStatus;
+import com.example.aucation.common.error.ApplicationException;
 import com.example.aucation.common.util.DateFormatPattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -252,7 +254,7 @@ public class AuctionBidService {
 
 		stringRedisTemplate.opsForValue().set(key,"This key is prepared Key");
 		// 경매시간 30분으로 고정
-		stringRedisTemplate.expire(key, 3, TimeUnit.MINUTES);
+		stringRedisTemplate.expire(key, 30, TimeUnit.MINUTES);
 		log.info("*********************** startAuction END !!");
 	}
 
@@ -262,7 +264,7 @@ public class AuctionBidService {
 		log.info("*********************** endAuction START !!");
 
 		Auction auction = auctionRepository.findByAuctionUUID(aucUuid)
-				.orElseThrow(()-> new Exception("Auction don't exist!!"));
+				.orElseThrow(()-> new ApplicationException(ApplicationError.NOT_EXIST_AUCTION));
 		// 경매 내역을 가지는 redis key 값
 		String key = "auc-ing-log:" + aucUuid;
 
@@ -270,17 +272,11 @@ public class AuctionBidService {
 		List<SaveAuctionBIDRedis> auctionBidList = redisTemplate.opsForList().range(key,0,-1);
 
 		// 최고가 판별 ( 최고가 + 가장 먼저 입찰한 사용자)
-		if(auctionBidList == null){
-			log.info("*********************** NULL !!");
-			return;
-		}
-		
-		if(auctionBidList.size()<1){
+		if(auctionBidList == null || auctionBidList.size()<1){
 			log.info("*********************** 경매 낙찰자 없음 !!");
 			auction.updateAuctionToEndCustomerIsNone(-1);
 			return;
 		}else if(auctionBidList.size()>1){
-			log.info("*********************** List 정렬 !!");
 			Collections.sort(auctionBidList);
 		}
 		log.info("*********************** 경매 낙찰자 있음 !!");
@@ -303,13 +299,14 @@ public class AuctionBidService {
 		log.info("*********************** 입찰 거래 내역 저장 시도 !!");
 
 		Member customer = memberRepository.findById(auctionBidList.get(topPrice).getPurchasePk())
-				.orElseThrow(()->new Exception("member 없음"));
+				.orElseThrow(()->new ApplicationException(ApplicationError.MEMBER_NOT_FOUND));
 
 		AuctionHistory auctionHistory = AuctionHistory.builder()
 				.historyDateTime(LocalDateTime.parse(auctionBidList.get(topPrice).getBidTime(), DateTimeFormatter.ofPattern(DateFormatPattern.get())))
 				.owner(auction.getOwner())
 				.customer(customer)
 				.auction(auction)
+				.historyStatus(HistoryStatus.BEFORE_CONFIRM)
 				.build();
 		auctionHistoryRepository.save(auctionHistory);
 		log.info("*********************** 입찰 거래 내역 저장 성공 !!");
