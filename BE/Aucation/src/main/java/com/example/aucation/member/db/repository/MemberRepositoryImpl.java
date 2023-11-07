@@ -89,6 +89,10 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
 		double totalPage = Math.ceil((double)count / 5);
 		MypageResponse response = MypageResponse.builder()
+			.memberDetail(member.getMemberDetail())
+			.memberPoint(member.getMemberPoint())
+			.imgURL(member.getImageURL())
+			.memberNickname(member.getMemberNickname())
 			.currentPage(memberPageRequest.getMyPageNum() - 1)
 			.totalPage((int)totalPage)
 			.mypageItems(result)

@@ -58,6 +58,10 @@ public class Member extends BaseEntity {
 	private String memberBanned;
 	private String memberRefresh;
 	private String memberFCM;
+	private String memberDetail;
+
+	@Column
+	private String imageURL;
 
 	@Embedded
 	private Address address;
@@ -71,8 +75,6 @@ public class Member extends BaseEntity {
 	@OneToOne
 	@JoinColumn(name = "shop_pk")
 	private Shop shop;
-	@Column
-	private String imageURL;
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<Follow> followList = new ArrayList<>();
@@ -139,5 +141,17 @@ public class Member extends BaseEntity {
 
 	public void minusUpdatePoint(int memberPoint, int discountDiscountedPrice) {
 		this.memberPoint = memberPoint-discountDiscountedPrice;
+	}
+
+	public void updateMemberNickname(String memberNickname) {
+		this.memberNickname=memberNickname;
+	}
+
+	public void updateMemberDetail(String memberDetail) {
+		this.memberDetail=memberDetail;
+	}
+
+	public void updateImgURL(String uploadImageUrl) {
+		this.imageURL=uploadImageUrl;
 	}
 }

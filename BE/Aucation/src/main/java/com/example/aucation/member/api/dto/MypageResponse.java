@@ -8,6 +8,14 @@ import lombok.Getter;
 @Getter
 public class MypageResponse {
 
+	private String memberNickname;
+
+	private String memberDetail;
+
+	private String imgURL;
+
+	private int memberPoint;
+
 	private int currentPage;
 
 	private int totalPage;
@@ -15,9 +23,14 @@ public class MypageResponse {
 	private List<MypageItemsResponse> MypageItems;
 
 	@Builder
-	public MypageResponse(int currentPage, int totalPage, List<MypageItemsResponse> mypageItems) {
+	public MypageResponse(String memberNickname, String memberDetail, String imgURL, int currentPage, int totalPage,
+		int memberPoint, List<MypageItemsResponse> mypageItems) {
+		this.memberNickname = memberNickname;
+		this.memberDetail = memberDetail;
+		this.imgURL = imgURL;
 		this.currentPage = currentPage;
 		this.totalPage = totalPage;
+		this.memberPoint = memberPoint;
 		MypageItems = mypageItems;
 	}
 }
