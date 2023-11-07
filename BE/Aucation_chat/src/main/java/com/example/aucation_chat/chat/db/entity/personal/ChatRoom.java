@@ -1,4 +1,4 @@
-package com.example.aucation_chat.chat.db.entity;
+package com.example.aucation_chat.chat.db.entity.personal;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name="chat_room")
-public class GroupChatRoom {
+public class ChatRoom {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "chat_pk")
@@ -42,14 +42,14 @@ public class GroupChatRoom {
 
 	////////////////////////////////////////////////////
 	@OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
-	List<GroupChatParticipant> chatParticipants = new ArrayList<GroupChatParticipant>();
+	List<ChatParticipant> chatParticipants = new ArrayList<ChatParticipant>();
 
 	@OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
-	List<GroupChatMessage> groupChatMessages = new ArrayList<GroupChatMessage>();
+	List<ChatMessage> chatMessages = new ArrayList<ChatMessage>();
 
 
 	@Builder
-	public GroupChatRoom(long chatPk, String chatSession, LocalDateTime chatCreate, LocalDateTime chatEnd) {
+	public ChatRoom(long chatPk, String chatSession, LocalDateTime chatCreate, LocalDateTime chatEnd) {
 		this.chatPk = chatPk;
 		this.chatSession = chatSession;
 		this.chatCreate = chatCreate;

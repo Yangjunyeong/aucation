@@ -1,4 +1,4 @@
-package com.example.aucation_chat.chat.db.entity;
+package com.example.aucation_chat.chat.db.entity.group;
 
 import java.time.LocalDateTime;
 
@@ -19,17 +19,17 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name ="chat_message")
+@Table(name ="group_chat_message")
 public class GroupChatMessage {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "message_pk")
+	@Column(name = "group_chat_message_pk")
 	private long messagePk;
 
-	@Column(name = "message_content")
+	@Column(name = "group_chat_message_content")
 	private String messageContent;
 
-	@Column(name = "message_time", columnDefinition = "TIMESTAMP(3)")
+	@Column(name = "group_chat_message_time", columnDefinition = "TIMESTAMP(3)")
 	private LocalDateTime messageTime;
 
 	@Column(name="member_pk")

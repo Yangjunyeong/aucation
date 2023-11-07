@@ -1,10 +1,10 @@
-package com.example.aucation_chat.chat.db.repository;
+package com.example.aucation_chat.chat.db.repository.group;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.aucation_chat.chat.db.entity.GroupChatMessage;
+import com.example.aucation_chat.chat.db.entity.group.GroupChatMessage;
 
 public interface GroupChatMessageRepository extends JpaRepository<GroupChatMessage, Long> {
 	List<GroupChatMessage> findByChatRoom_ChatPk(long chatPk);
