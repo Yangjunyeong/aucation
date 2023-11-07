@@ -18,6 +18,7 @@ import axios from "axios";
 import { set } from "react-hook-form";
 
 import { useRouter } from "next/navigation";
+import { timeToDate } from "../utils/timetodate";
 
 const Panmae = () => {
   const router = useRouter();
@@ -101,36 +102,67 @@ const Panmae = () => {
       alert("필수 항목을 모두 채워주세요!");
       return;
     }
-    const formData = new FormData();
-    formData.append("auctionStatus", option);
-    formData.append("auctionTitle", productname);
-    formData.append("auctionType", category);
-    formData.append(
-      "auctioMeetingLat",
-      transActionLocation ? transActionLocation[0].toString() : "37"
-    );
-    formData.append(
-      "auctionMeetingLng",
-      transActionLocation ? transActionLocation[1].toString() : "126"
-    );
-    formData.append("auctionStartPrice", price.toString());
-    formData.append("auctionDetail", description);
-    formData.append("auctionStartAfterTime", (hour * 60 + minute).toString());
-    if (discountPrice !== null) {
-      formData.append("prodDiscountedPrice", discountPrice.toString());
-    }
-    imagefiles.forEach((image, index) => {
-      formData.append("multipartFiles", image);
-    });
-
-    callApi("post", "/auction/register", formData)
-      .then(res => {
-        console.log(res);
-        router.push("/");
-      })
-      .catch(err => {
-        console.log(err);
+    if (option !== "할인") {
+      const formData = new FormData();
+      formData.append("auctionStatus", option);
+      formData.append("auctionTitle", productname);
+      formData.append("auctionType", category);
+      formData.append(
+        "auctioMeetingLat",
+        transActionLocation ? transActionLocation[0].toString() : "37"
+      );
+      formData.append(
+        "auctionMeetingLng",
+        transActionLocation ? transActionLocation[1].toString() : "126"
+      );
+      formData.append("auctionStartPrice", price.toString());
+      formData.append("auctionDetail", description);
+      formData.append("auctionStartAfterTime", (hour * 60 + minute).toString());
+      if (discountPrice !== null) {
+        formData.append("prodDiscountedPrice", discountPrice.toString());
+      }
+      imagefiles.forEach((image, index) => {
+        formData.append("multipartFiles", image);
       });
+
+      callApi("post", "/auction/register", formData)
+        .then(res => {
+          console.log(res);
+          router.push("/");
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    } else {
+      const time = timeToDate(hour, minute);
+      const formData = new FormData();
+      formData.append("discountTitle", productname);
+      formData.append("discountType", category);
+      formData.append(
+        "discountLat",
+        transActionLocation ? transActionLocation[0].toString() : "37"
+      );
+      formData.append(
+        "discountLng",
+        transActionLocation ? transActionLocation[1].toString() : "126"
+      );
+      formData.append("discountPrice", price.toString());
+      formData.append("discountDetail", description);
+      formData.append("discountEnd ", time);
+      formData.append("discountDiscountedPrice", discountPrice!.toString());
+      imagefiles.forEach((image, index) => {
+        formData.append("multipartFiles", image);
+      });
+
+      callApi("post", "/discount/register", formData)
+        .then(res => {
+          console.log(res);
+          router.push("/");
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
   };
 
   useEffect(() => {
