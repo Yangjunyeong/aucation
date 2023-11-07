@@ -30,7 +30,9 @@ import lombok.NoArgsConstructor;
 public class Discount extends BaseEntity {
 
 	private String discountTitle;
-	private String discountCategory;
+	private String discountType;
+	private double discountLng;
+	private double discountLat;
 	private LocalDateTime discountStart;
 	private LocalDateTime discountEnd;
 	private int discountPrice;
@@ -50,12 +52,14 @@ public class Discount extends BaseEntity {
 
 	@Builder
 	public Discount(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt, Long lastModifiedBy,
-		boolean isDeleted, String discountTitle, String discountCategory, LocalDateTime discountStart,
-		LocalDateTime discountEnd, int discountPrice, String discountDetail, int discountDiscountedPrice,
-		String discountImgURL, String discountUUID, int discountRate,Member owner) {
+		boolean isDeleted, String discountTitle, String discountType, double discountLng, double discountLat,
+		LocalDateTime discountStart, LocalDateTime discountEnd, int discountPrice, String discountDetail,
+		int discountDiscountedPrice, String discountImgURL, String discountUUID, int discountRate, Member owner) {
 		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
 		this.discountTitle = discountTitle;
-		this.discountCategory = discountCategory;
+		this.discountType = discountType;
+		this.discountLng = discountLng;
+		this.discountLat = discountLat;
 		this.discountStart = discountStart;
 		this.discountEnd = discountEnd;
 		this.discountPrice = discountPrice;

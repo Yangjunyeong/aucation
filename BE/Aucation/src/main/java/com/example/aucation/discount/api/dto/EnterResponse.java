@@ -14,7 +14,9 @@ import lombok.Getter;
 public class EnterResponse {
 
 	private String discountTitle;
-	private String discountCategory;
+	private String discountType;
+	private double discountLng;
+	private double discountLat;
 	private LocalDateTime discountEnd;
 	private int discountPrice;
 	private String discountDetail;
@@ -30,7 +32,9 @@ public class EnterResponse {
 	public static EnterResponse of(List<String> uuidImage, Discount discount, Member member) {
 		return EnterResponse.builder()
 			.discountImgURL(uuidImage)
-			.discountCategory(discount.getDiscountCategory())
+			.discountType(discount.getDiscountType())
+			.discountLat(discount.getDiscountLat())
+			.discountLng(discount.getDiscountLng())
 			.discountDetail(discount.getDiscountDetail())
 			.discountDiscountedPrice(discount.getDiscountDiscountedPrice())
 			.discountEnd(discount.getDiscountEnd())

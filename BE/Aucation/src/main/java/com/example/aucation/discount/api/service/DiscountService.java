@@ -2,6 +2,7 @@ package com.example.aucation.discount.api.service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -60,19 +61,26 @@ public class DiscountService {
 		isSmallBusiness(member);
 
 		int discountRate = (int)Math.ceil(((double)discountRequest.getDiscountDiscountedPrice() /discountRequest.getDiscountPrice())*100);
+		String dateString = discountRequest.getDiscountEnd();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSS");
+		LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
+
 
 		Discount discount = Discount.builder()
-			.discountCategory(discountRequest.getDiscountCategory())
+			.discountType(discountRequest.getDiscountType())
 			.discountDetail(discountRequest.getDiscountDetail())
+			.discountLng(discountRequest.getDiscountLng())
+			.discountLat(discountRequest.getDiscountLat())
 			.discountDiscountedPrice(discountRequest.getDiscountDiscountedPrice())
 			.discountStart(LocalDateTime.now())
-			.discountEnd(LocalDateTime.now().plusMinutes(discountRequest.getDiscountEnd()))
+			.discountEnd(dateTime)
 			.discountTitle(discountRequest.getDiscountTitle())
 			.discountPrice(discountRequest.getDiscountPrice())
 			.discountUUID(discountUUID)
 			.discountRate(discountRate)
 			.owner(member)
 			.build();
+
 		discountRepository.save(discount);
 		disPhotoService.uploadDiscount(multipartFiles, discountUUID);
 		return DiscountResponse.builder().message(SUCCESS_REGISTER_MESSAGE).build();
