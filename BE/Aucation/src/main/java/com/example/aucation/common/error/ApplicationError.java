@@ -63,6 +63,7 @@ public enum ApplicationError {
     MEMBER_NOT_HAVE_MONEY(HttpStatus.BAD_REQUEST,"W001" ,"현재 돈이 너무나도 부족합니다. 충전을 부탁드립니다." ),
     OWNER_NOT_BID(HttpStatus.BAD_REQUEST,"B001" ,"당신은 판매자입니다 입찰할수 없습니다"),
     DUPLICATE_NOT_BID(HttpStatus.BAD_REQUEST, "B002","당신은 현재 최고 입찰자입니다 또 입찰할수없습니다." ),
+    NOT_TIME_BID(HttpStatus.BAD_REQUEST,"B003" ,"입찰할 수 있는 시간이 아닙니다."),
     EXIST_IMPUID(HttpStatus.BAD_REQUEST,"P001","UID가 존재합니다"),
     DISCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND,"D001","존재하지 않은 할인상품입니다" ),
     NOT_VERIFY_SMALL_BUSINESS(HttpStatus.BAD_REQUEST,"V001" ,"소상공인이 아닙니다 먼저 사업자 등록을 해주세요"),
@@ -72,7 +73,9 @@ public enum ApplicationError {
     NOT_EXIST_AUCTION(HttpStatus.BAD_REQUEST,"P003" ,"존재하지 않은 옥션입니다."),
     EXIST_BID_HISTORY(HttpStatus.BAD_REQUEST,"P004" ,"경매를 선택한 내역이 있습니다."),
     NOT_EXIST_BID(HttpStatus.BAD_REQUEST,"P005" ,"입찰 내역이 존재하지 않습니다."),
-    EXIST_OWN_BID(HttpStatus.BAD_REQUEST,"P006" ,"입찰했던 내역이 있습니다.");
+    EXIST_OWN_BID(HttpStatus.BAD_REQUEST,"P006" ,"입찰했던 내역이 있습니다."),
+    NOT_EXIST_HISTORY(HttpStatus.BAD_REQUEST,"P007" ,"구매 예정인 입찰 내역이 없습니다."),
+    NOT_OWNER(HttpStatus.BAD_REQUEST,"P008" ,"역경매 등록자가 아닙니다. 등록자만 입찰을 선택할 수 있습니다.");
 
     private final HttpStatus status;
     private final String code;

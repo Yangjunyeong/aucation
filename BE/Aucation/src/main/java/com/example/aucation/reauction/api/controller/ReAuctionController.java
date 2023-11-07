@@ -4,6 +4,7 @@ package com.example.aucation.reauction.api.controller;
 import com.example.aucation.auction.api.dto.RegisterRequest;
 import com.example.aucation.common.support.AuthorizedVariable;
 import com.example.aucation.reauction.api.dto.ReAuctionBidRequest;
+import com.example.aucation.reauction.api.dto.ReAuctionConfirmRequest;
 import com.example.aucation.reauction.api.dto.ReAuctionSelectRequest;
 import com.example.aucation.reauction.api.dto.ReAuctionSelectResponse;
 import com.example.aucation.reauction.api.service.ReAuctionService;
@@ -33,8 +34,14 @@ public class ReAuctionController {
 
     @PostMapping("/select")
     private ResponseEntity<?> selectReAuctionBid(@AuthorizedVariable Long memberPk,
-                                                 @RequestBody ReAuctionSelectRequest request)throws Exception{
+                                                 @RequestBody ReAuctionSelectRequest request){
         ReAuctionSelectResponse response = reAuctionService.selectBid(memberPk,request);
         return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/confirm")
+    private ResponseEntity<?> confirmReAuctionBid(@AuthorizedVariable Long memberPk,
+                                                 @RequestBody ReAuctionConfirmRequest request){
+        return ResponseEntity.ok().body(reAuctionService.confirmBid(memberPk,request));
     }
 }
