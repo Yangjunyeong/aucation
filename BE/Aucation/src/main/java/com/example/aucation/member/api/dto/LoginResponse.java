@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LoginResponse {
 
-    private Long memberPk;
     private String role;
     private String socialType;
 }

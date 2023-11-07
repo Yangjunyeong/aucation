@@ -65,7 +65,6 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
         response.getWriter().write(objectMapper.writeValueAsString(LoginResponse.builder()
-                .memberPk(member.getId())
                 .role(member.getMemberRole().getKey())
                 .socialType(member.getSocialType().name())
                 .build()));
