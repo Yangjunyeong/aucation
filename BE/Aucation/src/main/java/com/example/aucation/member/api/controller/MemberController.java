@@ -39,7 +39,7 @@ public class MemberController {
 
 	@GetMapping("/certification/email/{email}")
 	public ResponseEntity<EmailResponse> cerifyemail(@PathVariable("email") String memberEmail) throws Exception {
-		return ResponseEntity.ok().body(memberService.cerifyemail(memberEmail));
+		return ResponseEntity.ok().body(memberService.certifyEmail(memberEmail));
 	}
 
 	@GetMapping("/verification/id/{memberId}")
