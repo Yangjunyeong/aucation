@@ -127,7 +127,7 @@ public class AuctionService {
 	}
 
 	@Transactional
-	public void register(Long memberPk, RegisterRequest registerRequest, List<MultipartFile> multipartFiles) throws IOException {
+	public RegisterResponse register(Long memberPk, RegisterRequest registerRequest, List<MultipartFile> multipartFiles) throws IOException {
 		Member member = memberRepository.findById(memberPk)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 		String auctionUUID = PasswordGenerator.generate();
@@ -148,12 +148,12 @@ public class AuctionService {
 				.auctionUUID(auctionUUID)
 				.owner(member)
 				.build();
-			auctionRepository.save(auction);
+			auction = auctionRepository.save(auction);
 			photoService.upload(multipartFiles, auctionUUID);
 			String key = "auc-pre:" + auctionUUID;
 			stringRedisTemplate.opsForValue().set(key, "This is a token for Prepared_Auction");
 			stringRedisTemplate.expire(key, registerRequest.getAuctionStartAfterTime(), TimeUnit.MINUTES);
-
+			return RegisterResponse.builder().auctionPk(auction.getId()).build();
 		}
 		//역 경매라면
 		else if(registerRequest.getAuctionStatus().equals(AuctionStatus.REVERSE_BID)) {
@@ -171,10 +171,11 @@ public class AuctionService {
 				.auctionUUID(auctionUUID)
 				.owner(member)
 				.build();
-			auctionRepository.save(auction);
+			auction = auctionRepository.save(auction);
 			photoService.upload(multipartFiles, auctionUUID);
+			return RegisterResponse.builder().auctionPk(auction.getId()).build();
 		}
-
+		return null;
 	}
 
 	public AuctionListResponse getAuctionPreList(Long memberPk,int pageNum, AuctionSortRequest sortRequest) {
