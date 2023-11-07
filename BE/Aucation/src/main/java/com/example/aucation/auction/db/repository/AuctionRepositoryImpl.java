@@ -80,11 +80,11 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
                 .limit(pageable.getPageSize())
                 .orderBy(getSortByCondition(searchCondition.getAuctionCondition(),likeCnt));
         List<AuctionPreResponseItem> result = query.fetch();
-        double totalPage = Math.ceil((double) count/pageable.getPageSize());
+
         return AuctionListResponse.builder()
                 .nowTime(LocalDateTime.now())
                 .currentPage(pageNum)
-                .totalPage(totalPage)
+                .totalPage(count)
                 .preItems(result)
                 .build();
 }
@@ -137,7 +137,6 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
                 .orderBy(getSortByCondition(searchCondition.getAuctionCondition(),likeCnt));
         List<AuctionIngResponseItem> result = query.fetch();
 
-        double totalPage = Math.ceil((double) count/pageable.getPageSize());
 
 
         for (AuctionIngResponseItem item : result) {
@@ -156,7 +155,7 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
         return AuctionListResponse.builder()
                 .nowTime(LocalDateTime.now())
                 .currentPage(pageNum)
-                .totalPage(totalPage)
+                .totalPage(count)
                 .ingItems(result)
                 .build();
 

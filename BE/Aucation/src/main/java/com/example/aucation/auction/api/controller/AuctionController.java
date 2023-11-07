@@ -37,11 +37,10 @@ public class AuctionController {
 	}
 
 	@PostMapping("/register")
-	private ResponseEntity<Void> register(@AuthorizedVariable Long memberPk,RegisterRequest registerRequest, @RequestPart(value="multipartFiles")
+	private ResponseEntity<?> register(@AuthorizedVariable Long memberPk,RegisterRequest registerRequest, @RequestPart(value="multipartFiles")
 	List<MultipartFile> multipartFiles) throws
 		IOException {
-		auctionService.register(memberPk,registerRequest,multipartFiles);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok().body(auctionService.register(memberPk,registerRequest,multipartFiles));
 	}
 	@PostMapping("/list/pre/{pageNum}")
 	private ResponseEntity<?> getAucPreList(@AuthorizedVariable Long memberPk, @PathVariable int pageNum, @RequestBody(required = false) AuctionSortRequest sortRequest){

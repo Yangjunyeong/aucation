@@ -124,4 +124,8 @@ public class Auction extends BaseEntity {
 		this.auctionEndPrice = auctionEndPrice;
 	}
 
+	public void updateReAuctionToEnd(Member customer, int bidPrice){
+		setCustomer(customer);
+		this.auctionEndPrice = bidPrice;
+	}
 }
