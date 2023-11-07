@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface AuctionHistoryRepository extends JpaRepository<AuctionHistory,Long> {
     boolean existsAuctionHistoryByAuction(Auction auction);
+    Optional<AuctionHistory> findByAuction(Auction auction);
 }
