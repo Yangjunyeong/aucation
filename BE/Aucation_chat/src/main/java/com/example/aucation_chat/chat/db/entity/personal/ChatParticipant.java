@@ -1,4 +1,4 @@
-package com.example.aucation_chat.chat.db.entity;
+package com.example.aucation_chat.chat.db.entity.personal;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +14,8 @@ import javax.persistence.Table;
 
 import org.springframework.data.annotation.CreatedDate;
 
+import com.example.aucation_chat.chat.db.entity.group.GroupChatRoom;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Table(name = "chat_participant")
-public class GroupChatParticipant {
+public class ChatParticipant {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "partici_pk")
@@ -45,7 +47,7 @@ public class GroupChatParticipant {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
-	private GroupChatRoom chatRoom;
+	private ChatRoom chatRoom;
 
 	// private void setMember(Member member){
 	// 	this.member = member;
@@ -54,16 +56,16 @@ public class GroupChatParticipant {
 	// 	}
 	// }
 
-	private void setChatRoom(GroupChatRoom groupChatRoom){
-		this.chatRoom = groupChatRoom;
-		if(groupChatRoom != null){
-			groupChatRoom.getChatParticipants().add(this);
+	private void setChatRoom(ChatRoom chatRoom){
+		this.chatRoom = chatRoom;
+		if(chatRoom != null){
+			chatRoom.getChatParticipants().add(this);
 		}
 	}
 
 	@Builder
-	public GroupChatParticipant(long particiPk, LocalDateTime particiJoin, LocalDateTime particiExit,
-		long memberPk, GroupChatRoom chatRoom) {
+	public ChatParticipant(long particiPk, LocalDateTime particiJoin, LocalDateTime particiExit,
+		long memberPk, ChatRoom chatRoom) {
 		this.particiPk = particiPk;
 		this.particiJoin = particiJoin;
 		this.particiExit = particiExit;
