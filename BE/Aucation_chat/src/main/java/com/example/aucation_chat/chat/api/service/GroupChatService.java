@@ -64,7 +64,7 @@ public class GroupChatService {
 		}
 		// 채팅 내역 없으면 MySQL에서 찾아오기 : Read-through --------
 		else {
-			return readThrough(auctionUUID);
+			return cacheAside(auctionUUID);
 		} // Read-Through 끝
 
 	}
@@ -103,7 +103,7 @@ public class GroupChatService {
 		return temp;
 	}
 
-	private List<ChatResponse> readThrough(String auctionUUID) {
+	private List<ChatResponse> cacheAside(String auctionUUID) {
     /*
 		1. MySQL에서 chatMessage들 가져오기
 		- auctionUUID로 chatPk 찾아서 chatPk로 chat_message 테이블 조회
@@ -167,7 +167,7 @@ public class GroupChatService {
 
 		// List<ChatMessage> chatList = chatMessageRepository.findTop50ByChatRoom_ChatPk_OrderByMessageTimeDesc(
 		// 	searchedChat.getChatPk());
-		List<GroupChatMessage> chatList = groupChatMessageRepository.findByChatRoom_ChatPk(searchedChat.getChatPk());
+		List<GroupChatMessage> chatList = groupChatMessageRepository.findByChatRoom_ChatPk_OrderByMessageTimeDesc(searchedChat.getChatPk());
 		return chatList;
 	}
 

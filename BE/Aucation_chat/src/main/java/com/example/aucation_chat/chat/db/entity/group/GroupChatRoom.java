@@ -30,7 +30,7 @@ public class GroupChatRoom {
 	@Column(name = "group_chat_pk")
 	private long chatPk;
 
-	@Column(name = "group_chat_session")
+	@Column(name = "group_chat_session", unique = true)
 	private String chatSession;
 
 	@CreatedDate
