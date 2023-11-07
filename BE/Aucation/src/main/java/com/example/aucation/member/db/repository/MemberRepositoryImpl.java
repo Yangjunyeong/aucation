@@ -86,38 +86,30 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		//System.out.println(qAuction.auctionStartDate.before(LocalDateTime.now()));
 
 		List<MypageItemsResponse> result = query.fetch();
-		for (MypageItemsResponse a : result) {
-			System.out.print(a.getAuctionPk() + " " + a.getAuctionTitle());
-			System.out.println();
-		}
+
 		double totalPage = Math.ceil((double)count / 5);
 		MypageResponse response = MypageResponse.builder()
 			.currentPage(memberPageRequest.getMyPageNum() - 1)
 			.totalPage((int)totalPage)
 			.mypageItems(result)
 			.build();
-		System.out.println(response.toString());
+
 		return response;
 
 	}
 
 	private Predicate chooseType(int productType) {
 		if (productType == 0) {
-			System.out.println("왜출력이안됨");
 			return qAuction.auctionStatus.eq(AuctionStatus.valueOf(String.valueOf(AuctionStatus.BID)));
 		} else {
-
-			System.out.println("왜출력이안됨22222");
 			return qAuction.auctionStatus.eq(AuctionStatus.valueOf(String.valueOf(AuctionStatus.REVERSE_BID)));
 		}
 	}
 
 	private Predicate chooseStatus(int productStatus, Member member) {
 		if (productStatus == 0) {
-			System.out.println(qAuction.owner.id + " " + member.getId());
 			return qAuction.owner.id.eq(member.getId());
 		} else {
-			System.out.println(qAuction.customer.id + " " + member.getId());
 			return qAuction.customer.id.eq(member.getId());
 		}
 	}

@@ -39,6 +39,7 @@ public class MemberService {
 	public void signup(SignupRequest signupRequest) {
 		validateMemberId(signupRequest.getMemberId());
 		validateMemberEmail(signupRequest.getMemberEmail());
+		verifynick(signupRequest.getMemberNickname());
 		Member member = Member.builder()
 			.memberId(signupRequest.getMemberId())
 			.memberPw(passwordEncoder.encode(signupRequest.getMemberPw()))
@@ -58,7 +59,7 @@ public class MemberService {
 		return memberRepository.searchMyAuctionPage(member,memberPageRequest,pageable);
 	}
 
-	public EmailResponse verifyemail(String memberEmail) throws Exception {
+	public EmailResponse certifyEmail(String memberEmail) throws Exception {
 		validateMemberEmail(memberEmail);
 		String code = registerMail.sendSimpleMessage(memberEmail,"회원가입");
 		return EmailResponse.of(code);
@@ -94,10 +95,6 @@ public class MemberService {
 		return null;
 	}
 
-	public EmailResponse cerifyemail(String memberEmail) throws Exception {
-		String code = registerMail.sendSimpleMessage(memberEmail,"회원가입");
-		return EmailResponse.of(code);
-	}
 	public void verifyId(String memberId) {
 		if(memberRepository.existsByMemberId(memberId)) {
 			throw new DuplicateException(ApplicationError.DUPLICATE_USERNAME);

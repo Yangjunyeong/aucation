@@ -28,12 +28,14 @@ public class PayService {
 	@Value("${iamport.secret}")
 	private String restApiSecret;
 
+	private static final String POINT_CHARGER ="포인트가 충전되었습니다.";
+
 	private MemberRepository memberRepository;
 
 	private IamportClient iamportClient;
 
 	public PayService(MemberRepository memberRepository) {
-		this.iamportClient = new IamportClient("1161083051413771", "2F1PV6Uctr2JOyqWLvDelOuGYBTNs6Zrn5Ptqi3MOmwFKA2xnf4STh1gYoCWeUshsb6lESJ5OjuZEMYW");
+		this.iamportClient = new IamportClient(restApiKey, restApiSecret);
 		this.memberRepository = memberRepository;
 	}
 
@@ -43,16 +45,9 @@ public class PayService {
 		IOException {
 		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 
-		checkDuplicateImpUid(payRequest);
-
 		IamportResponse<Payment> iamResponse = iamportClient.paymentByImpUid(payRequest.getImpUID());
 
 		member.updatePlusPoint(iamResponse.getResponse().getAmount().intValue());
-
-		return null;
-	}
-
-	private void checkDuplicateImpUid(PayRequest payRequest) {
-
+		return PaymentResponse.builder().message(POINT_CHARGER).build();
 	}
 }

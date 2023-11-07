@@ -84,10 +84,6 @@ public class Member extends BaseEntity {
 	private List<Discount> discountCustomerList = new ArrayList<>();
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-	private List<DiscountHistory> discountHistoryList = new ArrayList<>();
-
-
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<LikeAuction> likeAuctionList = new ArrayList<>();
 
 	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
@@ -118,6 +114,7 @@ public class Member extends BaseEntity {
 		this.memberId = memberId;
 		this.memberPw = memberPw;
 		this.memberEmail = memberEmail;
+		this.memberNickname = memberNickname;
 		this.memberRole = memberRole;
 		this.socialType = socialType;
 		this.imageURL = imageURL;
@@ -138,5 +135,9 @@ public class Member extends BaseEntity {
 
 	public void updateMemberStatus() {
 		this.memberRole = Role.SHOP;
+	}
+
+	public void minusUpdatePoint(int memberPoint, int discountDiscountedPrice) {
+		this.memberPoint = memberPoint-discountDiscountedPrice;
 	}
 }

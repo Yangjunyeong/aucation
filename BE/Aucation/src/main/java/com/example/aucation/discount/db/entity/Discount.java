@@ -35,9 +35,10 @@ public class Discount extends BaseEntity {
 	private LocalDateTime discountEnd;
 	private int discountPrice;
 	private String discountDetail;
-	private int discountDiscountedPirce;
+	private int discountDiscountedPrice;
 	private String discountImgURL;
 	private String discountUUID;
+	private int discountRate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -50,8 +51,8 @@ public class Discount extends BaseEntity {
 	@Builder
 	public Discount(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt, Long lastModifiedBy,
 		boolean isDeleted, String discountTitle, String discountCategory, LocalDateTime discountStart,
-		LocalDateTime discountEnd, int discountPrice, String discountDetail, int discountDiscountedPirce,
-		String discountImgURL, String discountUUID, Member owner) {
+		LocalDateTime discountEnd, int discountPrice, String discountDetail, int discountDiscountedPrice,
+		String discountImgURL, String discountUUID, int discountRate,Member owner) {
 		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
 		this.discountTitle = discountTitle;
 		this.discountCategory = discountCategory;
@@ -59,9 +60,10 @@ public class Discount extends BaseEntity {
 		this.discountEnd = discountEnd;
 		this.discountPrice = discountPrice;
 		this.discountDetail = discountDetail;
-		this.discountDiscountedPirce = discountDiscountedPirce;
+		this.discountDiscountedPrice = discountDiscountedPrice;
 		this.discountImgURL = discountImgURL;
 		this.discountUUID = discountUUID;
+		this.discountRate = discountRate;
 		addMember(owner);
 	}
 
