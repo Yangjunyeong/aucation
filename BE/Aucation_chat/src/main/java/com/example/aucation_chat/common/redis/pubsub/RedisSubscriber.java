@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
+import com.example.aucation_chat.chat.api.dto.response.ChatResponse;
 import com.example.aucation_chat.common.redis.dto.RedisChatMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -24,17 +25,36 @@ public class RedisSubscriber implements MessageListener {
 	@Override
 	public void onMessage(Message message, byte[] pattern) { // 메세지 수신할 때마다 호출
 		try {
+			log.info(" subscriber listeneing ...............................");
 			// Redis에서 발행된 메시지의 채널 이름을 가져오는 부분
-			String channel = new String(message.getChannel());
+			String channel = (String)redisTemplate.getStringSerializer().deserialize(message.getChannel());
+			log.info("      channel: "+channel);
 
-			// redis 에서 발행된 데이터를 받아 역직렬화
+			// message.getBody() : byte[] => String
 			String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
 
-			// 해당 객체를 RedisChatMessage 객체로 맵핑
+			// String으로 이루어진 객체를 매핑
 			RedisChatMessage chat = objectMapper.readValue(publishMessage, RedisChatMessage.class);
+			log.info("      넘어온 Redis chat: "+chat.toString());
+
+
+			// RedisChatMessage -> ChatResponse
+			ChatResponse res = ChatResponse.builder()
+				.memberPk(chat.getMemberPk())
+				.imageURL(chat.getImageURL())
+				.messageTime(chat.getMessageTime())
+				.messageContent(chat.getMessageContent())
+				.memberNickname(chat.getMemberNickname())
+				.build();
+			log.info("      ChatResponse: "+res.toString());
+
 
 			// Websocket 구독자에게 채팅 메시지 전송
-			messagingTemplate.convertAndSend("/topic/sub/" + channel,  chat);
+			String auctionUUID = channel.split(":")[1];
+			log.info("      auctionUUID: "+auctionUUID);
+			messagingTemplate.convertAndSend("/sub/" + auctionUUID,  res);
+			log.info(" subscriber listeneing 끝 ...............................");
+
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}

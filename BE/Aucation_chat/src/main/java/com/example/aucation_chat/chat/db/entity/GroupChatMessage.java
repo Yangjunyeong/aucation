@@ -12,8 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.springframework.data.annotation.CreatedDate;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Table(name ="chat_message")
-public class ChatMessage {
+public class GroupChatMessage {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "message_pk")
@@ -39,22 +37,22 @@ public class ChatMessage {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
-	private ChatRoom chatRoom;
+	private GroupChatRoom chatRoom;
 
-	private void setChatRoom(ChatRoom chatRoom){
-		this.chatRoom = chatRoom;
-		if(chatRoom != null){
-			chatRoom.getChatMessages().add(this);
+	private void setChatRoom(GroupChatRoom groupChatRoom){
+		this.chatRoom = groupChatRoom;
+		if(groupChatRoom != null){
+			groupChatRoom.getGroupChatMessages().add(this);
 		}
 	}
 
 	@Builder
-	public ChatMessage(long messagePk, String messageContent, LocalDateTime messageTime, long memberPk,
-		ChatRoom chatRoom) {
+	public GroupChatMessage(long messagePk, String messageContent, LocalDateTime messageTime, long memberPk,
+		GroupChatRoom groupChatRoom) {
 		this.messagePk = messagePk;
 		this.messageContent = messageContent;
 		this.messageTime = messageTime;
 		this.memberPk = memberPk;
-		this.chatRoom = chatRoom;
+		this.chatRoom = groupChatRoom;
 	}
 }

@@ -3,7 +3,6 @@ package com.example.aucation_chat.chat.api.service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -15,12 +14,12 @@ import org.springframework.stereotype.Service;
 import com.example.aucation_chat.auction.db.entity.Auction;
 import com.example.aucation_chat.auction.db.repository.AuctionRepository;
 import com.example.aucation_chat.chat.api.dto.response.ChatResponse;
-import com.example.aucation_chat.chat.db.entity.ChatMessage;
-import com.example.aucation_chat.chat.db.entity.ChatParticipant;
-import com.example.aucation_chat.chat.db.entity.ChatRoom;
-import com.example.aucation_chat.chat.db.repository.ChatMessageRepository;
-import com.example.aucation_chat.chat.db.repository.ChatParticipantRepository;
-import com.example.aucation_chat.chat.db.repository.ChatRoomRepository;
+import com.example.aucation_chat.chat.db.entity.GroupChatMessage;
+import com.example.aucation_chat.chat.db.entity.GroupChatParticipant;
+import com.example.aucation_chat.chat.db.entity.GroupChatRoom;
+import com.example.aucation_chat.chat.db.repository.GroupChatMessageRepository;
+import com.example.aucation_chat.chat.db.repository.GroupChatParticipantRepository;
+import com.example.aucation_chat.chat.db.repository.GroupChatRoomRepository;
 import com.example.aucation_chat.common.error.ApplicationError;
 import com.example.aucation_chat.common.error.NotFoundException;
 import com.example.aucation_chat.common.redis.dto.RedisChatMessage;
@@ -34,13 +33,15 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class ChatService {
+public class GroupChatService {
 
-	private final ChatRoomRepository chatRoomRepository;
-	private final ChatMessageRepository chatMessageRepository;
-	private final ChatParticipantRepository chatParticipantRepository;
+	private final GroupChatRoomRepository groupChatRoomRepository;
+	private final GroupChatMessageRepository groupChatMessageRepository;
+	private final GroupChatParticipantRepository groupChatParticipantRepository;
 	private final MemberRepository memberRepository;
 	private final AuctionRepository auctionRepository;
+	@Autowired
+	private final WebSocketChatService webSocketChatService;
 	@Autowired
 	private final RedisTemplate<String, RedisChatMessage> redisTemplate;
 
@@ -49,10 +50,10 @@ public class ChatService {
 	 * */
 	public List<ChatResponse> enter(String auctionUUID, long memberPk) {
 		// auctionUUID로 채팅방 찾고 없으면 생성
-		ChatRoom chatRoom = findChatRoomByUUID(auctionUUID).orElse(createNotExistChatRoom(auctionUUID));
+		GroupChatRoom groupChatRoom = findChatRoomByUUID(auctionUUID).orElse(createNotExistChatRoom(auctionUUID));
 
 		// 참여한 적 없다면 참여자로 생성
-		participate(memberPk, chatRoom);
+		participate(memberPk, groupChatRoom);
 
 		// redis에서 채팅 내역 빼오기
 		List<RedisChatMessage> redisChatMessages = redisTemplate.opsForList().range("chat-auc:" + auctionUUID, 0, -1);
@@ -68,35 +69,37 @@ public class ChatService {
 
 	}
 
-	private void participate(long memberPk, ChatRoom chatRoom) {
+
+	private void participate(long memberPk, GroupChatRoom groupChatRoom) {
 		// memberPk로 유효성검사
 		memberRepository.findByMemberPk(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 		// member가 지금 채팅방에 들어가있는지 검사
-		Optional<ChatParticipant> temp = chatParticipantRepository.findByChatRoom_ChatPkAndAndMemberPk(chatRoom.getChatPk(), memberPk);
+		Optional<GroupChatParticipant> temp = groupChatParticipantRepository.findByChatRoom_ChatPkAndAndMemberPk(
+			groupChatRoom.getChatPk(), memberPk);
 		// 안들어가 있을때만 participant로 insert
 		if(temp.isEmpty()) {
-			ChatParticipant chatParticipant = ChatParticipant.builder()
-				.chatRoom(chatRoom)
+			GroupChatParticipant chatParticipant = GroupChatParticipant.builder()
+				.chatRoom(groupChatRoom)
 				.memberPk(memberPk)
 				.particiJoin(LocalDateTime.now())
 				.build();
-			chatParticipantRepository.save(chatParticipant);
+			groupChatParticipantRepository.save(chatParticipant);
 		}
 	}
 
-	private Optional<ChatRoom> findChatRoomByUUID(String auctionUUID) {
+	private Optional<GroupChatRoom> findChatRoomByUUID(String auctionUUID) {
 		Auction searchedAuction = auctionRepository.findByAuctionUUID(auctionUUID)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.AUCTION_NOT_FOUND));
-		Optional<ChatRoom> chatRoom = chatRoomRepository.findByChatSession(auctionUUID);
+		Optional<GroupChatRoom> chatRoom = groupChatRoomRepository.findByChatSession(auctionUUID);
 		return chatRoom;
 	}
 
-	private ChatRoom createNotExistChatRoom(String auctionUUID) {
-		ChatRoom temp = ChatRoom.builder()
+	private GroupChatRoom createNotExistChatRoom(String auctionUUID) {
+		GroupChatRoom temp = GroupChatRoom.builder()
 			.chatSession(auctionUUID)
 			.chatCreate(LocalDateTime.now())
 			.build();
-		chatRoomRepository.save(temp);
+		groupChatRoomRepository.save(temp);
 		return temp;
 	}
 
@@ -105,7 +108,7 @@ public class ChatService {
 		1. MySQL에서 chatMessage들 가져오기
 		- auctionUUID로 chatPk 찾아서 chatPk로 chat_message 테이블 조회
 	*/
-		List<ChatMessage> chatList = getChatsFromDB(auctionUUID);
+		List<GroupChatMessage> chatList = getChatsFromDB(auctionUUID);
 
 		// 2. MySQL 에도 없음 => 새로 만들어진 채팅방이라는 뜻
 		if (chatList.isEmpty())
@@ -157,13 +160,14 @@ public class ChatService {
 		return chatResponses;
 	}
 
-	private List<ChatMessage> getChatsFromDB(String auctionUUID) {
-		ChatRoom searchedChat = chatRoomRepository.findByChatSession(auctionUUID)
+	private List<GroupChatMessage> getChatsFromDB(String auctionUUID) {
+		GroupChatRoom searchedChat = groupChatRoomRepository.findByChatSession(auctionUUID)
 			.orElseThrow(() -> new NotFoundException(
 				ApplicationError.CHATTING_ROOM_NOT_FOUND));
 
-		List<ChatMessage> chatList = chatMessageRepository.findTop50ByChatRoom_ChatPk_OrderByMessageTimeDesc(
-			searchedChat.getChatPk());
+		// List<ChatMessage> chatList = chatMessageRepository.findTop50ByChatRoom_ChatPk_OrderByMessageTimeDesc(
+		// 	searchedChat.getChatPk());
+		List<GroupChatMessage> chatList = groupChatMessageRepository.findByChatRoom_ChatPk(searchedChat.getChatPk());
 		return chatList;
 	}
 

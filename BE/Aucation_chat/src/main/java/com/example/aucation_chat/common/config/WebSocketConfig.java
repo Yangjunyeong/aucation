@@ -36,7 +36,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 		// /topic, /queue로 시작하는 destination헤더를 가진 메세지를 브로커로 라우팅
 		// 해당 경로를 subscribe하는 클라이언트에게 메세지 전달
 		// /topic은 1:N, /queue는 1:1 <= 꼭 지키는 규칙은 아님
-		config.enableSimpleBroker("/topic", "/queue");
+		// config.enableSimpleBroker("/topic", "/queue");
+		config.enableSimpleBroker("/sub");
 	}
 
 	// JSON을 객체로 변환
