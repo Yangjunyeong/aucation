@@ -83,15 +83,6 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
             auctionEndTime={item.auctionStartTime}
             stateHandler={auctionStateHandler}
           />
-          {/* <p>
-            {item.auctionEndTime && !!isNaN(item.auctionEndTime.getTime())
-              ? new Intl.DateTimeFormat("ko-KR", {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                }).format(new Date(item.auctionEndTime))
-              : "유효하지 않은 날짜"}
-          </p> */}
-          {/* <div>{tmp}</div> */}
         </div>
       </div>
     </div>

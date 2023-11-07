@@ -76,7 +76,7 @@ const AuctionCountDown: React.FC<StateCardProps> = ({
       <div
         className={clsx(
           "pr-2",
-          statusMessage == "경매시작"
+          statusMessage == "경매마감"
             ? "text-red-500"
             : statusMessage == "경매종료"
             ? "text-customBlue"
@@ -88,7 +88,11 @@ const AuctionCountDown: React.FC<StateCardProps> = ({
       {days > 0 && <div>{days}:</div>}
       {(days > 0 || hours > 0) && <div>&nbsp;{hours}&nbsp;:</div>}
       {(days > 0 || hours > 0 || minutes > 0) && <div>&nbsp;{minutes}&nbsp;:</div>}
-      {nowtime <= endTime && <div>&nbsp;{seconds}초 전</div>}
+      {nowtime <= endTime && (
+        <div>
+          &nbsp;{seconds}초 <span className="text-customBlue">전</span>
+        </div>
+      )}
     </span>
   );
 };

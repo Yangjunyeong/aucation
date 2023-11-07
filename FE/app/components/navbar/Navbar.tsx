@@ -6,25 +6,27 @@ import Image from "next/image";
 import Star from "@/app/images/Star.png";
 import { useRouter } from "next/navigation";
 import NavBtn from "../button/MainBtn";
+import { useRecoilState } from "recoil";
+import { authState } from "@/app//store/atoms";
 const Navbar: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [auth, setAuth] = useRecoilState(authState);
+
   const router = useRouter();
 
-  useEffect(() => {
-    console.log("네브바 내부");
-    const accessToken = localStorage.getItem("accessToken");
-    setTimeout(() => {
-      setIsLoggedIn(!!accessToken);
-    }, 1000);
-  }, []);
-
+  // useEffect(() => {
+  //   const token = localStorage.getItem("accessToken");
+  //   setIsLoggedIn(!!token);
+  // }, []);
+  const checkAuth = (e: React.MouseEvent<HTMLButtonElement>) => {
+    console.log(auth);
+  };
   const handleLogout = () => {
     // 로컬 스토리지에서 토큰 제거
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
 
     // 로그인 상태 업데이트
-    setIsLoggedIn(false);
+    setAuth({ isLoggedIn: false, role: "" });
 
     // 홈페이지로 리디렉션
     router.push("/");
@@ -52,13 +54,13 @@ const Navbar: React.FC = () => {
           할인 상품
         </Link>
       </div>
-
+      <button onClick={e => checkAuth(e)}>미안해</button>
       <div className="flex flex-row-reverse  justify-start w-full ">
-        <Link href={isLoggedIn ? "/panmae" : "/login"}>
+        <Link href={auth.isLoggedIn ? "/panmae" : "/login"}>
           <NavBtn className="ml-14 px-4">경매 올리기</NavBtn>
         </Link>
 
-        {isLoggedIn ? (
+        {auth.isLoggedIn ? (
           <a
             onClick={handleLogout}
             className="ml-14 text-2xl flex items-center hover:underline cursor-pointer"
@@ -72,7 +74,7 @@ const Navbar: React.FC = () => {
         )}
 
         <Link
-          href={isLoggedIn ? "/mypage" : "/login"}
+          href={auth.isLoggedIn ? "/mypage" : "/login"}
           className="ml-14 text-2xl flex items-center hover:underline"
         >
           마이페이지

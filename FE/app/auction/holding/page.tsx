@@ -48,8 +48,8 @@ const AuctionList = ({ params }: { params: PageParams }) => {
 
   const orderTypeList: orderType[] = [
     { id: 1, typeName: "최신순" },
-    { id: 2, typeName: "저가순" },
-    { id: 3, typeName: "고가순" },
+    { id: 2, typeName: "고가순" },
+    { id: 3, typeName: "저가순" },
     { id: 4, typeName: "좋아요순" },
   ];
   const searchTypeList: searchType[] = [
@@ -161,22 +161,22 @@ const AuctionList = ({ params }: { params: PageParams }) => {
           <SearchInput searchHandler={handleSearch} setSearchKeyword={setSearchKeyword} />
         </div>
       </div>
-      <div className="grid grid-cols-5 gap-x-6 gap-y-10">
+      {/* <div className="grid grid-cols-5 gap-x-6 gap-y-10">
         {dummyData.map(item => (
           <div key={item.auctionPk} className="shadow-lg h-[450px] rounded-lg">
             <AuctionListCard item={item} nowTime={tmp} />
           </div>
         ))}
-      </div>
+      </div> */}
 
-      {/* {isLoading ? (
+      {isLoading ? (
         <div className="flex justify-center items-center">
           <PacmanLoader color="#247eff" size={150} speedMultiplier={1} />
         </div>
       ) : data.ingItems.length > 0 ? (
         <div className="grid grid-cols-5 gap-x-6 gap-y-10">
           {data.ingItems.map(item => (
-            <div key={item.auctionPk} className="shadow-lg h-[450px] rounded-lg">
+            <div key={item.auctionPk} className="shadow-lg h-[500px] rounded-lg">
               <AuctionListCard item={item} nowTime={data.nowTime} />
             </div>
           ))}
@@ -188,7 +188,7 @@ const AuctionList = ({ params }: { params: PageParams }) => {
           width={1536}
           height={400} // 여기서 통일된 높이를 사용하세요
         />
-      )} */}
+      )}
 
       <Pagination
         activePage={pageNumber}

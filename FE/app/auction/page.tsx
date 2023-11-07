@@ -44,8 +44,8 @@ const AuctionList = ({ params }: { params: PageParams }) => {
 
   const orderTypeList: orderType[] = [
     { id: 1, typeName: "최신순" },
-    { id: 2, typeName: "저가순" },
-    { id: 3, typeName: "고가순" },
+    { id: 2, typeName: "고가순" },
+    { id: 3, typeName: "저가순" },
     { id: 4, typeName: "좋아요순" },
   ];
   const searchTypeList: searchType[] = [
@@ -80,11 +80,13 @@ const AuctionList = ({ params }: { params: PageParams }) => {
         console.log(searchFilters);
         console.log("데이터", error);
       });
-  }, [selectedCategory, selectedOrderType.id, searchType.id, searchKeyword, pageNumber]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory, selectedOrderType.id, pageNumber]);
 
   useEffect(() => {
     fetchAuctionData();
-  }, [fetchAuctionData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory, selectedOrderType.id, pageNumber]);
 
   const handleSearch = (keyword: string) => {
     setSearchKeyword(keyword); // 상태 업데이트

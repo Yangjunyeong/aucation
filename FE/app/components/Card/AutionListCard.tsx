@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-
+import { useRouter } from "next/navigation";
 import LikeBtn from "../../detail/components/LikeBtn";
 import { BsFillPersonFill } from "react-icons/bs";
 import Image from "next/image";
@@ -16,6 +16,7 @@ interface CardProps {
 }
 
 const AuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
+  const router = useRouter();
   const [likeCount, setLikeCount] = useState<number>(item.likeCnt);
   const [isLiked, setIsLiked] = useState<boolean>(item.isLike);
   // const tmp = nowTime ? new Date(nowTime) : null;
@@ -36,8 +37,16 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
         console.log("좋아요 실패", error);
       });
   };
+  const EnterDetail = (pk: number) => {
+    router.push(`/detail/${pk}`);
+  };
   return (
-    <div className="hover:cursor-pointer overflow-hidden h-full rounded-lg shadow-lg bg-white hover:border-sky-500 hover:ring-8 hover:ring-sky-200 hover:ring-opacity-100">
+    <div
+      onClick={() => {
+        EnterDetail(item.auctionPk);
+      }}
+      className="hover:cursor-pointer overflow-hidden h-full rounded-lg shadow-lg bg-white hover:border-sky-500 hover:ring-8 hover:ring-sky-200 hover:ring-opacity-100"
+    >
       <div className="h-1/2 relative">
         <Image
           src={item.auctionImg}
@@ -58,15 +67,15 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
           <p> 참여자: {item.auctionCurCnt} 명</p>
         </div>
 
-        <div className="flex items-center justify-between h-1/5 font-extrabold text-2xl overflow-hidden">
+        <div className="flex items-center justify-between h-[31%] font-extrabold text-2xl overflow-hidden">
           <p> {item.auctionTitle}</p>
         </div>
 
-        <div className="flex items-center justify-between h-1/6 font-bold text-xl">
-          <p> 시작가:{formatKoreanCurrency(item.auctionStartPrice)}</p>
+        <div className="flex items-center justify-between mb-1 font-bold text-xl">
+          <p> 시작가 : {formatKoreanCurrency(item.auctionStartPrice)}</p>
         </div>
-        <div className="flex items-center justify-between h-1/6 font-bold text-xl">
-          <p> 입찰가:{formatKoreanCurrency(item.auctionTopBidPrice)}</p>
+        <div className="flex items-center justify-between mb-1 font-bold text-xl">
+          <p> 입찰가 : {formatKoreanCurrency(item.auctionTopBidPrice)}</p>
         </div>
 
         <div className="flex items-center h-1/5 w-full border-2 rounded-3xl bg-customBgLightBlue text-lg">

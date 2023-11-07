@@ -14,7 +14,7 @@ import { AuctionData, AuctionItem, PreAuctionData } from "../../utils/cardType";
 import dummyData from "../components/dummyData";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import PacmanLoader from "react-spinners/PacmanLoader";
+import ClipLoader from "react-spinners/ClipLoader";
 import PreAuctionListCard from "@/app/components/Card/PreAuctionListCard";
 
 type PageParams = {
@@ -48,8 +48,8 @@ const AuctionList = ({ params }: { params: PageParams }) => {
 
   const orderTypeList: orderType[] = [
     { id: 1, typeName: "최신순" },
-    { id: 2, typeName: "저가순" },
-    { id: 3, typeName: "고가순" },
+    { id: 2, typeName: "고가순" },
+    { id: 3, typeName: "저가순" },
     { id: 4, typeName: "좋아요순" },
   ];
   const searchTypeList: searchType[] = [
@@ -102,7 +102,8 @@ const AuctionList = ({ params }: { params: PageParams }) => {
       .finally(() => {
         setIsLoading(false); // 데이터 로딩 완료
       });
-  }, [selectedCategory, selectedOrderType.id, searchType.id, searchKeyword, pageNumber]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory, selectedOrderType.id, pageNumber]);
 
   useEffect(() => {
     fetchAuctionData();
@@ -168,12 +169,12 @@ const AuctionList = ({ params }: { params: PageParams }) => {
         ))} */}
       {isLoading ? (
         <div className="flex justify-center items-center">
-          <PacmanLoader color="#247eff" size={150} speedMultiplier={1} />
+          <ClipLoader color="#247eff" size={150} speedMultiplier={1} />
         </div>
       ) : data.preItems.length > 0 ? (
         <div className="grid grid-cols-5 gap-x-6 gap-y-10">
           {data.preItems.map(item => (
-            <div key={item.auctionPk} className="shadow-lg h-[450px] rounded-lg">
+            <div key={item.auctionPk} className="shadow-lg h-[500px] rounded-lg">
               <PreAuctionListCard item={item} nowTime={data.nowTime} />
             </div>
           ))}

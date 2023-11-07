@@ -7,7 +7,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Banner from "./components/Banner";
 import PopularBidList from "./components/PopularBidList";
 import MainFloor from "./components/MainFloor";
-
+import PaymentModal from "../components/modal/PaymentModal";
 export default function Home() {
   // const getHandler = async () => {
   //   const res = await fetch("/api/get");
@@ -15,8 +15,11 @@ export default function Home() {
   //   console.log(data);
   //   setState(data.data);
   // };
+  const [isModalOpen, setModalOpen] = useState(false);
   return (
     <main className="px-48">
+      <button onClick={() => setModalOpen(true)}>Open Modal</button>
+      <PaymentModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
       <div>
         <Banner />
       </div>
