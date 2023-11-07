@@ -6,5 +6,5 @@ import lombok.Getter;
 public class PayRequest {
 
 	String impUID;
-	String amount;
+	int amount;
 }
