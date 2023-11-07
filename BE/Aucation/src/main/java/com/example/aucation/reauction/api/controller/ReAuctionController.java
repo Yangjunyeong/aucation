@@ -24,13 +24,11 @@ import java.util.List;
 public class ReAuctionController {
     private final ReAuctionService reAuctionService;
     @PostMapping("/bid")
-    private ResponseEntity<Void> bid(@AuthorizedVariable Long memberPk,
+    private ResponseEntity<?> bid(@AuthorizedVariable Long memberPk,
                                      ReAuctionBidRequest reAuctionBidRequest, @RequestPart(value="multipartFiles")
     List<MultipartFile> multipartFiles) throws
             IOException, Exception {
-
-        reAuctionService.bidReAuction(memberPk,reAuctionBidRequest,multipartFiles);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(reAuctionService.bidReAuction(memberPk,reAuctionBidRequest,multipartFiles));
     }
 
     @PostMapping("/select")
