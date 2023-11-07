@@ -1,27 +1,37 @@
 package com.example.aucation.member.api.controller;
 
+import java.io.IOException;
+
+import com.example.aucation.member.api.dto.DetailRequest;
+import com.example.aucation.member.api.dto.DetailResponse;
+import com.example.aucation.member.api.dto.ImageResponse;
 import com.example.aucation.member.api.dto.MemberEmailRequest;
 import com.example.aucation.member.api.dto.MemberNickRequest;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.aucation.common.dto.EmailResponse;
 import com.example.aucation.common.support.AuthorizedVariable;
 import com.example.aucation.member.api.dto.MemberPageRequest;
 import com.example.aucation.member.api.dto.MypageLikeResponse;
 import com.example.aucation.member.api.dto.MypageResponse;
+import com.example.aucation.member.api.dto.NicknameRequest;
+import com.example.aucation.member.api.dto.NicknameResponse;
 import com.example.aucation.member.api.dto.SignupRequest;
 import com.example.aucation.member.api.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import retrofit2.http.Multipart;
 
 @RequiredArgsConstructor
 @RestController
@@ -79,4 +89,20 @@ public class MemberController {
 	}
 
 	//마이페이지 할인 게시글
+
+	@PatchMapping("/modify/nickname")
+	public ResponseEntity<NicknameResponse> changenick(@AuthorizedVariable Long memberPk,@RequestBody NicknameRequest nicknameRequest) {
+		return ResponseEntity.ok().body(memberService.changenick(memberPk,nicknameRequest));
+	}
+
+	@PatchMapping("/modify/detail")
+	public ResponseEntity<DetailResponse> changedetail(@AuthorizedVariable Long memberPk,@RequestBody DetailRequest detailRequest) {
+		return ResponseEntity.ok().body(memberService.changedetail(memberPk,detailRequest));
+	}
+
+	@PatchMapping("/modify/image")
+	public ResponseEntity<ImageResponse> changeimage(@AuthorizedVariable Long memberPk, MultipartFile multipartFile) throws
+		IOException {
+		return ResponseEntity.ok().body(memberService.changeimage(memberPk,multipartFile));
+	}
 }
