@@ -47,7 +47,7 @@ public class ChatService {
 	/**
 	 * 채팅 목록 보여줌
 	 * */
-	public List<RedisChatMessage> enter(String auctionUUID, long memberPk) {
+	public List<ChatResponse> enter(String auctionUUID, long memberPk) {
 		// auctionUUID로 채팅방 찾고 없으면 생성
 		ChatRoom chatRoom = findChatRoomByUUID(auctionUUID).orElse(createNotExistChatRoom(auctionUUID));
 
@@ -59,7 +59,7 @@ public class ChatService {
 
 		// 채팅 내역 있으면 반환
 		if (!redisChatMessages.isEmpty()) {
-			return redisChatMessages;
+			return redisListToChatResponseList(redisChatMessages);
 		}
 		// 채팅 내역 없으면 MySQL에서 찾아오기 : Read-through --------
 		else {
@@ -100,27 +100,22 @@ public class ChatService {
 		return temp;
 	}
 
-	private List<RedisChatMessage> readThrough(String auctionUUID) {
+	private List<ChatResponse> readThrough(String auctionUUID) {
     /*
 		1. MySQL에서 chatMessage들 가져오기
 		- auctionUUID로 chatPk 찾아서 chatPk로 chat_message 테이블 조회
 	*/
-		ChatRoom searchedChat = chatRoomRepository.findByChatSession(auctionUUID)
-			.orElseThrow(() -> new NotFoundException(
-				ApplicationError.CHATTING_ROOM_NOT_FOUND));
-		// ChatRoom searchedChat = chatRoomRepository.findByChatSession(auctionUUID)
-
-		List<ChatMessage> chatList = chatMessageRepository.findTop50ByChatRoom_ChatPk_OrderByMessageTimeDesc(
-			searchedChat.getChatPk());
+		List<ChatMessage> chatList = getChatsFromDB(auctionUUID);
 
 		// 2. MySQL 에도 없음 => 새로 만들어진 채팅방이라는 뜻
 		if (chatList.isEmpty())
-			return null;
+			return new ArrayList<>();
 
 		// 3. MySQL에 있음 => Redis에 저장 후 반환
 		List<RedisChatMessage> dbToRedisChats = new ArrayList<>(); // MySQL에서 redis에 들어갈 채팅메세지들
+		List<ChatResponse> chatResponses = new ArrayList<>(); // MySQL -> chatResponse
 
-		// chat entity -> redis -> 저장&반환
+		// chat entity -> redis -> 저장 -> chat response 반환
 		for (int i = chatList.size() - 1; i > 0; i--) { //DB에서 보낸시간 기반 내림차순해서 가져왔기 때문에 뒤에서부터 조회해 오름차순으로 넣어야함
 
 			// message의 memberPk로 닉네임 찾아야함
@@ -131,21 +126,66 @@ public class ChatService {
 			String messageTime = chatList.get(i).getMessageTime()
 				.format(DateTimeFormatter.ofPattern(DateFormatPattern.get()));
 
+			long memberPk = chatList.get(i).getMemberPk();
+			String messageContent = chatList.get(i).getMessageContent();
+
 			// MySQL데이터를 Redis로 옮기는 과정
 			RedisChatMessage temp = RedisChatMessage.builder()
-				.memberPk(chatList.get(i).getMemberPk())
-				.messageContent(chatList.get(i).getMessageContent())
+				.memberPk(memberPk)
+				.messageContent(messageContent)
+				.memberNickname(member.getMemberNickname())
+				.messageTime(messageTime)
+				.imageURL(member.getImageURL())
+				.cachedFromDB(true)
+				.build();
+
+			dbToRedisChats.add(temp);
+
+			// MySQL데이터를 ChatResponse로 옮기는 과정
+			ChatResponse resp = ChatResponse.builder()
+				.memberPk(memberPk)
+				.messageContent(messageContent)
 				.memberNickname(member.getMemberNickname())
 				.messageTime(messageTime)
 				.imageURL(member.getImageURL())
 				.build();
-
-			dbToRedisChats.add(temp);
-			// redisTemplate.opsForList().rightPush(auctionUUID, temp);
+			chatResponses.add(resp);
 		}
 		redisTemplate.opsForList().rightPushAll("chat-auc:" + auctionUUID, dbToRedisChats);
 		redisTemplate.expire("chat-auc:" + auctionUUID, 30, TimeUnit.MINUTES); // 30분 TTL설정
-		return dbToRedisChats;
+
+		return chatResponses;
+	}
+
+	private List<ChatMessage> getChatsFromDB(String auctionUUID) {
+		ChatRoom searchedChat = chatRoomRepository.findByChatSession(auctionUUID)
+			.orElseThrow(() -> new NotFoundException(
+				ApplicationError.CHATTING_ROOM_NOT_FOUND));
+
+		List<ChatMessage> chatList = chatMessageRepository.findTop50ByChatRoom_ChatPk_OrderByMessageTimeDesc(
+			searchedChat.getChatPk());
+		return chatList;
+	}
+
+	// RedisChatMessages로 이루어진 List를 ChatResponse리스트로 변환
+	private List<ChatResponse> redisListToChatResponseList(List<RedisChatMessage> redisChatMessages) {
+		List<ChatResponse> temp = new ArrayList<>();
+		for(RedisChatMessage r: redisChatMessages){
+			temp.add(redisToChatResponse(r));
+		}
+		return temp;
+	}
+
+	// RedisChatMessage -> ChatResponse
+	private ChatResponse redisToChatResponse(RedisChatMessage r) {
+		ChatResponse temp = ChatResponse.builder()
+			.memberPk(r.getMemberPk())
+			.memberNickname(r.getMemberNickname())
+			.messageContent(r.getMessageContent())
+			.imageURL(r.getImageURL())
+			.messageTime(r.getMessageTime())
+			.build();
+		return temp;
 	}
 
 }
