@@ -10,4 +10,5 @@ import com.example.aucation_chat.discount.db.entity.Discount;
 @Repository
 public interface DiscountRepository extends JpaRepository<Discount,Long> {
 	Optional<Discount> findByDiscountUUID(String discountUUID);
+	Optional<Discount> findByDiscountPk(long discountPK);
 }

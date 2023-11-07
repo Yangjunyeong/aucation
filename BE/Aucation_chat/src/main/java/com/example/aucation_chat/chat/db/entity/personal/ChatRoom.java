@@ -30,7 +30,7 @@ public class ChatRoom {
 	@Column(name = "chat_pk")
 	private long chatPk;
 
-	@Column(name = "chat_session")
+	@Column(name = "chat_session", unique = true)
 	private String chatSession;
 
 	@CreatedDate
@@ -39,6 +39,10 @@ public class ChatRoom {
 
 	@Column(name = "chat_end", columnDefinition = "TIMESTAMP")
 	private LocalDateTime chatEnd;
+
+	// 어떤 제품가지고 채팅하는지 알아내기 위함
+	private long prodPk;
+	private int prodType; // 판매타입에 따라 조회해야할 테이블이 달라짐
 
 	////////////////////////////////////////////////////
 	@OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)

@@ -14,8 +14,6 @@ import javax.persistence.Table;
 
 import org.springframework.data.annotation.CreatedDate;
 
-import com.example.aucation_chat.chat.db.entity.group.GroupChatRoom;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

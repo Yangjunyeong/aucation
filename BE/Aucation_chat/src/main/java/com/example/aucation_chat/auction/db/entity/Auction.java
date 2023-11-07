@@ -4,11 +4,14 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
-
+import com.example.aucation_chat.member.db.entity.Member;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -43,4 +46,12 @@ public class Auction{
 	private String auctionDetail;
 	private LocalDateTime auctionStartDate;
 	private LocalDateTime auctionEndDate;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="auction_owner_pk")
+	private Member owner;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="auction_customer_pk")
+	private Member customer;
 }
