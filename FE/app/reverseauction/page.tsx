@@ -5,18 +5,10 @@ import BackBtn from "./components/BackBtn";
 import LikeBtn from "./components/LikeBtn";
 import profile from "@/app/images/bonobono.png";
 import cell from "@/app/images/sell.png";
-import map from "@/app/images/map.png";
 import { RiAuctionLine } from "react-icons/ri";
 import { BsFillPersonFill } from "react-icons/bs";
 import PriceBox from "./components/PriceBox";
-import KakaoMap from "@/app/map/page";
-
-import productimg from "@/app/images/productimg.png";
-import Card from "@/app/components/Card";
 import { useState } from "react";
-
-// 더미데이터 임포트
-import dummyData from "./components/DummyData";
 import ReAuctionCheckout from "./components/ReAuctionCheckout";
 import Modal from "../components/Modal";
 import ModalContent from "./components/ModalContent";
