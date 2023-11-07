@@ -12,6 +12,7 @@ import com.example.aucation.common.error.ApplicationException;
 import com.example.aucation.common.error.NotFoundException;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.member.db.repository.MemberRepository;
+import com.example.aucation.reauction.api.dto.OwnReAucBidResponse;
 import com.example.aucation.reauction.api.dto.ReAuctionBidRequest;
 import com.example.aucation.reauction.api.dto.ReAuctionSelectRequest;
 import com.example.aucation.reauction.api.dto.ReAuctionSelectResponse;
@@ -36,8 +37,8 @@ public class ReAuctionService {
     private final ReAucBidPhotoService reAucBidPhotoService;
     private final AuctionHistoryRepository auctionHistoryRepository;
     @Transactional
-    public void bidReAuction(Long memberPk, ReAuctionBidRequest reAuctionBidRequest,
-                             List<MultipartFile> multipartFiles) throws Exception{
+    public OwnReAucBidResponse bidReAuction(Long memberPk, ReAuctionBidRequest reAuctionBidRequest,
+                                            List<MultipartFile> multipartFiles) throws Exception{
         log.info("********************** bidReAuction start");
         Auction auction = auctionRepository.findById(reAuctionBidRequest.getReAuctionPk())
                 .orElseThrow(()-> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
@@ -50,6 +51,18 @@ public class ReAuctionService {
             throw new Exception("역경매가 아닙니다.");
         }
         log.info("********************** 역경매 여부 확인 완료");
+
+        log.info("********************** 선택된 입찰 내역이 존재 여부 확인 시도");
+        if(auctionHistoryRepository.existsAuctionHistoryByAuction(auction)){
+            throw new ApplicationException(ApplicationError.EXIST_BID_HISTORY);
+        }
+        log.info("********************** 선택된 입찰 내역 존재 여부 확인 완료");
+
+        log.info("********************** 자신의 입찰 내역 존재 여부 확인 시도");
+        if(reAuctionBidRepository.existsAuctionHistoryByAuctionAndMember(auction,member)){
+            throw new ApplicationException(ApplicationError.EXIST_OWN_BID);
+        }
+        log.info("********************** 자신의 입찰 내역 존재 여부 확인 완료");
 
         log.info("********************** 역경매 입찰 내역 저장 시도");
         ReAuctionBid reAuctionBid = ReAuctionBid.builder()
@@ -66,6 +79,11 @@ public class ReAuctionService {
         reAucBidPhotoService.upload(multipartFiles,reAuctionBid.getId());
         log.info("********************** 역경매 입찰 사진 저장 성공, 사진 수 = {}", multipartFiles.size());
         log.info("********************** bidReAuction end");
+        return OwnReAucBidResponse.builder()
+                .reAuctionPk(auction.getId())
+                .reAuctionTitle(auction.getAuctionTitle())
+                .reAuctionOwnerNickname(auction.getOwner().getMemberNickname())
+                .build();
     }
 
     @Transactional
