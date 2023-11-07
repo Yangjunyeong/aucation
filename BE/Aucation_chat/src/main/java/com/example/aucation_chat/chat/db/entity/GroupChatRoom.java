@@ -12,15 +12,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +24,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name="chat_room")
-public class ChatRoom {
+public class GroupChatRoom {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "chat_pk")
@@ -47,14 +42,14 @@ public class ChatRoom {
 
 	////////////////////////////////////////////////////
 	@OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
-	List<ChatParticipant> chatParticipants = new ArrayList<ChatParticipant>();
+	List<GroupChatParticipant> chatParticipants = new ArrayList<GroupChatParticipant>();
 
 	@OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
-	List<ChatMessage> chatMessages = new ArrayList<ChatMessage>();
+	List<GroupChatMessage> groupChatMessages = new ArrayList<GroupChatMessage>();
 
 
 	@Builder
-	public ChatRoom(long chatPk, String chatSession, LocalDateTime chatCreate, LocalDateTime chatEnd) {
+	public GroupChatRoom(long chatPk, String chatSession, LocalDateTime chatCreate, LocalDateTime chatEnd) {
 		this.chatPk = chatPk;
 		this.chatSession = chatSession;
 		this.chatCreate = chatCreate;

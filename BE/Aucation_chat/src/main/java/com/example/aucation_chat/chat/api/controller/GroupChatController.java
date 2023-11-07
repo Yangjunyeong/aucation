@@ -17,14 +17,12 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/v2/chat")
-public class ChatController {
+@RequestMapping("/api/v2/groupchat")
+public class GroupChatController {
 
 	private final GroupChatService chatService;
 
-	// @GetMapping("/start/")
-
-	@GetMapping("/enter/{memberPk}")
+	@GetMapping("/enter/{auctionUUID}/{memberPk}")
 	public ResponseEntity<List<ChatResponse>> enter (@PathVariable String auctionUUID, @PathVariable long memberPk) {
 		List<ChatResponse> chatList = chatService.enter(auctionUUID, memberPk);
 		return ResponseEntity.ok().body(chatList);

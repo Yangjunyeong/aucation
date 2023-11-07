@@ -1,5 +1,7 @@
 package com.example.aucation_chat.auction.db.entity;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,4 +32,15 @@ public class Auction{
 
 	@Column(name = "auctionuuid")
 	private String auctionUUID;
+
+	private AuctionStatus auctionStatus;
+	private String auctionTitle;
+	private String auctionType; // 카테고리
+	private int auctionStartPrice;
+	private int auctionEndPrice;
+	private double auctionMeetingLat;
+	private double auctionMeetingLng;
+	private String auctionDetail;
+	private LocalDateTime auctionStartDate;
+	private LocalDateTime auctionEndDate;
 }
