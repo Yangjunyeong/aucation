@@ -73,4 +73,9 @@ public class AuctionHistory extends BaseEntity {
 		this.customer=customer;
 		customer.getAuctionHistoryCustomerList().add(this);
 	}
+
+    public void updateToConfirm() {
+		this.auctionHistory = HistoryStatus.AFTER_CONFIRM;
+		this.historyDoneDateTime = LocalDateTime.now();
+    }
 }

@@ -9,13 +9,11 @@ import com.example.aucation.auction.db.repository.AuctionRepository;
 import com.example.aucation.common.entity.HistoryStatus;
 import com.example.aucation.common.error.ApplicationError;
 import com.example.aucation.common.error.ApplicationException;
+import com.example.aucation.common.error.BadRequestException;
 import com.example.aucation.common.error.NotFoundException;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.member.db.repository.MemberRepository;
-import com.example.aucation.reauction.api.dto.OwnReAucBidResponse;
-import com.example.aucation.reauction.api.dto.ReAuctionBidRequest;
-import com.example.aucation.reauction.api.dto.ReAuctionSelectRequest;
-import com.example.aucation.reauction.api.dto.ReAuctionSelectResponse;
+import com.example.aucation.reauction.api.dto.*;
 import com.example.aucation.reauction.db.entity.ReAuctionBid;
 import com.example.aucation.reauction.db.repository.ReAuctionBidRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +43,12 @@ public class ReAuctionService {
         Member member = memberRepository.findById(memberPk)
                 .orElseThrow(()->new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 
+        log.info("********************** 입찰자 확인 시도");
+        if(auction.getOwner().equals(member)){
+            throw new ApplicationException(ApplicationError.OWNER_NOT_BID);
+        }
+        log.info("********************** 입찰자 확인 완료");
+
         log.info("********************** 역경매 여부 확인 시도");
         if(!auction.getAuctionStatus().equals(AuctionStatus.REVERSE_BID)){
             log.info("********************** 역경매가 아닙니다.");
@@ -52,6 +56,12 @@ public class ReAuctionService {
         }
         log.info("********************** 역경매 여부 확인 완료");
 
+        log.info("********************** 역경매 입찰 가능 시간 여부 확인 시도");
+        if(auction.getAuctionEndDate().isBefore(LocalDateTime.now())){
+            throw new ApplicationException(ApplicationError.NOT_TIME_BID);
+        }
+        log.info("********************** 역경매 입찰 가능 시간 여부 확인 완료");
+        
         log.info("********************** 선택된 입찰 내역이 존재 여부 확인 시도");
         if(auctionHistoryRepository.existsAuctionHistoryByAuction(auction)){
             throw new ApplicationException(ApplicationError.EXIST_BID_HISTORY);
@@ -94,17 +104,19 @@ public class ReAuctionService {
         Member member = memberRepository.findById(memberPk)
                 .orElseThrow(()->new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 
-        log.info("********************** 입찰 가능 여부 확인 시도");
+        log.info("********************** 입찰 선택 가능 여부 확인 시도");
         if(auctionHistoryRepository.existsAuctionHistoryByAuction(auction)){
             throw new ApplicationException(ApplicationError.EXIST_BID_HISTORY);
         }
-        log.info("********************** 입찰 가능 여부 확인 완료");
+        log.info("********************** 입찰 선택 가능 여부 확인 완료");
 
-        log.info("********************** 입찰 가능 인원 확인 시도");
-        if(auction.getOwner().equals(member)){
-            throw new ApplicationException(ApplicationError.OWNER_NOT_BID);
+        log.info("********************** 입찰 선택 가능 인원 확인 시도");
+        log.info("*** :{}, {}",auction.getOwner().getMemberNickname(), member.getMemberNickname());
+        if(!auction.getOwner().equals(member)){
+            log.info("********************** 역경매 등록자가 아닙니다.");
+            throw new ApplicationException(ApplicationError.NOT_OWNER);
         }
-        log.info("********************** 입찰 가능 인원 확인 완료");
+        log.info("********************** 입찰 선택 가능 인원 확인 완료");
 
         log.info("********************** 입찰 내역 확인 시도");
         ReAuctionBid reAuctionBid = reAuctionBidRepository.findById(request.getReAuctionBidPk())
@@ -119,13 +131,13 @@ public class ReAuctionService {
         log.info("********************** 입찰 가능 포인트 확인 및 설정 완료");
 
         log.info("********************** 경매 상태 변경 시도");
-        auction.updateReAuctionToEnd(member,reAuctionBid.getReAucBidPrice());
+        auction.updateReAuctionToEnd(reAuctionBid.getMember(),reAuctionBid.getReAucBidPrice());
         log.info("********************** 경매 상태 변경 완료");
 
         log.info("********************** 경매 내역 저장 시도");
         AuctionHistory auctionHistory = AuctionHistory.builder()
-                .customer(member)
-                .owner(auction.getOwner())
+                .customer(reAuctionBid.getMember())
+                .owner(member)
                 .historyDateTime(LocalDateTime.now())
                 .auction(auction)
                 .historyStatus(HistoryStatus.BEFORE_CONFIRM)
@@ -138,6 +150,46 @@ public class ReAuctionService {
                 .reAuctionPk(auction.getId())
                 .reAuctionSelectBidPrice(auction.getAuctionEndPrice())
                 .reAuctionBidOwnerNickname(auction.getOwner().getMemberNickname())
+                .build();
+    }
+
+    public ReAuctionBidResponse confirmBid(Long memberPk, ReAuctionConfirmRequest request) {
+        log.info("********************** confirmBid start");
+        Auction auction = auctionRepository.findById(request.getReAuctionPk())
+                .orElseThrow(()-> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
+        Member member = memberRepository.findById(memberPk)
+                .orElseThrow(()->new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+
+        log.info("********************** 선택한 입찰 내역 확인 시도");
+        AuctionHistory auctionHistory = auctionHistoryRepository.findByAuction(auction)
+                .orElseThrow(()-> new NotFoundException(ApplicationError.NOT_EXIST_HISTORY));
+        log.info("********************** 선택한 입찰 내역 확인 완료");
+
+        log.info("********************** 선택한 입찰 내역 상태 확인 시도");
+        if(!auctionHistory.getAuctionHistory().equals(HistoryStatus.BEFORE_CONFIRM)){
+            throw new BadRequestException(ApplicationError.NOT_EXIST_HISTORY);
+        }
+        log.info("********************** 선택한 입찰 내역 상태 확인 완료");
+
+        log.info("********************** 입찰 내역 상태 변경 시도");
+        auctionHistory.updateToConfirm();
+        auctionHistoryRepository.save(auctionHistory);
+        log.info("********************** 입찰 내역 상태 변경 완료 DONE-TIME = {}",LocalDateTime.now());
+
+        log.info("********************** 역경매 입찰 등록자 포인트 시도");
+        Member customer = auctionHistory.getCustomer();
+        log.info("********************** customer ={}, point = {}",
+                customer.getMemberNickname(),customer.getMemberPoint());
+        customer.updatePoint(customer.getMemberPoint() + auction.getAuctionEndPrice());
+        memberRepository.save(customer);
+        log.info("********************** 역경매 입찰 등록자 포인트 완료, customer ={}, point = {}",
+                customer.getMemberNickname(),customer.getMemberPoint());
+        log.info("********************** confirmBid end");
+        return ReAuctionBidResponse.builder()
+                .reAuctionPk(auction.getId())
+                .reAuctionTitle(auction.getAuctionTitle())
+                .reAuctionOwnerNickname(member.getMemberNickname())
+                .reAuctionConfirmPrice(auction.getAuctionEndPrice())
                 .build();
     }
 }
