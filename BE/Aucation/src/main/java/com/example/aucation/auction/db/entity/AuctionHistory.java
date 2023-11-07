@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import com.example.aucation.common.entity.BaseEntity;
+import com.example.aucation.common.entity.HistoryStatus;
 import com.example.aucation.member.db.entity.Member;
 
 import lombok.AccessLevel;
@@ -40,16 +41,19 @@ public class AuctionHistory extends BaseEntity {
 	@JoinColumn(name = "customer_pk")
 	private Member customer;
 
+	private HistoryStatus auctionHistory;
+
 
 
 	@Builder
 	public AuctionHistory(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,
 						  Long lastModifiedBy, boolean isDeleted, LocalDateTime historyDateTime, Auction auction
-							, Member owner,Member customer, LocalDateTime historyDoneDateTime) {
-		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
+							, Member owner,Member customer, LocalDateTime historyDoneDateTime, HistoryStatus historyStatus) {
+		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted );
 		this.historyDateTime = historyDateTime;
 		this.historyDoneDateTime = historyDoneDateTime;
 		this.auction = auction;
+		this.auctionHistory = historyStatus;
 		addOwner(owner);
 		addCustomer(customer);
 	}
