@@ -17,8 +17,10 @@ import java.util.List;
 public interface AuctionRepositoryCustom {
     AuctionListResponse searchPreAucToCondition(Member member, int pageNum,
                                                 AuctionSortRequest sortRequest, Pageable pageable);
-    AuctionListResponse searchIngAucByCondition(Member member, int pageNum,
+    AuctionListResponse searchIngAucToCondition(Member member, int pageNum,
                                                 AuctionSortRequest sortRequest, Pageable pageable);
+    AuctionListResponse searchReAucToCondition(Member member, int pageNum,
+                                               AuctionSortRequest searchCondition, Pageable pageable);
     AuctionDetailResponse searchDetailAuc(Auction auction, Long memberPk,int auctionCondition);
     List<AuctionDetailItem> searchDetailItems(Long memberPk, Auction auction);
     ReAuctionDetailResponse searchDetailReAuc(Auction auction, Long memberPk, int checkTime);

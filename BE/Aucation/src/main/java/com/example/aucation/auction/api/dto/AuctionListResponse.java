@@ -17,16 +17,16 @@ public class AuctionListResponse {
     private Long totalPage;
     private List<AuctionPreResponseItem> preItems;
     private List<AuctionIngResponseItem> ingItems;
-//    private List<ReAuctionResponseItem> reItems;
+    private List<ReAuctionResponseItem> reItems;
 
     @Builder
-
-    public AuctionListResponse(LocalDateTime nowTime, int currentPage, double totalPage, List<AuctionPreResponseItem> preItems, List<AuctionIngResponseItem> ingItems) {
+    public AuctionListResponse(LocalDateTime nowTime, int currentPage, Long totalPage, List<AuctionPreResponseItem> preItems, List<AuctionIngResponseItem> ingItems, List<ReAuctionResponseItem> reItems) {
         this.nowTime = nowTime;
         this.currentPage = currentPage;
-        this.totalPage = (long)totalPage;
+        this.totalPage = totalPage;
         this.preItems = preItems;
         this.ingItems = ingItems;
+        this.reItems = reItems;
     }
 }
 

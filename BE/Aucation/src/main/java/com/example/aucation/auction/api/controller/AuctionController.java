@@ -4,6 +4,7 @@ import com.example.aucation.auction.api.dto.AuctionSortRequest;
 import java.io.IOException;
 import java.util.List;
 
+import com.example.aucation.reauction.api.service.ReAuctionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AuctionController {
 
 	private final AuctionService auctionService;
+	private final ReAuctionService reAuctionService;
 
 	@GetMapping("/place/{auctionUUID}")
 	private ResponseEntity<PlaceResponse> place(@AuthorizedVariable Long memberPk,
@@ -52,11 +54,10 @@ public class AuctionController {
 		return ResponseEntity.ok().body(auctionService.getAuctionIngList(memberPk,pageNum,sortRequest));
 	}
 
-	// 추후 추가 개발
-//	@PostMapping("/list/reAuc/{pageNum}")
-//	private ResponseEntity<?> getReAucList(@AuthorizedVariable Long memberPk, @PathVariable int pageNum, @RequestBody AuctionSortRequest sortRequest){
-//		return ResponseEntity.ok().body(auctionService.getReAuctionList(memberPk,pageNum,sortRequest));
-//	}
+	@PostMapping("/list/reAuc/{pageNum}")
+	private ResponseEntity<?> getReAucList(@AuthorizedVariable Long memberPk, @PathVariable int pageNum, @RequestBody AuctionSortRequest sortRequest){
+		return ResponseEntity.ok().body(reAuctionService.getReAuctionList(memberPk,pageNum,sortRequest));
+	}
 
 	@GetMapping("/{auctionPk}")
 	private ResponseEntity<?> getDetail(@AuthorizedVariable Long memberPk,
