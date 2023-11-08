@@ -61,7 +61,7 @@ public class AuctionController {
 	@GetMapping("/{auctionPk}")
 	private ResponseEntity<?> getDetail(@AuthorizedVariable Long memberPk,
 										@PathVariable Long auctionPk) throws Exception {
-		return ResponseEntity.ok().body(auctionService.getDetailInfoByAuctionPk(memberPk,auctionPk));
+		return ResponseEntity.ok().body(auctionService.getDetail(memberPk,auctionPk));
 	}
 
 	@GetMapping("/like/{auctionPk}")
