@@ -29,10 +29,9 @@ import com.example.aucation.member.api.dto.DetailRequest;
 import com.example.aucation.member.api.dto.DetailResponse;
 import com.example.aucation.member.api.dto.ImageResponse;
 import com.example.aucation.member.api.dto.MemberPageRequest;
-import com.example.aucation.member.api.dto.MyAuctionResponse;
 import com.example.aucation.member.api.dto.MyLikeResponse;
 import com.example.aucation.member.api.dto.MyReverseResponse;
-import com.example.aucation.member.api.dto.MypageLikeResponse;
+import com.example.aucation.member.api.dto.MypageResponse;
 import com.example.aucation.member.api.dto.NicknameRequest;
 import com.example.aucation.member.api.dto.NicknameResponse;
 import com.example.aucation.member.api.dto.SignupRequest;
@@ -108,11 +107,10 @@ public class MemberService {
 
 	//마이페이지 - 경매
 	@Transactional
-	public MyAuctionResponse myauction(Long memberPk, MemberPageRequest memberPageRequest) {
+	public MypageResponse myauction(Long memberPk, MemberPageRequest memberPageRequest) {
 		Member member = existsMemberPk(memberPk);
 		Pageable pageable = PageRequest.of(memberPageRequest.getMyPageNum()-1,COUNT_IN_PAGE);
 		return memberRepository.searchMyAuctionPage(member,memberPageRequest,pageable);
-
 	}
 
 	//마이페이지 - 역경매
@@ -121,16 +119,14 @@ public class MemberService {
 		Member member = existsMemberPk(memberPk);
 		Pageable pageable = PageRequest.of(memberPageRequest.getMyPageNum()-1,COUNT_IN_PAGE);
 		return memberRepository.searchMyReversePage(member,memberPageRequest,pageable);
-
 	}
 
 	//마이페이지 - 할인
 	@Transactional
 	public MyDiscountResponse mydiscount(Long memberPk, MemberPageRequest memberPageRequest) {
 		Member member = existsMemberPk(memberPk);
-		Pageable pageable = PageRequest.of(memberPageRequest.getMyPageNum()-1,COUNT_IN_PAGE);
-		return memberRepository.searchMyDiscountPage(member,memberPageRequest,pageable);
-
+		Pageable pageable = PageRequest.of(memberPageRequest.getMyPageNum() - 1, COUNT_IN_PAGE);
+		return memberRepository.searchMyDiscountPage(member, memberPageRequest, pageable);
 	}
 
 	//마이페이지 - 좋아요
@@ -139,14 +135,12 @@ public class MemberService {
 		Member member = existsMemberPk(memberPk);
 		Pageable pageable = PageRequest.of(likePageRequest.getMyPageNum()-1,COUNT_IN_PAGE);
 		return memberRepository.searchMyLikePage(member,pageable);
-
 	}
 
 	public EmailResponse certifyEmail(String memberEmail) throws Exception {
 		validateMemberEmail(memberEmail);
 		String code = registerMail.sendSimpleMessage(memberEmail,"회원가입");
 		return EmailResponse.of(code);
-
 	}
 
 	public void verifynick(String memberNickname) {
@@ -172,7 +166,7 @@ public class MemberService {
 		return memberRepository.findById(memberPk).orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 	}
 
-	public MypageLikeResponse mypageLike(Long memberPk) {
+	public MypageResponse mypageLike(Long memberPk) {
 		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 		return null;
 	}

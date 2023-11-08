@@ -25,5 +25,6 @@ public class MyReverseItemsResponse {
 	private HistoryStatus auctionHistory;
 	private LocalDateTime historyDateTime;
 	private LocalDateTime historyDoneDateTime;
+	private String imgfile;
 
 }
