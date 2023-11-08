@@ -32,6 +32,6 @@ public class MyDiscountResponse {
 		this.memberPoint = memberPoint;
 		this.currentPage = currentPage;
 		this.totalPage = totalPage;
-		mypageItems = mypageItems;
+		this.mypageItems =mypageItems;
 	}
 }

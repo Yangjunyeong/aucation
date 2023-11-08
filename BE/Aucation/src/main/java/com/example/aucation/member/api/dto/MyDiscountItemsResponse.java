@@ -20,4 +20,5 @@ public class MyDiscountItemsResponse {
 	private LocalDateTime historyDatetime;
 	private LocalDateTime historyDoneDatetime;
 	private HistoryStatus historyStatus;
+	private String imgfile;
 }

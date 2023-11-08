@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.aucation.auction.api.dto.PlaceResponse;
 import com.example.aucation.auction.api.dto.RegisterRequest;
 import com.example.aucation.common.support.AuthorizedVariable;
+import com.example.aucation.discount.api.dto.ConfirmResponse;
 import com.example.aucation.discount.api.dto.DiscountRequest;
 import com.example.aucation.discount.api.dto.DiscountResponse;
 import com.example.aucation.discount.api.dto.EnterResponse;
@@ -48,4 +49,8 @@ public class DiscountController {
 		return ResponseEntity.ok().body(discountService.purchase(memberPk,discountUUID));
 	}
 
+	@GetMapping("/confirm/{discountUUID}")
+	private ResponseEntity<ConfirmResponse> purchase(@PathVariable("discountUUID") String discountUUID){
+		return ResponseEntity.ok().body(discountService.confirm(discountUUID));
+	}
 }
