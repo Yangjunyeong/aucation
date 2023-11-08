@@ -13,15 +13,18 @@ public class RedisChatMessage {
 	private String imageURL;  // 보낸사람 프사 URL
 	private String messageTime;  // 보낸시간
 	private boolean cachedFromDB; // MySQL 갔다온건지 확인
+	
+	private long chatPk; // 어떤 채팅방의 메세지인지
 
 	@Builder
 	public RedisChatMessage(long memberPk, String memberNickname, String messageContent, String imageURL,
-		String messageTime, boolean cachedFromDB) {
+		String messageTime, boolean cachedFromDB, long chatPk) {
 		this.memberPk = memberPk;
 		this.memberNickname = memberNickname;
 		this.messageContent = messageContent;
 		this.imageURL = imageURL;
 		this.messageTime = messageTime;
 		this.cachedFromDB = cachedFromDB;
+		this.chatPk = chatPk;
 	}
 }

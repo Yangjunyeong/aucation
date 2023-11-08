@@ -37,6 +37,8 @@ public class WebSocketChatService {
 
 	@Autowired
 	private final RedisTemplate<String, RedisChatMessage> redisTemplate;
+	@Autowired
+	private final RedisTemplate<String, String> stringRedisTemplate;
 
 	private final MemberRepository memberRepository;
 
@@ -67,9 +69,9 @@ public class WebSocketChatService {
 
 	/** redis에 메세지 저장 후 redis에 저장되는 메세지 객체 리턴
 	 *  @param chatRequest  웹소켓 채팅에서 온 객체
-	 * @param sessionId = auctionUUID
+	 * @param chatUUID = auctionUUID
 	 * */
-	public ChatResponse saveAndReturn(ChatRequest chatRequest, String sessionId) {
+	public ChatResponse saveAndReturn(ChatRequest chatRequest, String chatUUID) {
 		// request에 담긴 member pk 로 보낸사람 정보 추출
 		Member member = memberRepository.findByMemberPk(chatRequest.getMemberPk())
 			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
@@ -77,6 +79,11 @@ public class WebSocketChatService {
 		String imageURL = member.getImageURL();
 		// 전송시간 기록
 		String messageTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(DateFormatPattern.get()));
+
+		// chatUUID로 chatPk 찾기
+		long chatPk = chatRoomRepository.findByChatSession(chatUUID)
+			.orElseThrow(() -> new NotFoundException(ApplicationError.CHATTING_ROOM_NOT_FOUND))
+			.getChatPk();
 
 		// RedisChatMessage로 만들어 redis에 저장
 		RedisChatMessage message = RedisChatMessage.builder()
@@ -86,11 +93,12 @@ public class WebSocketChatService {
 			.imageURL(imageURL)
 			.messageTime(messageTime)
 			.cachedFromDB(false)
+			.chatPk(chatPk)
 			.build();
 
 		// redis에 저장
-		redisTemplate.opsForList().rightPush("chat-auc:" + sessionId, message);
-		setTTL("chat-auc:",sessionId); // 첫 push 였다면 TTL 설정
+		redisTemplate.opsForList().rightPush("chat-auc:" + chatUUID, message);
+		setTTL("chat-auc:", chatUUID); // 첫 push 였다면 TTL 설정
 
 		// RedisChatMessage -> ChatResponse
 		ChatResponse res = ChatResponse.builder()
@@ -113,6 +121,11 @@ public class WebSocketChatService {
 		// 전송시간 기록
 		String messageTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(DateFormatPattern.get()));
 
+		// chatUUID로 chatPk 찾기
+		long chatPk = chatRoomRepository.findByChatSession(chatRequest.getChatUUID())
+			.orElseThrow(() -> new NotFoundException(ApplicationError.CHATTING_ROOM_NOT_FOUND))
+			.getChatPk();
+
 		// RedisChatMessage로 만들어 redis에 저장
 		RedisChatMessage message = RedisChatMessage.builder()
 			.memberPk(chatRequest.getMemberPk())
@@ -121,6 +134,7 @@ public class WebSocketChatService {
 			.imageURL(imageURL)
 			.messageTime(messageTime)
 			.cachedFromDB(false)
+			.chatPk(chatPk)
 			.build();
 
 		// redis에 저장
@@ -131,10 +145,11 @@ public class WebSocketChatService {
 		return message;
 	}
 
+	/** 리스트에 처음으로 push됐을 때만  ex:{redisKeyBase}:{chatUUID}를 키로 하는 expire전용 키 생성*/
 	private void setTTL(String redisKeyBase, String session) {
 		if (redisTemplate.opsForList().size(redisKeyBase + session) == 1) { // O(1)시간에 .size() 수행
-			redisTemplate.opsForValue(); // ex:redisKeyBase:session
-			redisTemplate.expire(redisKeyBase + session, 30, TimeUnit.MINUTES); // 30분 TTL설정
+			stringRedisTemplate.opsForValue()
+				.set("ex:" + redisKeyBase + session, "key for expire", 30, TimeUnit.MINUTES); // ex:redisKeyBase:session
 		}
 	}
 
@@ -143,7 +158,7 @@ public class WebSocketChatService {
 	/** 쪽지방 입장할 떄 topic 생성 */
 	public void createTopic(String chatUUID) {
 		ChannelTopic topic = topics.get(chatUUID);
-		String redisKeyBase="";
+		String redisKeyBase = "";
 
 		if (topic == null) {
 			// chatUUID을 가지는 key를 이용한 topic 생성
@@ -165,10 +180,10 @@ public class WebSocketChatService {
 		String redisKeyBase;
 		ChatRoom chatRoom = chatRoomRepository.findByChatSession(chatUUID)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.CHATTING_ROOM_NOT_FOUND));
-		int prodType= chatRoom.getProdType();
-		if(prodType == 0)  // 경매장일 때
+		int prodType = chatRoom.getProdType();
+		if (prodType == 0)  // 경매장일 때
 			redisKeyBase = "chat-bid:";
-		else if(prodType == 1)
+		else if (prodType == 1)
 			redisKeyBase = "chat-re-bid:";
 		else
 			redisKeyBase = "chat-dis:";
