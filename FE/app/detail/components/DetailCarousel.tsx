@@ -64,7 +64,7 @@ const DetailCarousel: React.FC<DetailImgProps> = ({ imglist }) => {
         swipeable={false}
       >
         {imglist.map((item: any, idx: React.Key | null | undefined) => {
-          return <DetailCarouselImg key={idx} item={item.url} />;
+          return <DetailCarouselImg key={idx} item={item} />;
         })}
       </Carousel>
     </div>

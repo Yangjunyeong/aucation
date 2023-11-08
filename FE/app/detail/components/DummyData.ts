@@ -17,7 +17,7 @@ const dummyData: DummyData[] = [
       auctionStartTime: new Date("2023-11-06T14:49:30"),
     
       title: "상품 제목 1",
-      highestPrice: 50000,
+      highestPrice: 5000000,
       isLiked: true,
       nickname: "사용자1",
       startPrice: 20000,
