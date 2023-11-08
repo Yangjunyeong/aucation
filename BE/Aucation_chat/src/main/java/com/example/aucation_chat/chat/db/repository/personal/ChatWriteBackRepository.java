@@ -18,13 +18,13 @@ import com.example.aucation_chat.common.util.DateFormatPattern;
 public class ChatWriteBackRepository {
 	private final JdbcTemplate jdbcTemplate;
 
-	public GroupChatWriteBackRepository(JdbcTemplate jdbcTemplate) {
+	public ChatWriteBackRepository(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
 	public void saveAll(List<RedisChatMessage> chatList) {
 		String sql = ""
-			+ "insert into group_chat_message "
+			+ "insert into chat_message "
 			+ "(member_pk, message_content, message_time, chat_room_chat_pk)"
 			+ " values (?,?,?,?)";
 

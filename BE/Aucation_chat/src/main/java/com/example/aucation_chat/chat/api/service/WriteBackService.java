@@ -35,6 +35,8 @@ public class WriteBackService {
 
 	@Transactional
 	public void writeBackElse(String redisKeyBase, String uuid) {
+		List<RedisChatMessage> chatList = redisTemplate.opsForList().range(redisKeyBase+":"+uuid, 0, -1);
+		chatWriteBackRepository.saveAll(chatList);
 	}
 
 }
