@@ -105,35 +105,6 @@ const Panmae = () => {
       alert("필수 항목을 모두 채워주세요!");
       return;
     }
-    const formData = new FormData();
-    formData.append("auctionStatus", option);
-    formData.append("auctionTitle", productname);
-    formData.append("auctionType", category);
-    formData.append(
-      "auctioMeetingLat",
-      transActionLocation ? transActionLocation[0].toString() : "37"
-    );
-    formData.append(
-      "auctionMeetingLng",
-      transActionLocation ? transActionLocation[1].toString() : "126"
-    );
-    formData.append("auctionStartPrice", price.toString());
-    formData.append("auctionDetail", description);
-    formData.append("auctionStartAfterTime", (hour * 60 + minute).toString());
-    if (discountPrice !== null) {
-      formData.append("prodDiscountedPrice", discountPrice.toString());
-    }
-    imagefiles.forEach((image, index) => {
-      formData.append("multipartFiles", image);
-    });
-    callApi("post", "/auction/register", formData)
-      .then(res => {
-        console.log(res.data);
-        router.push(`/detail/${res.data.auctionPk}`);
-      })
-      .catch(err => {
-        console.log(err);
-      });
     if (option !== "할인") {
       const formData = new FormData();
       formData.append("auctionStatus", option);
@@ -156,11 +127,10 @@ const Panmae = () => {
       imagefiles.forEach((image, index) => {
         formData.append("multipartFiles", image);
       });
-
       callApi("post", "/auction/register", formData)
         .then(res => {
-          console.log(res);
-          router.push("/");
+          console.log(res.data);
+          router.push(`/detail/${res.data.auctionPk}`);
         })
         .catch(err => {
           console.log(err);
