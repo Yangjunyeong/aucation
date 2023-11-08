@@ -50,9 +50,10 @@ interface OwnProps {
   title: string;
   className?: string;
   moreShow?: boolean;
+  goUrl?: string;
 }
 
-const PopularBidList: React.FC<OwnProps> = ({ title, className, moreShow = false }) => {
+const PopularBidList: React.FC<OwnProps> = ({ title, className, moreShow = false, goUrl }) => {
   const responsive = {
     superLargeDesktop: {
       // the naming can be any, depends on you.
@@ -78,7 +79,7 @@ const PopularBidList: React.FC<OwnProps> = ({ title, className, moreShow = false
         <div className="text-3xl font-bold ">{title}</div>
         {moreShow && (
           <Link
-            href={"/detail"}
+            href={`/auction/${goUrl}`}
             className="text-customLightTextColor text-lg hover:text-xl hover:underline"
           >
             더 보기
