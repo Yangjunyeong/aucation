@@ -11,11 +11,8 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import com.example.aucation.auction.api.dto.*;
-import com.example.aucation.auction.db.entity.AuctionBid;
-import com.example.aucation.reauction.api.dto.ReAucBidResponse;
 import com.example.aucation.reauction.api.service.ReAucBidPhotoService;
-import com.example.aucation.reauction.db.entity.ReAucBidPhoto;
-import com.example.aucation.reauction.db.entity.ReAuctionBid;
+import com.example.aucation.reauction.api.service.ReAuctionService;
 import com.example.aucation.reauction.db.repository.ReAuctionBidRepository;
 import com.example.aucation.common.error.BadRequestException;
 import com.example.aucation.like.db.entity.LikeAuction;
@@ -51,7 +48,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AuctionService {
 
 	private final StringRedisTemplate stringRedisTemplate;
-
+	private final ReAuctionService reAuctionService;
 	private final AuctionRepository	 auctionRepository;
 	private final ReAuctionBidRepository reAuctionBidRepository;
 
@@ -139,7 +136,7 @@ public class AuctionService {
 				.auctionStatus(AuctionStatus.BID)
 				.auctionType(registerRequest.getAuctionType())
 				.auctionTitle(registerRequest.getAuctionTitle())
-				.auctioMeetingLat(registerRequest.getAuctionMeetingLat())
+				.auctionMeetingLat(registerRequest.getAuctionMeetingLat())
 				.auctionMeetingLng(registerRequest.getAuctionMeetingLng())
 				.auctionEndPrice(0)
 				.auctionStartDate(LocalDateTime.now().plusMinutes(registerRequest.getAuctionStartAfterTime()))
@@ -162,7 +159,7 @@ public class AuctionService {
 				.auctionStatus(AuctionStatus.REVERSE_BID)
 				.auctionType(registerRequest.getAuctionType())
 				.auctionTitle(registerRequest.getAuctionTitle())
-				.auctioMeetingLat(registerRequest.getAuctionMeetingLat())
+				.auctionMeetingLat(registerRequest.getAuctionMeetingLat())
 				.auctionMeetingLng(registerRequest.getAuctionMeetingLng())
 				.auctionEndPrice(0)
 				.auctionStartDate(LocalDateTime.now())
@@ -192,116 +189,85 @@ public class AuctionService {
 		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 		Pageable pageable = PageRequest.of(pageNum - 1, COUNT_IN_PAGE);
 		AuctionListResponse auctions = auctionRepository.searchIngAucByCondition(member,pageNum,sortRequest, pageable);
-
 		return auctions;
 	}
 
 	@Transactional
-	public AuctionDetailResponse getDetailInfoByAuctionPk(Long memberPk, Long auctionPk) throws Exception {
-		log.info("********************** getDetailInfoByAuctionPk start");
-		LocalDateTime nowTime =LocalDateTime.now();
-
+	public Object getDetail(Long memberPk, Long auctionPk) throws Exception {
 		Auction auction = auctionRepository.findById(auctionPk)
 				.orElseThrow(()->new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
+		int checkTime = getAuctionTime(auction);
 
-		AuctionDetailResponse auctionDetailResponse = null;
 		if(auction.getAuctionStatus().equals(AuctionStatus.REVERSE_BID)){
-			log.info("********************** 역경매 정보 설정 시도");
-			auctionDetailResponse = auctionRepository.searchDetailReAucToPk(auctionPk, memberPk);
-			List<ReAuctionBid> reAuctionBids = auction.getReAuctionBidList();
-			if(auctionDetailResponse.getIsOwner()){
-				List<ReAucBidResponse> reAucBidResponses = new ArrayList<>();
-				log.info("********************** reAuctionBids size() : {}",reAuctionBids.size());
-				for(ReAuctionBid bid : reAuctionBids){
-					reAucBidResponses.add(ReAucBidResponse.builder()
-									.bidDetail(bid.getReAucBidDetail())
-									.bidPhotos(reAucBidPhotoService.getPhoto(bid))
-									.bidPrice(bid.getReAucBidPrice())
-									.customerPk(bid.getMember().getId())
-									.customerNickName(bid.getMember().getMemberNickname())
-									.customerPhoto(bid.getMember().getImageURL())
-							.build());
-				}
-				auctionDetailResponse.setReAucBidResponses(reAucBidResponses);
-			}else{
-				ReAuctionBid reAuctionBid = reAuctionBidRepository.findByIdAndMemberId(auctionPk,memberPk);
-				if(reAuctionBid != null){
-					auctionDetailResponse.setMyReAucBidResponse(
-							ReAucBidResponse.builder()
-									.bidDetail(reAuctionBid.getReAucBidDetail())
-									.bidPhotos(reAucBidPhotoService.getPhoto(reAuctionBid))
-									.bidPrice(reAuctionBid.getReAucBidPrice())
-									.customerPk(reAuctionBid.getMember().getId())
-									.customerNickName(reAuctionBid.getMember().getMemberNickname())
-									.customerPhoto(reAuctionBid.getMember().getImageURL())
-									.build()
-					);
-				}
-			}
-			auctionDetailResponse.setReAucBidCnt(reAuctionBids.size());
-			Integer lowPrice = Integer.MAX_VALUE;
-			for(ReAuctionBid bid:reAuctionBids){
-				lowPrice = lowPrice > bid.getReAucBidPrice()? bid.getReAucBidPrice() : lowPrice;
-			}
-			auctionDetailResponse.setAuctionTopPrice(lowPrice.equals(Integer.MAX_VALUE)?null:lowPrice);
-
-			log.info("********************** 역경매 정보 설정 완료");
-		}else{
-			log.info("********************** 경매 정보 설정 시도");
-			auctionDetailResponse = auctionRepository.searchDetailAucToPk(auctionPk, memberPk);
-			if(nowTime.isBefore(auctionDetailResponse.getAuctionStartTime())){
-				log.info("********************** 경매 상태 = {}","경매 전");
-
-				log.info("********************** 경매 예상 호가 설정 시도");
-				auctionDetailResponse.setAuctionAskPrice(
-						calculateValue(auctionDetailResponse.getAuctionStartPrice()));
-				log.info("********************** 경매 예상 호가 설정 성공, 호가 = {}",
-						auctionDetailResponse.getAuctionAskPrice());
-			}else if(nowTime.isAfter(auctionDetailResponse.getAuctionStartTime())
-					&& nowTime.isBefore(auctionDetailResponse.getAuctionEndTime())){
-				log.info("********************** 경매 상태 = {}","경매 중");
-
-				log.info("********************** 경매 입찰 내역 가져오기 시도");
-				List<SaveAuctionBIDRedis> bids = redisTemplate.opsForList().range(
-						"auc-ing-log:"+auctionDetailResponse.getAuctionUUID(),0,-1);
-				log.info("********************** 경매 입찰 내역 가져오기 성공");
-				if(bids == null || bids.isEmpty()){
-					log.info("********************** 경매 입찰 존재하지 않음");
-					auctionDetailResponse.setAuctionTopPrice(auctionDetailResponse.getAuctionStartPrice());
-					auctionDetailResponse.setAuctionAskPrice(
-							calculateValue(auctionDetailResponse.getAuctionTopPrice()));
-					log.info("********************** 경매 초기값 설정 완료. 현재가 = {}, 호가 ={}",
-							auctionDetailResponse.getAuctionTopPrice(), auctionDetailResponse.getAuctionAskPrice());
-				}else{
-					log.info("********************** 경매 입찰 존재");
-
-					log.info("********************** 경매 현재값 설정 시도");
-					Collections.sort(bids);
-					auctionDetailResponse.setAuctionTopPrice(bids.get(0).getBidPrice());
-					auctionDetailResponse.setAuctionAskPrice(bids.get(0).getAskPrice());
-					auctionDetailResponse.setAuctionCurCnt(bids.get(0).getHeadCnt());
-					log.info("********************** 경매 현재값 설정 완료. 현재 최고가 = {}, 호가 ={}, 참여자 ={}",
-							auctionDetailResponse.getAuctionTopPrice(),
-							auctionDetailResponse.getAuctionAskPrice(),
-							auctionDetailResponse.getAuctionCurCnt());
-				}
-			}else{
-				log.info("********************** 경매 상태 = {}","경매 완료");
-			}
-			log.info("********************** 경매 정보 설정 완료");
+			return reAuctionService.getDetail(memberPk, auction,checkTime);
 		}
+		log.info("********************** Auction : getDetail() start");
+
+		log.info("********************** 경매 정보 가져오기 시도");
+		AuctionDetailResponse response = auctionRepository.searchDetailAuc(auction,memberPk,checkTime);
+		log.info("********************** 경매 정보 가져오기 성공, AuctionPk = {}",response.getAuctionPk());
+
 		log.info("********************** 경매 사진 가져오기 시도");
 		List<String> auctionPhotoUrl = new ArrayList<>();
-		List<Photo> auctionPhotos = photoService.getPhoto(auctionPk);
-		for(Photo p : auctionPhotos){
-			auctionPhotoUrl.add(p.getImgUrl());
-		}
-		auctionDetailResponse.setAuctionPhoto(auctionPhotoUrl);
-		log.info("********************** 경매 사진 가져오기 및 설정 성공, 사진 수 ={}", auctionPhotoUrl.size());
 
-		auctionDetailResponse.setNowTime(nowTime);
-		log.info("********************** getDetailInfoByAuctionPk end");
-		return auctionDetailResponse;
+		photoService.getPhoto(auctionPk).forEach(photo->{
+			auctionPhotoUrl.add(photo.getImgUrl());
+		});
+		response.setAuctionPhoto(auctionPhotoUrl);
+		log.info("********************** 경매 사진 가져오기 및 설정 성공, 사진 수 ={}", auctionPhotoUrl.size());
+		log.info("********************** 해당 판매자 경매 정보 가져오기 시도");
+		List<AuctionDetailItem> auctionDetailItems = auctionRepository.searchDetailItems(response.getAuctionOwnerPk(),auction);
+		auctionDetailItems.forEach(auctionDetailItem -> {
+			Photo photo = photoService.getOnePhoto(auctionDetailItem.getAuctionPk());
+			auctionDetailItem.setAuctionPhoto(photo.getImgUrl());
+		});
+		response.setAuctionDetailItems(auctionDetailItems);
+		log.info("********************** 해당 판매자 경매 정보 가져오기 완료");
+
+
+		log.info("********************** 경매 상태별 정보 설정 시도");
+		if(checkTime<1){
+			log.info("********************** 경매 전 정보 설정 시도");
+			response.setAuctionAskPrice(response.getAuctionStartPrice());
+			response.setAuctionTopPrice(null);
+			response.setAuctionEndPrice(null);
+			response.setAuctionBidCnt(null);
+			log.info("********************** 경매 전 정보 설정 완료");
+		}else if(checkTime<2){
+			log.info("********************** 경매 중 정보 설정 시도");
+			response.setAuctionAskPrice(response.getAuctionStartPrice());
+			List<SaveAuctionBIDRedis> bids =
+					redisTemplate.opsForList().range("auc-ing-log:"+response.getAuctionUuid(),0,-1);
+			Collections.sort(bids);
+			if(!bids.isEmpty()){
+				response.setAuctionTopPrice(bids.get(0).getBidPrice());
+				response.setAuctionBidCnt((long) bids.size());
+			}
+			response.setAuctionEndPrice(null);
+			log.info("********************** 경매 중 정보 설정 완료");
+		}else{
+			log.info("********************** 경매 후 정보 설정 시도");
+			response.setAuctionAskPrice(null);
+			if(response.getAuctionTopPrice()==null){
+				response.setAuctionTopPrice(-1);
+			}
+			log.info("********************** 경매 후 정보 설정 완료");
+		}
+		log.info("********************** 경매 상태별 정보 설정 완료");
+
+		log.info("********************** 경매 중인 경우 현재 최고가 환인 완료, 최고가 = {}, 다음 입찰가 = {}"
+				,response.getAuctionTopPrice(),response.getAuctionAskPrice());
+
+
+
+		log.info("********************** 추가 정보 설정 시도");
+		response.setIsAction(checkTime);
+		response.setNowTime(LocalDateTime.now());
+		log.info("********************** 추가 정보 설정 완료, 현재 시간 = {}, 경매 상태 = {}"
+				,response.getNowTime(), response.getIsAction());
+
+		log.info("********************** Auction : getDetail() end");
+		return response;
 	}
 
 	@Transactional
@@ -338,6 +304,25 @@ public class AuctionService {
 		if(auction.getAuctionEndDate().isBefore(LocalDateTime.now())){
 			throw new BadRequestException(ApplicationError.CLOSE_THE_AUCTION);
 		}
+	}
+
+	/**
+	 * 경매 상태를 반환하는 메소드
+	 * 현재 시간과 비교하여 상태를 반환한다.
+	 * @return 0 : 경매 전
+	 * 		   1 : 경매 중
+	 * 		   2 : 경매 후
+	 */
+	public int getAuctionTime(Auction auction){
+		if(auction.getAuctionStartDate().isAfter(LocalDateTime.now())){
+			return 0;
+		}else if(auction.getAuctionStartDate().isBefore(LocalDateTime.now())
+				&& auction.getAuctionEndDate().isAfter(LocalDateTime.now())){
+			return 1;
+		}else{
+			return 2;
+		}
+
 	}
 
 //

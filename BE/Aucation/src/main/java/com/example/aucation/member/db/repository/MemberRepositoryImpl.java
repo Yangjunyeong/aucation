@@ -25,7 +25,6 @@ import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.photo.db.QPhoto;
 import com.example.aucation.reauction.db.entity.QReAuctionBid;
 import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
@@ -46,7 +45,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
 	private final QAuction qAuction = QAuction.auction;
 
-	private final QAuctionHistory qAuctionHistory = QAuctionHistory.auctionHistory1;
+	private final QAuctionHistory qAuctionHistory = QAuctionHistory.auctionHistory;
 
 	private final QReAuctionBid qReAuctionBid = QReAuctionBid.reAuctionBid;
 
@@ -96,7 +95,8 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			.leftJoin(qDisPhoto)
 			.on(qDisPhoto.discount.eq(qDiscount))
 			.where(chooseAuctionStatus(memberPageRequest.getAuctionStatus(), member))
-			.groupBy(qAuction,qAuctionHistory.auctionHistory,qAuctionHistory.historyDateTime,qAuctionHistory.historyDoneDateTime);
+			.groupBy(qAuction, qAuctionHistory.auctionHistory, qAuctionHistory.historyDateTime,
+				qAuctionHistory.historyDoneDateTime);
 
 		long count = query.fetchCount();
 
@@ -141,13 +141,13 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 				.and(qAuctionHistory.id.isNotNull());
 		} else if ("낙찰".equals(auctionStatus)) {
 			return qAuction.customer.id.eq(member.getId())
-				.and(qAuctionHistory.auctionHistory.eq(HistoryStatus.BEFORE_CONFIRM))
+				.and(qAuctionHistory.historyStatus.eq(HistoryStatus.BEFORE_CONFIRM))
 				.and(qAuction.auctionStatus.eq(AuctionStatus.BID))
 				.and(qAuctionHistory.historyDoneDateTime.isNull());
 		} else if ("구매완료".equals(auctionStatus)) {
 			// "구매" 및 "구매완료" 경우에 대한 조건 추가
 			return qAuction.customer.id.eq(member.getId())
-				.and(qAuctionHistory.auctionHistory.eq(HistoryStatus.AFTER_CONFIRM))
+				.and(qAuctionHistory.historyStatus.eq(HistoryStatus.AFTER_CONFIRM))
 				.and(qAuction.auctionStatus.eq(AuctionStatus.BID))
 				.and(qAuctionHistory.historyDoneDateTime.isNotNull());
 		}
@@ -202,7 +202,8 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 				//판매인가 구매인가
 				chooseReverseStatus(memberPageRequest.getProductStatus(), memberPageRequest.getAuctionStatus(), member)
 			)
-			.groupBy(qAuction,qReAuctionBid.reAucBidDatetime,qReAuctionBid.reAucBidPrice,qAuctionHistory.historyDateTime,qAuctionHistory.historyDoneDateTime);
+			.groupBy(qAuction, qReAuctionBid.reAucBidDatetime, qReAuctionBid.reAucBidPrice,
+				qAuctionHistory.historyDateTime, qAuctionHistory.historyDoneDateTime);
 		long count = query.fetchCount();
 
 		query.offset(pageable.getOffset())
@@ -307,15 +308,15 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qDiscountHistory.historyDoneDatetime.as("historyDoneDatetime"),
 					qDiscountHistory.historyStatus.as("historyStatus"),
 					qDisPhoto.imgUrl.min().as("imgfile")
-					))
+				))
 			.from(qDiscount)
 			.leftJoin(qDiscountHistory)
-			.on(qDiscount.id.eq(qDiscountHistory.discount.id),isMember(memberPageRequest,member))
+			.on(qDiscount.id.eq(qDiscountHistory.discount.id), isMember(memberPageRequest, member))
 			.leftJoin(qDisPhoto)
 			.on(qDisPhoto.discount.eq(qDiscount))
 			.where(chooseDiscountStatus(memberPageRequest.getAuctionStatus(), member))
-			.groupBy(qDiscount,qDiscountHistory.historyDatetime,qDiscountHistory.historyDoneDatetime
-				,qDiscountHistory.historyStatus);
+			.groupBy(qDiscount, qDiscountHistory.historyDatetime, qDiscountHistory.historyDoneDatetime
+				, qDiscountHistory.historyStatus);
 
 		long count = query.fetchCount();
 

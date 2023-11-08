@@ -13,6 +13,7 @@ import java.util.Optional;
 public interface ReAuctionBidRepository  extends JpaRepository<ReAuctionBid,Long> {
 
     Optional<ReAuctionBid> findById(ReAuctionBid reAuctionBid);
-    ReAuctionBid findByIdAndMemberId(Long reAucBidPk, Long memberPk);
+    Optional<ReAuctionBid> findByMemberIdAndAuction(Long memberPk, Auction auction);
     boolean existsAuctionHistoryByAuctionAndMember(Auction auction,Member member);
+    List<ReAuctionBid> findByAuction(Auction auction);
 }

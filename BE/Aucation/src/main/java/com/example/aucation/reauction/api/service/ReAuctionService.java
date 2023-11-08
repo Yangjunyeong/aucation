@@ -1,6 +1,8 @@
 package com.example.aucation.reauction.api.service;
 
 
+import com.example.aucation.auction.api.dto.AuctionDetailItem;
+import com.example.aucation.auction.api.dto.ReAuctionResponse;
 import com.example.aucation.auction.db.entity.Auction;
 import com.example.aucation.auction.db.entity.AuctionHistory;
 import com.example.aucation.auction.db.entity.AuctionStatus;
@@ -13,7 +15,10 @@ import com.example.aucation.common.error.BadRequestException;
 import com.example.aucation.common.error.NotFoundException;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.member.db.repository.MemberRepository;
+import com.example.aucation.photo.api.service.PhotoService;
+import com.example.aucation.photo.db.Photo;
 import com.example.aucation.reauction.api.dto.*;
+import com.example.aucation.reauction.db.entity.ReAucBidPhoto;
 import com.example.aucation.reauction.db.entity.ReAuctionBid;
 import com.example.aucation.reauction.db.repository.ReAuctionBidRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -31,6 +38,7 @@ import java.util.List;
 public class ReAuctionService {
     private final AuctionRepository auctionRepository;
     private final MemberRepository memberRepository;
+    private final PhotoService photoService;
     private final ReAuctionBidRepository reAuctionBidRepository;
     private final ReAucBidPhotoService reAucBidPhotoService;
     private final AuctionHistoryRepository auctionHistoryRepository;
@@ -166,7 +174,7 @@ public class ReAuctionService {
         log.info("********************** 선택한 입찰 내역 확인 완료");
 
         log.info("********************** 선택한 입찰 내역 상태 확인 시도");
-        if(!auctionHistory.getAuctionHistory().equals(HistoryStatus.BEFORE_CONFIRM)){
+        if(!auctionHistory.getHistoryStatus().equals(HistoryStatus.BEFORE_CONFIRM)){
             throw new BadRequestException(ApplicationError.NOT_EXIST_HISTORY);
         }
         log.info("********************** 선택한 입찰 내역 상태 확인 완료");
@@ -191,5 +199,118 @@ public class ReAuctionService {
                 .reAuctionOwnerNickname(member.getMemberNickname())
                 .reAuctionConfirmPrice(auction.getAuctionEndPrice())
                 .build();
+    }
+
+    public Object getDetail(Long memberPk, Auction auction,int checkTime) {
+        log.info("********************** ReAuction : getDetail() start");
+
+        log.info("********************** 경매 정보 가져오기 시도");
+        ReAuctionDetailResponse response = auctionRepository.searchDetailReAuc(auction,memberPk,checkTime);
+        log.info("********************** 경매 정보 가져오기 성공, AuctionPk = {}",response.getReAuctionPk());
+
+        log.info("********************** 경매 사진 가져오기 시도");
+        List<String> auctionPhotoUrl = new ArrayList<>();
+
+        photoService.getPhoto(auction.getId()).forEach(photo->{
+            auctionPhotoUrl.add(photo.getImgUrl());
+        });
+        response.setReAuctionPhoto(auctionPhotoUrl);
+        log.info("********************** 경매 사진 가져오기 및 설정 성공, 사진 수 ={}", auctionPhotoUrl.size());
+        log.info("********************** 해당 판매자 경매 정보 가져오기 시도");
+        List<AuctionDetailItem> auctionDetailItems = auctionRepository.searchDetailItems(response.getReAuctionOwnerPk(),auction);
+        auctionDetailItems.forEach(auctionDetailItem -> {
+            Photo photo = photoService.getOnePhoto(auctionDetailItem.getAuctionPk());
+            auctionDetailItem.setAuctionPhoto(photo.getImgUrl());
+        });
+        response.setReAuctionDetailItems(auctionDetailItems);
+        log.info("********************** 해당 판매자 경매 정보 가져오기 완료");
+
+
+        log.info("********************** 경매 상태별 정보 설정 시도");
+        if(checkTime<2){
+            log.info("********************** 경매 중 정보 설정 시도");
+            if(response.getIsOwner()){
+                List<ReAuctionBid> bids = reAuctionBidRepository.findByAuction(auction);
+                List<ReAucBidResponse> allBids = new ArrayList<>();
+                bids.forEach(bid->{
+                    List<String> bidPhotos = reAucBidPhotoService.getPhoto(bid);
+                    Member customer = bid.getMember();
+                    allBids.add(ReAucBidResponse.builder()
+                                    .customerPk(customer.getId())
+                                    .customerNickName(customer.getMemberNickname())
+                                    .customerPhoto(customer.getImageURL())
+                                    .bidPk(bid.getId())
+                                    .bidDetail(bid.getReAucBidDetail())
+                                    .bidPrice(bid.getReAucBidPrice())
+                                    .bidPhotos(bidPhotos)
+                            .build());
+                });
+                response.setReAuctionBidItems(allBids);
+            }else{
+                reAuctionBidRepository.findByMemberIdAndAuction(memberPk,auction)
+                        .ifPresent(myBid->{
+                            Member member = memberRepository.findById(memberPk)
+                                    .orElseThrow(()->new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+                            List<String> bidPhotos = reAucBidPhotoService.getPhoto(myBid);
+                            response.setOwnBid(ReAucBidResponse.builder()
+                                    .customerPk(memberPk)
+                                    .customerNickName(member.getMemberNickname())
+                                    .customerPhoto(member.getImageURL())
+                                    .bidPk(myBid.getId())
+                                    .bidDetail(myBid.getReAucBidDetail())
+                                    .bidPrice(myBid.getReAucBidPrice())
+                                    .bidPhotos(bidPhotos)
+                                    .build());
+                        });
+            }
+            log.info("********************** 경매 중 정보 설정 완료");
+        }else{
+            log.info("********************** 경매 후 정보 설정 시도");
+            Member customer = auction.getCustomer();
+            if(response.getIsOwner()){
+                if(customer!=null){
+                    reAuctionBidRepository.findByMemberIdAndAuction(customer.getId(),auction)
+                            .ifPresent(selectedBid->{
+                                List<String> bidPhotos = reAucBidPhotoService.getPhoto(selectedBid);
+                                response.setSelectedBid(ReAucBidResponse.builder()
+                                        .customerPk(customer.getId())
+                                        .customerNickName(customer.getMemberNickname())
+                                        .customerPhoto(customer.getImageURL())
+                                        .bidPk(selectedBid.getId())
+                                        .bidDetail(selectedBid.getReAucBidDetail())
+                                        .bidPrice(selectedBid.getReAucBidPrice())
+                                        .bidPhotos(bidPhotos)
+                                        .build());
+                            });
+                }
+            }else{
+                if(customer != null && customer.getId().equals(memberPk)){
+                    reAuctionBidRepository.findByMemberIdAndAuction(customer.getId(),auction)
+                            .ifPresent(selectedBid->{
+                                List<String> bidPhotos = reAucBidPhotoService.getPhoto(selectedBid);
+                                response.setOwnBid(ReAucBidResponse.builder()
+                                        .customerPk(customer.getId())
+                                        .customerNickName(customer.getMemberNickname())
+                                        .customerPhoto(customer.getImageURL())
+                                        .bidPk(selectedBid.getId())
+                                        .bidDetail(selectedBid.getReAucBidDetail())
+                                        .bidPrice(selectedBid.getReAucBidPrice())
+                                        .bidPhotos(bidPhotos)
+                                        .build());
+                            });
+                }
+            }
+            log.info("********************** 경매 후 정보 설정 완료");
+        }
+        log.info("********************** 경매 상태별 정보 설정 완료");
+
+        log.info("********************** 추가 정보 설정 시도");
+        response.setIsAction(checkTime);
+        response.setNowTime(LocalDateTime.now());
+        log.info("********************** 추가 정보 설정 완료, 현재 시간 = {}, 경매 상태 = {}"
+                ,response.getNowTime(), response.getIsAction());
+
+        log.info("********************** Auction : getDetail() end");
+        return response;
     }
 }
