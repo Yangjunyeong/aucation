@@ -2,6 +2,8 @@ package com.example.aucation.reauction.api.service;
 
 
 import com.example.aucation.auction.api.dto.AuctionDetailItem;
+import com.example.aucation.auction.api.dto.AuctionListResponse;
+import com.example.aucation.auction.api.dto.AuctionSortRequest;
 import com.example.aucation.auction.api.dto.ReAuctionResponse;
 import com.example.aucation.auction.db.entity.Auction;
 import com.example.aucation.auction.db.entity.AuctionHistory;
@@ -23,6 +25,8 @@ import com.example.aucation.reauction.db.entity.ReAuctionBid;
 import com.example.aucation.reauction.db.repository.ReAuctionBidRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,6 +46,20 @@ public class ReAuctionService {
     private final ReAuctionBidRepository reAuctionBidRepository;
     private final ReAucBidPhotoService reAucBidPhotoService;
     private final AuctionHistoryRepository auctionHistoryRepository;
+    private final int COUNT_IN_PAGE = 15;
+
+    public AuctionListResponse getReAuctionList(Long memberPk, int pageNum, AuctionSortRequest sortRequest) {
+        Member member = memberRepository.findById(memberPk).orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+        Pageable pageable = PageRequest.of(pageNum - 1, COUNT_IN_PAGE);
+
+        AuctionListResponse response = auctionRepository.searchReAucToCondition(member, pageNum, sortRequest, pageable);
+        response.getReItems().forEach(item->{
+            if(item.getReAuctionLowBidPrice() == null){
+                item.setReAuctionLowBidPrice(item.getReAuctionStartPrice());
+            }
+        });
+        return response;
+    }
     @Transactional
     public OwnReAucBidResponse bidReAuction(Long memberPk, ReAuctionBidRequest reAuctionBidRequest,
                                             List<MultipartFile> multipartFiles) throws Exception{
@@ -206,6 +224,9 @@ public class ReAuctionService {
 
         log.info("********************** 경매 정보 가져오기 시도");
         ReAuctionDetailResponse response = auctionRepository.searchDetailReAuc(auction,memberPk,checkTime);
+        if(response.getReAuctionLowPrice() == null){
+            response.setReAuctionLowPrice(response.getReAuctionStartPrice());
+        }
         log.info("********************** 경매 정보 가져오기 성공, AuctionPk = {}",response.getReAuctionPk());
 
         log.info("********************** 경매 사진 가져오기 시도");
@@ -313,4 +334,10 @@ public class ReAuctionService {
         log.info("********************** Auction : getDetail() end");
         return response;
     }
+
+
+
+
+
+
 }

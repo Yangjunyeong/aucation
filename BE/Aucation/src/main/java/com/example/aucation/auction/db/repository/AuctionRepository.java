@@ -1,6 +1,5 @@
 package com.example.aucation.auction.db.repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,10 +19,10 @@ public interface AuctionRepository extends JpaRepository<Auction,Long>, AuctionR
 	Optional<Auction> findByAuctionUUID(String auctionUUID);
 	AuctionListResponse searchPreAucToCondition(Member member, int pageNum,
 												AuctionSortRequest sortRequest, Pageable pageable);
-	AuctionListResponse searchIngAucByCondition(Member memberPk, int pageNum,
+	AuctionListResponse searchIngAucToCondition(Member memberPk, int pageNum,
 												AuctionSortRequest sortRequest, Pageable pageable);
-//	List<Auction> searchReAucByCondition(int pageNum, AuctionSortRequest sortRequest);
-
+	AuctionListResponse searchReAucToCondition(Member member, int pageNum,
+											   AuctionSortRequest searchCondition, Pageable pageable);
 	AuctionDetailResponse searchDetailAuc(Auction auction, Long memberPk,int auctionCondition);
 
 	List<AuctionDetailItem> searchDetailItems(Long memberPk,Auction auction);
