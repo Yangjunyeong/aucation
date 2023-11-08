@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-
 public class WriteBackService {
 
 	@Autowired
@@ -29,14 +28,18 @@ public class WriteBackService {
 
 	@Transactional
 	public void writeBackAuc(String redisKeyBase, String uuid) {
+		log.info(" *************** '경매장' 채팅 writeback 시작!! - writeBackAuc");
 		List<RedisChatMessage> chatList = redisTemplate.opsForList().range(redisKeyBase+":"+uuid, 0, -1);
 		groupChatWriteBackRepository.saveAll(chatList);
+		redisTemplate.delete(redisKeyBase+":"+uuid);
 	}
 
 	@Transactional
 	public void writeBackElse(String redisKeyBase, String uuid) {
+		log.info(" *************** '개인' 채팅 writeback 시작!! - writeBackElse");
 		List<RedisChatMessage> chatList = redisTemplate.opsForList().range(redisKeyBase+":"+uuid, 0, -1);
 		chatWriteBackRepository.saveAll(chatList);
+		redisTemplate.delete(redisKeyBase+":"+uuid);
 	}
 
 }
