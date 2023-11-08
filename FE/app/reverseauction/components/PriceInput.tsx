@@ -21,12 +21,12 @@ const PriceInput: React.FC<PriceInputProps> = ({ priceHandler }) => {
   };
 
   return (
-    <input
-      type="text"
-      className="
+    <div className="flex flex-row items-center">
+      <input
+        type="text"
+        className="
                 w-full
                 h-12
-                ml-10
                 border-2
                 border-gray-300
                 rounded-md
@@ -41,10 +41,12 @@ const PriceInput: React.FC<PriceInputProps> = ({ priceHandler }) => {
                 disabled:opacity-50
                 disabled:cursor-not-allowed
             "
-      placeholder="가격을 입력하세요"
-      value={text}
-      onChange={inputHandler}
-    />
+        placeholder="가격을 입력하세요"
+        value={text}
+        onChange={inputHandler}
+      />
+      <p className="text-2xl text-blue-500 ml-2">원</p>
+    </div>
   );
 };
 

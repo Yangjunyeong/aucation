@@ -3,11 +3,10 @@ import React from "react";
 
 type PriceBoxProps = {
   startingPrice: number;
-  highestPrice: number;
-  bidUnit: number;
+  lowPrice: number;
 };
 
-const PriceBox: React.FC<PriceBoxProps> = ({ startingPrice, highestPrice, bidUnit }) => {
+const PriceBox: React.FC<PriceBoxProps> = ({ startingPrice, lowPrice }) => {
   return (
     <div className="rounded-lg flex flex-row items-center p-6 bg-gray-100 border border-gray-400 mt-14">
       <div className="flex flex-col items-start flex-1 ml-4">
@@ -16,13 +15,8 @@ const PriceBox: React.FC<PriceBoxProps> = ({ startingPrice, highestPrice, bidUni
       </div>
       <div className="border-l border-gray-400 h-20"></div>
       <div className="flex flex-col items-start flex-1 ml-10">
-        <h3 className="text-sm text-gray-600">최고가</h3>
-        <p className="text-xl font-semibold text-blue-500">{pricetoString(highestPrice)}</p>
-      </div>
-      <div className="border-l border-gray-400 h-20"></div>
-      <div className="flex flex-col items-start flex-1 ml-10">
-        <h3 className="text-sm text-gray-600">입찰단위</h3>
-        <p className="text-xl f ont-semibold text-gray-700">{pricetoString(bidUnit)}</p>
+        <h3 className="text-sm text-gray-600">최저가</h3>
+        <p className="text-xl f ont-semibold text-gray-700">{pricetoString(lowPrice)}</p>
       </div>
     </div>
   );

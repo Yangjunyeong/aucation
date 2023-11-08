@@ -41,16 +41,15 @@ const AuctionChat = () => {
   const client = useRef<CompatClient>();
   const connectToWebSocket = () => {
     if (client.current) {
-      // client.current.deactivate();
-      return;
+      client.current.deactivate();
     }
     client.current = Stomp.over(() => {
       const ws = new SockJS(`${process.env.NEXT_PUBLIC_SERVER_URL}/chat-server`);
       return ws;
     });
 
-    client.current.connect({ memberPK: userDatas.memberPk }, () => {
-      client.current!.subscribe(`/topic/sub/${uuid}`, res => {
+    client.current.connect({}, () => {
+      client.current!.subscribe(`/sub/${uuid}`, res => {
         console.log(JSON.parse(res.body));
         const data = JSON.parse(res.body);
         setChats((chats: Chat[]) => {
@@ -61,8 +60,8 @@ const AuctionChat = () => {
   };
   const bidHandler = (text: string) => {
     client.current!.send(
-      `/pub/multichat/${uuid}`,
-      { memberPK: userDatas.memberPk },
+      `/pub/groupchat/${uuid}`,
+      {},
       JSON.stringify({
         memberPk: userDatas.memberPk,
         content: text,
@@ -80,16 +79,19 @@ const AuctionChat = () => {
       behavior: "smooth",
     });
   };
-
+  const foo = async () => {
+    await getChatHandler();
+    await scroll();
+  };
   useEffect(() => {
-    // const foo = async () => {
-    //   await getChatHandler();
-    //   await scroll();
-    // };
-    // foo();
-    // bidDataHandler();
-    // connectToWebSocket();
+    bidDataHandler();
+    connectToWebSocket();
   }, []);
+  useEffect(() => {
+    if (userDatas.memberPk) {
+      foo();
+    }
+  }, [userDatas.memberPk]);
 
   const bidDataHandler = () => {
     callApi("get", `/auction/place/${uuid}`, {})
@@ -115,7 +117,7 @@ const AuctionChat = () => {
 
   const getChatHandler = () => {
     axios
-      .get(`/api/v2/chat/enter/${uuid}`)
+      .get(`/api/v2/groupchat/enter/${uuid}/${userDatas.memberPk}`)
       .then(res => {
         setChats(res.data);
         console.log(res.data);
