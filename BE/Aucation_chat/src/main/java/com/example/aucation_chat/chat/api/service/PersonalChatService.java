@@ -54,9 +54,12 @@ public class PersonalChatService {
 	private final AuctionHistoryRepository auctionHistoryRepository;
 	private final DiscountHistoryRepository discountHistoryRepository;
 	private final RedisTemplate<String, RedisChatMessage> redisTemplate;
+	private final RedisTemplate<String, String> myStringRedisTemplate;
 
 	//////////////////////////////////////////////////////////////////
 	public PersonalChatEnterResponse enter(PersonalChatEnterRequest request) {
+		log.info("************************ 개인채팅방 enter 시작 !!!!!!!");
+
 		long prodPk = request.getProdPk();  // 물품 PK
 		int type = request.getProdType(); // 판매유형
 		int endPrice; // 최종가격
@@ -76,6 +79,8 @@ public class PersonalChatService {
 
 		// prodPk와 prodType으로 물품의 카테고리, 최종가격, 타입, 제목, 채팅내역, 판매자정보 결정
 		if (type < 2) { // 경매, 역경매일 때
+			log.info("************************ 경매&역경매 물품 채팅방입니다");
+
 			Auction auction = auctionRepository.findByAuctionPk(prodPk)
 				.orElseThrow(() -> new NotFoundException(ApplicationError.AUCTION_NOT_FOUND));
 			endPrice = getEndpriceFromAuction(auction);
@@ -91,6 +96,8 @@ public class PersonalChatService {
 				chatList = getChatList("chat-re-bid:", chatRoom.getChatSession());
 			}
 		} else {  // 할인판매일 때
+			log.info("************************ 할인판매 물품 채팅방입니다");
+
 			Discount discount = discountRepository.findByDiscountPk(prodPk)
 				.orElseThrow(() -> new NotFoundException(ApplicationError.DISCOUNT_NOT_FOUND));
 			endPrice = getEndPriceFromDiscount(discount);
@@ -114,7 +121,8 @@ public class PersonalChatService {
 			.sellerImageURL(sellerImageURL)
 			.sellerNickName(sellerNickName)
 			.build();
-
+		log.info("************************ 입장 끝! response: ");
+		log.info(resp.toString());
 		return resp;
 	}
 
@@ -132,6 +140,8 @@ public class PersonalChatService {
 	}
 
 	private List<ChatResponse> cacheAside(String redisKeyBase, String chatSession) {
+		log.info("****************************** 개인채팅 cache side 실행!!!!!!!");
+
     /*
 		1. MySQL에서 chatMessage들 가져오기
 		- auctionUUID로 chatPk 찾아서 chatPk로 chat_message 테이블 조회
@@ -139,8 +149,10 @@ public class PersonalChatService {
 		List<ChatMessage> chatList = getChatsFromDB(chatSession);
 
 		// 2. MySQL 에도 없음 => 새로 만들어진 채팅방이라는 뜻
-		if (chatList.isEmpty())
+		if (chatList.isEmpty()) {
+			log.info("************************ cache-aside: DB에도 없슴 !!!!!!!");
 			return new ArrayList<>();
+		}
 
 		// 3. MySQL에 있음 => Redis에 저장 후 반환
 		List<RedisChatMessage> dbToRedisChats = new ArrayList<>(); // MySQL에서 redis에 들어갈 채팅메세지들
@@ -183,7 +195,10 @@ public class PersonalChatService {
 			chatResponses.add(resp);
 		}
 		redisTemplate.opsForList().rightPushAll(redisKeyBase + chatSession, dbToRedisChats);
-		redisTemplate.expire(redisKeyBase + chatSession, 30, TimeUnit.MINUTES); // 30분 TTL설정
+		myStringRedisTemplate.opsForValue() // 30분 TTL설정
+			.set("ex:" + redisKeyBase + chatSession, "key for expire", 30, TimeUnit.MINUTES); // ex:redisKeyBase:session
+
+		log.info("************************ cache-aside 완료 !!!!!!!");
 
 		return chatResponses;
 	}
@@ -283,5 +298,15 @@ public class PersonalChatService {
 	private Member getValidMember(long memberPk) {
 		return memberRepository.findByMemberPk(memberPk).orElseThrow(() -> new NotFoundException(
 			ApplicationError.MEMBER_NOT_FOUND));
+	}
+
+	private void setTTL(String redisKeyBase, String session) {
+		if (redisTemplate.opsForList().size(redisKeyBase + session) == 1) { // O(1)시간에 .size() 수행
+			log.info(" ******************** SET TTL start!!!!");
+			myStringRedisTemplate.opsForValue()
+				.set("ex:" + redisKeyBase + session, "key for expire", 30, TimeUnit.MINUTES); // ex:redisKeyBase:session
+			log.info(" ******************** ex:"+redisKeyBase+session+" 키의 만료시간이 설정되었습니다");
+
+		}
 	}
 }
