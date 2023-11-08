@@ -2,7 +2,9 @@ package com.example.aucation.member.api.dto;
 
 import java.time.LocalDateTime;
 
+import com.example.aucation.auction.db.entity.AuctionHistory;
 import com.example.aucation.auction.db.entity.AuctionStatus;
+import com.example.aucation.common.entity.HistoryStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Builder;
@@ -44,10 +46,11 @@ public class MypageItemsResponse {
 
 	private String auctionType;
 
-	private LocalDateTime auctionHistory;
+	private HistoryStatus auctionHistory;
 
 	private LocalDateTime historyDateTime;
 
 	private LocalDateTime historyDoneDateTime;
+
 	private String imgfile;
 }

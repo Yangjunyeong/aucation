@@ -12,9 +12,10 @@ import lombok.Setter;
 @Setter
 public class MyReverseItemsResponse {
 	private String auctionTitle;
-	private String auctionStarePrice;
+	private int auctionStarePrice;
 	private int auctionSuccessPay;
 	private Long ownerPk;
+	private Long customerPk;
 	private String auctionUUID;
 	private Long auctionPk;
 	private AuctionStatus auctionStatus;
