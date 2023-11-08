@@ -4,9 +4,11 @@ import java.util.List;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-public class MyAuctionResponse {
+@Setter
+public class MypageResponse {
 
 	private String memberNickname;
 
@@ -20,18 +22,18 @@ public class MyAuctionResponse {
 
 	private int totalPage;
 
-	private List<MypageItemsResponse> MypageItems;
+	private List<MypageItemsResponse> mypageItems;
 
 	@Builder
-	public MyAuctionResponse(String memberNickname, String memberDetail, String imgURL, int currentPage, int totalPage,
-		int memberPoint, List<MypageItemsResponse> mypageItems) {
+	public MypageResponse(String memberNickname, String memberDetail, String imgURL, int memberPoint,
+		int currentPage,
+		int totalPage, List<MypageItemsResponse> mypageItems) {
 		this.memberNickname = memberNickname;
 		this.memberDetail = memberDetail;
 		this.imgURL = imgURL;
+		this.memberPoint = memberPoint;
 		this.currentPage = currentPage;
 		this.totalPage = totalPage;
-		this.memberPoint = memberPoint;
-		MypageItems = mypageItems;
+		this.mypageItems = mypageItems;
 	}
 }
-

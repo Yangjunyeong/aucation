@@ -59,4 +59,8 @@ public class DiscountHistory extends BaseEntity {
 		this.customer = customer;
 		this.discount = discount;
 	}
+
+	public void updateStatus() {
+		this.historyStatus = HistoryStatus.AFTER_CONFIRM;
+	}
 }

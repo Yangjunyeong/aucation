@@ -44,5 +44,10 @@ public class MypageItemsResponse {
 
 	private String auctionType;
 
+	private LocalDateTime auctionHistory;
 
+	private LocalDateTime historyDateTime;
+
+	private LocalDateTime historyDoneDateTime;
+	private String imgfile;
 }
