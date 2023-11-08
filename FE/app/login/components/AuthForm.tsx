@@ -10,10 +10,12 @@ import Input from "./Input";
 import Button from "./Button";
 import tw from "tailwind-styled-components";
 import { emailRegexp } from "@/app/utils/regexp";
-
+import { useRecoilState } from "recoil";
+import { authState } from "@/app/store/atoms";
 type Variant = "LOGIN" | "REGISTER";
 
 const AuthForm = () => {
+  const [auth, setAuth] = useRecoilState(authState);
   const router = useRouter();
   const [variant, setVariant] = useState<Variant>("LOGIN");
   const [id, setId] = useState<string>("");
@@ -77,7 +79,12 @@ const AuthForm = () => {
       .then(res => {
         localStorage.setItem("accessToken", res.headers.authorization);
         localStorage.setItem("refreshToken", res.headers["authorization-refresh"]);
+        setAuth({
+          isLoggedIn: true,
+          role: res.data.role,
+        });
         toast.success("로그인 성공");
+        console.log(res.data);
         router.push("/");
       })
       .catch(err => {
