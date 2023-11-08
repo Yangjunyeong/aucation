@@ -266,21 +266,39 @@ public class ReAuctionService {
             log.info("********************** 경매 중 정보 설정 완료");
         }else{
             log.info("********************** 경매 후 정보 설정 시도");
+            Member customer = auction.getCustomer();
             if(response.getIsOwner()){
-                Member customer = auction.getCustomer();
-                reAuctionBidRepository.findByMemberIdAndAuction(customer.getId(),auction)
-                        .ifPresent(selectedBid->{
-                            List<String> bidPhotos = reAucBidPhotoService.getPhoto(selectedBid);
-                            response.setSelectedBid(ReAucBidResponse.builder()
-                                    .customerPk(customer.getId())
-                                    .customerNickName(customer.getMemberNickname())
-                                    .customerPhoto(customer.getImageURL())
-                                    .bidPk(selectedBid.getId())
-                                    .bidDetail(selectedBid.getReAucBidDetail())
-                                    .bidPrice(selectedBid.getReAucBidPrice())
-                                    .bidPhotos(bidPhotos)
-                                    .build());
-                        });
+                if(customer!=null){
+                    reAuctionBidRepository.findByMemberIdAndAuction(customer.getId(),auction)
+                            .ifPresent(selectedBid->{
+                                List<String> bidPhotos = reAucBidPhotoService.getPhoto(selectedBid);
+                                response.setSelectedBid(ReAucBidResponse.builder()
+                                        .customerPk(customer.getId())
+                                        .customerNickName(customer.getMemberNickname())
+                                        .customerPhoto(customer.getImageURL())
+                                        .bidPk(selectedBid.getId())
+                                        .bidDetail(selectedBid.getReAucBidDetail())
+                                        .bidPrice(selectedBid.getReAucBidPrice())
+                                        .bidPhotos(bidPhotos)
+                                        .build());
+                            });
+                }
+            }else{
+                if(customer != null && customer.getId().equals(memberPk)){
+                    reAuctionBidRepository.findByMemberIdAndAuction(customer.getId(),auction)
+                            .ifPresent(selectedBid->{
+                                List<String> bidPhotos = reAucBidPhotoService.getPhoto(selectedBid);
+                                response.setOwnBid(ReAucBidResponse.builder()
+                                        .customerPk(customer.getId())
+                                        .customerNickName(customer.getMemberNickname())
+                                        .customerPhoto(customer.getImageURL())
+                                        .bidPk(selectedBid.getId())
+                                        .bidDetail(selectedBid.getReAucBidDetail())
+                                        .bidPrice(selectedBid.getReAucBidPrice())
+                                        .bidPhotos(bidPhotos)
+                                        .build());
+                            });
+                }
             }
             log.info("********************** 경매 후 정보 설정 완료");
         }
