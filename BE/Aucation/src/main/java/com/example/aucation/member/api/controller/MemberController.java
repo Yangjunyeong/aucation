@@ -20,11 +20,10 @@ import com.example.aucation.member.api.dto.ImageResponse;
 import com.example.aucation.member.api.dto.LikePageRequest;
 import com.example.aucation.member.api.dto.MemberPageRequest;
 import com.example.aucation.member.api.dto.MemberPkResponse;
-import com.example.aucation.member.api.dto.MyAuctionResponse;
 import com.example.aucation.member.api.dto.MyDiscountResponse;
 import com.example.aucation.member.api.dto.MyLikeResponse;
 import com.example.aucation.member.api.dto.MyReverseResponse;
-import com.example.aucation.member.api.dto.MypageLikeResponse;
+import com.example.aucation.member.api.dto.MypageResponse;
 import com.example.aucation.member.api.dto.NicknameRequest;
 import com.example.aucation.member.api.dto.NicknameResponse;
 import com.example.aucation.member.api.dto.SignupRequest;
@@ -72,7 +71,7 @@ public class MemberController {
 
 	//마이페이지-경매
 	@PostMapping("/mypage/auction")
-	public ResponseEntity<MyAuctionResponse> myauction(@AuthorizedVariable Long memberPk, @RequestBody MemberPageRequest memberPageRequest) {
+	public ResponseEntity<MypageResponse> myauction(@AuthorizedVariable Long memberPk, @RequestBody MemberPageRequest memberPageRequest) {
 		return ResponseEntity.ok().body(memberService.myauction(memberPk,memberPageRequest));
 	}
 
@@ -96,7 +95,7 @@ public class MemberController {
 
 	//마이페이지 좋아요 게시글
 	@PostMapping("/mypage/like")
-	public ResponseEntity<MypageLikeResponse> mypageLike(@AuthorizedVariable Long memberPk) {
+	public ResponseEntity<MypageResponse> mypageLike(@AuthorizedVariable Long memberPk) {
 		return ResponseEntity.ok().body(memberService.mypageLike(memberPk));
 	}
 

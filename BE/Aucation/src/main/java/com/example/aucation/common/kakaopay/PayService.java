@@ -34,8 +34,9 @@ public class PayService {
 
 	private IamportClient iamportClient;
 
+
 	public PayService(MemberRepository memberRepository) {
-		this.iamportClient = new IamportClient(restApiKey, restApiSecret);
+		this.iamportClient = new IamportClient("1161083051413771", "2F1PV6Uctr2JOyqWLvDelOuGYBTNs6Zrn5Ptqi3MOmwFKA2xnf4STh1gYoCWeUshsb6lESJ5OjuZEMYW");
 		this.memberRepository = memberRepository;
 	}
 

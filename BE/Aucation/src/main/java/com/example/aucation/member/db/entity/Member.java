@@ -23,7 +23,6 @@ import com.example.aucation.like.db.entity.LikeDiscount;
 import com.example.aucation.reauction.db.entity.ReAuctionBid;
 import com.example.aucation.common.entity.BaseEntity;
 import com.example.aucation.discount.db.entity.Discount;
-import com.example.aucation.discount.db.entity.DiscountHistory;
 import com.example.aucation.follow.db.entity.Follow;
 import com.example.aucation.like.db.entity.LikeAuction;
 import com.example.aucation.shop.db.entity.Shop;
@@ -157,5 +156,9 @@ public class Member extends BaseEntity {
 
 	public void updateImgURL(String uploadImageUrl) {
 		this.imageURL=uploadImageUrl;
+	}
+
+	public void updateOwnerPoint(int discountDiscountedPrice) {
+		this.memberPoint +=discountDiscountedPrice;
 	}
 }

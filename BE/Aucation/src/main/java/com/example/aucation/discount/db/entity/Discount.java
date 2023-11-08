@@ -87,4 +87,7 @@ public class Discount extends BaseEntity {
 		member.getDiscountCustomerList().add(this);
 	}
 
+	public void updateCustomer(Member member) {
+		this.customer= member;
+	}
 }

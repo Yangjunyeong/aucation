@@ -22,6 +22,7 @@ import com.example.aucation.common.error.ExistsException;
 import com.example.aucation.common.error.NotFoundException;
 import com.example.aucation.common.util.PasswordGenerator;
 import com.example.aucation.discount.api.dto.DiscountListResponse;
+import com.example.aucation.discount.api.dto.ConfirmResponse;
 import com.example.aucation.discount.api.dto.DiscountRequest;
 import com.example.aucation.discount.api.dto.DiscountResponse;
 import com.example.aucation.discount.api.dto.DiscountSortRequest;
@@ -58,7 +59,9 @@ public class DiscountService {
 
 	private static final String SUCCESS_REGISTER_MESSAGE = "할인 상품이 등록되었습니다.";
 
-	private static final String SUCCESS_PURCHASE_MESSAGE = "할인 상품을 구매했습니다";
+	private static final String SUCCESS_PURCHASE_MESSAGE="할인 상품을 구매 예약했습니다 상품을 받으러 가세요(구매 예약)";
+
+	private static final String PERFECT_PURCHASE_MESSAGE="할인 상품을 구매 확정지었습니다 (구매 확정)";
 
 	private final int COUNT_IN_PAGE = 15;
 
@@ -149,6 +152,7 @@ public class DiscountService {
 		isHaveCustomerMoney(member, discount);
 		member.minusUpdatePoint(member.getMemberPoint(), discount.getDiscountDiscountedPrice());
 
+		discount.updateCustomer(member);
 		DiscountHistory discountHistory = DiscountHistory.builder()
 			.historyDatetime(LocalDateTime.now())
 			.customer(member)
@@ -223,5 +227,26 @@ public class DiscountService {
 		DiscountListResponse discounts = discountRepository.searchListByCondition(member, pageNum, sortRequest,
 			pageable);
 		return discounts;
+	}
+
+	public ConfirmResponse confirm(String discountUUID) {
+		//구매확정은 구매자가 누르는것
+
+		Discount discount = discountRepository.findByDiscountUUID(discountUUID)
+			.orElseThrow(()->new NotFoundException(ApplicationError.DISCOUNT_NOT_FOUND));
+
+		Member owner = memberRepository.findById(discount.getOwner().getId())
+			.orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+
+		DiscountHistory discountHistory = discountHistoryRepository.findByDiscountId(discount.getId())
+			.orElseThrow(()->new NotFoundException(ApplicationError.DISCOUNT_HISTORY_NOT_FOUND));
+
+		owner.updateOwnerPoint(discount.getDiscountDiscountedPrice());
+
+		discountHistory.updateStatus();
+
+		return ConfirmResponse.builder().message(PERFECT_PURCHASE_MESSAGE).build();
+
+
 	}
 }
