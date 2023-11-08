@@ -124,9 +124,9 @@ public class WebSocketChatService {
 			.build();
 
 		// redis에 저장
-		String redisKeyBase = getRedisKeyBase(chatRequest.getChatSession());
-		redisTemplate.opsForList().rightPush(redisKeyBase + chatRequest.getChatSession(), message);
-		setTTL(redisKeyBase, chatRequest.getChatSession()); // 첫 push 였다면 TTL 설정
+		String redisKeyBase = getRedisKeyBase(chatRequest.getChatUUID());
+		redisTemplate.opsForList().rightPush(redisKeyBase + chatRequest.getChatUUID(), message);
+		setTTL(redisKeyBase, chatRequest.getChatUUID()); // 첫 push 였다면 TTL 설정
 
 		return message;
 	}
@@ -141,17 +141,17 @@ public class WebSocketChatService {
 	/* ----------------------------- PUB/SUB --------------------------------------*/
 
 	/** 쪽지방 입장할 떄 topic 생성 */
-	public void createTopic(String chatSession) {
-		ChannelTopic topic = topics.get(chatSession);
+	public void createTopic(String chatUUID) {
+		ChannelTopic topic = topics.get(chatUUID);
 		String redisKeyBase="";
 
 		if (topic == null) {
-			// chatSession을 가지는 key를 이용한 topic 생성
-			redisKeyBase = getRedisKeyBase(chatSession);
-			topic = new ChannelTopic(redisKeyBase + chatSession);
+			// chatUUID을 가지는 key를 이용한 topic 생성
+			redisKeyBase = getRedisKeyBase(chatUUID);
+			topic = new ChannelTopic(redisKeyBase + chatUUID);
 			redisMessageListener.addMessageListener(redisSubscriber, topic);  // pub/sub 통신을 위해 리스너를 설정. 대화가 가능해진다
 			log.info("**************** createTopic: " + topic + " listening ");
-			topics.put(chatSession, topic);
+			topics.put(chatUUID, topic);
 		}
 	}
 
@@ -160,10 +160,10 @@ public class WebSocketChatService {
 		return topics.get(roomId);
 	}
 
-	/** chatSession에 따라 redis의 key 앞부분이 달라짐 */
-	private String getRedisKeyBase(String chatSession) {
+	/** chatUUID에 따라 redis의 key 앞부분이 달라짐 */
+	private String getRedisKeyBase(String chatUUID) {
 		String redisKeyBase;
-		ChatRoom chatRoom = chatRoomRepository.findByChatSession(chatSession)
+		ChatRoom chatRoom = chatRoomRepository.findByChatSession(chatUUID)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.CHATTING_ROOM_NOT_FOUND));
 		int prodType= chatRoom.getProdType();
 		if(prodType == 0)  // 경매장일 때

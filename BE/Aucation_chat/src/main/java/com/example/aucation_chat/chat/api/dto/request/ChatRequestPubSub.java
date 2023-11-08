@@ -13,7 +13,7 @@ import lombok.Setter;
 public class ChatRequestPubSub {
 	private long memberPk;	// 보낸사람 pk
 	private String content;		// 채팅내용
-	private String chatSession;
+	private String chatUUID;
 }
 
 
