@@ -105,42 +105,13 @@ const Panmae = () => {
       alert("필수 항목을 모두 채워주세요!");
       return;
     }
-    const formData = new FormData();
-    formData.append("auctionStatus", option);
-    formData.append("auctionTitle", productname);
-    formData.append("auctionType", category);
-    formData.append(
-      "auctioMeetingLat",
-      transActionLocation ? transActionLocation[0].toString() : "37"
-    );
-    formData.append(
-      "auctionMeetingLng",
-      transActionLocation ? transActionLocation[1].toString() : "126"
-    );
-    formData.append("auctionStartPrice", price.toString());
-    formData.append("auctionDetail", description);
-    formData.append("auctionStartAfterTime", (hour * 60 + minute).toString());
-    if (discountPrice !== null) {
-      formData.append("prodDiscountedPrice", discountPrice.toString());
-    }
-    imagefiles.forEach((image, index) => {
-      formData.append("multipartFiles", image);
-    });
-    callApi("post", "/auction/register", formData)
-      .then(res => {
-        console.log(res.data);
-        router.push(`/detail/${res.data.auctionPk}`);
-      })
-      .catch(err => {
-        console.log(err);
-      });
     if (option !== "할인") {
       const formData = new FormData();
       formData.append("auctionStatus", option);
       formData.append("auctionTitle", productname);
       formData.append("auctionType", category);
       formData.append(
-        "auctioMeetingLat",
+        "auctionMeetingLat",
         transActionLocation ? transActionLocation[0].toString() : "37"
       );
       formData.append(
@@ -156,11 +127,15 @@ const Panmae = () => {
       imagefiles.forEach((image, index) => {
         formData.append("multipartFiles", image);
       });
-
       callApi("post", "/auction/register", formData)
         .then(res => {
-          console.log(res);
-          router.push("/");
+          console.log(res.data);
+          console.log(transActionLocation);
+          // if (option == "경매") {
+          //   router.push(`/detail/auction/${res.data.auctionPk}`);
+          // } else {
+          //   router.push(`/reverseauction/${res.data.auctionPk}`);
+          // }
         })
         .catch(err => {
           console.log(err);
@@ -283,7 +258,10 @@ const Panmae = () => {
           <div className="flex-col w-3/5 mt-2">
             <Input productnameHandler={productnameHandler} />
             <div
-              className={clsx(`flex text-[var(--c-blue)] ml-10 mt-3`, productname ? "hidden" : "")}
+              className={clsx(
+                `flex text-[var(--c-blue)] ml-10 mt-3 `,
+                productname ? "invisible" : ""
+              )}
             >
               <AiOutlineStop size={24} />
               <span>제목을 입력해 주세요</span>
@@ -318,7 +296,7 @@ const Panmae = () => {
             </h1>
             <div>
               <TypeOfSales option={option} optionHandler={optionHandler} isShopper={auth.role} />
-              <div className={clsx(`flex text-[var(--c-blue)] mt-3`, option ? "hidden" : "")}>
+              <div className={clsx(`flex text-[var(--c-blue)] mt-3`, option ? "invisible" : "")}>
                 <AiOutlineStop size={24} />
                 <span>경매의 종류를 선택해 주세요</span>
               </div>
@@ -371,7 +349,9 @@ const Panmae = () => {
             <div className="flex-col w-3/8">
               <PriceInput priceHandler={priceHandler} />
 
-              <div className={clsx(`flex text-[var(--c-blue)] ml-10 mt-3`, price ? "hidden" : "")}>
+              <div
+                className={clsx(`flex text-[var(--c-blue)] ml-10 mt-3`, price ? "invisible" : "")}
+              >
                 <AiOutlineStop size={24} />
                 <span>가격을 입력해 주세요</span>
               </div>
@@ -385,7 +365,9 @@ const Panmae = () => {
             <div className="flex-col w-3/8">
               <PriceInput priceHandler={discountPriceHandler} />
 
-              <div className={clsx(`flex text-[var(--c-blue)] ml-10 mt-3`, price ? "hidden" : "")}>
+              <div
+                className={clsx(`flex text-[var(--c-blue)] ml-10 mt-3`, price ? "invisible" : "")}
+              >
                 <AiOutlineStop size={24} />
                 <span>할인 가격을 입력해 주세요</span>
               </div>

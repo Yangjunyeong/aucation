@@ -81,8 +81,7 @@ const AuctionMainPage = () => {
   // 웹소켓 연결 및 이벤트 핸들러 설정
   const connectToWebSocket = () => {
     if (client.current) {
-      // client.current.disconnect();
-      return;
+      client.current.disconnect();
     }
     client.current = Stomp.over(() => {
       const ws = new SockJS(`${process.env.NEXT_PUBLIC_SERVER_URL}/auc-server`);
@@ -142,14 +141,6 @@ const AuctionMainPage = () => {
           });
         }
       });
-      client.current!.send(
-        `/app/send/register/${uuid}`,
-        {},
-        JSON.stringify({
-          message: "입장",
-          memberPk: datas.memberPk,
-        })
-      );
     });
   };
 
