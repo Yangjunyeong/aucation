@@ -193,7 +193,7 @@ const AuctionList = ({ params }: { params: PageParams }) => {
       <Pagination
         activePage={pageNumber}
         itemsCountPerPage={15}
-        totalItemsCount={450}
+        totalItemsCount={data.totalPage}
         pageRangeDisplayed={5}
         prevPageText={"‹"}
         nextPageText={"›"}

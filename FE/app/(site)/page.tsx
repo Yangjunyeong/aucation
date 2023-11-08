@@ -16,6 +16,7 @@ export default function Home() {
   //   setState(data.data);
   // };
   const [isModalOpen, setModalOpen] = useState(false);
+
   return (
     <main className="px-48">
       <button onClick={() => setModalOpen(true)}>Open Modal1</button>
@@ -31,10 +32,11 @@ export default function Home() {
           title={"🛒 역경매 상품"}
           className={"bg-customBgLightBlue"}
           moreShow={true}
+          goUrl={"reverse-auction"}
         />
       </div>
       <div>
-        <PopularBidList title={"📢 현재 경매중인 상품"} moreShow={true} />
+        <PopularBidList title={"📢 현재 경매중인 상품"} moreShow={true} goUrl={"holding"} />
       </div>
       <div>
         <MainFloor />

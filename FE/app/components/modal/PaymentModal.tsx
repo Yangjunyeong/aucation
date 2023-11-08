@@ -22,6 +22,13 @@ const PaymentModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       onClose();
     }
   };
+  const handleCurrencyFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    // setTimeout을 사용하여 포커스 이벤트가 완전히 처리된 후에 커서 위치를 변경합니다.
+    setTimeout(() => {
+      const valueLength = e.target.value.length - 1; // '원' 문자를 제외한 길이
+      e.target.setSelectionRange(valueLength, valueLength);
+    }, 0);
+  };
 
   const addButtonHandler = (addedValue: number) => {
     setAmount(prevAmount => {
@@ -34,10 +41,13 @@ const PaymentModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     // value의 값이 숫자가 아닐경우 빈문자열로 replace 해버림.
-
-    const numericValue = parseInt(value.replace(/[^0-9]/g, ""), 10) || 0;
-    setFormattedAmount(value); // 사용자 입력을 그대로 반영
-    setAmount(numericValue);
+    let onlyNumber = value.replace(/[^0-9]/g, "");
+    if (onlyNumber === "") {
+      onlyNumber = "0";
+    }
+    // const numericValue = parseInt(value.replace(/[^0-9]/g, ""), 10) || 0;
+    setFormattedAmount(onlyNumber); // 사용자 입력을 그대로 반영
+    setAmount(parseInt(onlyNumber));
   };
   const onBlurHandler = () => {
     setFormattedAmount(amount === 0 ? "" : `${new Intl.NumberFormat("ko-KR").format(amount)}원`);
@@ -47,8 +57,28 @@ const PaymentModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     setFormattedAmount(amount.toString());
   };
 
+  // const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  //   const { selectionStart, selectionEnd, value } = e.currentTarget;
+  //   const valueLength = value.length - 1; // '원'을 제외한 값의 길이
+
+  //   // '원' 문자 바로 앞에서 백스페이스가 눌렸을 때
+  //   if (e.key === "Backspace" && selectionStart !== null && selectionStart > valueLength) {
+  //     // '원' 바로 앞에 커서가 있는 경우 백스페이스를 방지합니다.
+  //     e.preventDefault();
+  //     const newValue = value.slice(0, valueLength);
+  //     setFormattedAmount(newValue);
+  //     setAmount(parseInt(newValue) || 0);
+  //   } else if (e.key === "Backspace" && selectionStart === valueLength) {
+  //     // '원' 앞의 숫자를 삭제합니다.
+  //     e.preventDefault();
+  //     const newValue = value.slice(0, valueLength - 1);
+  //     setFormattedAmount(newValue);
+  //     setAmount(parseInt(newValue) || 0);
+  //   }
+  // };
+
   useEffect(() => {
-    setFormattedAmount(amount === 0 ? "" : `${new Intl.NumberFormat("ko-KR").format(amount)}원`);
+    setFormattedAmount(amount === 0 ? "" : `${new Intl.NumberFormat("ko-KR").format(amount)}`);
   }, [amount]);
 
   useEffect(() => {
@@ -94,10 +124,12 @@ const PaymentModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         <div className="pr-5 flex">
           <input
             type="text"
-            value={formattedAmount}
+            value={formattedAmount === "" ? "" : formattedAmount}
             onChange={inputHandler}
             onBlur={onBlurHandler}
+            // onFocus={handleCurrencyFocus}
             onFocus={onFocusHandler}
+            // onKeyDown={handleKeyDown}
             placeholder="금액을 입력하세요"
             className="text-2xl focus:outline-none focus:border-blue-500 border-b-2 border-customGray w-full"
           />

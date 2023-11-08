@@ -16,7 +16,7 @@ import { BsFillXCircleFill } from "react-icons/bs";
 import { callApi } from "../utils/api";
 import axios from "axios";
 import { set } from "react-hook-form";
-
+import ClipLoader from "react-spinners/ClipLoader";
 import { useRecoilValue } from "recoil";
 import { authState } from "../store/atoms";
 import { useRouter } from "next/navigation";
@@ -39,6 +39,7 @@ const Panmae = () => {
   const [discountPrice, setDiscountPrice] = useState<number | null>(null); // 옵션에서 할인 선택시 할인가
 
   const [transActionLocation, setTransActionLocation] = useState<number[] | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const imgRef = useRef<HTMLInputElement>(null);
   const saveImgFile = () => {
@@ -105,38 +106,6 @@ const Panmae = () => {
       alert("필수 항목을 모두 채워주세요!");
       return;
     }
-    const formData = new FormData();
-    formData.append("auctionStatus", option);
-    formData.append("auctionTitle", productname);
-    formData.append("auctionType", category);
-    formData.append(
-      "auctionMeetingLat",
-      transActionLocation ? transActionLocation[0].toString() : "37"
-    );
-    formData.append(
-      "auctionMeetingLng",
-      transActionLocation ? transActionLocation[1].toString() : "126"
-    );
-    formData.append("auctionStartPrice", price.toString());
-    formData.append("auctionDetail", description);
-    formData.append("auctionStartAfterTime", (hour * 60 + minute).toString());
-    if (discountPrice !== null) {
-      formData.append("prodDiscountedPrice", discountPrice.toString());
-    }
-    imagefiles.forEach((image, index) => {
-      formData.append("multipartFiles", image);
-    });
-    callApi("post", "/auction/register", formData)
-      .then(res => {
-        console.log(res.data);
-        formData.forEach((value, key) => {
-          console.log(value, key);
-        });
-        router.push(`/detail/${res.data.auctionPk}`);
-      })
-      .catch(err => {
-        console.log(err);
-      });
     if (option !== "할인") {
       const formData = new FormData();
       formData.append("auctionStatus", option);
@@ -170,6 +139,9 @@ const Panmae = () => {
         })
         .catch(err => {
           console.log(err);
+        })
+        .finally(() => {
+          setLoading(false);
         });
     } else {
       const time = timeToDate(hour, minute);
@@ -199,6 +171,9 @@ const Panmae = () => {
         })
         .catch(err => {
           console.log(err);
+        })
+        .finally(() => {
+          setLoading(false);
         });
     }
   };
@@ -310,9 +285,17 @@ const Panmae = () => {
         <div className="border-b-2 border-black w-full" />
 
         <div className="flex mt-10 mx-4">
-          <h1 className="text-2xl mr-10 font-semibold">
+          {/* <h1 className="text-2xl mr-10 font-semibold">
             거래지역 <span className="text-red-500">*</span>
-          </h1>
+          </h1> */}
+          <div className="flex flex-col mr-10 w-1/6">
+            <h1 className="text-2xl font-semibold ">
+              거래지역 <span className="text-red-500">*</span>
+            </h1>
+            <div className="mt-14 text-customLightTextColor">
+              지도 위에 마우스 클릭을 통해 <br />내 주변에서 원하는 거래 지역을 선택할 수 있어요
+            </div>
+          </div>
           <div className="w-[600px] h-[500px] mr-5 mb-5">
             <MoveMap setTransActionLocation={setTransActionLocation} />
           </div>
@@ -450,6 +433,11 @@ const Panmae = () => {
           </button>
         </div>
       </div>
+      {loading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <ClipLoader color="#247eff" size={250} />
+        </div>
+      )}
     </div>
   );
 };
