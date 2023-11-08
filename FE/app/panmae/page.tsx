@@ -131,7 +131,7 @@ const Panmae = () => {
       callApi("post", "/auction/register", formData)
         .then(res => {
           console.log(res.data);
-          if (option == "경매") {
+          if (option == "BID") {
             router.push(`/detail/auction/${res.data.auctionPk}`);
           } else {
             router.push(`/reverseauction/${res.data.auctionPk}`);
