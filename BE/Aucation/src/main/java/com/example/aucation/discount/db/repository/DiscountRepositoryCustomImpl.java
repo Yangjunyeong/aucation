@@ -72,7 +72,8 @@ public class DiscountRepositoryCustomImpl implements DiscountRepositoryCustom {
 				keywordEq(sortRequest.getSearchType(), sortRequest.getSearchKeyword())
 			)
 			.leftJoin(qMember).on(qDiscount.owner.eq(qMember))
-			.leftJoin(qLikeDiscount).on(qLikeDiscount.discount.eq(qDiscount));
+			.leftJoin(qLikeDiscount).on(qLikeDiscount.discount.eq(qDiscount))
+			.groupBy(qDiscount);
 
 		long count = query.fetch().size();
 
