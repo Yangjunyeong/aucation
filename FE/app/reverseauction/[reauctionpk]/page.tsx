@@ -145,7 +145,11 @@ const AuctionDetail = () => {
             {/* {data ? <h1>{data.title}</h1> : <p>Loading...</p>} */}
           </div>
           <div className="mt-5 text-2xl">
-            <span className="text-blue-600 mr-2">역경매</span>
+            {data.isAction == 2 ? (
+              <span className="text-red-600 mr-2">역경매 완료</span>
+            ) : (
+              <span className="text-blue-600 mr-2">역경매</span>
+            )}
             <span>{data.reAuctionType}</span>
           </div>
 
