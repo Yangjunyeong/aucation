@@ -2,13 +2,6 @@ package com.example.aucation.member.api.controller;
 
 import java.io.IOException;
 
-import com.example.aucation.member.api.dto.DetailRequest;
-import com.example.aucation.member.api.dto.DetailResponse;
-import com.example.aucation.member.api.dto.ImageResponse;
-import com.example.aucation.member.api.dto.MemberEmailRequest;
-import com.example.aucation.member.api.dto.MemberNickRequest;
-
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -21,9 +14,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.aucation.common.dto.EmailResponse;
 import com.example.aucation.common.support.AuthorizedVariable;
+import com.example.aucation.member.api.dto.DetailRequest;
+import com.example.aucation.member.api.dto.DetailResponse;
+import com.example.aucation.member.api.dto.ImageResponse;
+import com.example.aucation.member.api.dto.LikePageRequest;
 import com.example.aucation.member.api.dto.MemberPageRequest;
+import com.example.aucation.member.api.dto.MemberPkResponse;
+import com.example.aucation.member.api.dto.MyAuctionResponse;
+import com.example.aucation.member.api.dto.MyDiscountResponse;
+import com.example.aucation.member.api.dto.MyLikeResponse;
+import com.example.aucation.member.api.dto.MyReverseResponse;
 import com.example.aucation.member.api.dto.MypageLikeResponse;
-import com.example.aucation.member.api.dto.MypageResponse;
 import com.example.aucation.member.api.dto.NicknameRequest;
 import com.example.aucation.member.api.dto.NicknameResponse;
 import com.example.aucation.member.api.dto.SignupRequest;
@@ -31,7 +32,6 @@ import com.example.aucation.member.api.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import retrofit2.http.Multipart;
 
 @RequiredArgsConstructor
 @RestController
@@ -70,16 +70,28 @@ public class MemberController {
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping("/test")
-	public ResponseEntity<Void> test(@AuthorizedVariable Long memberPk) {
-		log.info(String.valueOf(memberPk));
-		return ResponseEntity.ok().build();
+	//마이페이지-경매
+	@PostMapping("/mypage/auction")
+	public ResponseEntity<MyAuctionResponse> myauction(@AuthorizedVariable Long memberPk, @RequestBody MemberPageRequest memberPageRequest) {
+		return ResponseEntity.ok().body(memberService.myauction(memberPk,memberPageRequest));
 	}
 
-	//마이페이지
-	@PostMapping("/mypage")
-	public ResponseEntity<MypageResponse> mypage(@AuthorizedVariable Long memberPk, @RequestBody MemberPageRequest memberPageRequest) {
-		return ResponseEntity.ok().body(memberService.mypage(memberPk,memberPageRequest));
+	//마이페이지-역경매
+	@PostMapping("/mypage/reauction")
+	public ResponseEntity<MyReverseResponse> myreacution(@AuthorizedVariable Long memberPk, @RequestBody MemberPageRequest memberPageRequest) {
+		return ResponseEntity.ok().body(memberService.myreacution(memberPk,memberPageRequest));
+	}
+
+	//마이페이지-할인
+	@PostMapping("/mypage/discount")
+	public ResponseEntity<MyDiscountResponse> mydiscount(@AuthorizedVariable Long memberPk, @RequestBody MemberPageRequest memberPageRequest) {
+		return ResponseEntity.ok().body(memberService.mydiscount(memberPk,memberPageRequest));
+	}
+
+	//마이페이지-좋아요
+	@PostMapping("/mypage/likeauction")
+	public ResponseEntity<MyLikeResponse> likeauction(@AuthorizedVariable Long memberPk,@RequestBody LikePageRequest likePageRequest) {
+		return ResponseEntity.ok().body(memberService.likeauction(memberPk,likePageRequest));
 	}
 
 	//마이페이지 좋아요 게시글
@@ -89,7 +101,6 @@ public class MemberController {
 	}
 
 	//마이페이지 할인 게시글
-
 	@PatchMapping("/modify/nickname")
 	public ResponseEntity<NicknameResponse> changenick(@AuthorizedVariable Long memberPk,@RequestBody NicknameRequest nicknameRequest) {
 		return ResponseEntity.ok().body(memberService.changenick(memberPk,nicknameRequest));
@@ -105,4 +116,10 @@ public class MemberController {
 		IOException {
 		return ResponseEntity.ok().body(memberService.changeimage(memberPk,multipartFile));
 	}
+
+	@GetMapping("/get")
+	public ResponseEntity<MemberPkResponse> test(@AuthorizedVariable Long memberPk) {
+		return ResponseEntity.ok().body(MemberPkResponse.builder().memberPk(memberPk).build());
+	}
+
 }

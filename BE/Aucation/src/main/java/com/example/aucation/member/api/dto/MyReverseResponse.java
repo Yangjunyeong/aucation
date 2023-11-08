@@ -6,8 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class MypageResponse {
-
+public class MyReverseResponse {
 	private String memberNickname;
 
 	private String memberDetail;
@@ -20,17 +19,18 @@ public class MypageResponse {
 
 	private int totalPage;
 
-	private List<MypageItemsResponse> MypageItems;
+	private List<MyReverseItemsResponse> MypageItems;
 
 	@Builder
-	public MypageResponse(String memberNickname, String memberDetail, String imgURL, int currentPage, int totalPage,
-		int memberPoint, List<MypageItemsResponse> mypageItems) {
+	public MyReverseResponse(String memberNickname, String memberDetail, String imgURL, int memberPoint,
+		int currentPage,
+		int totalPage, List<MyReverseItemsResponse> mypageItems) {
 		this.memberNickname = memberNickname;
 		this.memberDetail = memberDetail;
 		this.imgURL = imgURL;
+		this.memberPoint = memberPoint;
 		this.currentPage = currentPage;
 		this.totalPage = totalPage;
-		this.memberPoint = memberPoint;
 		MypageItems = mypageItems;
 	}
 }
