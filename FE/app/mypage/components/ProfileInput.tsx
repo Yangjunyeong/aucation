@@ -23,7 +23,7 @@ const ProfileInput: React.FC<InputProps> = ({ value, onChange, onTextAreaChange,
   if (size === 'small') {
     inputClassName += ' text-xl';
   } else if (size === 'medium') {
-    inputClassName += ' text-2xl w-[300px]';
+    inputClassName += ' text-2xl w-[240px]';
   }
 
   return (
