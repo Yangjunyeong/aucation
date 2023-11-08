@@ -30,7 +30,7 @@ public class ReAuctionDetailResponse {
     private Double reAuctionMeetingLng;
     private String reAuctionInfo;
     private Integer reAuctionStartPrice;
-    private Integer reAuctionTopPrice;
+    private Integer reAuctionLowPrice;
     private Integer reAuctionEndPrice;  // 경매 후에만 제공
     private Long reAuctionBidCnt;
     private LocalDateTime nowTime;
@@ -47,7 +47,7 @@ public class ReAuctionDetailResponse {
     private ReAucBidResponse selectedBid;
 
     @Builder
-    public ReAuctionDetailResponse(Long reAuctionPk, AuctionStatus reAuctionStatus, String reAuctionTitle, String reAuctionType, Long reAuctionOwnerPk, Role reAuctionOwnerMemberRole, String reAuctionOwnerPhoto, String reAuctionOwnerNickname, List<String> reAuctionPhoto, Double reAuctionMeetingLat, Double reAuctionMeetingLng, String reAuctionInfo, Integer reAuctionStartPrice, Integer reAuctionTopPrice, Integer reAuctionEndPrice, Long reAuctionBidCnt, LocalDateTime nowTime, LocalDateTime reAuctionStartTime, LocalDateTime reAuctionEndTime, Boolean isOwner, int isAction, Long likeCnt, Boolean isLike, List<AuctionDetailItem> reAuctionDetailItems, List<ReAucBidResponse> reAuctionBidItems) {
+    public ReAuctionDetailResponse(Long reAuctionPk, AuctionStatus reAuctionStatus, String reAuctionTitle, String reAuctionType, Long reAuctionOwnerPk, Role reAuctionOwnerMemberRole, String reAuctionOwnerPhoto, String reAuctionOwnerNickname, List<String> reAuctionPhoto, Double reAuctionMeetingLat, Double reAuctionMeetingLng, String reAuctionInfo, Integer reAuctionStartPrice, Integer reAuctionLowPrice, Integer reAuctionEndPrice, Long reAuctionBidCnt, LocalDateTime nowTime, LocalDateTime reAuctionStartTime, LocalDateTime reAuctionEndTime, Boolean isOwner, int isAction, Long likeCnt, Boolean isLike, List<AuctionDetailItem> reAuctionDetailItems, List<ReAucBidResponse> reAuctionBidItems) {
         this.reAuctionPk = reAuctionPk;
         this.reAuctionStatus = reAuctionStatus;
         this.reAuctionTitle = reAuctionTitle;
@@ -61,7 +61,7 @@ public class ReAuctionDetailResponse {
         this.reAuctionMeetingLng = reAuctionMeetingLng;
         this.reAuctionInfo = reAuctionInfo;
         this.reAuctionStartPrice = reAuctionStartPrice;
-        this.reAuctionTopPrice = reAuctionTopPrice;
+        this.reAuctionLowPrice = reAuctionLowPrice;
         this.reAuctionEndPrice = reAuctionEndPrice;
         this.reAuctionBidCnt = reAuctionBidCnt;
         this.nowTime = nowTime;

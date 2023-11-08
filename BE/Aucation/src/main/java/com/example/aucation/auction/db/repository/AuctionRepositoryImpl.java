@@ -11,6 +11,7 @@ import com.example.aucation.member.db.entity.QMember;
 import com.example.aucation.member.db.entity.Role;
 import com.example.aucation.photo.db.QPhoto;
 import com.example.aucation.reauction.api.dto.ReAuctionDetailResponse;
+import com.example.aucation.reauction.db.entity.QReAuctionBid;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -33,6 +34,7 @@ import java.util.List;
 public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
     private final JPAQueryFactory queryFactory;
     private final QAuction qAuction = QAuction.auction;
+    private final QReAuctionBid qReAuctionBid = QReAuctionBid.reAuctionBid;
     private final QLikeAuction qLikeAuction = QLikeAuction.likeAuction;
     private final QAuctionBid qAuctionBid = QAuctionBid.auctionBid;
     private final QMember qMember = QMember.member;
@@ -270,12 +272,12 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
                                 qAuction.auctionMeetingLng.as("reAuctionMeetingLng"),
                                 qAuction.auctionDetail.as("reAuctionInfo"),
                                 qAuction.auctionStartPrice.as("reAuctionStartPrice"),
-                                qAuctionBid.AuctionBidPrice.max().as("reAuctionTopPrice"),
                                 qAuction.auctionEndPrice.as("reAuctionEndPrice"),
-                                qAuctionBid.count().as("reAuctionBidCnt"),
-                                qAuction.auctionStartDate.as("auctionStartTime"),
-                                qAuction.auctionEndDate.as("auctionEndTime"),
+                                qAuction.auctionStartDate.as("reAuctionStartTime"),
+                                qAuction.auctionEndDate.as("reAuctionEndTime"),
                                 qLikeAuction.countDistinct().as("likeCnt"),
+                                qReAuctionBid.reAucBidPrice.min().as("reAuctionLowPrice"),
+                                qReAuctionBid.reAucBidPrice.countDistinct().as("reAuctionBidCnt"),
                                 new CaseBuilder()
                                         .when(
                                                 JPAExpressions.selectOne()
@@ -300,8 +302,8 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
                 .on(qLikeAuction.auction.eq(qAuction))
                 .leftJoin(qMember)
                 .on(qAuction.owner.eq(qMember))
-                .leftJoin(qAuctionBid)
-                .on(qAuctionBid.auction.eq(qAuction))
+                .leftJoin(qReAuctionBid)
+                .on(qReAuctionBid.auction.eq(qAuction))
                 .groupBy(qAuction);
         return query.fetchOne();
     }
