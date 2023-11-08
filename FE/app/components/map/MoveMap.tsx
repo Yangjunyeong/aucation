@@ -29,7 +29,6 @@ const MoveMap: React.FC<OwnProps> = ({ setTransActionLocation }) => {
         var container = document.getElementById("map");
         var options = {
           center: new window.kakao.maps.LatLng(lat, lng),
-          //   center: new window.kakao.maps.LatLng(33.45, 126.56),
           level: 3,
         };
 
@@ -42,20 +41,14 @@ const MoveMap: React.FC<OwnProps> = ({ setTransActionLocation }) => {
         var marker = new window.kakao.maps.Marker(), // 클릭한 위치를 표시할 마커입니다
           infowindow = new window.kakao.maps.InfoWindow({ zindex: 1 }); // 클릭한 위치에 대한 주소를 표시할 인포윈도우입니다
         marker.setMap(map);
-        marker.setDraggable(true);
+        // marker.setDraggable(true);
         // 생성 페이지에서는 드래그 가능, 디테일 페이지에서는 마커 드래그 불가능
-
-        // 마커에서 마우스를 때면 마커 위치가 나옴
-        window.kakao.maps.event.addListener(marker, "mouseout", function () {
-          setMarker([marker.getPosition().getLat(), marker.getPosition().getLng()]);
-        });
 
         // 현재 지도 중심좌표로 주소를 검색해서 지도 좌측 상단에 표시합니다
         searchAddrFromCoords(map.getCenter(), displayCenterInfo);
 
         // 지도를 클릭했을 때 클릭 위치 좌표에 대한 주소정보를 표시하도록 이벤트를 등록합니다
         window.kakao.maps.event.addListener(map, "click", function (mouseEvent: any) {
-          setMarker([marker.getPosition().getLat(), marker.getPosition().getLng()]);
           searchDetailAddrFromCoords(mouseEvent.latLng, function (result: any, status: any) {
             if (status === window.kakao.maps.services.Status.OK) {
               var detailAddr = !!result[0].road_address
@@ -74,7 +67,7 @@ const MoveMap: React.FC<OwnProps> = ({ setTransActionLocation }) => {
               // 마커를 클릭한 위치에 표시합니다
               marker.setPosition(mouseEvent.latLng);
               marker.setMap(map);
-
+              setMarker([marker.getPosition().getLat(), marker.getPosition().getLng()]);
               // 인포윈도우에 클릭한 위치에 대한 법정동 상세 주소정보를 표시합니다
               infowindow.setContent(content);
               infowindow.open(map, marker);
@@ -143,6 +136,7 @@ const MoveMap: React.FC<OwnProps> = ({ setTransActionLocation }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     markerLocation(markerXY);
+    console.log(markerXY);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [markerXY]);
 
