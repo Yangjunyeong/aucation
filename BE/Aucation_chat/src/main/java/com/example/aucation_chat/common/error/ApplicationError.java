@@ -57,12 +57,12 @@ public enum ApplicationError {
     AWS_S3_DELETE_ERROR(HttpStatus.BAD_REQUEST, "A002", "S3 파일 삭제를 실패했습니다."),
     AWS_REKOGNITION_ERROR(HttpStatus.BAD_REQUEST, "A003", "REKOGNITION 에러가 발생했습니다."),
     AUCTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "A004", "없는 경매장입니다"),
-    AUCTION_HISTORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "A005", "경매 기록이 없습니다"),
+    AUCTION_HISTORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "A005", "경매제품의 거래 내역이 존재하지 않습니다."),
 
     PRODUCT_CONFIRMED(HttpStatus.BAD_REQUEST, "P001", "거래가 끝난 물품입니다."),
 
     DISCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "D001", "없는 할인제품입니다."),
-    DISCOUNT_HISTORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "D002", "할인판매 기록이 없습니다"),
+    DISCOUNT_HISTORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "D002", "할인판매 거래 내역이 존재하지 않습니다."),
     
 
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S001", "서버 내부 에러가 발생했습니다."),
