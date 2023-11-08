@@ -76,7 +76,7 @@ public class RedisConfig {
 	}
 
 	@Bean
-	RedisTemplate<String, String> stringRedisTemplate() {
+	RedisTemplate<String, String> myStringRedisTemplate() {
 		RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
 
 		redisTemplate.setConnectionFactory(redisConnectionFactory());

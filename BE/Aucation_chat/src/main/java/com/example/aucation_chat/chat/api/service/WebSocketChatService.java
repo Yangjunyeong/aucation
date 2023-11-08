@@ -38,7 +38,7 @@ public class WebSocketChatService {
 	@Autowired
 	private final RedisTemplate<String, RedisChatMessage> redisTemplate;
 	@Autowired
-	private final RedisTemplate<String, String> stringRedisTemplate;
+	private final RedisTemplate<String, String> myStringRedisTemplate;
 
 	private final MemberRepository memberRepository;
 
@@ -148,11 +148,10 @@ public class WebSocketChatService {
 	/** 리스트에 처음으로 push됐을 때만  ex:{redisKeyBase}:{chatUUID}를 키로 하는 expire전용 키 생성*/
 	private void setTTL(String redisKeyBase, String session) {
 		if (redisTemplate.opsForList().size(redisKeyBase + session) == 1) { // O(1)시간에 .size() 수행
-			stringRedisTemplate.opsForValue()
+			myStringRedisTemplate.opsForValue()
 				.set("ex:" + redisKeyBase + session, "key for expire", 30, TimeUnit.MINUTES); // ex:redisKeyBase:session
 		}
 	}
-
 	/* ----------------------------- PUB/SUB --------------------------------------*/
 
 	/** 쪽지방 입장할 떄 topic 생성 */
