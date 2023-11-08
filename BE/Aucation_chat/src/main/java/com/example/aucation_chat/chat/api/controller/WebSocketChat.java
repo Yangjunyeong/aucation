@@ -60,12 +60,12 @@ public class WebSocketChat {
 		log.info("content: " + chatRequest.getContent());
 
 		// chat-auc:auctionUUID로 topic(채팅방) 등록. redisSubscriber(리스너)와 연동
-		webSocketChatService.createTopic(chatRequest.getChatSession());
+		webSocketChatService.createTopic(chatRequest.getChatUUID());
 
 		/***** redis에 메세지 저장*****/
 		RedisChatMessage message = webSocketChatService.saveAndReturn2(chatRequest);
 
 		// chatRequest를 RedisChatMessage로 가공해 구독한 클라이언트에게 브로드캐스팅
-		redisPublisher.publish(webSocketChatService.getTopic(chatRequest.getChatSession()), message);
+		redisPublisher.publish(webSocketChatService.getTopic(chatRequest.getChatUUID()), message);
 	}
 }

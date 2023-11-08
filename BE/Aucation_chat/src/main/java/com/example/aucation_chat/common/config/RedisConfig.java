@@ -76,7 +76,20 @@ public class RedisConfig {
 	}
 
 	@Bean
-	public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory){
+	RedisTemplate<String, String> stringRedisTemplate() {
+		RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+
+		redisTemplate.setConnectionFactory(redisConnectionFactory());
+
+		// StringRedisSerializer: binary 데이터로 저장되기 때문에 이를 String 으로 변환시켜주며(반대로도 가능) UTF-8 인코딩 방식을 사용
+		redisTemplate.setKeySerializer(new StringRedisSerializer());
+		redisTemplate.setValueSerializer(new StringRedisSerializer());
+
+		return redisTemplate;
+	}
+
+	@Bean
+	public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory) {
 		RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
 		redisMessageListenerContainer.setConnectionFactory(redisConnectionFactory);
 		return redisMessageListenerContainer;
