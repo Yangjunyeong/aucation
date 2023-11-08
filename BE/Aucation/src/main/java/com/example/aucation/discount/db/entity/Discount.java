@@ -1,16 +1,21 @@
 package com.example.aucation.discount.db.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import com.example.aucation.common.entity.BaseEntity;
+import com.example.aucation.like.db.entity.LikeDiscount;
 import com.example.aucation.member.db.entity.Member;
 
 import lombok.AccessLevel;
@@ -49,6 +54,9 @@ public class Discount extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
 	private Member customer;
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	private List<LikeDiscount> likeDiscountList = new ArrayList<>();
 
 	@Builder
 	public Discount(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt, Long lastModifiedBy,

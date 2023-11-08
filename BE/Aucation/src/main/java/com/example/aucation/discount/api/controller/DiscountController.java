@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,7 @@ import com.example.aucation.common.support.AuthorizedVariable;
 import com.example.aucation.discount.api.dto.ConfirmResponse;
 import com.example.aucation.discount.api.dto.DiscountRequest;
 import com.example.aucation.discount.api.dto.DiscountResponse;
+import com.example.aucation.discount.api.dto.DiscountSortRequest;
 import com.example.aucation.discount.api.dto.EnterResponse;
 import com.example.aucation.discount.api.dto.PurchaseResponse;
 import com.example.aucation.discount.api.service.DiscountService;
@@ -47,6 +49,19 @@ public class DiscountController {
 	@GetMapping("/purchase/{discountUUID}")
 	private ResponseEntity<PurchaseResponse> purchase(@AuthorizedVariable Long memberPk, @PathVariable("discountUUID") String discountUUID){
 		return ResponseEntity.ok().body(discountService.purchase(memberPk,discountUUID));
+	}
+
+	////////////// 리스트 /////////////////////////////////
+
+	@PostMapping("list/{pageNum}")
+	private ResponseEntity<?> getDiscountList(@AuthorizedVariable Long memberPk, @PathVariable int pageNum, @RequestBody(required = false) DiscountSortRequest sortRequest){
+		return ResponseEntity.ok().body(discountService.getDiscountList(memberPk, pageNum, sortRequest));
+	}
+
+	@GetMapping("/like/{discountPk}")
+	private ResponseEntity<?> likeAuction(@AuthorizedVariable Long memberPk, @PathVariable Long discountPk) throws Exception {
+		discountService.setLikeDiscount(memberPk,discountPk);
+		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping("/confirm/{discountUUID}")
