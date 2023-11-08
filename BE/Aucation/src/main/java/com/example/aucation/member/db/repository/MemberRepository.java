@@ -2,15 +2,16 @@ package com.example.aucation.member.db.repository;
 
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.example.aucation.member.api.dto.MemberPageRequest;
-import com.example.aucation.member.api.dto.MypageLikeResponse;
-import com.example.aucation.member.api.dto.MypageResponse;
+import com.example.aucation.member.api.dto.MyAuctionResponse;
+import com.example.aucation.member.api.dto.MyDiscountResponse;
+import com.example.aucation.member.api.dto.MyLikeResponse;
+import com.example.aucation.member.api.dto.MyReverseResponse;
 import com.example.aucation.member.db.entity.Member;
 
 @Repository
@@ -27,6 +28,9 @@ public interface MemberRepository extends JpaRepository<Member, Long>,MemberRepo
 
 	boolean existsByMemberId(String memberId);
 
-	MypageResponse searchMyAuctionPage(Member member, MemberPageRequest memberPageRequest, Pageable pageable);
+	MyAuctionResponse searchMyAuctionPage(Member member, MemberPageRequest memberPageRequest, Pageable pageable);
+	MyReverseResponse searchMyReversePage(Member member, MemberPageRequest memberPageRequest, Pageable pageable);
+	MyDiscountResponse searchMyDiscountPage(Member member, MemberPageRequest memberPageRequest, Pageable pageable);
+	MyLikeResponse searchMyLikePage(Member member, Pageable pageable);
 	
 }
