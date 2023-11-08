@@ -50,7 +50,7 @@ public class GroupChatService {
 	 * */
 	public List<ChatResponse> enter(String auctionUUID, long memberPk) {
 		// auctionUUID로 채팅방 찾고 없으면 생성
-		GroupChatRoom groupChatRoom = findChatRoomByUUID(auctionUUID).orElse(createNotExistChatRoom(auctionUUID));
+		GroupChatRoom groupChatRoom = findChatRoomByUUID(auctionUUID);
 
 		// 참여한 적 없다면 참여자로 생성
 		participate(memberPk, groupChatRoom);
@@ -87,19 +87,26 @@ public class GroupChatService {
 		}
 	}
 
-	private Optional<GroupChatRoom> findChatRoomByUUID(String auctionUUID) {
+	private GroupChatRoom findChatRoomByUUID(String auctionUUID) {
 		Auction searchedAuction = auctionRepository.findByAuctionUUID(auctionUUID)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.AUCTION_NOT_FOUND));
 		Optional<GroupChatRoom> chatRoom = groupChatRoomRepository.findByChatSession(auctionUUID);
-		return chatRoom;
+		if(chatRoom.isEmpty()){
+			return createNotExistChatRoom(auctionUUID);
+		}else{
+			return chatRoom.get();
+		}
 	}
 
 	private GroupChatRoom createNotExistChatRoom(String auctionUUID) {
+		log.info(" ************ 방이 없어 생성, "+auctionUUID);
 		GroupChatRoom temp = GroupChatRoom.builder()
 			.chatSession(auctionUUID)
 			.chatCreate(LocalDateTime.now())
 			.build();
 		groupChatRoomRepository.save(temp);
+		log.info(" *********** 생성 끝 ");
+
 		return temp;
 	}
 
