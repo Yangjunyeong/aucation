@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +59,7 @@ public class PersonalChatService {
 	private final RedisTemplate<String, String> myStringRedisTemplate;
 
 	//////////////////////////////////////////////////////////////////
+	@Transactional
 	public PersonalChatEnterResponse enter(PersonalChatEnterRequest request) {
 		log.info("************************ 개인채팅방 enter 시작 !!!!!!!");
 
@@ -84,15 +87,25 @@ public class PersonalChatService {
 			Auction auction = auctionRepository.findByAuctionPk(prodPk)
 				.orElseThrow(() -> new NotFoundException(ApplicationError.AUCTION_NOT_FOUND));
 			endPrice = getEndpriceFromAuction(auction);
+			log.info("************************ 최종가 " + endPrice);
+
 			prodCategory = auction.getAuctionType();
+			log.info("************************ 카테고리 " + prodCategory);
+
 			prodName = auction.getAuctionTitle();
+			log.info("************************ 물품 이름 " + prodName);
+
 			sellerImageURL = auction.getOwner().getImageURL();
+			log.info("************************ 프사 주소 " + sellerImageURL);
+
 			sellerNickName = auction.getOwner().getMemberNickname();
+			log.info("************************ 파는사람 닉네임 " + sellerNickName);
+
 			sellerPk = auction.getOwner().getMemberPk();
 			if (type == 1) { // 역경매일 때 채팅가져오기
 				prodType = "역경매";
 				chatList = getChatList("chat-bid:", chatRoom.getChatSession());
-			} else{ // 경매일 때 채팅가져오기
+			} else { // 경매일 때 채팅가져오기
 				chatList = getChatList("chat-re-bid:", chatRoom.getChatSession());
 			}
 		} else {  // 할인판매일 때
@@ -100,12 +113,24 @@ public class PersonalChatService {
 
 			Discount discount = discountRepository.findByDiscountPk(prodPk)
 				.orElseThrow(() -> new NotFoundException(ApplicationError.DISCOUNT_NOT_FOUND));
+
 			endPrice = getEndPriceFromDiscount(discount);
+			log.info("************************ 최종가 " + endPrice);
+
 			prodCategory = discount.getDiscountCategory();
+			log.info("************************ 카테고리 " + prodCategory);
+
 			prodName = discount.getDiscountTitle();
-			sellerImageURL = discount.getOwner().getImageURL();
-			sellerNickName = discount.getOwner().getMemberNickname();
-			sellerPk = discount.getOwner().getMemberPk();
+			log.info("************************ 물품 이름 " + prodName);
+
+			Member seller = discount.getOwner();
+			sellerImageURL = seller.getImageURL();
+			log.info("************************ 프사 주소 " + sellerImageURL);
+
+			sellerNickName = seller.getMemberNickname();
+			log.info("************************ 파는사람 닉네임 " + sellerNickName);
+
+			sellerPk = seller.getMemberPk();
 			prodType = "할인판매";
 			chatList = getChatList("chat-dis:", chatRoom.getChatSession());
 		}
@@ -121,20 +146,18 @@ public class PersonalChatService {
 			.sellerImageURL(sellerImageURL)
 			.sellerNickName(sellerNickName)
 			.build();
-		log.info("************************ 입장 끝! response: ");
-		log.info(resp.toString());
+		log.info("************************ 입장 끝!");
 		return resp;
 	}
 
-
 	// ----------------------- service안에 들어가는 메소드들 --------------------------- //
 	private List<ChatResponse> getChatList(String redisKeyBase, String chatSession) {
-		List<RedisChatMessage> redisChatMessages = redisTemplate.opsForList().range(redisKeyBase+chatSession, 0, -1);
+		List<RedisChatMessage> redisChatMessages = redisTemplate.opsForList().range(redisKeyBase + chatSession, 0, -1);
 
 		// cache-aside
-		if(!redisChatMessages.isEmpty()){
+		if (!redisChatMessages.isEmpty()) {
 			return redisListToChatResponseList(redisChatMessages);
-		} else{
+		} else {
 			return cacheAside(redisKeyBase, chatSession);
 		}
 	}
@@ -211,14 +234,15 @@ public class PersonalChatService {
 
 		// List<ChatMessage> chatList = chatMessageRepository.findTop50ByChatRoom_ChatPk_OrderByMessageTimeDesc(
 		// 	searchedChat.getChatPk());
-		List<ChatMessage> chatList = chatMessageRepository.findByChatRoom_ChatPk_OrderByMessageTimeDesc(searchedChat.getChatPk());
+		List<ChatMessage> chatList = chatMessageRepository.findByChatRoom_ChatPk_OrderByMessageTimeDesc(
+			searchedChat.getChatPk());
 		return chatList;
 	}
 
 	// RedisChatMessages로 이루어진 List를 ChatResponse리스트로 변환
 	private List<ChatResponse> redisListToChatResponseList(List<RedisChatMessage> redisChatMessages) {
 		List<ChatResponse> temp = new ArrayList<>();
-		for(RedisChatMessage r: redisChatMessages){
+		for (RedisChatMessage r : redisChatMessages) {
 			temp.add(redisToChatResponse(r));
 		}
 		return temp;
@@ -236,7 +260,6 @@ public class PersonalChatService {
 		return temp;
 	}
 
-
 	private void participate(ChatRoom chatRoom, long memberPk) {
 		memberRepository.findByMemberPk(memberPk)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
@@ -253,7 +276,7 @@ public class PersonalChatService {
 			chatParticipantRepository.save(chatParticipant);
 		}
 	}
-	
+
 	private int getEndPriceFromDiscount(Discount discount) {
 		DiscountHistory history = discountHistoryRepository.findByDiscount_DiscountPk(discount.getDiscountPk())
 			.orElseThrow(() -> new NotFoundException(ApplicationError.DISCOUNT_HISTORY_NOT_FOUND));
@@ -305,7 +328,7 @@ public class PersonalChatService {
 			log.info(" ******************** SET TTL start!!!!");
 			myStringRedisTemplate.opsForValue()
 				.set("ex:" + redisKeyBase + session, "key for expire", 30, TimeUnit.MINUTES); // ex:redisKeyBase:session
-			log.info(" ******************** ex:"+redisKeyBase+session+" 키의 만료시간이 설정되었습니다");
+			log.info(" ******************** ex:" + redisKeyBase + session + " 키의 만료시간이 설정되었습니다");
 
 		}
 	}
