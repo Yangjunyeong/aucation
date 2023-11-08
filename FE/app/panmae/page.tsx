@@ -105,6 +105,38 @@ const Panmae = () => {
       alert("필수 항목을 모두 채워주세요!");
       return;
     }
+    const formData = new FormData();
+    formData.append("auctionStatus", option);
+    formData.append("auctionTitle", productname);
+    formData.append("auctionType", category);
+    formData.append(
+      "auctionMeetingLat",
+      transActionLocation ? transActionLocation[0].toString() : "37"
+    );
+    formData.append(
+      "auctionMeetingLng",
+      transActionLocation ? transActionLocation[1].toString() : "126"
+    );
+    formData.append("auctionStartPrice", price.toString());
+    formData.append("auctionDetail", description);
+    formData.append("auctionStartAfterTime", (hour * 60 + minute).toString());
+    if (discountPrice !== null) {
+      formData.append("prodDiscountedPrice", discountPrice.toString());
+    }
+    imagefiles.forEach((image, index) => {
+      formData.append("multipartFiles", image);
+    });
+    callApi("post", "/auction/register", formData)
+      .then(res => {
+        console.log(res.data);
+        formData.forEach((value, key) => {
+          console.log(value, key);
+        });
+        router.push(`/detail/${res.data.auctionPk}`);
+      })
+      .catch(err => {
+        console.log(err);
+      });
     if (option !== "할인") {
       const formData = new FormData();
       formData.append("auctionStatus", option);
@@ -130,12 +162,11 @@ const Panmae = () => {
       callApi("post", "/auction/register", formData)
         .then(res => {
           console.log(res.data);
-          console.log(transActionLocation);
-          // if (option == "경매") {
-          //   router.push(`/detail/auction/${res.data.auctionPk}`);
-          // } else {
-          //   router.push(`/reverseauction/${res.data.auctionPk}`);
-          // }
+          if (option == "경매") {
+            router.push(`/detail/auction/${res.data.auctionPk}`);
+          } else {
+            router.push(`/reverseauction/${res.data.auctionPk}`);
+          }
         })
         .catch(err => {
           console.log(err);

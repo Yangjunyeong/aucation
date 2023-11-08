@@ -327,6 +327,7 @@ const MyPage: NextPage = () => {
     }
   }, [category, secondCategory]);
 
+  // 데이터 불러오기
   useEffect(() => {
     const data = {
       productStatus: secondCategory,
@@ -334,7 +335,7 @@ const MyPage: NextPage = () => {
       productFilter: itemsort,
       myPageNum: pageNumber,
     };
-
+    // 유저 데이터 불러오기
     callApi("post", "members/mypage", data)
       .then(res => {
         console.log(res.data);
@@ -366,7 +367,7 @@ const MyPage: NextPage = () => {
           <div className="flex-col ml-10">
             <div className="flex mt-2 h-[60px]">
               <span className="flex items-center mt-1 w-[60px]">
-                {isShop ? <HiBuildingStorefront size={30} /> : <BsPersonFill size={70} />}
+                {isShop ? <HiBuildingStorefront size={70} /> : <BsPersonFill size={70} />}
               </span>
               {/* 유저네임/ 유저네임 인풋 */}
               <div className="flex text-2xl mt-1 items-center font-semibold w-[240px] whitespace-nowrap overflow-hidden text-ellipsis">
@@ -522,8 +523,8 @@ const MyPage: NextPage = () => {
 
         {/* 솔트 */}
         <div className="flex text-lg font-semibold text-center cursor-pointer">
-          {itemsortList.map(item => (
-            <div>
+          {itemsortList.map((item, idx) => (
+            <div key={idx}>
               <div
                 className={clsx("text-lg", itemsort == item ? "font-bold text-customBlue" : "")}
                 onClick={() => itemSortHandler(item)}
