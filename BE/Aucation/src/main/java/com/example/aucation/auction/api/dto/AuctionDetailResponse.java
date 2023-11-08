@@ -1,7 +1,7 @@
 package com.example.aucation.auction.api.dto;
 
 import com.example.aucation.auction.db.entity.AuctionStatus;
-import com.example.aucation.reauction.api.dto.ReAucBidResponse;
+import com.example.aucation.member.db.entity.Role;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
@@ -17,64 +17,67 @@ import java.util.List;
 public class AuctionDetailResponse {
 
     private Long auctionPk;
-    private AuctionStatus auctionStatus; //
-    private String auctionTitle;          //
-    private String auctionType;          //
-    private String auctionOwnerNickname; //
-    private String auctionOwnerPhoto;   //
+    private String auctionUuid;
+    private AuctionStatus auctionStatus;
+    private String auctionTitle;
+    private String auctionType;
+    private Long auctionOwnerPk;
+    private Role auctionOwnerMemberRole;
+    private String auctionOwnerPhoto;
+    private String auctionOwnerNickname;
     private List<String> auctionPhoto;
-    private double auctionMeetingLat;   //
-    private double auctionMeetingLng;    //
-    private String auctionInfo;   //
-    private Integer auctionStartPrice;    //
-    private Long likeCnt;            //
-    private Boolean isLike;              //
-    private LocalDateTime nowTime;    //
+    private Double auctionMeetingLat;
+    private Double auctionMeetingLng;
+    private String auctionInfo;
+    private Integer auctionStartPrice;
+
+
+    private LocalDateTime nowTime;
     private LocalDateTime auctionStartTime;
     private LocalDateTime auctionEndTime;
-    private int isAction;   // 0 : 전  1 : 중  -1 : 후
+    private int isAction;
 
-    private String auctionUUID;         //
-    private Integer auctionCurCnt;
-    private Integer auctionTopPrice;  //
-    private Integer auctionAskPrice;  //
-    /// 경매  ///
+    private Long likeCnt;
+    private Boolean isLike;
 
-    private Boolean isOwner;  //
-    private int reAucBidCnt;
-    private ReAucBidResponse myReAucBidResponse;            // isOwner : false 인 경우
-    private List<ReAucBidResponse> reAucBidResponses = new ArrayList<>();  // true 인 경우
 
-    /// 역경매 ///
+    private Integer auctionAskPrice;
+
+    private List<AuctionDetailItem> auctionDetailItems = new ArrayList<>();
+
+    // 경매 중 제공 데이터
+    private Integer auctionTopPrice;
+
+    // 경매 후 제공 데이터
+    private Integer auctionEndPrice;
+    private Long auctionBidCnt;
 
     @Builder
-    public AuctionDetailResponse(Long auctionPk,String auctionUUID, Integer auctionCurCnt, AuctionStatus auctionStatus,
-                                 String auctionTitle, String auctionType, String auctionOwnerNickname,
-                                 String auctionOwnerPhoto, List<String> auctionPhoto, double auctionMeetingLat,
-                                 double auctionMeetingLng, int auctionStartPrice, int auctionTopPrice,
-                                 int auctionAskPrice, String auctionInfo, Long likeCnt, Boolean isLike,
-                                 LocalDateTime nowTime, LocalDateTime auctionStartTime,
-                                 LocalDateTime auctionEndTime, int isAction) {
-        this.auctionPk =auctionPk;
-        this.auctionUUID = auctionUUID;
-        this.auctionCurCnt = auctionCurCnt;
+    public AuctionDetailResponse(Long auctionPk, String auctionUuid, AuctionStatus auctionStatus, String auctionTitle, String auctionType, Long auctionOwnerPk, Role auctionOwnerMemberRole, String auctionOwnerPhoto, String auctionOwnerNickname, List<String> auctionPhoto, Double auctionMeetingLat, Double auctionMeetingLng, String auctionInfo, Integer auctionStartPrice, LocalDateTime nowTime, LocalDateTime auctionStartTime, LocalDateTime auctionEndTime, int isAction, Long likeCnt, Boolean isLike, Integer auctionAskPrice, List<AuctionDetailItem> auctionDetailItems, Integer auctionTopPrice, Integer auctionEndPrice, Long auctionBidCnt) {
+        this.auctionPk = auctionPk;
+        this.auctionUuid = auctionUuid;
         this.auctionStatus = auctionStatus;
         this.auctionTitle = auctionTitle;
         this.auctionType = auctionType;
-        this.auctionOwnerNickname = auctionOwnerNickname;
+        this.auctionOwnerPk = auctionOwnerPk;
+        this.auctionOwnerMemberRole = auctionOwnerMemberRole;
         this.auctionOwnerPhoto = auctionOwnerPhoto;
+        this.auctionOwnerNickname = auctionOwnerNickname;
         this.auctionPhoto = auctionPhoto;
         this.auctionMeetingLat = auctionMeetingLat;
         this.auctionMeetingLng = auctionMeetingLng;
-        this.auctionStartPrice = auctionStartPrice;
-        this.auctionTopPrice = auctionTopPrice;
-        this.auctionAskPrice = auctionAskPrice;
         this.auctionInfo = auctionInfo;
-        this.likeCnt = likeCnt;
-        this.isLike = isLike;
+        this.auctionStartPrice = auctionStartPrice;
         this.nowTime = nowTime;
         this.auctionStartTime = auctionStartTime;
         this.auctionEndTime = auctionEndTime;
         this.isAction = isAction;
+        this.likeCnt = likeCnt;
+        this.isLike = isLike;
+        this.auctionAskPrice = auctionAskPrice;
+        this.auctionDetailItems = auctionDetailItems;
+        this.auctionTopPrice = auctionTopPrice;
+        this.auctionEndPrice = auctionEndPrice;
+        this.auctionBidCnt = auctionBidCnt;
     }
 }

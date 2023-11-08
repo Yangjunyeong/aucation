@@ -41,9 +41,7 @@ public class AuctionHistory extends BaseEntity {
 	@JoinColumn(name = "customer_pk")
 	private Member customer;
 
-	private HistoryStatus auctionHistory;
-
-
+	private HistoryStatus historyStatus;
 
 	@Builder
 	public AuctionHistory(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,
@@ -53,7 +51,7 @@ public class AuctionHistory extends BaseEntity {
 		this.historyDateTime = historyDateTime;
 		this.historyDoneDateTime = historyDoneDateTime;
 		this.auction = auction;
-		this.auctionHistory = historyStatus;
+		this.historyStatus = historyStatus;
 		addOwner(owner);
 		addCustomer(customer);
 	}
@@ -75,7 +73,7 @@ public class AuctionHistory extends BaseEntity {
 	}
 
     public void updateToConfirm() {
-		this.auctionHistory = HistoryStatus.AFTER_CONFIRM;
+		this.historyStatus = HistoryStatus.AFTER_CONFIRM;
 		this.historyDoneDateTime = LocalDateTime.now();
     }
 }

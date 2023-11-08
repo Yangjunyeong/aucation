@@ -96,5 +96,10 @@ public class PhotoService {
 		return photoRepository.findByAuctionId(auctionPk)
 				.orElseThrow(()-> new NotFoundException(ApplicationError.AWS_S3_SAVE_ERROR));
 	}
+	public Photo getOnePhoto(long auctionPk) {
+		return photoRepository.findFirstByAuctionIdOrderByIdAsc(auctionPk)
+				.orElseThrow(()-> new NotFoundException(ApplicationError.AWS_S3_SAVE_ERROR));
+	}
+
 }
 

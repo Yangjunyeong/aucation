@@ -21,9 +21,7 @@ import com.example.aucation.member.api.dto.MyReverseItemsResponse;
 import com.example.aucation.member.api.dto.MyReverseResponse;
 import com.example.aucation.member.api.dto.MypageItemsResponse;
 import com.example.aucation.member.db.entity.Member;
-import com.example.aucation.member.db.entity.QMember;
 import com.example.aucation.reauction.db.entity.QReAuctionBid;
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
@@ -43,7 +41,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
 	private final QAuction qAuction = QAuction.auction;
 
-	private final QAuctionHistory qAuctionHistory = QAuctionHistory.auctionHistory1;
+	private final QAuctionHistory qAuctionHistory = QAuctionHistory.auctionHistory;
 
 	private final QReAuctionBid qReAuctionBid = QReAuctionBid.reAuctionBid;
 
@@ -224,16 +222,16 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 				return qAuction.customer.id.eq(member.getId())
 					.and(qAuction.auctionEndPrice.isNotNull())
 					.and(qAuctionHistory.auction.id.eq(qAuction.id))
-					.and(qAuctionHistory.auctionHistory.eq(HistoryStatus.BEFORE_CONFIRM))
+					.and(qAuctionHistory.historyStatus.eq(HistoryStatus.BEFORE_CONFIRM))
 					.and(qAuction.auctionStatus.eq(AuctionStatus.BID));
 
 			} else if ("구매완료".equals(auctionStatus)) {
 				// "구매" 및 "구매완료" 경우에 대한 조건 추가
 				return qAuction.customer.id.eq(member.getId())
 					.and(qAuction.auctionEndPrice.isNotNull())
-					.and(qAuctionHistory.auction.id.eq(qAuction.id))
-					.and(qAuctionHistory.auctionHistory.eq(HistoryStatus.AFTER_CONFIRM))
-					.and(qAuction.auctionStatus.eq(AuctionStatus.BID));
+						.and(qAuctionHistory.auction.id.eq(qAuction.id))
+						.and(qAuctionHistory.historyStatus.eq(HistoryStatus.AFTER_CONFIRM))
+						.and(qAuction.auctionStatus.eq(AuctionStatus.BID));
 			}
 		}
 		return null;

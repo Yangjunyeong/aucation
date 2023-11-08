@@ -4,10 +4,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.aucation.auction.api.dto.AuctionDetailItem;
 import com.example.aucation.auction.api.dto.AuctionDetailResponse;
 import com.example.aucation.auction.api.dto.AuctionListResponse;
 import com.example.aucation.auction.api.dto.AuctionSortRequest;
 import com.example.aucation.member.db.entity.Member;
+import com.example.aucation.reauction.api.dto.ReAuctionDetailResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.aucation.auction.db.entity.Auction;
@@ -22,7 +24,9 @@ public interface AuctionRepository extends JpaRepository<Auction,Long>, AuctionR
 												AuctionSortRequest sortRequest, Pageable pageable);
 //	List<Auction> searchReAucByCondition(int pageNum, AuctionSortRequest sortRequest);
 
-	AuctionDetailResponse searchDetailAucToPk(Long auctionPk, Long memberPk);
+	AuctionDetailResponse searchDetailAuc(Auction auction, Long memberPk,int auctionCondition);
 
-    AuctionDetailResponse searchDetailReAucToPk(Long auctionPk, Long memberPk);
+	List<AuctionDetailItem> searchDetailItems(Long memberPk,Auction auction);
+
+	ReAuctionDetailResponse searchDetailReAuc(Auction auction, Long memberPk, int checkTime);
 }
