@@ -26,6 +26,7 @@
     "react-responsive-carousel": "^3.2.23",
     "react-spinners": "^0.13.8",
     "recoil": "^0.7.7",
+    "recoil-persist": "^5.1.0",
     "sharp": "^0.32.6",
     "sockjs-client": "^1.6.1",
     "ws": "^8.14.2"

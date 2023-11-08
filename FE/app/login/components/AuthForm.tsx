@@ -79,6 +79,7 @@ const AuthForm = () => {
       .then(res => {
         localStorage.setItem("accessToken", res.headers.authorization);
         localStorage.setItem("refreshToken", res.headers["authorization-refresh"]);
+        localStorage.setItem("role", res.data.role);
         setAuth({
           isLoggedIn: true,
           role: res.data.role,

@@ -13,10 +13,6 @@ const Navbar: React.FC = () => {
 
   const router = useRouter();
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem("accessToken");
-  //   setIsLoggedIn(!!token);
-  // }, []);
   const checkAuth = (e: React.MouseEvent<HTMLButtonElement>) => {
     console.log(auth);
   };
@@ -24,6 +20,7 @@ const Navbar: React.FC = () => {
     // 로컬 스토리지에서 토큰 제거
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("recoil-persist");
 
     // 로그인 상태 업데이트
     setAuth({ isLoggedIn: false, role: "" });
@@ -31,6 +28,19 @@ const Navbar: React.FC = () => {
     // 홈페이지로 리디렉션
     router.push("/");
   };
+  useEffect(() => {
+    const checkLocalStorageToken = () => {
+      const token = localStorage.getItem("accessToken");
+      const whichRole = localStorage.getItem("role");
+      if (token) {
+        setAuth({ ...auth, isLoggedIn: true, role: whichRole });
+      } else {
+        setAuth({ ...auth, isLoggedIn: false });
+      }
+
+      checkLocalStorageToken();
+    };
+  }, []);
 
   return (
     <div className="w-full h-28 flex flex-row items-center sticky top-0 z-50 bg-white px-48">
