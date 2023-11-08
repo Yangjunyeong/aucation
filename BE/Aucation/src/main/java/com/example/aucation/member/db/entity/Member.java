@@ -19,6 +19,7 @@ import javax.persistence.OneToOne;
 import com.example.aucation.auction.db.entity.Auction;
 import com.example.aucation.auction.db.entity.AuctionBid;
 import com.example.aucation.auction.db.entity.AuctionHistory;
+import com.example.aucation.like.db.entity.LikeDiscount;
 import com.example.aucation.reauction.db.entity.ReAuctionBid;
 import com.example.aucation.common.entity.BaseEntity;
 import com.example.aucation.discount.db.entity.Discount;
@@ -107,6 +108,9 @@ public class Member extends BaseEntity {
 	private List<ReAuctionBid> reAuctionBidList = new ArrayList<>();
 	//	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	//	private List<Alram> alramList = new ArrayList<>();
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	private List<LikeDiscount> likeDiscountList = new ArrayList<>();
 
 	@Builder
 	public Member(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt,
