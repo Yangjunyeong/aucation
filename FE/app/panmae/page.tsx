@@ -17,11 +17,14 @@ import { callApi } from "../utils/api";
 import axios from "axios";
 import { set } from "react-hook-form";
 
+import { useRecoilValue } from "recoil";
+import { authState } from "../store/atoms";
 import { useRouter } from "next/navigation";
 import { timeToDate } from "../utils/timetodate";
 
 const Panmae = () => {
   const router = useRouter();
+  const auth = useRecoilValue(authState);
 
   const [imagecount, setImagecount] = useState(0);
   const [images, setImages] = useState<string[]>([]); // 이미지의 url 주소를 담는 state
@@ -102,6 +105,35 @@ const Panmae = () => {
       alert("필수 항목을 모두 채워주세요!");
       return;
     }
+    const formData = new FormData();
+    formData.append("auctionStatus", option);
+    formData.append("auctionTitle", productname);
+    formData.append("auctionType", category);
+    formData.append(
+      "auctioMeetingLat",
+      transActionLocation ? transActionLocation[0].toString() : "37"
+    );
+    formData.append(
+      "auctionMeetingLng",
+      transActionLocation ? transActionLocation[1].toString() : "126"
+    );
+    formData.append("auctionStartPrice", price.toString());
+    formData.append("auctionDetail", description);
+    formData.append("auctionStartAfterTime", (hour * 60 + minute).toString());
+    if (discountPrice !== null) {
+      formData.append("prodDiscountedPrice", discountPrice.toString());
+    }
+    imagefiles.forEach((image, index) => {
+      formData.append("multipartFiles", image);
+    });
+    callApi("post", "/auction/register", formData)
+      .then(res => {
+        console.log(res.data);
+        router.push(`/detail/${res.data.auctionPk}`);
+      })
+      .catch(err => {
+        console.log(err);
+      });
     if (option !== "할인") {
       const formData = new FormData();
       formData.append("auctionStatus", option);
@@ -285,7 +317,7 @@ const Panmae = () => {
               경매 종류 <span className="text-red-500">*</span>
             </h1>
             <div>
-              <TypeOfSales option={option} optionHandler={optionHandler} />
+              <TypeOfSales option={option} optionHandler={optionHandler} isShopper={auth.role} />
               <div className={clsx(`flex text-[var(--c-blue)] mt-3`, option ? "hidden" : "")}>
                 <AiOutlineStop size={24} />
                 <span>경매의 종류를 선택해 주세요</span>

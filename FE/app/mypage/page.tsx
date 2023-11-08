@@ -67,12 +67,12 @@ interface userData {
 }
 
 type CategoryTypes = {
-  [category: string]:
+  [key: string]:
+    | string[]
     | {
         판매?: string[];
         구매?: string[];
-      }
-    | string[];
+      };
 };
 interface categoryLikeType {
   // pk: number
