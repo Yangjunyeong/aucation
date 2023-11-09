@@ -30,6 +30,8 @@ import com.example.aucation.member.api.dto.MypageResponse;
 import com.example.aucation.member.api.dto.NicknameRequest;
 import com.example.aucation.member.api.dto.NicknameResponse;
 import com.example.aucation.member.api.dto.SignupRequest;
+import com.example.aucation.member.api.dto.StreetRequest;
+import com.example.aucation.member.api.dto.StreetResponse;
 import com.example.aucation.member.api.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
