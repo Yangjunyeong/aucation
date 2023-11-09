@@ -4,9 +4,19 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.example.aucation.auction.api.dto.AuctionIngResponseItem;
+import com.example.aucation.auction.api.dto.AuctionPreResponseItem;
+import com.example.aucation.auction.api.dto.ReAuctionResponseItem;
+import com.example.aucation.auction.api.service.AuctionService;
+import com.example.aucation.common.support.AuthorizedVariable;
+import com.example.aucation.discount.api.dto.DiscountListResponseItem;
+import com.example.aucation.discount.api.service.DiscountService;
+import com.example.aucation.member.api.dto.*;
+import com.example.aucation.reauction.api.service.ReAuctionService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,18 +33,6 @@ import com.example.aucation.common.error.ApplicationError;
 import com.example.aucation.common.error.DuplicateException;
 import com.example.aucation.common.error.NotFoundException;
 import com.example.aucation.common.service.RegisterMail;
-import com.example.aucation.member.api.dto.LikePageRequest;
-import com.example.aucation.member.api.dto.MyDiscountResponse;
-import com.example.aucation.member.api.dto.DetailRequest;
-import com.example.aucation.member.api.dto.DetailResponse;
-import com.example.aucation.member.api.dto.ImageResponse;
-import com.example.aucation.member.api.dto.MemberPageRequest;
-import com.example.aucation.member.api.dto.MyLikeResponse;
-import com.example.aucation.member.api.dto.MyReverseResponse;
-import com.example.aucation.member.api.dto.MypageResponse;
-import com.example.aucation.member.api.dto.NicknameRequest;
-import com.example.aucation.member.api.dto.NicknameResponse;
-import com.example.aucation.member.api.dto.SignupRequest;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.member.db.entity.Role;
 import com.example.aucation.member.db.entity.SocialType;
@@ -52,7 +50,9 @@ public class MemberService {
 	private final PasswordEncoder passwordEncoder;
 
 	private final MemberRepository memberRepository;
-
+	private final AuctionService auctionService;
+	private final DiscountService discountService;
+	private final ReAuctionService reAuctionService;
 	private final RegisterMail registerMail;
 
 	private final PhotoService photoService;
@@ -217,4 +217,15 @@ public class MemberService {
 			}
 		}
 	}
+
+    public MainPageResponse getMainPageInfo(Long memberPk) {
+		List<AuctionIngResponseItem> hotAuctions = auctionService.getHotAuctionsToMainPage(memberPk);
+		List<DiscountListResponseItem> discounts = discountService.getDiscountToMainPage(memberPk);
+		List<ReAuctionResponseItem> recentAuctions = reAuctionService.getRecentReAucToMainPage(memberPk);
+		return MainPageResponse.builder()
+				.hotAuctions(hotAuctions)
+				.discounts(discounts)
+				.recentAuctions(recentAuctions)
+				.build();
+    }
 }

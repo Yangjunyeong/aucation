@@ -121,4 +121,9 @@ public class MemberController {
 		return ResponseEntity.ok().body(MemberPkResponse.builder().memberPk(memberPk).build());
 	}
 
+	@GetMapping("/mainPage")
+	public ResponseEntity<?> getMainPage(@AuthorizedVariable Long memberPk){
+		return ResponseEntity.ok().body(memberService.getMainPageInfo(memberPk));
+	}
+
 }
