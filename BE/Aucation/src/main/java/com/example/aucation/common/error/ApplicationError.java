@@ -76,7 +76,8 @@ public enum ApplicationError {
     EXIST_OWN_BID(HttpStatus.BAD_REQUEST,"P006" ,"입찰했던 내역이 있습니다."),
     NOT_EXIST_HISTORY(HttpStatus.BAD_REQUEST,"P007" ,"구매 예정인 입찰 내역이 없습니다."),
     NOT_OWNER(HttpStatus.BAD_REQUEST,"P008" ,"역경매 등록자가 아닙니다. 등록자만 입찰을 선택할 수 있습니다."),
-    DISCOUNT_HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND,"D004","History가 존재하지않습니다" );
+    DISCOUNT_HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND,"D004","History가 존재하지않습니다" ),
+    NOT_CHEAPER_PRODUCT_PRICE(HttpStatus.NOT_FOUND,"D005","할인가가 정가보다 비싸거나 똑같습니다 다시입력해주세요");
 
     private final HttpStatus status;
     private final String code;

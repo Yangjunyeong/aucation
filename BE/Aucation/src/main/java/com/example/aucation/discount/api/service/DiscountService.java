@@ -76,9 +76,13 @@ public class DiscountService {
 		String discountUUID = PasswordGenerator.generate();
 
 		// 할인율구하기 : (정가-할인가)*100/정가
+		//할인가
 		int discountedPrice = discountRequest.getDiscountDiscountedPrice();
+		//정가
 		int originalPrice = discountRequest.getDiscountPrice();
-		int discountRate = (int)Math.ceil((double)((originalPrice - discountedPrice) * 100 / originalPrice));
+
+		isdiscountedPirce(originalPrice,discountedPrice);
+		int discountRate = (int)Math.ceil(((double)((originalPrice - discountedPrice) * 100) / originalPrice));
 
 		// 할인 마감시간
 		String dateString = discountRequest.getDiscountEnd();
@@ -105,6 +109,12 @@ public class DiscountService {
 
 		// 메세지 반환
 		return DiscountResponse.builder().message(SUCCESS_REGISTER_MESSAGE).build();
+	}
+
+	private void isdiscountedPirce(int originalPrice, int discountedPrice) {
+		if(originalPrice>discountedPrice){
+			throw new BadRequestException(ApplicationError.NOT_CHEAPER_PRODUCT_PRICE);
+		}
 	}
 
 	@Transactional
