@@ -55,6 +55,7 @@ public class DiscountRepositoryCustomImpl implements DiscountRepositoryCustom {
 					qDiscount.discountRate.as("discountRate"),
 					qDisPhoto.imgUrl.min().as("discountImg"),
 					qDiscount.discountEnd.as("discountEnd"),
+					qDiscount.discountUUID.as("discountUUID"),
 					qMember.memberNickname.as("discountOwnerNickname"),
 					qLikeDiscount.countDistinct().as(likeCnt),
 					new CaseBuilder()
@@ -110,6 +111,7 @@ public class DiscountRepositoryCustomImpl implements DiscountRepositoryCustom {
 								qDiscount.discountRate.as("discountRate"),
 								qDisPhoto.imgUrl.min().as("discountImg"),
 								qDiscount.discountEnd.as("discountEnd"),
+								qDiscount.discountUUID.as("discountUUID"),
 								qMember.memberNickname.as("discountOwnerNickname"),
 								new CaseBuilder()
 										.when(
