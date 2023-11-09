@@ -35,6 +35,7 @@ public class JwtService {
 
 	private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
 	private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
+
 	private static final String MEMBER_PK_CLAIM = "MemberPk";
 	private static final String BEARER = "Bearer ";
 	private static final String REMOVE = "";

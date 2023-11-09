@@ -51,6 +51,8 @@ public class DiscountService {
 
 	private final DiscountHistoryRepository discountHistoryRepository;
 
+	private final LikeDiscountRepository likeDiscountRepository;
+
 	private static final String SUCCESS_REGISTER_MESSAGE = "할인 상품이 등록되었습니다.";
 
 	private static final String SUCCESS_PURCHASE_MESSAGE="할인 상품을 구매 예약했습니다 상품을 받으러 가세요(구매 예약)";
@@ -58,8 +60,6 @@ public class DiscountService {
 	private static final String PERFECT_PURCHASE_MESSAGE="할인 상품을 구매 확정지었습니다 (구매 확정)";
 
 	private final int COUNT_IN_PAGE = 15;
-
-	private final LikeDiscountRepository likeDiscountRepository;
 
 	@Transactional
 	/** 할인상품 등록 */
@@ -123,7 +123,10 @@ public class DiscountService {
 			.map(DisPhoto::getImgUrl)
 			.collect(Collectors.toList());
 
-		return EnterResponse.of(UUIDImage, discount, member);
+		boolean isFalse = likeDiscountRepository.existsByDiscountAndMember(discount,member);
+		int likeCnt = likeDiscountRepository.countByDiscountAndMember(discount,member);
+
+		return EnterResponse.of(UUIDImage, discount, member,isFalse,likeCnt);
 	}
 
 	public void isSmallBusiness(Member member) {
