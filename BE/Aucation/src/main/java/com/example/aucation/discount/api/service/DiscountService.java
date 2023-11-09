@@ -108,7 +108,7 @@ public class DiscountService {
 		disPhotoService.uploadDiscount(multipartFiles, discountUUID);
 
 		// 메세지 반환
-		return DiscountResponse.builder().message(SUCCESS_REGISTER_MESSAGE).build();
+		return DiscountResponse.builder().message(SUCCESS_REGISTER_MESSAGE).discountUUID(discountUUID).build();
 	}
 
 	private void isdiscountedPirce(int originalPrice, int discountedPrice) {

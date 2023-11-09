@@ -423,7 +423,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			.leftJoin(qPhoto).on(qAuction.id.eq(qPhoto.auction.id))
 			.leftJoin(qLikeAuction).on(qLikeAuction.auction.id.eq(qAuction.id))
 			.leftJoin(qAuctionHistory).on(qAuctionHistory.auction.id.eq(qAuction.id))
-			.where(qLikeAuction.member.id.eq(member.getId()))  // 수정된 부분: 8로 고정
+			.where(qLikeAuction.member.id.eq(member.getId()).and(isAucAndReAuc(likePageRequest.getProductStatus())))  // 수정된 부분: 8로 고정
     		.groupBy(qAuction, qAuctionHistory.historyStatus, qLikeAuction.createdAt);
 
 		long count = query.fetchCount();
