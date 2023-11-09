@@ -1,7 +1,5 @@
 package com.example.aucation.member.db.repository;
 
-import static com.querydsl.core.group.GroupBy.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,12 +28,10 @@ import com.example.aucation.member.api.dto.MypageResponse;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.photo.db.QPhoto;
 import com.example.aucation.reauction.db.entity.QReAuctionBid;
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -66,8 +62,6 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 	private final QPhoto qPhoto = QPhoto.photo;
 
 	private final QDisPhoto qDisPhoto = QDisPhoto.disPhoto;
-
-
 
 	@Override
 	public MypageResponse searchMyAuctionPage(Member member, MemberPageRequest memberPageRequest,
@@ -201,10 +195,10 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			.on(qPhoto.auction.eq(qAuction))
 			.where(
 				//판매인가 구매인가
-				chooseReverseStatus( memberPageRequest.getAuctionStatus(), member)
+				chooseReverseStatus(memberPageRequest.getAuctionStatus(), member)
 			)
 			.groupBy(qAuction, qReAuctionBid.reAucBidDatetime, qReAuctionBid.reAucBidPrice,
-				qAuctionHistory.historyDateTime, qAuctionHistory.historyDoneDateTime,qAuctionHistory.historyStatus);
+				qAuctionHistory.historyDateTime, qAuctionHistory.historyDoneDateTime, qAuctionHistory.historyStatus);
 		long count = query.fetchCount();
 
 		query.offset(pageable.getOffset())
@@ -246,46 +240,45 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 	private Predicate chooseReverseStatus(String auctionStatus, Member member) {
 		//역경매 - 판매 : 내가 팔려고 경매 참여하는것
 
-			if ("입찰중".equals(auctionStatus)) {
-				return qReAuctionBid.auction.owner.id.eq(member.getId())
-					.and(qAuctionHistory.isNull())
-					.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
-			} else if ("낙찰".equals(auctionStatus)) {
-				// "판매" 및 "경매중" 경우에 대한 조건 추가
-				return qReAuctionBid.auction.owner.id.eq(member.getId())
-					.and(qAuctionHistory.isNotNull())
-					.and(qAuctionHistory.historyDateTime.isNotNull())
-					.and(qAuctionHistory.historyDoneDateTime.isNull())
-					.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
-			} else if ("거래완료".equals(auctionStatus)) {
-				// "판매" 및 "경매완료" 경우에 대한 조건 추가
-				return qReAuctionBid.auction.owner.id.eq(member.getId())
-					.and(qAuctionHistory.isNotNull())
-					.and(qAuctionHistory.historyDateTime.isNotNull())
-					.and(qAuctionHistory.historyDoneDateTime.isNotNull())
-					.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
+		if ("입찰중".equals(auctionStatus)) {
+			return qReAuctionBid.auction.owner.id.eq(member.getId())
+				.and(qAuctionHistory.isNull())
+				.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
+		} else if ("낙찰".equals(auctionStatus)) {
+			// "판매" 및 "경매중" 경우에 대한 조건 추가
+			return qReAuctionBid.auction.owner.id.eq(member.getId())
+				.and(qAuctionHistory.isNotNull())
+				.and(qAuctionHistory.historyDateTime.isNotNull())
+				.and(qAuctionHistory.historyDoneDateTime.isNull())
+				.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
+		} else if ("거래완료".equals(auctionStatus)) {
+			// "판매" 및 "경매완료" 경우에 대한 조건 추가
+			return qReAuctionBid.auction.owner.id.eq(member.getId())
+				.and(qAuctionHistory.isNotNull())
+				.and(qAuctionHistory.historyDateTime.isNotNull())
+				.and(qAuctionHistory.historyDoneDateTime.isNotNull())
+				.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
 
 			//역경매 - 구매 : 내가 살려고 경매 자의로 올린것
+		} else if ("경매중".equals(auctionStatus)) {
+			return qReAuctionBid.auction.customer.id.eq(member.getId())
+				.and(qReAuctionBid.isNull())
+				.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
+
+		} else if ("입찰완료".equals(auctionStatus)) {
+			// "구매" 및 "구매완료" 경우에 대한 조건 추가
+			return qReAuctionBid.auction.customer.id.eq(member.getId())
+				.and(qReAuctionBid.isNotNull())
+				.and(qAuction.auctionEndPrice.eq(-1))
+				.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
+
+		} else if ("경매종료".equals(auctionStatus)) {
+			// "구매" 및 "구매완료" 경우에 대한 조건 추가
+			return qReAuctionBid.auction.customer.id.eq(member.getId())
+				.and(qReAuctionBid.isNotNull())
+				.and(qAuction.auctionEndPrice.ne(-1))
+				.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
 		}
-			else if ("경매중".equals(auctionStatus)) {
-				return qReAuctionBid.auction.customer.id.eq(member.getId())
-					.and(qReAuctionBid.isNull())
-					.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
-
-			} else if ("입찰완료".equals(auctionStatus)) {
-				// "구매" 및 "구매완료" 경우에 대한 조건 추가
-				return qReAuctionBid.auction.customer.id.eq(member.getId())
-					.and(qReAuctionBid.isNotNull())
-					.and(qAuction.auctionEndPrice.eq(-1))
-					.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
-
-			} else if ("경매종료".equals(auctionStatus)) {
-				// "구매" 및 "구매완료" 경우에 대한 조건 추가
-				return qReAuctionBid.auction.customer.id.eq(member.getId())
-					.and(qReAuctionBid.isNotNull())
-					.and(qAuction.auctionEndPrice.ne(-1))
-					.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
-			}
 
 		return null;
 	}
@@ -423,8 +416,9 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			.leftJoin(qPhoto).on(qAuction.id.eq(qPhoto.auction.id))
 			.leftJoin(qLikeAuction).on(qLikeAuction.auction.id.eq(qAuction.id))
 			.leftJoin(qAuctionHistory).on(qAuctionHistory.auction.id.eq(qAuction.id))
-			.where(qLikeAuction.member.id.eq(member.getId()).and(isAucAndReAuc(likePageRequest.getProductStatus())))  // 수정된 부분: 8로 고정
-    		.groupBy(qAuction, qAuctionHistory.historyStatus, qLikeAuction.createdAt);
+			.where(qLikeAuction.member.id.eq(member.getId())
+				.and(isAucAndReAuc(likePageRequest.getProductStatus())))  // 수정된 부분: 8로 고정
+			.groupBy(qAuction, qAuctionHistory.historyStatus, qLikeAuction.createdAt);
 
 		long count = query.fetchCount();
 
@@ -449,7 +443,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 	}
 
 	private Predicate isAucAndReAuc(String productStatus) {
-		if(productStatus.equals("경매")){
+		if (productStatus.equals("경매")) {
 			return qAuction.auctionStatus.eq(AuctionStatus.BID);
 		}
 		return qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID);
