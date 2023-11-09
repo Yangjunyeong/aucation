@@ -100,7 +100,7 @@ const MyPage: NextPage = () => {
   // 소상공인 인증 모달, 포인트 충전 모달
   const [isShopModal, setIsShopModal] = useState<boolean>(false); // 소상공인 인증 모달 여부
   const [isPointModal, setIsPointModal] = useState<boolean>(false); // 포인트 충전 모달 여부
-  
+
   // 현재 선택된 카테고리 및 카테고리 목록
   const [category, setCategory] = useState<string>("할인");
   const [secondCategory, setSecondCategory] = useState<any>("판매");
@@ -113,7 +113,7 @@ const MyPage: NextPage = () => {
   // 소상공인 판단
   const [isShop, setIsShop] = useState<boolean>(false);
   const [shopNum, setShopNum] = useState<any>("");
-  
+
   const categories: any = {
     경매: {
       판매: ["경매전", "경매중", "경매완료"],
@@ -127,7 +127,7 @@ const MyPage: NextPage = () => {
       판매: ["판매중", "예약중", "판매완료"],
       구매: ["예약중", "구매완료"],
     },
-    좋아요:{}
+    좋아요: {},
   };
   // 카테고리 매핑
   // const categoryMap: { [key: string]: number } = {
@@ -136,7 +136,7 @@ const MyPage: NextPage = () => {
   //   할인: 2,
   //   좋아요: 3,
   // };
-  
+
   // 요소 정렬
   const itemsortList: string[] = ["최신순", "인기순", "저가순", "고가순"];
 
@@ -166,29 +166,29 @@ const MyPage: NextPage = () => {
     console.log(username);
     setUsernameUpdate(false);
     let data = {
-      memberNickname: username
-    }
+      memberNickname: username,
+    };
     callApi("patch", "members/modify/nickname", data)
-      .then((res) => {
-        console.log(res.data)
+      .then(res => {
+        console.log(res.data);
       })
-      .catch((err) => {
-        console.log(err)
-      })
+      .catch(err => {
+        console.log(err);
+      });
   };
-  const handleInfoUpdateConfirm = () =>{
+  const handleInfoUpdateConfirm = () => {
     console.log(info);
     setUserInfoUpdate(false);
     let data = {
-      memberDetail: info
-    }
+      memberDetail: info,
+    };
     callApi("patch", "members/modify/detail", data)
-      .then((res) => {
-        console.log(res.data)
+      .then(res => {
+        console.log(res.data);
       })
-      .catch((err) => {
-        console.log(err)
-      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   // 유저 네임 / 인포 수정
@@ -201,7 +201,7 @@ const MyPage: NextPage = () => {
 
   // 모달 핸들러
   const pointModalHandler = () => {
-    console.log('클릭')
+    console.log("클릭");
     setIsPointModal(!isPointModal);
   };
   const shopModalHandler = () => {
@@ -344,7 +344,7 @@ const MyPage: NextPage = () => {
         console.log(JSON.stringify(data, null, 2));
         console.log(err);
       });
-  },[])
+  }, []);
 
   return (
     <div className="w-full px-80 py-20">
@@ -444,12 +444,19 @@ const MyPage: NextPage = () => {
               {!userInfoUpdate && (
                 <UpdateBtn onUpdate={handleUserInfoUpdate} buttonText="소개글 수정" />
               )}
-              {userInfoUpdate && 
-              <div className="flex w-[156px]">
-                <UpdateBtn onUpdate={handleInfoUpdateConfirm} buttonText="확인" />
-              </div>}
+              {userInfoUpdate && (
+                <div className="flex w-[156px]">
+                  <UpdateBtn onUpdate={handleInfoUpdateConfirm} buttonText="확인" />
+                </div>
+              )}
               <div className="flex ml-[480px] items-center text-xl">
-                내 포인트 :&nbsp;<span className="flex text-2xl font-bold">10,000&nbsp;<span onClick={pointModalHandler}><BiWon size={30}/></span></span>
+                내 포인트 :&nbsp;
+                <span className="flex text-2xl font-bold">
+                  10,000&nbsp;
+                  <span onClick={pointModalHandler}>
+                    <BiWon size={30} />
+                  </span>
+                </span>
                 {/* <Modal onClick={pointModalHandler}>
                   <ModalContent/>
                 </Modal> */}
