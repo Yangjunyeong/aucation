@@ -5,11 +5,15 @@ import { MdCancel } from "react-icons/md";
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
+  cash: (value:any) => void;
 }
 
-const PaymentModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
+const PaymentModal: React.FC<ModalProps> = ({ isOpen, onClose, cash }) => {
   const [amount, setAmount] = useState<number>(0);
   const [formattedAmount, setFormattedAmount] = useState<string>("");
+  const cashHandler = () => {
+    cash(amount)
+  }
   const buttonNum = [
     { formatNum: "+1천원", num: 1000 },
     { formatNum: "+5천원", num: 5000 },
@@ -151,7 +155,8 @@ const PaymentModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         <div className="flex mt-10 justify-evenly">
-          <div className="flex items-center justify-center w-[30%] border-2 text-3xl cursor-pointer text-white bg-custom-btn-gradient hover:bg-custom-btn-gradient-hover py-6">
+          <div className="flex items-center justify-center w-[30%] border-2 text-3xl cursor-pointer text-white bg-custom-btn-gradient hover:bg-custom-btn-gradient-hover py-6"
+          onClick={cashHandler}>
             결제
           </div>
           <div

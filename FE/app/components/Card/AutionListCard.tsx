@@ -38,7 +38,7 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
       });
   };
   const EnterDetail = (pk: number) => {
-    router.push(`/detail/${pk}`);
+    router.push(`/detail/auction/${pk}`);
   };
   return (
     <div

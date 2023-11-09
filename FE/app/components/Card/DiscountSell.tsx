@@ -115,7 +115,6 @@ const DiscountSell: React.FC<CardProps> = ({ item, thirdCategory }) => {
             피츄카 팔아요 제발 사주세요 사주세요피츄카 팔아요 제발 사주세요 사주세요피츄카 팔아요
             제발 사주세요 사주세요피츄카 팔아요 제발 사
           </div>
-
           {/* 구매자 */}
           {(thirdCategory == "예약중" || thirdCategory == "판매완료") && (
             <div className="flex mt-2 text-[22px] font-semibold">
