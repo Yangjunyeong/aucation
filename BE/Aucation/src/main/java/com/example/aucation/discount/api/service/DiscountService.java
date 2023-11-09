@@ -112,7 +112,7 @@ public class DiscountService {
 	}
 
 	private void isdiscountedPirce(int originalPrice, int discountedPrice) {
-		if(originalPrice>discountedPrice){
+		if(originalPrice<discountedPrice){
 			throw new BadRequestException(ApplicationError.NOT_CHEAPER_PRODUCT_PRICE);
 		}
 	}
