@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.aucation_chat.auction.db.entity.Auction;
 import com.example.aucation_chat.auction.db.entity.AuctionHistory;
+import com.example.aucation_chat.auction.db.entity.AuctionStatus;
 import com.example.aucation_chat.auction.db.repository.AuctionHistoryRepository;
 import com.example.aucation_chat.auction.db.repository.AuctionRepository;
 import com.example.aucation_chat.chat.api.dto.request.PersonalChatEnterRequest;
@@ -73,18 +74,34 @@ public class PersonalChatService {
 		String prodName;
 		List<ChatResponse> chatList = new ArrayList<>();
 		long sellerPk;
-
-		// prodPk 랑 prodType을 가지는 채팅방 조회
-		ChatRoom chatRoom = findChatRoom(prodPk, type);
+		ChatRoom chatRoom;
 
 		// prodPk와 prodType으로 물품의 카테고리, 최종가격, 타입, 제목, 채팅내역, 판매자정보, 참여 결정
 		if (type < 2) { // 경매, 역경매일 때
 			log.info("************************ 경매&역경매 물품 채팅방입니다");
 
+			log.info("************************ 경매&역경매 유효성 검사");
 			Auction auction = auctionRepository.findByAuctionPk(prodPk)
 				.orElseThrow(() -> new NotFoundException(ApplicationError.AUCTION_NOT_FOUND));
+			// type과 pk 간의 일치 검사
+			if(type==0){
+				if(auction.getAuctionStatus() == AuctionStatus.BID)
+					throw new ApplicationException(ApplicationError.INVALID_PRODUCT);
+			} else if(type==1){
+				if(auction.getAuctionStatus() == AuctionStatus.REVERSE_BID)
+					throw new ApplicationException(ApplicationError.INVALID_PRODUCT);
+			}
+			// if(!(type== 0 && auction.getAuctionStatus() == AuctionStatus.BID))
+			// 	throw new ApplicationException(ApplicationError.INVALID_PRODUCT);
+			// else if(!(type==1 && auction.getAuctionStatus() == AuctionStatus.REVERSE_BID))
+			// 	throw new ApplicationException(ApplicationError.INVALID_PRODUCT);
 
+			log.info("************************ 끝난 경매인가요?");
 			AuctionHistory history = isEndAuction(auction);
+
+			// prodPk 랑 prodType을 가지는 채팅방 조회
+			log.info("************************ 채팅방 찾기");
+			chatRoom = findChatRoom(prodPk, type);
 
 			// 내가 정당한 참여자인지 검사
 			if (isValidParticipant(request.getMemberPk(), history.getCustomer().getMemberPk(),
@@ -118,11 +135,17 @@ public class PersonalChatService {
 		} else if(type==2) {  // 할인판매일 때
 			log.info("************************ 할인판매 물품 채팅방입니다");
 
+			log.info("************************ 할인판매 유효성 검사");
 			Discount discount = discountRepository.findByDiscountPk(prodPk)
 				.orElseThrow(() -> new NotFoundException(ApplicationError.DISCOUNT_NOT_FOUND));
 
 			// history조회 => 구매끝난건지 검사
+			log.info("************************ 끝난 경매인가요?");
 			DiscountHistory history = isEndDiscount(discount);
+
+			// prodPk 랑 prodType을 가지는 채팅방 조회
+			log.info("************************ 채팅방 찾기");
+			chatRoom = findChatRoom(prodPk, type);
 
 			// 내가 정당한 참여자인지 검사
 			if (isValidParticipant(request.getMemberPk(), history.getCustomer().getMemberPk(),
@@ -335,10 +358,14 @@ public class PersonalChatService {
 	private ChatRoom findChatRoom(long prodPk, int prodType) {
 		ChatRoom chatRoom = chatRoomRepository.findByProdPkAndProdType(prodPk, prodType);
 		if (chatRoom == null) { // 채팅한적 없으면 생성
+			log.info("************************ 채팅방 생성 !!!!!!!!!");
+
 			String chatSession = PasswordGenerator.generate();
 			ChatRoom temp = ChatRoom.builder()
 				.chatSession(chatSession)
 				.chatCreate(LocalDateTime.now())
+				.prodPk(prodPk)
+				.prodType(prodType)
 				.build();
 			chatRoomRepository.save(temp);
 			chatRoom = temp;
