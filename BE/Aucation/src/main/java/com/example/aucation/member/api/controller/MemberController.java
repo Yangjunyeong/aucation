@@ -13,9 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.aucation.common.dto.EmailResponse;
+import com.example.aucation.common.service.FCMService;
 import com.example.aucation.common.support.AuthorizedVariable;
 import com.example.aucation.member.api.dto.DetailRequest;
 import com.example.aucation.member.api.dto.DetailResponse;
+import com.example.aucation.member.api.dto.FCMTokenReq;
+import com.example.aucation.member.api.dto.FCMTokenRes;
 import com.example.aucation.member.api.dto.ImageResponse;
 import com.example.aucation.member.api.dto.LikePageRequest;
 import com.example.aucation.member.api.dto.MemberPageRequest;
@@ -39,6 +42,13 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberController {
 
 	private final MemberService memberService;
+
+	private final FCMService fcmService;
+
+	@PostMapping("/saveFCM")
+	public ResponseEntity<FCMTokenRes> saveToken(@AuthorizedVariable long memberPk,@RequestBody FCMTokenReq fcmTokenReq) throws Exception {
+		return ResponseEntity.ok().body(fcmService.saveToken(memberPk,fcmTokenReq));
+	}
 
 	@PostMapping("/signup")
 	public ResponseEntity<Void> signup(@RequestBody SignupRequest signupRequest) {
