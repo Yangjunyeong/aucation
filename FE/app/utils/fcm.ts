@@ -12,17 +12,17 @@
 //   vapidKey: string;
 // }
 
-// const config: Config = {
-//   apiKey: import.meta.env.VITE_APP_FCM_API_KEY,
-//   authDomain: import.meta.env.VITE_APP_FCM_AUTH_DOMAIN,
-//   projectId: import.meta.env.VITE_APP_FCM_PROJECT_ID,
-//   storageBucket: import.meta.env.VITE_APP_FCM_STORAGE_BUCKET,
-//   messagingSenderId: import.meta.env.VITE_APP_FCM_MESSAGING_SENDER_ID,
-//   appId: import.meta.env.VITE_APP_FCM_APP_ID,
-//   vapidKey: import.meta.env.VITE_APP_FCM_VAPID,
+// const Config = {
+//   apiKey: "AIzaSyAcROxN0Cs7nAlSMdzm_h-8tmNarPJoWzU",
+//   authDomain: "aucation-f5a83.firebaseapp.com",
+//   projectId: "aucation-f5a83",
+//   storageBucket: "aucation-f5a83.appspot.com",
+//   messagingSenderId: "409998959069",
+//   appId: "1:409998959069:web:9ce727e4b1297228e49634",
+//   measurementId: "G-755RTX3Q1G",
 // };
 
-// const app = initializeApp(config);
+// const app = initializeApp(Config);
 // const messaging = getMessaging(app);
 
 // // 토큰값 얻기
