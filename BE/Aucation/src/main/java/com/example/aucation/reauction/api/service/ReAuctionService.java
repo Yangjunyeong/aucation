@@ -1,10 +1,7 @@
 package com.example.aucation.reauction.api.service;
 
 
-import com.example.aucation.auction.api.dto.AuctionDetailItem;
-import com.example.aucation.auction.api.dto.AuctionListResponse;
-import com.example.aucation.auction.api.dto.AuctionSortRequest;
-import com.example.aucation.auction.api.dto.ReAuctionResponse;
+import com.example.aucation.auction.api.dto.*;
 import com.example.aucation.auction.db.entity.Auction;
 import com.example.aucation.auction.db.entity.AuctionHistory;
 import com.example.aucation.auction.db.entity.AuctionStatus;
@@ -336,8 +333,13 @@ public class ReAuctionService {
     }
 
 
-
-
-
-
+    public List<ReAuctionResponseItem> getRecentReAucToMainPage(Long memberPk) {
+        List<ReAuctionResponseItem> response = auctionRepository.searchRecentReAucToMainPage(memberPk);
+        response.forEach(item->{
+            if(item.getReAuctionLowBidPrice() == null){
+                item.setReAuctionLowBidPrice(item.getReAuctionStartPrice());
+            }
+        });
+        return response;
+    }
 }

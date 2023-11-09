@@ -297,6 +297,11 @@ public class AuctionService {
 		log.info("********************** setLikeAuction() 완료");
 	}
 
+	public List<AuctionIngResponseItem> getHotAuctionsToMainPage(Long memberPk) {
+		List<AuctionIngResponseItem> response = auctionRepository.searchHotAuctionToMainPage(memberPk);
+		return response;
+	}
+
 	public void isExistAuction(Auction auction) {
 		if (auction.getAuctionEndDate().isBefore(LocalDateTime.now())) {
 			throw new BadRequestException(ApplicationError.CLOSE_THE_AUCTION);
@@ -322,4 +327,6 @@ public class AuctionService {
 		}
 
 	}
+
+
 }

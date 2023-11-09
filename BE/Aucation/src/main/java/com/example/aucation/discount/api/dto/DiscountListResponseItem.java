@@ -1,5 +1,6 @@
 package com.example.aucation.discount.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import org.checkerframework.checker.units.qual.N;
 @Getter
 @Setter
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DiscountListResponseItem{
 	private long discountPk;
 	private Boolean isLike; //

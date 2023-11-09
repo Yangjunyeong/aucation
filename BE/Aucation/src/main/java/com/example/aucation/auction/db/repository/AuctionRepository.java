@@ -3,10 +3,7 @@ package com.example.aucation.auction.db.repository;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.aucation.auction.api.dto.AuctionDetailItem;
-import com.example.aucation.auction.api.dto.AuctionDetailResponse;
-import com.example.aucation.auction.api.dto.AuctionListResponse;
-import com.example.aucation.auction.api.dto.AuctionSortRequest;
+import com.example.aucation.auction.api.dto.*;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.reauction.api.dto.ReAuctionDetailResponse;
 import org.springframework.data.domain.Pageable;
@@ -28,4 +25,7 @@ public interface AuctionRepository extends JpaRepository<Auction,Long>, AuctionR
 	List<AuctionDetailItem> searchDetailItems(Long memberPk,Auction auction);
 
 	ReAuctionDetailResponse searchDetailReAuc(Auction auction, Long memberPk, int checkTime);
+	List<AuctionIngResponseItem> searchHotAuctionToMainPage(Long memberPk);
+	List<ReAuctionResponseItem> searchRecentReAucToMainPage(Long memberPk);
+
 }
