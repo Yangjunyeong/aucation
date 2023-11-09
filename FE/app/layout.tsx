@@ -5,7 +5,6 @@ import RecoilRootProvider from "./utils/recoilRootProvider";
 import Navbar from "./components/navbar/Navbar";
 import Footer from "./components/footer/Footer";
 import ToasterContext from "./utils/ToasterContext";
-import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
