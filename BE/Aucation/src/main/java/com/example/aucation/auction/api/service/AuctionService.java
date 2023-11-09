@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import com.example.aucation.auction.api.dto.*;
+import com.example.aucation.common.service.FCMService;
 import com.example.aucation.reauction.api.service.ReAucBidPhotoService;
 import com.example.aucation.reauction.api.service.ReAuctionService;
 import com.example.aucation.reauction.db.repository.ReAuctionBidRepository;
@@ -38,6 +39,7 @@ import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.member.db.repository.MemberRepository;
 import com.example.aucation.photo.api.service.PhotoService;
 import com.example.aucation.photo.db.Photo;
+import com.google.firebase.messaging.FirebaseMessagingException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +60,8 @@ public class AuctionService {
 	private final RedisTemplate<String, SaveAuctionBIDRedis> redisTemplate;
 
 	private final PhotoService photoService;
+
+	private final FCMService fcmService;
 	private final int COUNT_IN_PAGE = 15;
 
 

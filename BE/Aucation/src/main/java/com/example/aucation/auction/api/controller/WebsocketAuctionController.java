@@ -1,20 +1,15 @@
 package com.example.aucation.auction.api.controller;
 
-import java.net.SocketException;
-
 import com.example.aucation.auction.api.dto.BidResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 
 import com.example.aucation.auction.api.dto.BIDRequest;
 import com.example.aucation.auction.api.service.AuctionBidService;
-import com.example.aucation.common.support.AuthorizedVariable;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @Slf4j
 @RequiredArgsConstructor
-public class WebsocketChatController {
+public class WebsocketAuctionController {
 
 	private final AuctionBidService auctionBidService;
 

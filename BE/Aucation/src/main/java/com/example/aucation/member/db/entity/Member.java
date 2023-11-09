@@ -57,7 +57,6 @@ public class Member extends BaseEntity {
 	private String memberNickname;
 	private String memberBanned;
 	private String memberRefresh;
-	private String memberFCM;
 	private String memberDetail;
 	private String memberFCMToken;
 

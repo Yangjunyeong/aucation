@@ -7,6 +7,7 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
 
 import com.example.aucation.auction.api.service.AuctionBidService;
+import com.google.firebase.messaging.FirebaseMessagingException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,7 +43,11 @@ public class RedisKeyExpiredListener extends KeyExpirationEventMessageListener {
 
         if(aucInfo[1].equals("pre")){
             log.info("*********************** 경매 시작 이벤트!!");
-            auctionBidService.startAuction(aucUuid);
+            try {
+                auctionBidService.startAuction(aucUuid);
+            } catch (FirebaseMessagingException e) {
+                throw new RuntimeException(e);
+            }
         }else {
             log.info("*********************** 경매 종료 이벤트!!");
             try {
