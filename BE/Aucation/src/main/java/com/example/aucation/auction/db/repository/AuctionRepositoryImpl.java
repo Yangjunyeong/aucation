@@ -121,7 +121,12 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
                                                         .exists()
                                         )
                                         .then(true)
-                                        .otherwise(false).as("isLike")
+                                        .otherwise(false).as("isLike"),
+                                new CaseBuilder()
+                                        .when(qAuction.owner.memberRole.eq(Role.SHOP))
+                                        .then(true)
+                                        .otherwise(false)
+                                        .as("auctionOwnerIsShop")
                         )
                 )
                 .from(qAuction)
@@ -146,8 +151,6 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
                 .limit(pageable.getPageSize())
                 .orderBy(getSortByCondition(searchCondition.getAuctionCondition(),likeCnt));
         List<AuctionIngResponseItem> result = query.fetch();
-
-
 
         for (AuctionIngResponseItem item : result) {
             List<SaveAuctionBIDRedis> bidList = redisTemplate.opsForList().range(item.getAuctionUUID()
@@ -391,6 +394,11 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
                                 qAuction.auctionStartPrice.as("auctionStartPrice"),
                                 qAuction.auctionEndDate.as("auctionEndTime"),
                                 qMember.memberNickname.as("auctionOwnerNickname"),
+                                new CaseBuilder()
+                                        .when(qMember.memberRole.eq(Role.SHOP))
+                                        .then(true)
+                                        .otherwise(false)
+                                        .as("auctionOwnerIsShop"),
                                 qLikeAuction.countDistinct().as(likeCnt),
                                 qPhoto.imgUrl.min().as("auctionImg"),
                                 new CaseBuilder()
