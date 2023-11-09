@@ -36,6 +36,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
 
+
         String username = extractUsername(authentication);
         Member member = getMemberByUsername(username);
         Long memberPk = member.getId();

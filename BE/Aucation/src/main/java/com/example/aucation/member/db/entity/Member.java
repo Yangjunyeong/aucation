@@ -59,6 +59,7 @@ public class Member extends BaseEntity {
 	private String memberRefresh;
 	private String memberFCM;
 	private String memberDetail;
+	private String memberFCMToken;
 
 	@Column
 	private String imageURL;
@@ -160,5 +161,9 @@ public class Member extends BaseEntity {
 
 	public void updateOwnerPoint(int discountDiscountedPrice) {
 		this.memberPoint +=discountDiscountedPrice;
+	}
+
+	public void updateFCMToken(String token) {
+		this.memberFCMToken=token;
 	}
 }

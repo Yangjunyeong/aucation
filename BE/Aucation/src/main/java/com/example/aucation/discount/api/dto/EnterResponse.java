@@ -28,7 +28,7 @@ public class EnterResponse {
 	private int memberPoint;
 	private long memberPk;
 	private String myNickname;
-
+	private long discountPk;
 
 	private String ownerURL;
 	private LocalDateTime discountCur;
@@ -55,7 +55,7 @@ public class EnterResponse {
 			.isLike(isFalse)
 			.discountCur(LocalDateTime.now())
 			.discountRate(discount.getDiscountRate())
-
+			.discountPk(discount.getId())
 			.memberPoint(member.getMemberPoint())
 			.memberPk(member.getId())
 			.myNickname(member.getMemberNickname())
