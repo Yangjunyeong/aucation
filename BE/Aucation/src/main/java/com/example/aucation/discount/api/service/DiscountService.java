@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.example.aucation.discount.api.dto.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,13 +22,6 @@ import com.example.aucation.common.error.BadRequestException;
 import com.example.aucation.common.error.ExistsException;
 import com.example.aucation.common.error.NotFoundException;
 import com.example.aucation.common.util.PasswordGenerator;
-import com.example.aucation.discount.api.dto.DiscountListResponse;
-import com.example.aucation.discount.api.dto.ConfirmResponse;
-import com.example.aucation.discount.api.dto.DiscountRequest;
-import com.example.aucation.discount.api.dto.DiscountResponse;
-import com.example.aucation.discount.api.dto.DiscountSortRequest;
-import com.example.aucation.discount.api.dto.EnterResponse;
-import com.example.aucation.discount.api.dto.PurchaseResponse;
 import com.example.aucation.discount.db.entity.Discount;
 import com.example.aucation.discount.db.entity.DiscountHistory;
 import com.example.aucation.discount.db.repository.DiscountHistoryRepository;
@@ -249,4 +243,9 @@ public class DiscountService {
 
 
 	}
+
+    public List<DiscountListResponseItem> getDiscountToMainPage(Long memberPk) {
+		List<DiscountListResponseItem> response = discountRepository.searchDiscountToMainPage(memberPk);
+		return response;
+    }
 }

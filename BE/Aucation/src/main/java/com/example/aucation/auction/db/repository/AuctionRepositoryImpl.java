@@ -379,6 +379,119 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom{
         return query.fetchOne();
     }
 
+    @Override
+    public List<AuctionIngResponseItem> searchHotAuctionToMainPage(Long memberPk) {
+        NumberPath<Long> likeCnt = Expressions.numberPath(Long.class,"likeCnt");
+        JPAQuery<AuctionIngResponseItem> query = queryFactory
+                .select(
+                        Projections.bean(AuctionIngResponseItem.class,
+                                qAuction.id.as("auctionPk"),
+                                qAuction.auctionUUID.as("auctionUUID"),
+                                qAuction.auctionTitle.as("auctionTitle"),
+                                qAuction.auctionStartPrice.as("auctionStartPrice"),
+                                qAuction.auctionEndDate.as("auctionEndTime"),
+                                qMember.memberNickname.as("auctionOwnerNickname"),
+                                qLikeAuction.countDistinct().as(likeCnt),
+                                qPhoto.imgUrl.min().as("auctionImg"),
+                                new CaseBuilder()
+                                        .when(
+                                                JPAExpressions.selectOne()
+                                                        .from(qLikeAuction)
+                                                        .where(qLikeAuction.auction.eq(qAuction)
+                                                                .and(qLikeAuction.member.id.eq(memberPk)))
+                                                        .exists()
+                                        )
+                                        .then(true)
+                                        .otherwise(false)
+                                        .as("isLike")
+                        )
+                )
+                .from(qAuction)
+                .where(qAuction.auctionStartDate.before(LocalDateTime.now())
+                                .and(qAuction.auctionEndDate.after(LocalDateTime.now())),
+                        qAuction.auctionStatus.eq(AuctionStatus.BID)
+                )
+                .leftJoin(qLikeAuction)
+                .on(qLikeAuction.auction.eq(qAuction))
+                .leftJoin(qMember)
+                .on(qAuction.owner.eq(qMember))
+                .leftJoin(qPhoto)
+                .on(qPhoto.auction.eq(qAuction))
+                .groupBy(qAuction)
+                .orderBy(new OrderSpecifier<>(Order.DESC, likeCnt))
+                .limit(16);
+
+        List<AuctionIngResponseItem> result = query.fetch();
+
+
+        for (AuctionIngResponseItem item : result) {
+            List<SaveAuctionBIDRedis> bidList = redisTemplate.opsForList().range(item.getAuctionUUID()
+                    ,0,-1);
+            if(bidList ==null || bidList.isEmpty()){
+                item.setAuctionTopBidPrice(item.getAuctionStartPrice());
+                item.setAuctionCurCnt(0);
+                continue;
+            }
+            Collections.sort(bidList);
+            item.setAuctionTopBidPrice(bidList.get(0).getBidPrice());
+            item.setAuctionCurCnt(bidList.get(0).getHeadCnt());
+        }
+        return result;
+    }
+
+    @Override
+    public List<ReAuctionResponseItem> searchRecentReAucToMainPage(Long memberPk) {
+        NumberPath<Long> likeCnt = Expressions.numberPath(Long.class,"likeCnt");
+        JPAQuery<ReAuctionResponseItem> query = queryFactory
+                .select(
+                        Projections.bean(ReAuctionResponseItem.class,
+                                qAuction.id.as("reAuctionPk"),
+                                qAuction.auctionTitle.as("reAuctionTitle"),
+                                qAuction.auctionStartPrice.as("reAuctionStartPrice"),
+                                qReAuctionBid.reAucBidPrice.min().as("reAuctionLowBidPrice"),
+                                qReAuctionBid.reAucBidPrice.countDistinct().as("reAuctionBidCnt"),
+                                qPhoto.imgUrl.min().as("reAuctionImg"),
+                                qAuction.auctionEndDate.as("reAuctionEndTime"),
+                                qMember.memberNickname.as("reAuctionOwnerNickname"),
+                                qLikeAuction.countDistinct().as(likeCnt),
+                                new CaseBuilder()
+                                        .when(qMember.memberRole.eq(Role.SHOP))
+                                        .then(true)
+                                        .otherwise(false)
+                                        .as("reAuctionOwnerIsShop"),
+                                new CaseBuilder()
+                                        .when(
+                                                JPAExpressions.selectOne()
+                                                        .from(qLikeAuction)
+                                                        .where(qLikeAuction.auction.eq(qAuction)
+                                                                .and(qLikeAuction.member.id.eq(memberPk)))
+                                                        .exists()
+                                        )
+                                        .then(true)
+                                        .otherwise(false)
+                                        .as("isLike")
+                        )
+                )
+                .from(qAuction)
+                .where(qAuction.auctionEndDate.after(LocalDateTime.now()),
+                        qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID)
+                )
+                .leftJoin(qLikeAuction)
+                .on(qLikeAuction.auction.eq(qAuction))
+                .leftJoin(qMember)
+                .on(qAuction.owner.eq(qMember))
+                .leftJoin(qPhoto)
+                .on(qPhoto.auction.eq(qAuction))
+                .leftJoin(qReAuctionBid)
+                .on(qReAuctionBid.auction.eq(qAuction))
+                .groupBy(qAuction)
+                .orderBy(new OrderSpecifier<>(Order.DESC, qAuction.auctionStartDate))
+                .limit(4);
+
+
+        return query.fetch();
+    }
+
     private BooleanExpression catalogEq(String catalog) {
         if (catalog == null) {
             return null;

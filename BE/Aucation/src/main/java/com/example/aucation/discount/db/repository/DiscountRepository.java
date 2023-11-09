@@ -1,7 +1,9 @@
 package com.example.aucation.discount.db.repository;
 
+import java.util.List;
 import java.util.Optional;
 
+import com.example.aucation.discount.api.dto.DiscountListResponseItem;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -21,5 +23,7 @@ public interface DiscountRepository extends JpaRepository<Discount,Long>, Discou
 	/////////////////////// custom ///////////////////
 	DiscountListResponse searchListByCondition(
 		Member member, int pageNum, DiscountSortRequest sortRequest, Pageable pageable);
+
+	List<DiscountListResponseItem> searchDiscountToMainPage(Long memberPk);
 
 }

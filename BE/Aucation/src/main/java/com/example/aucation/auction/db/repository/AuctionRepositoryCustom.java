@@ -1,9 +1,6 @@
 package com.example.aucation.auction.db.repository;
 
-import com.example.aucation.auction.api.dto.AuctionDetailItem;
-import com.example.aucation.auction.api.dto.AuctionDetailResponse;
-import com.example.aucation.auction.api.dto.AuctionListResponse;
-import com.example.aucation.auction.api.dto.AuctionSortRequest;
+import com.example.aucation.auction.api.dto.*;
 import com.example.aucation.auction.db.entity.Auction;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.reauction.api.dto.ReAuctionDetailResponse;
@@ -25,5 +22,6 @@ public interface AuctionRepositoryCustom {
     List<AuctionDetailItem> searchDetailItems(Long memberPk, Auction auction);
     ReAuctionDetailResponse searchDetailReAuc(Auction auction, Long memberPk, int checkTime);
 
-
+    List<AuctionIngResponseItem> searchHotAuctionToMainPage(Long memberPk);
+    List<ReAuctionResponseItem> searchRecentReAucToMainPage(Long memberPk);
 }

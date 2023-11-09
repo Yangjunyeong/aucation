@@ -4,6 +4,7 @@ package com.example.aucation.discount.db.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.example.aucation.disphoto.db.entity.QDisPhoto;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +36,7 @@ public class DiscountRepositoryCustomImpl implements DiscountRepositoryCustom {
 
 	private final JPAQueryFactory queryFactory;
 	private final QDiscount qDiscount = QDiscount.discount;
+	private final QDisPhoto qDisPhoto = QDisPhoto.disPhoto;
 	private final QMember qMember = QMember.member;
 	private final QLikeDiscount qLikeDiscount = QLikeDiscount.likeDiscount;
 	private final RedisTemplate<String, SaveAuctionBIDRedis> redisTemplate;
@@ -51,7 +53,7 @@ public class DiscountRepositoryCustomImpl implements DiscountRepositoryCustom {
 					qDiscount.discountDiscountedPrice.as("discountedPrice"),
 					qDiscount.discountPrice.as("originalPrice"),
 					qDiscount.discountRate.as("discountRate"),
-					qDiscount.discountImgURL.as("discountImg"),
+					qDisPhoto.imgUrl.min().as("discountImg"),
 					qDiscount.discountEnd.as("discountEnd"),
 					qMember.memberNickname.as("discountOwnerNickname"),
 					qLikeDiscount.countDistinct().as(likeCnt),
@@ -68,11 +70,16 @@ public class DiscountRepositoryCustomImpl implements DiscountRepositoryCustom {
 				)
 			).from(qDiscount)
 			.where(
+					qDiscount.discountEnd.after(LocalDateTime.now()),
 				catalogEq(sortRequest.getDiscountCategory()),
 				keywordEq(sortRequest.getSearchType(), sortRequest.getSearchKeyword())
 			)
-			.leftJoin(qMember).on(qDiscount.owner.eq(qMember))
-			.leftJoin(qLikeDiscount).on(qLikeDiscount.discount.eq(qDiscount))
+			.leftJoin(qMember)
+				.on(qDiscount.owner.eq(qMember))
+			.leftJoin(qLikeDiscount)
+				.on(qLikeDiscount.discount.eq(qDiscount))
+			.leftJoin(qDisPhoto)
+				.on(qDisPhoto.discount.eq(qDiscount))
 			.groupBy(qDiscount);
 
 		long count = query.fetch().size();
@@ -89,6 +96,46 @@ public class DiscountRepositoryCustomImpl implements DiscountRepositoryCustom {
 			.totalPage(count)
 			.currentPage(pageNum)
 			.build();
+	}
+
+	@Override
+	public List<DiscountListResponseItem> searchDiscountToMainPage(Long memberPk) {
+		JPAQuery<DiscountListResponseItem> query = queryFactory
+				.select(
+						Projections.bean(DiscountListResponseItem.class,
+								qDiscount.id.as("discountPk"),
+								qDiscount.discountTitle.as("discountTitle"),
+								qDiscount.discountDiscountedPrice.as("discountedPrice"),
+								qDiscount.discountPrice.as("originalPrice"),
+								qDiscount.discountRate.as("discountRate"),
+								qDisPhoto.imgUrl.min().as("discountImg"),
+								qDiscount.discountEnd.as("discountEnd"),
+								qMember.memberNickname.as("discountOwnerNickname"),
+								new CaseBuilder()
+										.when(
+												JPAExpressions.selectOne()
+														.from(qLikeDiscount)
+														.where(qLikeDiscount.discount.eq(qDiscount))
+														.where(qLikeDiscount.member.id.eq(memberPk)) // Replace myUser with your user reference
+														.exists()
+										)
+										.then(true)
+										.otherwise(false).as("isLike")
+						)
+				).from(qDiscount)
+				.where(
+						qDiscount.discountEnd.after(LocalDateTime.now())
+				)
+				.leftJoin(qMember)
+				.on(qDiscount.owner.eq(qMember))
+				.leftJoin(qLikeDiscount)
+				.on(qLikeDiscount.discount.eq(qDiscount))
+				.leftJoin(qDisPhoto)
+				.on(qDisPhoto.discount.eq(qDiscount))
+				.groupBy(qDiscount)
+				.orderBy(new OrderSpecifier<>(Order.DESC, qDiscount.createdAt))
+				.limit(4);
+		return query.fetch();
 	}
 
 	private BooleanExpression catalogEq(String category) {
