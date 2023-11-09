@@ -51,12 +51,14 @@ public class ChatRoom {
 	@OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
 	List<ChatMessage> chatMessages = new ArrayList<ChatMessage>();
 
-
 	@Builder
-	public ChatRoom(long chatPk, String chatSession, LocalDateTime chatCreate, LocalDateTime chatEnd) {
+	public ChatRoom(long chatPk, String chatSession, LocalDateTime chatCreate, LocalDateTime chatEnd, long prodPk,
+		int prodType) {
 		this.chatPk = chatPk;
 		this.chatSession = chatSession;
 		this.chatCreate = chatCreate;
 		this.chatEnd = chatEnd;
+		this.prodPk = prodPk;
+		this.prodType = prodType;
 	}
 }
