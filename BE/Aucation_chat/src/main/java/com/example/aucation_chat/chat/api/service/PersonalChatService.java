@@ -294,7 +294,7 @@ public class PersonalChatService {
 		AuctionHistory history = auctionHistoryRepository.findByAuction_AuctionPk(auction.getAuctionPk())
 			.orElseThrow(() -> new NotFoundException(ApplicationError.AUCTION_HISTORY_NOT_FOUND));
 
-		HistoryStatus status = history.getAuctionHistory();
+		HistoryStatus status = history.getHistoryStatus();
 		// 구매확정된 물품일 때 채팅방 입장하지 않음
 		if (status == HistoryStatus.AFTER_CONFIRM)
 			throw new ApplicationException(ApplicationError.PRODUCT_CONFIRMED);

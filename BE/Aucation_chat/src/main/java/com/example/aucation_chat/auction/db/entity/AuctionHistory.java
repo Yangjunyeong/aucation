@@ -45,5 +45,5 @@ public class AuctionHistory {
 	@JoinColumn(name = "customer_pk")
 	private Member customer;
 
-	private HistoryStatus auctionHistory;
+	private HistoryStatus historyStatus;
 }
