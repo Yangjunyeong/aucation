@@ -128,9 +128,9 @@ public class PersonalChatService {
 			sellerPk = auction.getOwner().getMemberPk();
 			if (type == 1) { // 역경매일 때 채팅가져오기
 				prodType = "역경매";
-				chatList = getChatList("chat-bid:", chatRoom.getChatSession());
-			} else { // 경매일 때 채팅가져오기
 				chatList = getChatList("chat-re-bid:", chatRoom.getChatSession());
+			} else { // 경매일 때 채팅가져오기
+				chatList = getChatList("chat-bid:", chatRoom.getChatSession());
 			}
 		} else if(type==2) {  // 할인판매일 때
 			log.info("************************ 할인판매 물품 채팅방입니다");
