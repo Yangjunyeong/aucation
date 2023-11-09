@@ -8,36 +8,50 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.example.aucation.auction.api.dto.AuctionIngResponseItem;
-import com.example.aucation.auction.api.dto.AuctionPreResponseItem;
-import com.example.aucation.auction.api.dto.ReAuctionResponseItem;
-import com.example.aucation.auction.api.service.AuctionService;
-import com.example.aucation.common.support.AuthorizedVariable;
-import com.example.aucation.discount.api.dto.DiscountListResponseItem;
-import com.example.aucation.discount.api.service.DiscountService;
-import com.example.aucation.member.api.dto.*;
-import com.example.aucation.reauction.api.service.ReAuctionService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.example.aucation.auction.api.dto.AuctionIngResponseItem;
+import com.example.aucation.auction.api.dto.ReAuctionResponseItem;
+import com.example.aucation.auction.api.service.AuctionService;
 import com.example.aucation.common.dto.EmailResponse;
 import com.example.aucation.common.error.ApplicationError;
 import com.example.aucation.common.error.DuplicateException;
 import com.example.aucation.common.error.NotFoundException;
 import com.example.aucation.common.service.RegisterMail;
+import com.example.aucation.discount.api.dto.DiscountListResponseItem;
+import com.example.aucation.discount.api.service.DiscountService;
+import com.example.aucation.member.api.dto.DetailRequest;
+import com.example.aucation.member.api.dto.DetailResponse;
+import com.example.aucation.member.api.dto.ImageResponse;
+import com.example.aucation.member.api.dto.LikePageRequest;
+import com.example.aucation.member.api.dto.MainPageResponse;
+import com.example.aucation.member.api.dto.MemberPageRequest;
+import com.example.aucation.member.api.dto.MyDiscountResponse;
+import com.example.aucation.member.api.dto.MyLikeResponse;
+import com.example.aucation.member.api.dto.MyReverseResponse;
+import com.example.aucation.member.api.dto.MypageResponse;
+import com.example.aucation.member.api.dto.NicknameRequest;
+import com.example.aucation.member.api.dto.NicknameResponse;
+import com.example.aucation.member.api.dto.SignupRequest;
+import com.example.aucation.member.api.dto.StreetRequest;
+import com.example.aucation.member.api.dto.StreetResponse;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.member.db.entity.Role;
 import com.example.aucation.member.db.entity.SocialType;
 import com.example.aucation.member.db.repository.MemberRepository;
 import com.example.aucation.photo.api.service.PhotoService;
+import com.example.aucation.reauction.api.service.ReAuctionService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,9 +76,14 @@ public class MemberService {
 
 	private final AmazonS3Client amazonS3Client;
 
+	private final String apikey = "641818b805857c5d7f1d3a8885668274";
+
+	private final String kakaoApiUrl = "https://dapi.kakao.com/v2/local/geo/coord2address.json";
+
+
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
-	private static final String DEFAULT_IMAGE_URL="https://aucation-bucket.s3.ap-northeast-2.amazonaws.com/profile/bear.jpggi";
+	private static final String DEFAULT_IMAGE_URL = "https://aucation-bucket.s3.ap-northeast-2.amazonaws.com/profile/bear.jpggi";
 
 	@Transactional
 	public void signup(SignupRequest signupRequest) {
@@ -85,7 +104,8 @@ public class MemberService {
 
 	@Transactional
 	public NicknameResponse changenick(Long memberPk, NicknameRequest nicknameRequest) {
-		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+		Member member = memberRepository.findById(memberPk)
+			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 		verifynick(nicknameRequest.getMemberNickname());
 		member.updateMemberNickname(nicknameRequest.getMemberNickname());
 		return NicknameResponse.of();
@@ -93,15 +113,17 @@ public class MemberService {
 
 	@Transactional
 	public DetailResponse changedetail(Long memberPk, DetailRequest detailRequest) {
-		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+		Member member = memberRepository.findById(memberPk)
+			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 		member.updateMemberDetail(detailRequest.getMemberDetail());
 		return DetailResponse.of();
 	}
 
 	@Transactional
 	public ImageResponse changeimage(Long memberPk, MultipartFile multipartFile) throws IOException {
-		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
-		upload(multipartFile,member);
+		Member member = memberRepository.findById(memberPk)
+			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+		upload(multipartFile, member);
 		return ImageResponse.of();
 	}
 
@@ -109,16 +131,16 @@ public class MemberService {
 	@Transactional
 	public MypageResponse myauction(Long memberPk, MemberPageRequest memberPageRequest) {
 		Member member = existsMemberPk(memberPk);
-		Pageable pageable = PageRequest.of(memberPageRequest.getMyPageNum()-1,COUNT_IN_PAGE);
-		return memberRepository.searchMyAuctionPage(member,memberPageRequest,pageable);
+		Pageable pageable = PageRequest.of(memberPageRequest.getMyPageNum() - 1, COUNT_IN_PAGE);
+		return memberRepository.searchMyAuctionPage(member, memberPageRequest, pageable);
 	}
 
 	//마이페이지 - 역경매
 	@Transactional
 	public MyReverseResponse myreacution(Long memberPk, MemberPageRequest memberPageRequest) {
 		Member member = existsMemberPk(memberPk);
-		Pageable pageable = PageRequest.of(memberPageRequest.getMyPageNum()-1,COUNT_IN_PAGE);
-		return memberRepository.searchMyReversePage(member,memberPageRequest,pageable);
+		Pageable pageable = PageRequest.of(memberPageRequest.getMyPageNum() - 1, COUNT_IN_PAGE);
+		return memberRepository.searchMyReversePage(member, memberPageRequest, pageable);
 	}
 
 	//마이페이지 - 할인
@@ -133,61 +155,62 @@ public class MemberService {
 	@Transactional
 	public MyLikeResponse likeauction(Long memberPk, LikePageRequest likePageRequest) {
 		Member member = existsMemberPk(memberPk);
-		Pageable pageable = PageRequest.of(likePageRequest.getMyPageNum()-1,COUNT_IN_PAGE);
-		if(likePageRequest.getProductStatus().equals("할인")){
-			return memberRepository.searchMyDisLike(member,likePageRequest,pageable);
+		Pageable pageable = PageRequest.of(likePageRequest.getMyPageNum() - 1, COUNT_IN_PAGE);
+		if (likePageRequest.getProductStatus().equals("할인")) {
+			return memberRepository.searchMyDisLike(member, likePageRequest, pageable);
 		}
-		return memberRepository.searchMyAucLIke(member,likePageRequest,pageable);
+		return memberRepository.searchMyAucLIke(member, likePageRequest, pageable);
 	}
 
 	public EmailResponse certifyEmail(String memberEmail) throws Exception {
 		validateMemberEmail(memberEmail);
-		String code = registerMail.sendSimpleMessage(memberEmail,"회원가입");
+		String code = registerMail.sendSimpleMessage(memberEmail, "회원가입");
 		return EmailResponse.of(code);
 	}
 
 	public void verifynick(String memberNickname) {
-		if(memberRepository.existsByMemberNickname(memberNickname)) {
+		if (memberRepository.existsByMemberNickname(memberNickname)) {
 			throw new DuplicateException(ApplicationError.DUPLICATE_NICKNAME);
 		}
 	}
 
 	private void validateMemberEmail(String memberEmail) {
-		if(memberRepository.existsByMemberEmail(memberEmail)) {
+		if (memberRepository.existsByMemberEmail(memberEmail)) {
 			throw new DuplicateException(ApplicationError.DUPLICATE_MEMBER_EMAIL);
 		}
 	}
 
 	private void validateMemberId(String memberId) {
-		if(memberRepository.existsByMemberId(memberId)) {
+		if (memberRepository.existsByMemberId(memberId)) {
 			throw new DuplicateException(ApplicationError.DUPLICATE_USERNAME);
 		}
 
 	}
 
 	private Member existsMemberPk(Long memberPk) {
-		return memberRepository.findById(memberPk).orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+		return memberRepository.findById(memberPk)
+			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 	}
 
 	public MypageResponse mypageLike(Long memberPk) {
-		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+		Member member = memberRepository.findById(memberPk)
+			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 		return null;
 	}
 
 	public void verifyId(String memberId) {
-		if(memberRepository.existsByMemberId(memberId)) {
+		if (memberRepository.existsByMemberId(memberId)) {
 			throw new DuplicateException(ApplicationError.DUPLICATE_USERNAME);
 		}
 
 	}
-
 
 	public void upload(MultipartFile files, Member member) throws IOException {
 
 		File uploadFile = convertToFile(files)
 			.orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 변환에 실패했습니다."));
 
-		String fileName = dirName + "/" + member.getMemberNickname() + "/" +" " + uploadFile.getName();
+		String fileName = dirName + "/" + member.getMemberNickname() + "/" + " " + uploadFile.getName();
 
 		String uploadImageUrl = putS3(uploadFile, fileName);
 
@@ -195,11 +218,13 @@ public class MemberService {
 
 		member.updateImgURL(uploadImageUrl);
 	}
+
 	public String putS3(File uploadFile, String fileName) {
 		amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile)
 			.withCannedAcl(CannedAccessControlList.PublicRead));
 		return amazonS3Client.getUrl(bucket, fileName).toString();
 	}
+
 	public Optional<File> convertToFile(MultipartFile file) throws IOException, FileNotFoundException {
 		File uploadFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
 		FileOutputStream fos = new FileOutputStream(uploadFile);
@@ -218,14 +243,14 @@ public class MemberService {
 		}
 	}
 
-    public MainPageResponse getMainPageInfo(Long memberPk) {
+	public MainPageResponse getMainPageInfo(Long memberPk) {
 		List<AuctionIngResponseItem> hotAuctions = auctionService.getHotAuctionsToMainPage(memberPk);
 		List<DiscountListResponseItem> discounts = discountService.getDiscountToMainPage(memberPk);
 		List<ReAuctionResponseItem> recentAuctions = reAuctionService.getRecentReAucToMainPage(memberPk);
 		return MainPageResponse.builder()
-				.hotAuctions(hotAuctions)
-				.discounts(discounts)
-				.recentAuctions(recentAuctions)
-				.build();
-    }
+			.hotAuctions(hotAuctions)
+			.discounts(discounts)
+			.recentAuctions(recentAuctions)
+			.build();
+	}
 }
