@@ -10,12 +10,14 @@ import { PreAuctionItem } from "@/app/utils/cardType";
 import formatKoreanCurrency from "@/app/utils/formatKoreanCurrency";
 import { callApi } from "@/app/utils/api";
 import AuctionCountDown from "./AuctionCountDown";
+import { useRouter } from "next/navigation";
 interface CardProps {
   item: PreAuctionItem;
   nowTime: Date | null;
 }
 
 const AuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
+  const router = useRouter();
   const [likeCount, setLikeCount] = useState<number>(item.likeCnt);
   const [isLiked, setIsLiked] = useState<boolean>(item.isLike);
   // const tmp = nowTime ? new Date(nowTime) : null;
@@ -36,8 +38,16 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
         console.log("좋아요 실패", error);
       });
   };
+  const EnterDetail = (pk: number) => {
+    router.push(`/detail/auction/${pk}`);
+  };
   return (
-    <div className="hover:cursor-pointer overflow-hidden h-full rounded-lg shadow-lg bg-white hover:border-sky-500 hover:ring-8 hover:ring-sky-200 hover:ring-opacity-100">
+    <div
+      onClick={() => {
+        EnterDetail(item.auctionPk);
+      }}
+      className="hover:cursor-pointer overflow-hidden h-full rounded-lg shadow-lg bg-white hover:border-sky-500 hover:ring-8 hover:ring-sky-200 hover:ring-opacity-100"
+    >
       <div className="h-1/2 relative">
         <Image
           src={item.auctionImg}

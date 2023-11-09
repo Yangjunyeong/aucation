@@ -56,8 +56,9 @@ import { HiBuildingStorefront } from "react-icons/hi2";
 import { BsPersonFill } from "react-icons/bs";
 import { BiWon } from "react-icons/bi";
 import { icons } from "react-icons";
-import ModalContent from "./components/ModalContent";
 
+// 모달
+import PaymentModal from "../components/modal/PaymentModal";
 interface userData {
   profileImg: string;
   nickname: string;
@@ -83,6 +84,8 @@ interface categoryLikeType {
   isLiked: boolean;
 }
 const MyPage: NextPage = () => {
+  // apiData
+  const [dataList,setDataList] = useState<any>()
   // 프로필 이미지/ 네임 / 인포
   const router = useRouter();
   const [images, setImages] = useState<string>("");
@@ -102,7 +105,7 @@ const MyPage: NextPage = () => {
   const [isPointModal, setIsPointModal] = useState<boolean>(false); // 포인트 충전 모달 여부
 
   // 현재 선택된 카테고리 및 카테고리 목록
-  const [category, setCategory] = useState<string>("할인");
+  const [category, setCategory] = useState<string>("경매");
   const [secondCategory, setSecondCategory] = useState<any>("판매");
   const [thirdCategory, setThirdCategory] = useState<string>("경매전");
   const [itemsort, setItemsort] = useState<string>("최신순");
@@ -111,9 +114,17 @@ const MyPage: NextPage = () => {
   const [pageNumber, setPageNumber] = useState<number>(1);
 
   // 소상공인 판단
-  const [isShop, setIsShop] = useState<boolean>(false);
+  const [isShop, setIsShop] = useState<string>("소상공인");
   const [shopNum, setShopNum] = useState<any>("");
 
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  
+  const apiUrl:any = {
+    경매: "members/mypage/auction",
+    역경매: "members/mypage/reauction",
+    할인: "members/mypage/discount",
+    좋아요: "members/mypage/like",
+  }
   const categories: any = {
     경매: {
       판매: ["경매전", "경매중", "경매완료"],
@@ -127,24 +138,17 @@ const MyPage: NextPage = () => {
       판매: ["판매중", "예약중", "판매완료"],
       구매: ["예약중", "구매완료"],
     },
-    좋아요: {},
+    좋아요: ["경매", "역경매", "할인"],
   };
-  // 카테고리 매핑
-  // const categoryMap: { [key: string]: number } = {
-  //   경매: 0,
-  //   역경매: 1,
-  //   할인: 2,
-  //   좋아요: 3,
-  // };
-
+  
   // 요소 정렬
-  const itemsortList: string[] = ["최신순", "인기순", "저가순", "고가순"];
+  const itemsortList: string[] = ["최신순", "저가순", "고가순"];
 
   // 이미지 업로드
   const handleImageUpload = (imageFile: File) => {
     const formData = new FormData();
     formData.append("multipartFile", imageFile);
-    callApi("patch", "members/modify/image", formData)
+    callApi("post", "members/modify/image", formData)
       .then(res => {
         console.log("이미지 업로드 성공", res.data);
       })
@@ -260,10 +264,10 @@ const MyPage: NextPage = () => {
       merchant_uid: `mid_${new Date().getTime()}`,
       name: "AUCATION",
       amount: value,
-      buyer_email: "tdest@navedr.com",
-      buyer_name: "코드쿡",
+      buyer_email: "aucation@aucation.com",
+      buyer_name: "오케이션",
       buyer_tel: "010-1234-5678",
-      buyer_addr: "서울특별시",
+      buyer_addr: "남해",
       buyer_postcode: "123-456",
     };
     const callback = (response: RequestPayResponse) => {
@@ -273,11 +277,14 @@ const MyPage: NextPage = () => {
         toast.success("결제 성공");
         callApi("post", "/verifyIamport", {
           amount: response.paid_amount,
+          impUID: response.imp_uid
         })
           .then(res => {
             console.log(res.data);
+            setIsOpen(false)
           })
           .catch(err => {
+            console.log(JSON.stringify(data, null, 2));
             console.log(JSON.stringify(data, null, 2));
             console.log(err);
           });
@@ -316,35 +323,51 @@ const MyPage: NextPage = () => {
   // 1번 카테고리 변경 시 2번 카테고리 초기화
   useEffect(() => {
     if (category !== "좋아요") {
+      console.log("1번카테고리 변경");
       secondCategoryHandler(Object.keys(categories[category])[0]);
+    } else {
+      secondCategoryHandler("")
     }
   }, [category]);
   useEffect(() => {
     if (category !== "좋아요") {
+      console.log("2번카테고리 변경");
       thirdCategoryHandler(categories[category][secondCategory!][0]);
     } else {
-      thirdCategoryHandler("좋아요");
+      console.log("2번카테고리 변경");
+      thirdCategoryHandler("경매");
     }
   }, [category, secondCategory]);
 
   // 데이터 불러오기
   useEffect(() => {
-    const data = {
-      productStatus: secondCategory,
-      auctionStatus: thirdCategory,
-      productFilter: itemsort,
-      myPageNum: pageNumber,
-    };
+    let data:any
+    if (category !== "좋아요") {
+      data = {
+        productType: category,
+        productStatus: secondCategory,
+        auctionStatus: thirdCategory,
+        productFilter: itemsort,
+        myPageNum: pageNumber,
+      };
+    } else {
+      data = {
+        productStatus: thirdCategory,
+        myPageNum: pageNumber,
+      };
+    }
+
     // 유저 데이터 불러오기
-    callApi("post", "members/mypage", data)
+    callApi("post", `${apiUrl[category]}`, data)
       .then(res => {
         console.log(res.data);
+        setDataList(res.data)
       })
       .catch(err => {
         console.log(JSON.stringify(data, null, 2));
         console.log(err);
       });
-  }, []);
+  },[thirdCategory])
 
   return (
     <div className="w-full px-80 py-20">
@@ -367,7 +390,11 @@ const MyPage: NextPage = () => {
           <div className="flex-col ml-10">
             <div className="flex mt-2 h-[60px]">
               <span className="flex items-center mt-1 w-[60px]">
-                {isShop ? <HiBuildingStorefront size={70} /> : <BsPersonFill size={70} />}
+                {isShop == "소상공인" ? (
+                  <HiBuildingStorefront size={70} />
+                ) : (
+                  <BsPersonFill size={70} />
+                )}
               </span>
               {/* 유저네임/ 유저네임 인풋 */}
               <div className="flex text-2xl mt-1 items-center font-semibold w-[240px] whitespace-nowrap overflow-hidden text-ellipsis">
@@ -389,7 +416,7 @@ const MyPage: NextPage = () => {
               </div>
               {/* 소상공인 인증 */}
 
-              {!isShop ? (
+              {isShop == "개인" ? (
                 <div className="flex ml-[200px] text-xl items-center">
                   소상공인 이신가요? &nbsp;
                   <Link
@@ -440,7 +467,7 @@ const MyPage: NextPage = () => {
               )}
             </div>
             {/* 수정버튼 */}
-            <div className="flex mt-[15px]">
+            <div className="flex mt-[15px] w-[930px] justify-between">
               {!userInfoUpdate && (
                 <UpdateBtn onUpdate={handleUserInfoUpdate} buttonText="소개글 수정" />
               )}
@@ -449,10 +476,10 @@ const MyPage: NextPage = () => {
                   <UpdateBtn onUpdate={handleInfoUpdateConfirm} buttonText="확인" />
                 </div>
               )}
-              <div className="flex ml-[480px] items-center text-xl">
+              <div className="flex ml-[200px] items-center text-xl">
                 내 포인트 :&nbsp;
-                <span className="flex text-2xl font-bold">
-                  10,000&nbsp;
+                <span className="flex justify-between text-2xl font-bold">
+                  {dataList?.memberPoint}&nbsp;
                   <span onClick={pointModalHandler}>
                     <BiWon size={30} />
                   </span>
@@ -461,7 +488,11 @@ const MyPage: NextPage = () => {
                   <ModalContent/>
                 </Modal> */}
               </div>
+              <div className="flex justify-center text-xl items-center">
+                <span className="cursor-pointer underline" onClick={()=>setIsOpen(!isOpen)}>충전하기</span>
+              </div>
             </div>
+              <PaymentModal onClose={()=>setIsOpen(false)} isOpen={isOpen} cash={cashHandler}/>
           </div>
         </div>
       </div>
@@ -509,16 +540,27 @@ const MyPage: NextPage = () => {
       <div className="flex justify-between mt-10">
         <div className="flex">
           <div className="flex gap-4 text-xl font-semibold h-[35px] items-center cursor-pointer">
-            {categories[category][secondCategory]?.map((item: any, idx: any) => (
-              <CategoryBox
-                name={item}
-                selectedCategory={thirdCategory!}
-                key={idx}
-                categoryHandler={thirdCategoryHandler}
-                css="flex items-center justify-center font-semibold "
-                dynamicCss={"second"}
-              />
-            ))}
+            {category !== "좋아요"
+              ? categories[category][secondCategory]?.map((item: any, idx: any) => (
+                  <CategoryBox
+                    name={item}
+                    selectedCategory={thirdCategory!}
+                    key={idx}
+                    categoryHandler={thirdCategoryHandler}
+                    css="flex items-center justify-center font-semibold "
+                    dynamicCss={"second"}
+                  />
+                ))
+              : categories[category]?.map((item: any, idx: any) => (
+                  <CategoryBox
+                    name={item}
+                    selectedCategory={thirdCategory!}
+                    key={idx}
+                    categoryHandler={thirdCategoryHandler}
+                    css="flex items-center justify-center font-semibold "
+                    dynamicCss={"second"}
+                  />
+                ))}
           </div>
           <div className="ml-4">
             {category !== "좋아요" && (

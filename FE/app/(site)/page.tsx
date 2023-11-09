@@ -20,7 +20,6 @@ export default function Home() {
   return (
     <main className="px-48">
       <button onClick={() => setModalOpen(true)}>Open Modal1</button>
-      <PaymentModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
       <div>
         <Banner />
       </div>

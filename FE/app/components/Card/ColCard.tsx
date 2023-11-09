@@ -91,6 +91,7 @@ const Card: React.FC<CardProps> = ({ item }) => {
         )}
 
         {/* stateContent */}
+        
         <div className="p-4">
           <div className="flex justify-between mb-2">
             <div className="flex">
