@@ -226,6 +226,8 @@ public class PersonalChatService {
 
 	// ----------------------- service안에 들어가는 메소드들 --------------------------- //
 	private List<ChatResponse> getChatList(String redisKeyBase, String chatSession) {
+		log.info("************************ "+redisKeyBase+chatSession+"에서 채팅 내역을 찾는중.....");
+
 		List<RedisChatMessage> redisChatMessages = redisTemplate.opsForList().range(redisKeyBase + chatSession, 0, -1);
 
 		// cache-aside
