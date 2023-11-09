@@ -460,9 +460,9 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		JPAQuery<MyLikeItemsResponse> query = jpaQueryFactory
 			.select(
 				Projections.bean(MyLikeItemsResponse.class,
-					qDiscount.discountTitle.as("productTitle"),
-					qDiscount.discountUUID.as("productUUID"),
-					qDiscount.id.as("productPk"),
+					qDiscount.discountTitle.as("auctionTitle"),
+					qDiscount.discountUUID.as("auctionUUID"),
+					qDiscount.id.as("auctionPk"),
 					qDiscount.owner.id.as("ownerPk"),
 					qDiscountHistory.historyStatus.as("historyStatus"),
 					qDiscount.createdAt.as("likeDateTime"),
