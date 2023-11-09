@@ -16,6 +16,7 @@ import com.example.aucation.discount.db.entity.QDiscount;
 import com.example.aucation.discount.db.entity.QDiscountHistory;
 import com.example.aucation.disphoto.db.entity.QDisPhoto;
 import com.example.aucation.like.db.entity.QLikeAuction;
+import com.example.aucation.like.db.entity.QLikeDiscount;
 import com.example.aucation.member.api.dto.LikePageRequest;
 import com.example.aucation.member.api.dto.MemberPageRequest;
 import com.example.aucation.member.api.dto.MyDiscountItemsResponse;
@@ -57,6 +58,8 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 	private final QReAuctionBid qReAuctionBid = QReAuctionBid.reAuctionBid;
 
 	private final QDiscount qDiscount = QDiscount.discount;
+
+	private final QLikeDiscount qLikeDiscount = QLikeDiscount.likeDiscount;
 
 	private final QDiscountHistory qDiscountHistory = QDiscountHistory.discountHistory;
 
@@ -420,7 +423,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			.leftJoin(qPhoto).on(qAuction.id.eq(qPhoto.auction.id))
 			.leftJoin(qLikeAuction).on(qLikeAuction.auction.id.eq(qAuction.id))
 			.leftJoin(qAuctionHistory).on(qAuctionHistory.auction.id.eq(qAuction.id))
-			.where(qLikeAuction.member.id.eq(8L))  // 수정된 부분: 8로 고정
+			.where(qLikeAuction.member.id.eq(member.getId()))  // 수정된 부분: 8로 고정
     		.groupBy(qAuction, qAuctionHistory.historyStatus, qLikeAuction.createdAt);
 
 		long count = query.fetchCount();
@@ -457,26 +460,26 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		JPAQuery<MyLikeItemsResponse> query = jpaQueryFactory
 			.select(
 				Projections.bean(MyLikeItemsResponse.class,
-					qDiscount.discountTitle.as("auctionTitle"),
-					qDiscount.discountUUID.as("auctionUUID"),
-					qDiscount.id.as("auctionPk"),
+					qDiscount.discountTitle.as("productTitle"),
+					qDiscount.discountUUID.as("productUUID"),
+					qDiscount.id.as("productPk"),
 					qDiscount.owner.id.as("ownerPk"),
 					qDiscountHistory.historyStatus.as("historyStatus"),
 					qDiscount.createdAt.as("likeDateTime"),
 					qPhoto.imgUrl.min().as("imgfile")
 				))
-			.from(qAuction)
-			.leftJoin(qPhoto).on(qAuction.id.eq(qPhoto.auction.id))
-			.leftJoin(qLikeAuction).on(qLikeAuction.auction.id.eq(qAuction.id))
-			.leftJoin(qAuctionHistory).on(qAuctionHistory.auction.id.eq(qAuction.id))
-			.where(qLikeAuction.member.id.eq(8L))  // 수정된 부분: 8로 고정
-			.groupBy(qAuction, qAuctionHistory.historyStatus, qLikeAuction.createdAt);
+			.from(qDiscount)
+			.leftJoin(qDisPhoto).on(qDisPhoto.discount.id.eq(qDiscount.id))
+			.leftJoin(qLikeDiscount).on(qLikeDiscount.discount.id.eq(qDiscount.id))
+			.leftJoin(qDiscountHistory).on(qDiscountHistory.discount.id.eq(qDiscount.id))
+			.where(qLikeDiscount.member.id.eq(member.getId()))  // 수정된 부분: 8로 고정
+			.groupBy(qDiscount, qDiscountHistory.historyStatus, qLikeDiscount.createdAt);
 
 		long count = query.fetchCount();
 
 		query.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
-			.orderBy(new OrderSpecifier<>(Order.DESC, qAuction.auctionStartDate));
+			.orderBy(new OrderSpecifier<>(Order.DESC, qDiscount.discountStart));
 
 		List<MyLikeItemsResponse> result = query.fetch();
 
