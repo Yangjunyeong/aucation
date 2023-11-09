@@ -25,4 +25,5 @@ public class DiscountListResponseItem{
 	private String discountOwnerNickname; //
 	private LocalDateTime discountEnd;  //
 	private String discountImg;  //
+	private String discountUUID;
 }
