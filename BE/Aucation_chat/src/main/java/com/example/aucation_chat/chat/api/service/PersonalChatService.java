@@ -128,9 +128,9 @@ public class PersonalChatService {
 			sellerPk = auction.getOwner().getMemberPk();
 			if (type == 1) { // 역경매일 때 채팅가져오기
 				prodType = "역경매";
-				chatList = getChatList("chat-bid:", chatRoom.getChatSession());
-			} else { // 경매일 때 채팅가져오기
 				chatList = getChatList("chat-re-bid:", chatRoom.getChatSession());
+			} else { // 경매일 때 채팅가져오기
+				chatList = getChatList("chat-bid:", chatRoom.getChatSession());
 			}
 		} else if(type==2) {  // 할인판매일 때
 			log.info("************************ 할인판매 물품 채팅방입니다");
@@ -226,6 +226,8 @@ public class PersonalChatService {
 
 	// ----------------------- service안에 들어가는 메소드들 --------------------------- //
 	private List<ChatResponse> getChatList(String redisKeyBase, String chatSession) {
+		log.info("************************ "+redisKeyBase+chatSession+"에서 채팅 내역을 찾는중.....");
+
 		List<RedisChatMessage> redisChatMessages = redisTemplate.opsForList().range(redisKeyBase + chatSession, 0, -1);
 
 		// cache-aside
