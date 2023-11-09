@@ -3,6 +3,7 @@ package com.example.aucation.member.db.repository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import com.example.aucation.member.api.dto.LikePageRequest;
 import com.example.aucation.member.api.dto.MemberPageRequest;
 import com.example.aucation.member.api.dto.MyDiscountResponse;
 import com.example.aucation.member.api.dto.MyLikeResponse;
@@ -19,6 +20,8 @@ public interface MemberRepositoryCustom {
 
 	MyDiscountResponse searchMyDiscountPage(Member member, MemberPageRequest memberPageRequest, Pageable pageable);
 
-	MyLikeResponse searchMyLikePage(Member member,Pageable pageable);
+	MyLikeResponse searchMyAucLIke(Member member, LikePageRequest likePageRequest, Pageable pageable);
+
+	MyLikeResponse searchMyDisLike(Member member, LikePageRequest likePageRequest, Pageable pageable);
 
 }
