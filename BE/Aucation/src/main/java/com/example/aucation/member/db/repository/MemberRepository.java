@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.example.aucation.member.api.dto.LikePageRequest;
 import com.example.aucation.member.api.dto.MemberPageRequest;
 import com.example.aucation.member.api.dto.MyDiscountResponse;
 import com.example.aucation.member.api.dto.MyLikeResponse;
@@ -31,6 +32,6 @@ public interface MemberRepository extends JpaRepository<Member, Long>,MemberRepo
 	MypageResponse searchMyAuctionPage(Member member, MemberPageRequest memberPageRequest, Pageable pageable);
 	MyReverseResponse searchMyReversePage(Member member, MemberPageRequest memberPageRequest, Pageable pageable);
 	MyDiscountResponse searchMyDiscountPage(Member member, MemberPageRequest memberPageRequest, Pageable pageable);
-	MyLikeResponse searchMyLikePage(Member member, Pageable pageable);
-	
+	MyLikeResponse searchMyAucLIke(Member member, LikePageRequest likePageRequest, Pageable pageable);
+	MyLikeResponse searchMyDisLike(Member member, LikePageRequest likePageRequest, Pageable pageable);
 }

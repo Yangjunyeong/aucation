@@ -29,7 +29,14 @@ public class EnterResponse {
 	private long memberPk;
 	private String myNickname;
 
-	public static EnterResponse of(List<String> uuidImage, Discount discount, Member member) {
+
+	private String ownerURL;
+	private LocalDateTime discountCur;
+	private boolean isLike;
+	private int likeCnt;
+	private int discountRate;
+
+	public static EnterResponse of(List<String> uuidImage, Discount discount, Member member,boolean isFalse, int likeCnt) {
 		return EnterResponse.builder()
 			.discountImgURL(uuidImage)
 			.discountType(discount.getDiscountType())
@@ -43,6 +50,12 @@ public class EnterResponse {
 			.discountUUID(discount.getDiscountUUID())
 			.ownerPk(discount.getOwner().getId())
 			.ownerName(discount.getOwner().getMemberNickname())
+			.ownerURL(discount.getOwner().getImageURL())
+			.likeCnt(likeCnt)
+			.isLike(isFalse)
+			.discountCur(LocalDateTime.now())
+			.discountRate(discount.getDiscountRate())
+
 			.memberPoint(member.getMemberPoint())
 			.memberPk(member.getId())
 			.myNickname(member.getMemberNickname())

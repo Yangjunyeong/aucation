@@ -1,5 +1,7 @@
 package com.example.aucation.member.db.repository;
 
+import static com.querydsl.core.group.GroupBy.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,9 +15,12 @@ import com.example.aucation.common.entity.HistoryStatus;
 import com.example.aucation.discount.db.entity.QDiscount;
 import com.example.aucation.discount.db.entity.QDiscountHistory;
 import com.example.aucation.disphoto.db.entity.QDisPhoto;
+import com.example.aucation.like.db.entity.QLikeAuction;
+import com.example.aucation.member.api.dto.LikePageRequest;
 import com.example.aucation.member.api.dto.MemberPageRequest;
 import com.example.aucation.member.api.dto.MyDiscountItemsResponse;
 import com.example.aucation.member.api.dto.MyDiscountResponse;
+import com.example.aucation.member.api.dto.MyLikeItemsResponse;
 import com.example.aucation.member.api.dto.MyLikeResponse;
 import com.example.aucation.member.api.dto.MyReverseItemsResponse;
 import com.example.aucation.member.api.dto.MyReverseResponse;
@@ -45,6 +50,8 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
 	private final QAuction qAuction = QAuction.auction;
 
+	private final QLikeAuction qLikeAuction = QLikeAuction.likeAuction;
+
 	private final QAuctionHistory qAuctionHistory = QAuctionHistory.auctionHistory;
 
 	private final QReAuctionBid qReAuctionBid = QReAuctionBid.reAuctionBid;
@@ -56,6 +63,8 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 	private final QPhoto qPhoto = QPhoto.photo;
 
 	private final QDisPhoto qDisPhoto = QDisPhoto.disPhoto;
+
+
 
 	@Override
 	public MypageResponse searchMyAuctionPage(Member member, MemberPageRequest memberPageRequest,
@@ -336,11 +345,6 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		}
 	}
 
-	@Override
-	public MyLikeResponse searchMyLikePage(Member member, Pageable pageable) {
-		return null;
-	}
-
 	private Predicate chooseDiscountStatus(String auctionStatus, Member member) {
 		if ("판매중".equals(auctionStatus)) {
 			return qDiscount.owner.id.eq(member.getId())
@@ -396,6 +400,97 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			return new OrderSpecifier<>(Order.DESC, qDiscount.discountPrice);
 		}
 		return null;
+	}
+
+	@Override
+	public MyLikeResponse searchMyAucLIke(Member member, LikePageRequest likePageRequest, Pageable pageable) {
+		JPAQuery<MyLikeItemsResponse> query = jpaQueryFactory
+			.select(
+				Projections.bean(MyLikeItemsResponse.class,
+					qAuction.auctionStatus.as("auctionStatus"),
+					qAuction.auctionTitle.as("auctionTitle"),
+					qAuction.auctionUUID.as("auctionUUID"),
+					qAuction.id.as("auctionPk"),
+					qAuction.owner.id.as("ownerPk"),
+					qAuctionHistory.historyStatus.as("historyStatus"),
+					qLikeAuction.createdAt.as("likeDateTime"),
+					qPhoto.imgUrl.min().as("imgfile")
+				))
+			.from(qAuction)
+			.leftJoin(qPhoto).on(qAuction.id.eq(qPhoto.auction.id))
+			.leftJoin(qLikeAuction).on(qLikeAuction.auction.id.eq(qAuction.id))
+			.leftJoin(qAuctionHistory).on(qAuctionHistory.auction.id.eq(qAuction.id))
+			.where(qLikeAuction.member.id.eq(8L))  // 수정된 부분: 8로 고정
+    		.groupBy(qAuction, qAuctionHistory.historyStatus, qLikeAuction.createdAt);
+
+		long count = query.fetchCount();
+
+		query.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.orderBy(new OrderSpecifier<>(Order.DESC, qAuction.auctionStartDate));
+
+		List<MyLikeItemsResponse> result = query.fetch();
+
+		double totalPage = Math.ceil((double)count / 5);
+
+		return MyLikeResponse.builder()
+			.memberDetail(member.getMemberDetail())
+			.memberPoint(member.getMemberPoint())
+			.imgURL(member.getImageURL())
+			.memberNickname(member.getMemberNickname())
+			.currentPage(likePageRequest.getMyPageNum() - 1)
+			.totalPage((int)totalPage)
+			.mypageItems(result)
+			.build();
+
+	}
+
+	private Predicate isAucAndReAuc(String productStatus) {
+		if(productStatus.equals("경매")){
+			return qAuction.auctionStatus.eq(AuctionStatus.BID);
+		}
+		return qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID);
+	}
+
+	@Override
+	public MyLikeResponse searchMyDisLike(Member member, LikePageRequest likePageRequest, Pageable pageable) {
+		JPAQuery<MyLikeItemsResponse> query = jpaQueryFactory
+			.select(
+				Projections.bean(MyLikeItemsResponse.class,
+					qDiscount.discountTitle.as("auctionTitle"),
+					qDiscount.discountUUID.as("auctionUUID"),
+					qDiscount.id.as("auctionPk"),
+					qDiscount.owner.id.as("ownerPk"),
+					qDiscountHistory.historyStatus.as("historyStatus"),
+					qDiscount.createdAt.as("likeDateTime"),
+					qPhoto.imgUrl.min().as("imgfile")
+				))
+			.from(qAuction)
+			.leftJoin(qPhoto).on(qAuction.id.eq(qPhoto.auction.id))
+			.leftJoin(qLikeAuction).on(qLikeAuction.auction.id.eq(qAuction.id))
+			.leftJoin(qAuctionHistory).on(qAuctionHistory.auction.id.eq(qAuction.id))
+			.where(qLikeAuction.member.id.eq(8L))  // 수정된 부분: 8로 고정
+			.groupBy(qAuction, qAuctionHistory.historyStatus, qLikeAuction.createdAt);
+
+		long count = query.fetchCount();
+
+		query.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.orderBy(new OrderSpecifier<>(Order.DESC, qAuction.auctionStartDate));
+
+		List<MyLikeItemsResponse> result = query.fetch();
+
+		double totalPage = Math.ceil((double)count / 5);
+
+		return MyLikeResponse.builder()
+			.memberDetail(member.getMemberDetail())
+			.memberPoint(member.getMemberPoint())
+			.imgURL(member.getImageURL())
+			.memberNickname(member.getMemberNickname())
+			.currentPage(likePageRequest.getMyPageNum() - 1)
+			.totalPage((int)totalPage)
+			.mypageItems(result)
+			.build();
 	}
 }
 

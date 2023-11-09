@@ -134,7 +134,10 @@ public class MemberService {
 	public MyLikeResponse likeauction(Long memberPk, LikePageRequest likePageRequest) {
 		Member member = existsMemberPk(memberPk);
 		Pageable pageable = PageRequest.of(likePageRequest.getMyPageNum()-1,COUNT_IN_PAGE);
-		return memberRepository.searchMyLikePage(member,pageable);
+		if(likePageRequest.getProductStatus().equals("할인")){
+			return memberRepository.searchMyDisLike(member,likePageRequest,pageable);
+		}
+		return memberRepository.searchMyAucLIke(member,likePageRequest,pageable);
 	}
 
 	public EmailResponse certifyEmail(String memberEmail) throws Exception {
