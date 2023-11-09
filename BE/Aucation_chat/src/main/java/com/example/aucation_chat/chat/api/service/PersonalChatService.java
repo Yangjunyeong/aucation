@@ -77,16 +77,23 @@ public class PersonalChatService {
 		// prodPk 랑 prodType을 가지는 채팅방 조회
 		ChatRoom chatRoom = findChatRoom(prodPk, type);
 
-		// 참여
-		participate(chatRoom, request.getMemberPk());
-
-		// prodPk와 prodType으로 물품의 카테고리, 최종가격, 타입, 제목, 채팅내역, 판매자정보 결정
+		// prodPk와 prodType으로 물품의 카테고리, 최종가격, 타입, 제목, 채팅내역, 판매자정보, 참여 결정
 		if (type < 2) { // 경매, 역경매일 때
 			log.info("************************ 경매&역경매 물품 채팅방입니다");
 
 			Auction auction = auctionRepository.findByAuctionPk(prodPk)
 				.orElseThrow(() -> new NotFoundException(ApplicationError.AUCTION_NOT_FOUND));
-			endPrice = getEndpriceFromAuction(auction);
+
+			AuctionHistory history = isEndAuction(auction);
+
+			// 내가 정당한 참여자인지 검사
+			if (isValidParticipant(request.getMemberPk(), history.getCustomer().getMemberPk(),
+				history.getOwner().getMemberPk()))
+				participate(chatRoom, request.getMemberPk());
+			else
+				throw new ApplicationException(ApplicationError.FORBIDDEN_PARTICIPANT);
+
+			endPrice = auction.getAuctionEndPrice();
 			log.info("************************ 최종가 " + endPrice);
 
 			prodCategory = auction.getAuctionType();
@@ -108,14 +115,26 @@ public class PersonalChatService {
 			} else { // 경매일 때 채팅가져오기
 				chatList = getChatList("chat-re-bid:", chatRoom.getChatSession());
 			}
-		} else {  // 할인판매일 때
+		} else if(type==2) {  // 할인판매일 때
 			log.info("************************ 할인판매 물품 채팅방입니다");
 
 			Discount discount = discountRepository.findByDiscountPk(prodPk)
 				.orElseThrow(() -> new NotFoundException(ApplicationError.DISCOUNT_NOT_FOUND));
 
-			endPrice = getEndPriceFromDiscount(discount);
-			log.info("************************ 최종가 " + endPrice);
+			// history조회 => 구매끝난건지 검사
+			DiscountHistory history = isEndDiscount(discount);
+
+			// 내가 정당한 참여자인지 검사
+			if (isValidParticipant(request.getMemberPk(), history.getCustomer().getMemberPk(),
+				discount.getOwner().getMemberPk())) {
+				participate(chatRoom, request.getMemberPk());
+			}
+			else {
+				throw new ApplicationException(ApplicationError.FORBIDDEN_PARTICIPANT);
+			}
+
+			endPrice = discount.getDiscountDiscountedPrice(); // 할인가 조회
+			log.info("************************ 할인가 " + endPrice);
 
 			prodCategory = discount.getDiscountCategory();
 			log.info("************************ 카테고리 " + prodCategory);
@@ -133,6 +152,8 @@ public class PersonalChatService {
 			sellerPk = seller.getMemberPk();
 			prodType = "할인판매";
 			chatList = getChatList("chat-dis:", chatRoom.getChatSession());
+		} else{
+			throw new ApplicationException(ApplicationError.INVALID_PRODUCT);
 		}
 
 		PersonalChatEnterResponse resp = PersonalChatEnterResponse.builder()
@@ -148,6 +169,36 @@ public class PersonalChatService {
 			.build();
 		log.info("************************ 입장 끝!");
 		return resp;
+	}
+
+	private AuctionHistory isEndAuction(Auction auction) {
+		AuctionHistory history = auctionHistoryRepository.findByAuction_AuctionPk(auction.getAuctionPk())
+			.orElseThrow(() -> new NotFoundException(ApplicationError.AUCTION_HISTORY_NOT_FOUND));
+
+		HistoryStatus status = history.getHistoryStatus();
+		// 구매확정된 물품일 때 채팅방 입장하지 않음
+		if (status == HistoryStatus.AFTER_CONFIRM)
+			throw new ApplicationException(ApplicationError.PRODUCT_CONFIRMED);
+
+		return history;
+	}
+
+	private DiscountHistory isEndDiscount(Discount discount) {
+		DiscountHistory history = discountHistoryRepository.findByDiscount_DiscountPk(discount.getDiscountPk())
+			.orElseThrow(() -> new NotFoundException(ApplicationError.DISCOUNT_HISTORY_NOT_FOUND));
+
+		HistoryStatus status = history.getHistoryStatus();
+		// 구매확정된 물품일 때 채팅방 입장하지 않음
+		if (status == HistoryStatus.AFTER_CONFIRM)
+			throw new ApplicationException(ApplicationError.PRODUCT_CONFIRMED);
+
+		return history;
+	}
+
+	private boolean isValidParticipant(long memberPk, long customerPk, long ownerPk) {
+		if (memberPk == customerPk || memberPk == ownerPk)
+			return true;
+		return false;
 	}
 
 	// ----------------------- service안에 들어가는 메소드들 --------------------------- //
@@ -261,8 +312,10 @@ public class PersonalChatService {
 	}
 
 	private void participate(ChatRoom chatRoom, long memberPk) {
+		// 멤버의 유효성 검사
 		memberRepository.findByMemberPk(memberPk)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+
 		// member가 지금 채팅방에 들어가있는지 검사
 		Optional<ChatParticipant> temp = chatParticipantRepository.findByChatRoom_ChatPkAndMemberPk(
 			chatRoom.getChatPk(), memberPk);
@@ -277,30 +330,6 @@ public class PersonalChatService {
 		}
 	}
 
-	private int getEndPriceFromDiscount(Discount discount) {
-		DiscountHistory history = discountHistoryRepository.findByDiscount_DiscountPk(discount.getDiscountPk())
-			.orElseThrow(() -> new NotFoundException(ApplicationError.DISCOUNT_HISTORY_NOT_FOUND));
-
-		HistoryStatus status = history.getHistoryStatus();
-		// 구매확정된 물품일 때 채팅방 입장하지 않음
-		if (status == HistoryStatus.AFTER_CONFIRM)
-			throw new ApplicationException(ApplicationError.PRODUCT_CONFIRMED);
-
-		return discount.getDiscountPrice(); // 최종가격 조회
-	}
-
-	/** 경매, 역경매 물품의 최종가격 확인 */
-	private int getEndpriceFromAuction(Auction auction) {
-		AuctionHistory history = auctionHistoryRepository.findByAuction_AuctionPk(auction.getAuctionPk())
-			.orElseThrow(() -> new NotFoundException(ApplicationError.AUCTION_HISTORY_NOT_FOUND));
-
-		HistoryStatus status = history.getHistoryStatus();
-		// 구매확정된 물품일 때 채팅방 입장하지 않음
-		if (status == HistoryStatus.AFTER_CONFIRM)
-			throw new ApplicationException(ApplicationError.PRODUCT_CONFIRMED);
-
-		return auction.getAuctionEndPrice(); // 최종가격 조회
-	}
 
 	/** 채팅방 찾기 */
 	private ChatRoom findChatRoom(long prodPk, int prodType) {

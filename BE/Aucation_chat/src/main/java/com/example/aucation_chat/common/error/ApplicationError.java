@@ -50,6 +50,7 @@ public enum ApplicationError {
     INSTANT_MEETING_ALREADY_FULL(HttpStatus.BAD_REQUEST, "I002", "이미 번개팅 모집이 완료되었습니다."),
 
     CHATTING_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "C001", "채팅방을 찾을 수 없습니다."),
+    FORBIDDEN_PARTICIPANT(HttpStatus.FORBIDDEN, "C002", "당신은 해당 채팅의 참여자가 아닙니다."),
 
     FILE_NOT_EXIST(HttpStatus.BAD_REQUEST, "F001", "파일이 존재하지 않습니다."),
 
@@ -60,10 +61,12 @@ public enum ApplicationError {
     AUCTION_HISTORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "A005", "경매제품의 거래 내역이 존재하지 않습니다."),
 
     PRODUCT_CONFIRMED(HttpStatus.BAD_REQUEST, "P001", "거래가 끝난 물품입니다."),
+    INVALID_PRODUCT(HttpStatus.BAD_REQUEST, "P002", "유효하지 않은 판매 유형입니다"),
 
     DISCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "D001", "없는 할인제품입니다."),
     DISCOUNT_HISTORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "D002", "할인판매 거래 내역이 존재하지 않습니다."),
-    
+
+
 
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S001", "서버 내부 에러가 발생했습니다."),
     DUPLICATE_MEMBER_EMAIL(HttpStatus.BAD_REQUEST,"U015","이메일이 중복했습니다"),
