@@ -44,10 +44,15 @@ public class RedisKeyExpiredListener extends KeyExpirationEventMessageListener {
 		String UUID = keyInfo[2];
 		String redisKeyBase = keyInfo[1];
 		// String[] aucInfo = keyInfo[0].split("-");
+
 		if(redisKeyBase.equals("chat-auc")){
-			writeBackService.writeBackAuc(redisKeyBase, UUID);
+			log.info("	*********************** redisKeyBase = {}, UUID = {} !!",key, UUID);
+
+			writeBackService.writeBackAuc(redisKeyBase+":"+UUID);
 		}else{
-			writeBackService.writeBackElse(redisKeyBase, UUID);
+			log.info("	*********************** redisKeyBase = {}, UUID = {} !!",key, UUID);
+
+			writeBackService.writeBackElse(redisKeyBase+":"+UUID);
 		}
 		log.info("*********************** REDIS EXPIRED EVENT END !!");
 	}
