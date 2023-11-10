@@ -89,6 +89,7 @@ public class FCMService {
 			Map<String, String> data = new HashMap<>();
 			data.put("auctionUUID", auction.getAuctionUUID());
 			data.put("status", "경매");
+			data.put("type", "room");
 			Notification notification = Notification.builder()
 				.setTitle(ALRAM_TITLE)
 				.setBody(auction.getAuctionTitle() + ALRAM_BODY)
@@ -122,6 +123,7 @@ public class FCMService {
 		Map<String, String> data = new HashMap<>();
 		data.put("prodPk", String.valueOf(auction.getId()));
 		data.put("status", auctionStatus);
+		data.put("type", "chat");
 		Notification notification = Notification.builder()
 			.setTitle(auction.getAuctionTitle() + END_ALRAM_TITLE)
 			.setBody(END_ALRAM_BODY)
@@ -149,6 +151,7 @@ public class FCMService {
 		Map<String, String> data = new HashMap<>();
 		data.put("prodPk", String.valueOf(discount.getId()));
 		data.put("status", discountStatus);
+		data.put("type", "chat");
 
 		Notification notification = Notification.builder()
 			.setTitle(discount.getDiscountTitle() + END_ALRAM_TITLE)
@@ -173,6 +176,7 @@ public class FCMService {
 		Map<String, String> data = new HashMap<>();
 		data.put("auctionUUID", auction.getAuctionUUID());
 		data.put("status","경매");
+		data.put("type", "room");
 		Notification notification = Notification.builder()
 			.setTitle(auction.getAuctionTitle() + HIGH_ALRAM_TITLE)
 			.setBody(auction.getAuctionTitle() + HIGH_ALRAM_BODY)
@@ -200,6 +204,7 @@ public class FCMService {
 		Map<String, String> data = new HashMap<>();
 		data.put("prodPk", String.valueOf(auction.getId()));
 		data.put("status","역경매");
+		data.put("type", "room");
 
 		Notification notification = Notification.builder()
 			.setTitle(auction.getAuctionTitle()+": "+REAUCTION_ALRAM_TITLE)
