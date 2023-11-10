@@ -81,7 +81,7 @@ public class MemberService {
 
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
-	private static final String DEFAULT_IMAGE_URL = "https://aucation-bucket.s3.ap-northeast-2.amazonaws.com/profile/bear.jpggi";
+	private static final String DEFAULT_IMAGE_URL = "https://aucation-bucket.s3.ap-northeast-2.amazonaws.com/bear.jpg";
 
 	@Transactional
 	public void signup(SignupRequest signupRequest) {
