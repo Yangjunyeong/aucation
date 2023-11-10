@@ -58,4 +58,5 @@ public class MypageItemsResponse {
 	private String street;
 	private String ownerNicknname;
 	private Boolean isLike;
+	private String customerNicknname;
 }

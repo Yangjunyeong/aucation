@@ -82,6 +82,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qAuction.auctionEndPrice.as("auctionSuccessPay"),
 					qAuction.owner.id.as("ownerPk"),
 					qAuction.owner.memberNickname.as("ownerNicknname"),
+					qAuction.customer.memberNickname.as("customerNicknname"),
 					qAuction.address.city.as("mycity"),
 					qAuction.address.zipcode.as("zipcode"),
 					qAuction.address.street.as("street"),
@@ -179,6 +180,9 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		}
 	}
 
+
+	//역경매
+
 	@Override
 	public MyReverseResponse searchMyReversePage(Member member, MemberPageRequest memberPageRequest,
 		Pageable pageable) {
@@ -197,6 +201,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qAuction.auctionType.as("auctionType"),
 					qAuction.createdAt.as("registerDate"),
 					qAuction.owner.memberNickname.as("ownerNicknname"),
+					qAuction.customer.memberNickname.as("customerNickname"),
 					qAuction.address.city.as("mycity"),
 					qAuction.address.zipcode.as("zipcode"),
 					qAuction.address.street.as("street"),
@@ -315,6 +320,8 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		return null;
 	}
 
+	//판매자 판매 입장에선 구매자를 봐야함
+	//구매 입장에선 판매자를 봐야함
 	@Override
 	public MyDiscountResponse searchMyDiscountPage(Member member, MemberPageRequest memberPageRequest,
 		Pageable pageable) {
@@ -327,7 +334,8 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qDiscount.discountEnd.as("discountEnd"),
 					qDiscount.owner.id.as("ownerPk"),
 					qDiscount.customer.id.as("customerPk"),
-					qAuction.owner.memberNickname.as("ownerNicknname"),
+					qDiscount.owner.memberNickname.as("ownerNicknname"),
+					qDiscount.customer.memberNickname.as("customerNickname"),
 					qDiscount.id.as("discountPk"),
 					qDiscount.address.city.as("mycity"),
 					qDiscount.address.zipcode.as("zipcode"),
@@ -456,6 +464,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qAuction.id.as("auctionPk"),
 					qAuction.owner.id.as("ownerPk"),
 					qAuction.owner.memberNickname.as("ownerNicknname"),
+					qAuction.customer.memberNickname.as("customerNickname"),
 					qAuction.address.city.as("mycity"),
 					qAuction.address.zipcode.as("zipcode"),
 					qAuction.address.street.as("street"),
@@ -510,6 +519,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qDiscount.id.as("auctionPk"),
 					qDiscount.owner.id.as("ownerPk"),
 					qAuction.owner.memberNickname.as("ownerNicknname"),
+					qAuction.customer.memberNickname.as("customerNickname"),
 					qDiscount.address.city.as("mycity"),
 					qDiscount.address.zipcode.as("zipcode"),
 					qDiscount.address.street.as("street"),
