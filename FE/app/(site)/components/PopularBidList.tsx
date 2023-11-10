@@ -12,7 +12,7 @@ import { AuctionItem, ReverseAuctionItem, DiscountItem } from "@/app/components/
 import AuctionListCard from "@/app/components/Card/AutionListCard";
 import DiscountListCard from "@/app/components/Card/DiscountListCard";
 import ClipLoader from "react-spinners/ClipLoader";
-
+import Image from "next/image";
 // interface CarouselButtonGroupProps extends ButtonGroupProps {
 //   className?: string;
 //   next: () => void;
@@ -105,12 +105,12 @@ const PopularBidList: React.FC<OwnProps> = ({
         )}
       </div>
 
-      <div className="h-[600px]">
+      <div className="h-[600px] relative">
         {isLoading ? (
           <div className="flex justify-center items-center">
             <ClipLoader color="#247eff" size={200} speedMultiplier={1} />
           </div>
-        ) : (
+        ) : item.length > 0 ? (
           <Carousel
             className="h-full ml-10 flex pl-5"
             responsive={responsive}
@@ -148,6 +148,8 @@ const PopularBidList: React.FC<OwnProps> = ({
                 </div>
               ))}
           </Carousel>
+        ) : (
+          <Image src={"/assets/images/noItems.png"} alt="아이템이 없다" fill />
         )}
       </div>
     </div>

@@ -4,6 +4,7 @@ interface StateCardProps {
   currentTime: Date;
   auctionEndTime: Date;
   stateHandler: (state: string) => void;
+  isPre?: boolean;
 }
 
 interface TimeLeft {
@@ -17,6 +18,7 @@ const AuctionCountDown: React.FC<StateCardProps> = ({
   auctionEndTime,
   stateHandler,
   currentTime,
+  isPre = false,
 }) => {
   const [nowtime, setNowtime] = useState(new Date(currentTime));
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -66,9 +68,9 @@ const AuctionCountDown: React.FC<StateCardProps> = ({
 
   let statusMessage;
   if (nowtime < endTime) {
-    statusMessage = "경매종료";
+    isPre ? (statusMessage = "경매시작") : (statusMessage = "경매종료");
   } else {
-    statusMessage = "경매마감";
+    isPre ? (statusMessage = "경매중") : (statusMessage = "마감");
   }
 
   return (
@@ -78,7 +80,7 @@ const AuctionCountDown: React.FC<StateCardProps> = ({
           "pr-2",
           statusMessage == "경매마감"
             ? "text-red-500"
-            : statusMessage == "경매종료"
+            : statusMessage == "경매종료" || "경매시작"
             ? "text-customBlue"
             : "text-black"
         )}

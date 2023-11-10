@@ -42,12 +42,7 @@ const PreAuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
     router.push(`/detail/auction/${pk}`);
   };
   return (
-    <div
-      onClick={() => {
-        EnterDetail(item.auctionPk);
-      }}
-      className="hover:cursor-pointer overflow-hidden h-full rounded-lg shadow-lg bg-white hover:border-sky-500 hover:ring-8 hover:ring-sky-200 hover:ring-opacity-100"
-    >
+    <div className=" overflow-hidden h-full rounded-lg shadow-lg bg-white hover:border-sky-500 hover:ring-8 hover:ring-sky-200 hover:ring-opacity-100">
       <div className=" overflow-hidden h-full rounded-lg shadow-lg bg-white hover:border-sky-500 hover:ring-8 hover:ring-sky-200 hover:ring-opacity-100">
         <div className="h-1/2 relative">
           <Image
@@ -57,6 +52,9 @@ const PreAuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
             objectFit="cover"
             objectPosition="center"
             className="cursor-pointer transition-transform transform duration-300 hover:scale-110"
+            onClick={() => {
+              EnterDetail(item.auctionPk);
+            }}
           />
           <div className="absolute top-2 right-2">
             <LikeBtn isLiked={isLiked} likeHandler={likeHandler} />
@@ -98,6 +96,7 @@ const PreAuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
               currentTime={nowTime!}
               auctionEndTime={item.auctionStartTime}
               stateHandler={auctionStateHandler}
+              isPre={true}
             />
           </div>
         </div>
