@@ -56,4 +56,6 @@ public class MypageItemsResponse {
 	private String mycity;
 	private String zipcode;
 	private String street;
+	private String ownerNicknname;
+	private Boolean isLike;
 }
