@@ -198,7 +198,7 @@ public class FCMService {
 			.orElseThrow(() -> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
 
 		Map<String, String> data = new HashMap<>();
-		data.put("auctionUUID", auction.getAuctionUUID());
+		data.put("prodPk", String.valueOf(auction.getId()));
 		data.put("status","역경매");
 
 		Notification notification = Notification.builder()
