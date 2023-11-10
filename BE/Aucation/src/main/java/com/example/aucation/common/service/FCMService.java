@@ -1,6 +1,5 @@
 package com.example.aucation.common.service;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +12,8 @@ import com.example.aucation.auction.db.entity.AuctionStatus;
 import com.example.aucation.auction.db.repository.AuctionRepository;
 import com.example.aucation.common.error.ApplicationError;
 import com.example.aucation.common.error.NotFoundException;
+import com.example.aucation.discount.db.entity.Discount;
+import com.example.aucation.discount.db.repository.DiscountRepository;
 import com.example.aucation.like.db.entity.LikeAuction;
 import com.example.aucation.like.db.repository.LikeAuctionRepository;
 import com.example.aucation.member.api.dto.FCMTokenReq;
@@ -35,6 +36,8 @@ public class FCMService {
 
 	private final AuctionRepository auctionRepository;
 
+	private final DiscountRepository discountRepository;
+
 	private final LikeAuctionRepository likeAuctionRepository;
 
 	private final FirebaseMessaging firebaseMessaging;
@@ -48,10 +51,16 @@ public class FCMService {
 	private static final String HIGH_ALRAM_TITLE = " 의 최고 경매자 바뀜";
 
 	private static final String HIGH_ALRAM_BODY = "최고 경매자가 나타났습니다 경매를 다시하여 상품을 가지세요";
+
+	private static final String END_ALRAM_TITLE = "낙찰완료 ! ";
+
+	private static final String END_ALRAM_BODY = "판매자 혹은 구매자와 채팅을 통해 대화를 시작하세요";
+
 	@Transactional
 	public FCMTokenRes saveToken(long memberPk, FCMTokenReq fcmTokenReq) {
 
-		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+		Member member = memberRepository.findById(memberPk)
+			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 
 		member.updateFCMToken(fcmTokenReq.getToken());
 
@@ -62,20 +71,21 @@ public class FCMService {
 	@Transactional
 	public void setAucAlram(String auctionUUID) throws FirebaseMessagingException {
 		//UUID로 auction 검색
-		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID).orElseThrow(()-> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
+		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID)
+			.orElseThrow(() -> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
 		//auctionPK로 좋아요 테이블 검색
 		List<LikeAuction> likeAuctions = likeAuctionRepository.findByAuctionId(auction.getId());
 
-		if(likeAuctions==null){
+		if (likeAuctions == null) {
 			return;
 		}
 		//각 해당하는 사람들한테 메세지 전송
-		for (LikeAuction likeAlram: likeAuctions) {
+		for (LikeAuction likeAlram : likeAuctions) {
 			Map<String, String> data = new HashMap<>();
 			data.put("auctionUUID", auction.getAuctionUUID());
 			Notification notification = Notification.builder()
 				.setTitle(ALRAM_TITLE)
-				.setBody(auction.getAuctionTitle()+ ALRAM_BODY)
+				.setBody(auction.getAuctionTitle() + ALRAM_BODY)
 				.build();
 
 			com.google.firebase.messaging.Message message = com.google.firebase.messaging.Message.builder()
@@ -87,20 +97,19 @@ public class FCMService {
 			firebaseMessaging.send(message);
 		}
 
-
-
 	}
 
 	@Transactional
 	public void setAucHighAlram(Member secondUser, String auctionUUID) throws FirebaseMessagingException {
 
-		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID).orElseThrow(()-> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
+		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID)
+			.orElseThrow(() -> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
 
 		Map<String, String> data = new HashMap<>();
 		data.put("auctionUUID", auctionUUID);
 		Notification notification = Notification.builder()
-			.setTitle(auction.getAuctionTitle()+ALRAM_TITLE)
-			.setBody(auction.getAuctionTitle() + ALRAM_BODY)
+			.setTitle(auction.getAuctionTitle() + HIGH_ALRAM_TITLE)
+			.setBody(auction.getAuctionTitle() + HIGH_ALRAM_BODY)
 			.build();
 
 		com.google.firebase.messaging.Message message = com.google.firebase.messaging.Message.builder()
@@ -111,5 +120,65 @@ public class FCMService {
 
 		firebaseMessaging.send(message);
 
+	}
+
+	@Transactional
+	public void setAucEndAlarm(String auctionUUID, Long memberPk) throws FirebaseMessagingException {
+
+		Member member = memberRepository.findById(memberPk)
+			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+
+		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID)
+			.orElseThrow(() -> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
+		String auctionStatus = "";
+		if (auction.getAuctionStatus().equals(AuctionStatus.BID)) {
+			auctionStatus = "경매";
+		} else if (auction.getAuctionStatus().equals(AuctionStatus.REVERSE_BID)) {
+			auctionStatus = "역경매";
+		}
+		Map<String, String> data = new HashMap<>();
+		data.put("auctionUUID", auctionUUID);
+		data.put("memberPK", String.valueOf(member.getId()));
+		data.put("auctionStatus", auctionStatus);
+		Notification notification = Notification.builder()
+			.setTitle(auction.getAuctionTitle() + END_ALRAM_TITLE)
+			.setBody(END_ALRAM_BODY)
+			.build();
+
+		com.google.firebase.messaging.Message message = com.google.firebase.messaging.Message.builder()
+			.setToken(member.getMemberFCMToken())
+			.setNotification(notification)
+			.putAllData(data)
+			.build();
+
+		firebaseMessaging.send(message);
+
+	}
+
+	public void setDisAucAlarm(String discountUUID, Long memberPk) throws FirebaseMessagingException {
+
+		Member member = memberRepository.findById(memberPk)
+			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+
+		Discount discount = discountRepository.findByDiscountUUID(discountUUID)
+			.orElseThrow(() -> new NotFoundException(ApplicationError.DISCOUNT_NOT_FOUND));
+		String discountStatus = "할인";
+		Map<String, String> data = new HashMap<>();
+		data.put("discountUUID", discountUUID);
+		data.put("memberPK", String.valueOf(member.getId()));
+		data.put("discountStatus", discountStatus);
+
+		Notification notification = Notification.builder()
+			.setTitle(discount.getDiscountTitle() + END_ALRAM_TITLE)
+			.setBody(END_ALRAM_BODY)
+			.build();
+
+		com.google.firebase.messaging.Message message = com.google.firebase.messaging.Message.builder()
+			.setToken(member.getMemberFCMToken())
+			.setNotification(notification)
+			.putAllData(data)
+			.build();
+
+		firebaseMessaging.send(message);
 	}
 }

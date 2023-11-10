@@ -20,4 +20,8 @@ public class MyLikeItemsResponse {
 	private HistoryStatus historyStatus;
 	private LocalDateTime likeDateTime;
 	private String imgfile;
+
+	private String mycity;
+	private String zipcode;
+	private String street;
 }

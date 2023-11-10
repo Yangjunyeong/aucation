@@ -24,6 +24,6 @@ public interface DiscountRepository extends JpaRepository<Discount,Long>, Discou
 	DiscountListResponse searchListByCondition(
 		Member member, int pageNum, DiscountSortRequest sortRequest, Pageable pageable);
 
-	List<DiscountListResponseItem> searchDiscountToMainPage(Long memberPk);
+	List<DiscountListResponseItem> searchDiscountToMainPage(Long memberPk,Member member);
 
 }

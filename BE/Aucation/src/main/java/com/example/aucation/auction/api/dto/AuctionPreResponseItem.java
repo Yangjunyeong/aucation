@@ -15,4 +15,7 @@ public class AuctionPreResponseItem{
     private String auctionOwnerNickname; //
     private LocalDateTime auctionStartTime;  //
     private String auctionImg;  //
+    private String mycity;
+    private String zipcode;
+    private String street;
 }

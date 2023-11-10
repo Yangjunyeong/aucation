@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.example.aucation.common.dto.StreetResponse;
+import com.example.aucation.common.service.CommonService;
+import com.example.aucation.common.service.FCMService;
 import com.example.aucation.discount.api.dto.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,9 +34,11 @@ import com.example.aucation.disphoto.db.entity.DisPhoto;
 import com.example.aucation.like.db.entity.LikeAuction;
 import com.example.aucation.like.db.entity.LikeDiscount;
 import com.example.aucation.like.db.repository.LikeDiscountRepository;
+import com.example.aucation.member.db.entity.Address;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.member.db.entity.Role;
 import com.example.aucation.member.db.repository.MemberRepository;
+import com.google.firebase.messaging.FirebaseMessagingException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +57,10 @@ public class DiscountService {
 	private final DiscountHistoryRepository discountHistoryRepository;
 
 	private final LikeDiscountRepository likeDiscountRepository;
+
+	private final FCMService fcmService;
+
+	private final CommonService commonService;
 
 	private static final String SUCCESS_REGISTER_MESSAGE = "할인 상품이 등록되었습니다.";
 
@@ -89,6 +98,7 @@ public class DiscountService {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSS");
 		LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
 
+		Address address = setMemberAddress(discountRequest.getDiscountLng(), discountRequest.getDiscountLng());
 		// 할인상품 등록
 		Discount discount = Discount.builder()
 			.discountType(discountRequest.getDiscountType())
@@ -98,6 +108,7 @@ public class DiscountService {
 			.discountDiscountedPrice(discountRequest.getDiscountDiscountedPrice())
 			.discountStart(LocalDateTime.now())
 			.discountEnd(dateTime)
+			.address(address)
 			.discountTitle(discountRequest.getDiscountTitle())
 			.discountPrice(discountRequest.getDiscountPrice())
 			.discountUUID(discountUUID)
@@ -109,6 +120,15 @@ public class DiscountService {
 
 		// 메세지 반환
 		return DiscountResponse.builder().message(SUCCESS_REGISTER_MESSAGE).discountUUID(discountUUID).build();
+	}
+
+	private Address setMemberAddress(double discountLng, double discountLat) {
+		StreetResponse streetResponse = commonService.findstreet(discountLng, discountLat);
+		return Address.builder()
+			.city(streetResponse.getCity())
+			.zipcode(streetResponse.getZipcode())
+			.street(streetResponse.getStreet())
+			.build();
 	}
 
 	private void isdiscountedPirce(int originalPrice, int discountedPrice) {
@@ -146,7 +166,7 @@ public class DiscountService {
 	}
 
 	@Transactional
-	public PurchaseResponse purchase(Long memberPk, String discountUUID) {
+	public PurchaseResponse purchase(Long memberPk, String discountUUID) throws FirebaseMessagingException {
 
 		Member member = memberRepository.findById(memberPk)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
@@ -168,6 +188,8 @@ public class DiscountService {
 			.historyStatus(HistoryStatus.BEFORE_CONFIRM)
 			.build();
 		discountHistoryRepository.save(discountHistory);
+
+		fcmService.setDisAucAlarm(discount.getDiscountUUID(),discount.getOwner().getId());
 
 		return PurchaseResponse.builder().message(SUCCESS_PURCHASE_MESSAGE).build();
 	}
@@ -258,7 +280,10 @@ public class DiscountService {
 	}
 
     public List<DiscountListResponseItem> getDiscountToMainPage(Long memberPk) {
-		List<DiscountListResponseItem> response = discountRepository.searchDiscountToMainPage(memberPk);
+
+		Member member = memberRepository.findById(memberPk).orElseThrow(()->new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+
+		List<DiscountListResponseItem> response = discountRepository.searchDiscountToMainPage(memberPk,member);
 		return response;
     }
 }

@@ -8,6 +8,7 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -16,6 +17,7 @@ import javax.persistence.OneToMany;
 
 import com.example.aucation.common.entity.BaseEntity;
 import com.example.aucation.like.db.entity.LikeDiscount;
+import com.example.aucation.member.db.entity.Address;
 import com.example.aucation.member.db.entity.Member;
 
 import lombok.AccessLevel;
@@ -47,6 +49,9 @@ public class Discount extends BaseEntity {
 	private String discountUUID;
 	private int discountRate;
 
+	@Embedded
+	private Address address;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
 	private Member owner;
@@ -62,7 +67,7 @@ public class Discount extends BaseEntity {
 	public Discount(Long id, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModifiedAt, Long lastModifiedBy,
 		boolean isDeleted, String discountTitle, String discountType, double discountLng, double discountLat,
 		LocalDateTime discountStart, LocalDateTime discountEnd, int discountPrice, String discountDetail,
-		int discountDiscountedPrice, String discountImgURL, String discountUUID, int discountRate, Member owner) {
+		int discountDiscountedPrice, String discountImgURL, String discountUUID, int discountRate, Member owner, Address address) {
 		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
 		this.discountTitle = discountTitle;
 		this.discountType = discountType;
@@ -76,6 +81,7 @@ public class Discount extends BaseEntity {
 		this.discountImgURL = discountImgURL;
 		this.discountUUID = discountUUID;
 		this.discountRate = discountRate;
+		this.address =address;
 		addMember(owner);
 	}
 

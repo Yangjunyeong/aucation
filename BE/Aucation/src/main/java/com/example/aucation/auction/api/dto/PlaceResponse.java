@@ -3,6 +3,9 @@ package com.example.aucation.auction.api.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.example.aucation.auction.db.entity.Auction;
+import com.example.aucation.member.db.entity.Address;
+import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.member.db.entity.Role;
 
 import lombok.Builder;
@@ -11,6 +14,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 public class PlaceResponse {
 
 	private long memberPk;
@@ -29,26 +33,26 @@ public class PlaceResponse {
 	private int headCnt;
 	private boolean highBid;
 	private String myNickname;
+	private Address address;
 
-	@Builder
-	public PlaceResponse(long memberPk, int memberPoint, String title, String detail, String ownerNickname,
-		List<String> picture, String ownerPicture, long ownerPk, Role ownerType, int nowPrice, int askPrice,
-		LocalDateTime enterTime, LocalDateTime endTime, int headCnt, boolean highBid, String myNickname) {
-		this.memberPk = memberPk;
-		this.memberPoint = memberPoint;
-		this.title = title;
-		this.detail = detail;
-		this.ownerNickname = ownerNickname;
-		this.picture = picture;
-		this.ownerPicture = ownerPicture;
-		this.ownerPk = ownerPk;
-		this.ownerType = ownerType;
-		this.nowPrice = nowPrice;
-		this.askPrice = askPrice;
-		this.enterTime = enterTime;
-		this.endTime = endTime;
-		this.headCnt = headCnt;
-		this.highBid = highBid;
-		this.myNickname = myNickname;
-	}
+	// public PlaceResponse(long memberPk, int memberPoint, String title, String detail, String ownerNickname,
+	// 	List<String> picture, String ownerPicture, long ownerPk, Role ownerType, int nowPrice, int askPrice,
+	// 	LocalDateTime enterTime, LocalDateTime endTime, int headCnt, boolean highBid, String myNickname) {
+	// 	this.memberPk = memberPk;
+	// 	this.memberPoint = memberPoint;
+	// 	this.title = title;
+	// 	this.detail = detail;
+	// 	this.ownerNickname = ownerNickname;
+	// 	this.picture = picture;
+	// 	this.ownerPicture = ownerPicture;
+	// 	this.ownerPk = ownerPk;
+	// 	this.ownerType = ownerType;
+	// 	this.nowPrice = nowPrice;
+	// 	this.askPrice = askPrice;
+	// 	this.enterTime = enterTime;
+	// 	this.endTime = endTime;
+	// 	this.headCnt = headCnt;
+	// 	this.highBid = highBid;
+	// 	this.myNickname = myNickname;
+	// }
 }

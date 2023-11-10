@@ -1,4 +1,4 @@
-package com.example.aucation.member.api.dto;
+package com.example.aucation.common.dto;
 
 import org.springframework.stereotype.Service;
 

@@ -12,11 +12,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3Client;
@@ -26,9 +24,11 @@ import com.example.aucation.auction.api.dto.AuctionIngResponseItem;
 import com.example.aucation.auction.api.dto.ReAuctionResponseItem;
 import com.example.aucation.auction.api.service.AuctionService;
 import com.example.aucation.common.dto.EmailResponse;
+import com.example.aucation.common.dto.StreetResponse;
 import com.example.aucation.common.error.ApplicationError;
 import com.example.aucation.common.error.DuplicateException;
 import com.example.aucation.common.error.NotFoundException;
+import com.example.aucation.common.service.CommonService;
 import com.example.aucation.common.service.RegisterMail;
 import com.example.aucation.discount.api.dto.DiscountListResponseItem;
 import com.example.aucation.discount.api.service.DiscountService;
@@ -45,13 +45,11 @@ import com.example.aucation.member.api.dto.MypageResponse;
 import com.example.aucation.member.api.dto.NicknameRequest;
 import com.example.aucation.member.api.dto.NicknameResponse;
 import com.example.aucation.member.api.dto.SignupRequest;
-import com.example.aucation.member.api.dto.StreetRequest;
-import com.example.aucation.member.api.dto.StreetResponse;
+import com.example.aucation.member.db.entity.Address;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.member.db.entity.Role;
 import com.example.aucation.member.db.entity.SocialType;
 import com.example.aucation.member.db.repository.MemberRepository;
-import com.example.aucation.photo.api.service.PhotoService;
 import com.example.aucation.reauction.api.service.ReAuctionService;
 
 import lombok.RequiredArgsConstructor;
@@ -65,22 +63,21 @@ public class MemberService {
 	private final PasswordEncoder passwordEncoder;
 
 	private final MemberRepository memberRepository;
+
 	private final AuctionService auctionService;
+
 	private final DiscountService discountService;
+
 	private final ReAuctionService reAuctionService;
+
 	private final RegisterMail registerMail;
 
-	private final PhotoService photoService;
+	private final CommonService commonService;
 	private final int COUNT_IN_PAGE = 5;
 
 	private final String dirName = "profile";
 
 	private final AmazonS3Client amazonS3Client;
-
-	private final String apikey = "641818b805857c5d7f1d3a8885668274";
-
-	private final String kakaoApiUrl = "https://dapi.kakao.com/v2/local/geo/coord2address.json";
-
 
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
@@ -91,12 +88,16 @@ public class MemberService {
 		validateMemberId(signupRequest.getMemberId());
 		validateMemberEmail(signupRequest.getMemberEmail());
 		verifynick(signupRequest.getMemberNickname());
+
+		Address address = setMemberAddress(signupRequest.getMemberLng(), signupRequest.getMemberLat());
+
 		Member member = Member.builder()
 			.memberId(signupRequest.getMemberId())
 			.memberPw(passwordEncoder.encode(signupRequest.getMemberPw()))
 			.memberEmail(signupRequest.getMemberEmail())
 			.memberNickname(signupRequest.getMemberNickname())
 			.memberRole(Role.COMMON)
+			.address(address)
 			.imageURL(DEFAULT_IMAGE_URL)
 			.socialType(SocialType.NORMAL)
 			.build();
@@ -253,6 +254,15 @@ public class MemberService {
 			.hotAuctions(hotAuctions)
 			.discounts(discounts)
 			.recentAuctions(recentAuctions)
+			.build();
+	}
+
+	private Address setMemberAddress(double memberLng, double memberLat) {
+		StreetResponse streetResponse = commonService.findstreet(memberLng, memberLat);
+		return Address.builder()
+			.city(streetResponse.getCity())
+			.zipcode(streetResponse.getZipcode())
+			.street(streetResponse.getStreet())
 			.build();
 	}
 }

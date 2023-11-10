@@ -1,4 +1,4 @@
-package com.example.aucation.member.api.dto;
+package com.example.aucation.common.dto;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +10,6 @@ import lombok.Setter;
 public class StreetResponse {
 
 	private String city;
-	private String zip;
 	private String street;
-
+	private String zipcode;
 }
