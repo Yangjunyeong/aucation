@@ -66,6 +66,7 @@ public enum ApplicationError {
     DISCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "D001", "없는 할인제품입니다."),
     DISCOUNT_HISTORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "D002", "할인판매 거래 내역이 존재하지 않습니다."),
 
+    INVALID_REDIS_KEY(HttpStatus.BAD_REQUEST, "R001", "유효하지 않은 Redis key입니다."),
 
 
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S001", "서버 내부 에러가 발생했습니다."),

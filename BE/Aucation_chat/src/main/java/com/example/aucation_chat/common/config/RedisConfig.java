@@ -11,17 +11,23 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import com.example.aucation_chat.common.redis.dto.RedisChatMessage;
+import com.example.aucation_chat.common.redis.pubsub.RedisSubscriber;
+import com.example.aucation_chat.common.redis.util.RedisKeyExpiredListener;
 
 import io.lettuce.core.ReadFrom;
 import io.lettuce.core.cluster.ClusterClientOptions;
 import io.lettuce.core.cluster.ClusterTopologyRefreshOptions;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
+@Slf4j
 public class RedisConfig {
 	// @Value("${spring.redis.host}")
 	// private String host;
@@ -89,9 +95,22 @@ public class RedisConfig {
 	}
 
 	@Bean
-	public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory) {
+	public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory,
+		RedisSubscriber redisSubscriber,
+		RedisKeyExpiredListener redisKeyExpiredListener) {
 		RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
 		redisMessageListenerContainer.setConnectionFactory(redisConnectionFactory);
+
+		// PUB/SUB 이벤트를 처리하는 리스너 등록
+		// redisMessageListenerContainer.addMessageListener(redisSubscriber, new PatternTopic("__key*__:*"));
+
+		// key expiration 이벤트를 처리하는 리스너 등록
+		redisMessageListenerContainer.addMessageListener(redisKeyExpiredListener,
+			new PatternTopic("__keyevent@*__:expired"));
+
+		redisMessageListenerContainer.setErrorHandler(
+			e -> log.error("There was an error in redis key expiration listener container", e));
+
 		return redisMessageListenerContainer;
 	}
 }
