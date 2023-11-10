@@ -120,6 +120,9 @@ public class ReAuctionService {
         reAucBidPhotoService.upload(multipartFiles,reAuctionBid.getId());
         log.info("********************** 역경매 입찰 사진 저장 성공, 사진 수 = {}", multipartFiles.size());
         log.info("********************** bidReAuction end");
+
+        fcmService.setReAucAlram(auction.getId(),auction.getOwner().getId());
+
         return OwnReAucBidResponse.builder()
                 .reAuctionPk(auction.getId())
                 .reAuctionTitle(auction.getAuctionTitle())

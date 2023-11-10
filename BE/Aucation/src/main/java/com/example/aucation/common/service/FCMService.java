@@ -56,6 +56,11 @@ public class FCMService {
 
 	private static final String END_ALRAM_BODY = "판매자 혹은 구매자와 채팅을 통해 대화를 시작하세요";
 
+	private static final String REAUCTION_ALRAM_TITLE = "역경매 입찰자가 새로 등장하였습니다! ";
+
+	private static final String REAUCTION_ALRAM_BODY = "해당 금액에 물건을 사실 경우, 알람을 눌러 구매 확정을 지어주세요";
+
+
 	@Transactional
 	public FCMTokenRes saveToken(long memberPk, FCMTokenReq fcmTokenReq) {
 
@@ -100,13 +105,73 @@ public class FCMService {
 	}
 
 	@Transactional
+	public void setAucEndAlarm(String auctionUUID, Long memberPk) throws FirebaseMessagingException {
+
+		Member member = memberRepository.findById(memberPk)
+			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+
+		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID)
+			.orElseThrow(() -> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
+		String auctionStatus = "";
+		if (auction.getAuctionStatus().equals(AuctionStatus.BID)) {
+			auctionStatus = "경매";
+		} else if (auction.getAuctionStatus().equals(AuctionStatus.REVERSE_BID)) {
+			auctionStatus = "역경매";
+		}
+		Map<String, String> data = new HashMap<>();
+		data.put("prodPk", String.valueOf(auction.getId()));
+		data.put("status", auctionStatus);
+		Notification notification = Notification.builder()
+			.setTitle(auction.getAuctionTitle() + END_ALRAM_TITLE)
+			.setBody(END_ALRAM_BODY)
+			.build();
+
+		com.google.firebase.messaging.Message message = com.google.firebase.messaging.Message.builder()
+			.setToken(member.getMemberFCMToken())
+			.setNotification(notification)
+			.putAllData(data)
+			.build();
+
+		firebaseMessaging.send(message);
+
+	}
+
+	@Transactional
+	public void setDisAucAlarm(String discountUUID, Long memberPk) throws FirebaseMessagingException {
+
+		Member member = memberRepository.findById(memberPk)
+			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+
+		Discount discount = discountRepository.findByDiscountUUID(discountUUID)
+			.orElseThrow(() -> new NotFoundException(ApplicationError.DISCOUNT_NOT_FOUND));
+		String discountStatus = "할인";
+		Map<String, String> data = new HashMap<>();
+		data.put("prodPk", String.valueOf(discount.getId()));
+		data.put("status", discountStatus);
+
+		Notification notification = Notification.builder()
+			.setTitle(discount.getDiscountTitle() + END_ALRAM_TITLE)
+			.setBody(END_ALRAM_BODY)
+			.build();
+
+		com.google.firebase.messaging.Message message = com.google.firebase.messaging.Message.builder()
+			.setToken(member.getMemberFCMToken())
+			.setNotification(notification)
+			.putAllData(data)
+			.build();
+
+		firebaseMessaging.send(message);
+	}
+
+	@Transactional
 	public void setAucHighAlram(Member secondUser, String auctionUUID) throws FirebaseMessagingException {
 
 		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
 
 		Map<String, String> data = new HashMap<>();
-		data.put("auctionUUID", auctionUUID);
+		data.put("prodPk", String.valueOf(auction.getId()));
+		data.put("status","경매");
 		Notification notification = Notification.builder()
 			.setTitle(auction.getAuctionTitle() + HIGH_ALRAM_TITLE)
 			.setBody(auction.getAuctionTitle() + HIGH_ALRAM_BODY)
@@ -123,26 +188,21 @@ public class FCMService {
 	}
 
 	@Transactional
-	public void setAucEndAlarm(String auctionUUID, Long memberPk) throws FirebaseMessagingException {
+	public void setReAucAlram(Long auctionId, Long memberPk) throws FirebaseMessagingException {
 
 		Member member = memberRepository.findById(memberPk)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 
-		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID)
+		Auction auction = auctionRepository.findById(auctionId)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
-		String auctionStatus = "";
-		if (auction.getAuctionStatus().equals(AuctionStatus.BID)) {
-			auctionStatus = "경매";
-		} else if (auction.getAuctionStatus().equals(AuctionStatus.REVERSE_BID)) {
-			auctionStatus = "역경매";
-		}
+
 		Map<String, String> data = new HashMap<>();
-		data.put("auctionUUID", auctionUUID);
-		data.put("memberPK", String.valueOf(member.getId()));
-		data.put("auctionStatus", auctionStatus);
+		data.put("auctionUUID", auction.getAuctionUUID());
+		data.put("status","역경매");
+
 		Notification notification = Notification.builder()
-			.setTitle(auction.getAuctionTitle() + END_ALRAM_TITLE)
-			.setBody(END_ALRAM_BODY)
+			.setTitle(auction.getAuctionTitle()+": "+REAUCTION_ALRAM_TITLE)
+			.setBody(auction.getAuctionTitle()+": "+REAUCTION_ALRAM_BODY)
 			.build();
 
 		com.google.firebase.messaging.Message message = com.google.firebase.messaging.Message.builder()
@@ -153,32 +213,6 @@ public class FCMService {
 
 		firebaseMessaging.send(message);
 
-	}
 
-	public void setDisAucAlarm(String discountUUID, Long memberPk) throws FirebaseMessagingException {
-
-		Member member = memberRepository.findById(memberPk)
-			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
-
-		Discount discount = discountRepository.findByDiscountUUID(discountUUID)
-			.orElseThrow(() -> new NotFoundException(ApplicationError.DISCOUNT_NOT_FOUND));
-		String discountStatus = "할인";
-		Map<String, String> data = new HashMap<>();
-		data.put("discountUUID", discountUUID);
-		data.put("memberPK", String.valueOf(member.getId()));
-		data.put("discountStatus", discountStatus);
-
-		Notification notification = Notification.builder()
-			.setTitle(discount.getDiscountTitle() + END_ALRAM_TITLE)
-			.setBody(END_ALRAM_BODY)
-			.build();
-
-		com.google.firebase.messaging.Message message = com.google.firebase.messaging.Message.builder()
-			.setToken(member.getMemberFCMToken())
-			.setNotification(notification)
-			.putAllData(data)
-			.build();
-
-		firebaseMessaging.send(message);
 	}
 }
