@@ -169,9 +169,9 @@ const Panmae = () => {
       imagefiles.forEach((image, index) => {
         formData.append("multipartFiles", image);
       });
-      formData.forEach((key,value) => {
-        console.log(key,value)
-      })
+      formData.forEach((key, value) => {
+        console.log(key, value);
+      });
       callApi("post", "/discount/register", formData)
         .then(res => {
           console.log(res);

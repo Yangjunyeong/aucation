@@ -65,7 +65,7 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime, type = "auction" 
     }
   };
   return (
-    <div className=" overflow-hidden h-full rounded-lg shadow-lg bg-white hover:border-sky-500 hover:ring-8 hover:ring-sky-200 hover:ring-opacity-100">
+    <div className=" overflow-hidden h-full w-full rounded-lg shadow-lg bg-white hover:border-sky-500 hover:ring-8 hover:ring-sky-200 hover:ring-opacity-100">
       <div className="h-1/2 relative">
         <Image
           onClick={() => {

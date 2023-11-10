@@ -128,7 +128,7 @@ const AuctionList = ({ params }: { params: PageParams }) => {
         ))}
       </div>
 
-      <div className="flex flex-row h-[75px] items-center justify-between">
+      <div className="flex flex-row h-[75px] items-center justify-between mb-7">
         <div className="flex flex-row space-x-8">
           <DropdownButton
             options={localCategoryList}

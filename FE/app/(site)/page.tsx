@@ -9,14 +9,16 @@ import PopularBidList from "./components/PopularBidList";
 import MainFloor from "./components/MainFloor";
 import { HomePageData } from "../components/Card/cardType";
 import { callApi } from "../utils/api";
-import ClipLoader from "react-spinners/ClipLoader";
+
+import { AuctionData, ReverseAuctionData, DiscountData } from "../components/Card/cardType";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<HomePageData>({
-    hotAuction: [],
+    nowTime: null,
+    hotAuctions: [],
     discounts: [],
-    recentAutions: [],
+    recentAuctions: [],
   });
 
   const callHomePageData = () => {
@@ -36,26 +38,44 @@ export default function Home() {
 
   useEffect(() => {
     callHomePageData();
-  });
+  }, []);
 
   return (
     <main className="px-48">
       <div>
         <Banner />
       </div>
-      <div>
-        <PopularBidList title={"🔥 현재 인기 경매"} />
-      </div>
-      <div>
+      <div className="h-[800px]">
         <PopularBidList
-          title={"🛒 역경매 상품"}
-          className={"bg-customBgLightBlue"}
-          moreShow={true}
-          goUrl={"reverse-auction"}
+          title={"🔥 현재 인기 경매"}
+          type={"hotAution"}
+          item={data.hotAuctions}
+          nowTime={data.nowTime}
+          isLoading={isLoading}
         />
       </div>
       <div>
-        <PopularBidList title={"📢 현재 경매중인 상품"} moreShow={true} goUrl={"holding"} />
+        <PopularBidList
+          title={"📢 역경매 상품"}
+          className={"bg-customBgLightBlue"}
+          moreShow={true}
+          goUrl={"reverse-auction"}
+          type={"reverseAution"}
+          item={data.recentAuctions}
+          nowTime={data.nowTime}
+          isLoading={isLoading}
+        />
+      </div>
+      <div>
+        <PopularBidList
+          title={"🛒 소상공인 할인제품"}
+          moreShow={true}
+          goUrl={"holding"}
+          type={"discounts"}
+          item={data.discounts}
+          nowTime={data.nowTime}
+          isLoading={isLoading}
+        />
       </div>
       <div>
         <MainFloor />
