@@ -10,18 +10,18 @@ import SearchInput from "../components/SearchInput";
 import { callApi } from "../../utils/api";
 import Pagination from "react-js-pagination";
 import "../components/Paging.css";
-import { AuctionData, AuctionItem } from "../../utils/cardType";
+import { ReverseAuctionData } from "../../components/Card/cardType";
 import AuctionListCard from "../../components/Card/AutionListCard";
 import dummyData from "../components/dummyData";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import PacmanLoader from "react-spinners/PacmanLoader";
+import ClipLoader from "react-spinners/ClipLoader";
 
 type PageParams = {
   headerTap: string;
 };
 
-const AuctionList = ({ params }: { params: PageParams }) => {
+const ReverseAuctionList = ({ params }: { params: PageParams }) => {
   const router = useRouter();
   const [selectedTap, setSelectedTap] = useState("삽니다"); // 상단 탭, 경매 유형
   const [selectedCategory, setSelectedCategory] = useState<string>("전체"); // 카테고리
@@ -33,15 +33,12 @@ const AuctionList = ({ params }: { params: PageParams }) => {
   }); // 정렬기준
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [pageNumber, setPageNumber] = useState<number>(1);
-  const [data, setData] = useState<AuctionData>({
+  const [data, setData] = useState<ReverseAuctionData>({
     nowTime: null, // 현재 시간
     currentPage: 0, // 현재 페이지
     totalPage: 0, // 총 페이지
-    ingItems: [], // 경매 아이템 목록
+    reItems: [], // 경매 아이템 목록
   });
-  const [totalItemsCount, setTotalItemsCount] = useState(0); // 전체 아이템 수
-
-  const tmp = new Date();
 
   const tapList = ["경매중", "경매전", "삽니다"];
   const localCategoryList = ["전체", ...CategoryNameList];
@@ -89,20 +86,21 @@ const AuctionList = ({ params }: { params: PageParams }) => {
       searchKeyword: searchKeyword,
     };
     console.log(searchFilters);
-    callApi("post", `/auction/list/pre/${pageNumber}`, searchFilters)
+    callApi("post", `/auction/list/reAuc/${pageNumber}`, searchFilters)
       .then(response => {
         console.log("데이터", response.data);
         setData(response.data);
       })
 
       .catch(error => {
-        console.log(searchFilters);
+        console.log("실패한 데이터", searchFilters);
         console.log("데이터", error);
       })
       .finally(() => {
         setIsLoading(false); // 데이터 로딩 완료
       });
-  }, [selectedCategory, selectedOrderType.id, searchType.id, searchKeyword, pageNumber]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory, selectedOrderType.id, pageNumber]);
 
   useEffect(() => {
     fetchAuctionData();
@@ -168,13 +166,13 @@ const AuctionList = ({ params }: { params: PageParams }) => {
         ))} */}
       {isLoading ? (
         <div className="flex justify-center items-center">
-          <PacmanLoader color="#247eff" size={150} speedMultiplier={1} />
+          <ClipLoader color="#247eff" size={150} speedMultiplier={1} />
         </div>
-      ) : data.ingItems.length > 0 ? (
+      ) : data.reItems.length > 0 ? (
         <div className="grid grid-cols-5 gap-x-6 gap-y-10">
-          {data.ingItems.map(item => (
-            <div key={item.auctionPk} className="shadow-lg h-[450px] rounded-lg">
-              <AuctionListCard item={item} nowTime={data.nowTime} />
+          {data.reItems.map(item => (
+            <div key={item.reAuctionPk} className="shadow-lg h-[500px] rounded-lg">
+              <AuctionListCard item={item} nowTime={data.nowTime} type={"reverse"} />
             </div>
           ))}
         </div>
@@ -200,4 +198,4 @@ const AuctionList = ({ params }: { params: PageParams }) => {
   );
 };
 
-export default AuctionList;
+export default ReverseAuctionList;

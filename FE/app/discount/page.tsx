@@ -1,26 +1,23 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import clsx from "clsx";
-import HeaderTap from "./components/HeaderTap";
-import OrderTypeBtn from "./components/OrderTypeBtn";
-import { orderType, searchType } from "./components/type";
-import { CategoryNameList } from "../components/frontData/categoryNameList";
-import DropdownButton from "../components/button/DropDownBtn";
-import SearchInput from "./components/SearchInput";
-import { callApi } from "../utils/api";
+
+import OrderTypeBtn from "@/app/auction/components/OrderTypeBtn";
+import { orderType, searchType } from "@/app/auction/components/type";
+import { CategoryNameList } from "@/app/components/frontData/categoryNameList";
+import DropdownButton from "@/app/components/button/DropDownBtn";
+import SearchInput from "@/app/auction/components/SearchInput";
+import { callApi } from "@/app/utils/api";
 import Pagination from "react-js-pagination";
-import "./components/Paging.css";
-import { AuctionData, AuctionItem } from "../utils/cardType";
-import AuctionListCard from "../components/Card/AutionListCard";
-import dummyData from "./components/dummyData";
+import "@/app/auction/components/Paging.css";
+import { DiscountData } from "@/app/components/Card/cardType";
+import DiscountListCard from "@/app/components/Card/DiscountListCard";
+// import dummyData from "../components/dummyData";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import ClipLoader from "react-spinners/ClipLoader";
 
-type PageParams = {
-  headerTap: string;
-};
-
-const AuctionList = ({ params }: { params: PageParams }) => {
-  const [selectedTap, setSelectedTap] = useState("경매중"); // 상단 탭, 경매 유형
+const DiscountList = () => {
+  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState<string>("전체"); // 카테고리
   const [searchType, setSearchType] = useState<searchType>({ id: 0, typeName: "제목" }); // 검색유형
   const [searchKeyword, setSearchKeyword] = useState<string>(""); // 검색키워드
@@ -28,18 +25,15 @@ const AuctionList = ({ params }: { params: PageParams }) => {
     id: 1,
     typeName: "최신순",
   }); // 정렬기준
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [pageNumber, setPageNumber] = useState<number>(1);
-  const [data, setData] = useState<AuctionData>({
+  const [data, setData] = useState<DiscountData>({
     nowTime: null, // 현재 시간
     currentPage: 0, // 현재 페이지
     totalPage: 0, // 총 페이지
-    ingItems: [], // 경매 아이템 목록
+    items: [], // 경매 아이템 목록
   });
-  const [totalItemsCount, setTotalItemsCount] = useState(0); // 전체 아이템 수
 
-  const tmp = new Date();
-
-  const tapList = ["경매중", "경매전", "삽니다"];
   const localCategoryList = ["전체", ...CategoryNameList];
 
   const orderTypeList: orderType[] = [
@@ -58,11 +52,8 @@ const AuctionList = ({ params }: { params: PageParams }) => {
     console.log(page);
   };
 
-  const headerHandler = (tap: string) => {
-    setSelectedTap(tap);
-  };
-
-  const fetchAuctionData = useCallback(async () => {
+  const fetchAuctionData = useCallback(() => {
+    setIsLoading(true);
     const searchFilters = {
       auctionCatalog: selectedCategory !== "전체" ? selectedCategory : null,
       auctionCondition: selectedOrderType.id,
@@ -70,23 +61,25 @@ const AuctionList = ({ params }: { params: PageParams }) => {
       searchKeyword: searchKeyword,
     };
     console.log(searchFilters);
-    callApi("post", `/auction/list/ing/${pageNumber}`, searchFilters)
+    callApi("post", `/discount/list/${pageNumber}`, searchFilters)
       .then(response => {
-        console.log("데이터", response.data);
+        console.log("데이터 성공", response.data);
         setData(response.data);
       })
 
       .catch(error => {
         console.log(searchFilters);
-        console.log("데이터", error);
+        console.log("데이터 에러", error);
+      })
+      .finally(() => {
+        setIsLoading(false); // 데이터 로딩 완료
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory, selectedOrderType.id, pageNumber]);
 
   useEffect(() => {
     fetchAuctionData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategory, selectedOrderType.id, pageNumber]);
+  }, [fetchAuctionData]);
 
   const handleSearch = (keyword: string) => {
     setSearchKeyword(keyword); // 상태 업데이트
@@ -96,15 +89,7 @@ const AuctionList = ({ params }: { params: PageParams }) => {
   return (
     <div className="px-48 ">
       <div className="flex flex-row space-x-10 h-[100px] items-center">
-        <div className="font-black text-5xl">경매 상품</div>
-        {tapList.map((tap: string, idx) => (
-          <HeaderTap
-            key={idx}
-            tap={tap}
-            selected={tap === selectedTap}
-            headerHandler={headerHandler}
-          />
-        ))}
+        <div className="font-black text-5xl">소상공인 할인제품</div>
       </div>
 
       <div className="flex flex-row h-[75px] items-center justify-between">
@@ -141,31 +126,39 @@ const AuctionList = ({ params }: { params: PageParams }) => {
           <SearchInput searchHandler={handleSearch} setSearchKeyword={setSearchKeyword} />
         </div>
       </div>
-      <div className="grid grid-cols-5 gap-x-6 gap-y-10">
-        {data.ingItems &&
-          data.ingItems.map(item => (
-            <div key={item.auctionPk} className="shadow-lg h-[450px] rounded-lg">
-              <AuctionListCard item={item} nowTime={data.nowTime} />
-            </div>
-          ))}
-        {!data.ingItems && (
-          <Image
-            src={"/assets/images/noResults.png}"}
-            alt="검색 결과가 없어요"
-            width={1536}
-            height={700}
-          />
-        )}
-        {/* {dummyData.map(item => (
+      {/* <div className="grid grid-cols-5 gap-x-6 gap-y-10">
+        {dummyData.map(item => (
           <div key={item.auctionPk} className="shadow-lg h-[450px] rounded-lg">
             <AuctionListCard item={item} nowTime={tmp} />
           </div>
-        ))} */}
-      </div>
+        ))}
+      </div> */}
+
+      {isLoading ? (
+        <div className="flex justify-center items-center">
+          <ClipLoader color="#247eff" size={150} speedMultiplier={1} />
+        </div>
+      ) : data.items.length > 0 ? (
+        <div className="grid grid-cols-5 gap-x-6 gap-y-10">
+          {data.items.map(item => (
+            <div key={item.discountPk} className="shadow-lg h-[500px] rounded-lg">
+              <DiscountListCard item={item} nowTime={data.nowTime} />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <Image
+          src="/assets/images/noResults.png"
+          alt="검색 결과가 없어요"
+          width={1536}
+          height={400} // 여기서 통일된 높이를 사용하세요
+        />
+      )}
+
       <Pagination
         activePage={pageNumber}
         itemsCountPerPage={15}
-        totalItemsCount={450}
+        totalItemsCount={data.totalPage}
         pageRangeDisplayed={5}
         prevPageText={"‹"}
         nextPageText={"›"}
@@ -175,4 +168,4 @@ const AuctionList = ({ params }: { params: PageParams }) => {
   );
 };
 
-export default AuctionList;
+export default DiscountList;

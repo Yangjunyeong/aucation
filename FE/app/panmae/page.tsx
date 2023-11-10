@@ -102,7 +102,13 @@ const Panmae = () => {
     setDescription(event.target.value);
   };
   const submitHandler = () => {
-    if (!option || !productname || !category || (hour === 0 && minute === 0)) {
+    if (
+      !option ||
+      !productname ||
+      !category ||
+      (hour === 0 && minute === 0) ||
+      imagefiles.length === 0
+    ) {
       alert("필수 항목을 모두 채워주세요!");
       return;
     }
@@ -169,7 +175,8 @@ const Panmae = () => {
       callApi("post", "/discount/register", formData)
         .then(res => {
           console.log(res);
-          router.push("/");
+          const uuid = res.data.discountUUID;
+          router.push(`discount/${uuid}`);
         })
         .catch(err => {
           console.log(err);
