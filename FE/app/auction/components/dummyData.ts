@@ -1,4 +1,4 @@
-import { AuctionItem } from "@/app/utils/cardType"; // 타입 임포트
+import { AuctionItem } from "@/app/components/Card/cardType"; // 타입 임포트
 
 const dummyData: AuctionItem[] = [
   {

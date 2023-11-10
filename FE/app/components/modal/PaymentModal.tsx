@@ -35,11 +35,11 @@ const PaymentModal: React.FC<ModalProps> = ({ isOpen, onClose, cash }) => {
   };
 
   const addButtonHandler = (addedValue: number) => {
-    setAmount(prevAmount => {
-      const newAmount = prevAmount + addedValue;
-
-      return newAmount;
-    });
+    const newAmount = amount + addedValue;
+    setAmount(newAmount);
+    setFormattedAmount(
+      newAmount === 0 ? "" : `${new Intl.NumberFormat("ko-KR").format(newAmount)}원`
+    );
   };
 
   const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,7 +82,7 @@ const PaymentModal: React.FC<ModalProps> = ({ isOpen, onClose, cash }) => {
   // };
 
   useEffect(() => {
-    setFormattedAmount(amount === 0 ? "" : `${new Intl.NumberFormat("ko-KR").format(amount)}`);
+    setFormattedAmount(amount === 0 ? "" : `${new Intl.NumberFormat("ko-KR").format(amount)}원`);
   }, [amount]);
 
   useEffect(() => {

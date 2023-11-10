@@ -10,7 +10,7 @@ import SearchInput from "../components/SearchInput";
 import { callApi } from "../../utils/api";
 import Pagination from "react-js-pagination";
 import "../components/Paging.css";
-import { AuctionData, AuctionItem, PreAuctionData } from "../../utils/cardType";
+import { AuctionData, AuctionItem, PreAuctionData } from "../../components/Card/cardType";
 import dummyData from "../components/dummyData";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -91,13 +91,13 @@ const AuctionList = ({ params }: { params: PageParams }) => {
     console.log(searchFilters);
     callApi("post", `/auction/list/pre/${pageNumber}`, searchFilters)
       .then(response => {
-        console.log("데이터", response.data);
+        console.log("데이터 성공", response.data);
         setData(response.data);
       })
 
       .catch(error => {
         console.log(searchFilters);
-        console.log("데이터", error);
+        console.log("데이터 에러", error);
       })
       .finally(() => {
         setIsLoading(false); // 데이터 로딩 완료

@@ -7,19 +7,39 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Banner from "./components/Banner";
 import PopularBidList from "./components/PopularBidList";
 import MainFloor from "./components/MainFloor";
-import PaymentModal from "../components/modal/PaymentModal";
+import { HomePageData } from "../components/Card/cardType";
+import { callApi } from "../utils/api";
+import ClipLoader from "react-spinners/ClipLoader";
+
 export default function Home() {
-  // const getHandler = async () => {
-  //   const res = await fetch("/api/get");
-  //   const data = await res.json();
-  //   console.log(data);
-  //   setState(data.data);
-  // };
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [data, setData] = useState<HomePageData>({
+    hotAuction: [],
+    discounts: [],
+    recentAutions: [],
+  });
+
+  const callHomePageData = () => {
+    setIsLoading(true);
+    callApi("get", "/members/mainPage")
+      .then(res => {
+        console.log("홈페이지 데이터", res);
+        setData(res.data);
+      })
+      .catch(err => {
+        console.log("홈페이지 데이터 에러", err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    callHomePageData();
+  });
 
   return (
     <main className="px-48">
-      <button onClick={() => setModalOpen(true)}>Open Modal1</button>
       <div>
         <Banner />
       </div>
