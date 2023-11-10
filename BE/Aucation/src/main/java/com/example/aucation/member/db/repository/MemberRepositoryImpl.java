@@ -32,6 +32,8 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -79,6 +81,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qAuction.auctionEndDate.as("auctionEndDate"),
 					qAuction.auctionEndPrice.as("auctionSuccessPay"),
 					qAuction.owner.id.as("ownerPk"),
+					qAuction.owner.memberNickname.as("ownerNicknname"),
 					qAuction.address.city.as("mycity"),
 					qAuction.address.zipcode.as("zipcode"),
 					qAuction.address.street.as("street"),
@@ -87,6 +90,17 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qAuction.auctionStatus.as("auctionStatus"),
 					qAuction.auctionType.as("auctionType"),
 					qAuction.createdAt.as("registerDate"),
+					new CaseBuilder()
+						.when(
+							JPAExpressions.selectOne()
+								.from(qLikeAuction)
+								.where(qLikeAuction.auction.eq(qAuction)
+									.and(qLikeAuction.member.id.eq(member.getId())))
+								.exists()
+						)
+						.then(true)
+						.otherwise(false)
+						.as("isLike"),
 					qAuctionHistory.historyStatus.as("auctionHistory"),
 					qAuctionHistory.historyDateTime.as("historyDateTime"),
 					qAuctionHistory.historyDoneDateTime.as("historyDoneDateTime"),
@@ -182,9 +196,21 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qAuction.auctionStatus.as("auctionStatus"),
 					qAuction.auctionType.as("auctionType"),
 					qAuction.createdAt.as("registerDate"),
+					qAuction.owner.memberNickname.as("ownerNicknname"),
 					qAuction.address.city.as("mycity"),
 					qAuction.address.zipcode.as("zipcode"),
 					qAuction.address.street.as("street"),
+					new CaseBuilder()
+						.when(
+							JPAExpressions.selectOne()
+								.from(qLikeAuction)
+								.where(qLikeAuction.auction.eq(qAuction)
+									.and(qLikeAuction.member.id.eq(member.getId())))
+								.exists()
+						)
+						.then(true)
+						.otherwise(false)
+						.as("isLike"),
 					qReAuctionBid.reAucBidDatetime.as("reAucBidDateTime"),
 					qReAuctionBid.reAucBidPrice.as("reAucBidPrice"),
 					qAuctionHistory.historyStatus.as("auctionHistory"),
@@ -301,11 +327,23 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qDiscount.discountEnd.as("discountEnd"),
 					qDiscount.owner.id.as("ownerPk"),
 					qDiscount.customer.id.as("customerPk"),
+					qAuction.owner.memberNickname.as("ownerNicknname"),
 					qDiscount.id.as("discountPk"),
 					qDiscount.address.city.as("mycity"),
 					qDiscount.address.zipcode.as("zipcode"),
 					qDiscount.address.street.as("street"),
 					qDiscount.discountUUID.as("discountUUID"),
+					new CaseBuilder()
+						.when(
+							JPAExpressions.selectOne()
+								.from(qLikeDiscount)
+								.where(qLikeDiscount.discount.eq(qDiscount)
+									.and(qLikeDiscount.member.id.eq(member.getId())))
+								.exists()
+						)
+						.then(true)
+						.otherwise(false)
+						.as("isLike"),
 					qDiscountHistory.historyDatetime.as("historyDatetime"),
 					qDiscountHistory.historyDoneDatetime.as("historyDoneDatetime"),
 					qDiscountHistory.historyStatus.as("historyStatus"),
@@ -417,6 +455,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qAuction.auctionUUID.as("auctionUUID"),
 					qAuction.id.as("auctionPk"),
 					qAuction.owner.id.as("ownerPk"),
+					qAuction.owner.memberNickname.as("ownerNicknname"),
 					qAuction.address.city.as("mycity"),
 					qAuction.address.zipcode.as("zipcode"),
 					qAuction.address.street.as("street"),
@@ -470,6 +509,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qDiscount.discountUUID.as("auctionUUID"),
 					qDiscount.id.as("auctionPk"),
 					qDiscount.owner.id.as("ownerPk"),
+					qAuction.owner.memberNickname.as("ownerNicknname"),
 					qDiscount.address.city.as("mycity"),
 					qDiscount.address.zipcode.as("zipcode"),
 					qDiscount.address.street.as("street"),

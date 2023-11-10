@@ -24,4 +24,6 @@ public class MyDiscountItemsResponse {
 	private String mycity;
 	private String zipcode;
 	private String street;
+	private Boolean isLike;
+
 }
