@@ -4,7 +4,7 @@ import React from "react";
 type PriceBoxProps = {
   startingPrice: number;
   lowPrice: number;
-  endPrice?: number;
+  endPrice: number;
 };
 
 const PriceBox: React.FC<PriceBoxProps> = ({ startingPrice, lowPrice, endPrice }) => {
@@ -15,14 +15,14 @@ const PriceBox: React.FC<PriceBoxProps> = ({ startingPrice, lowPrice, endPrice }
         <p className="text-xl font-semibold text-gray-700">{pricetoString(startingPrice)}</p>
       </div>
       <div className="border-l border-gray-400 h-20"></div>
-      {endPrice && (
+      {endPrice != 0 && (
         <div className="flex flex-col items-start flex-1 ml-10">
           <h3 className="text-sm text-gray-600">낙찰가</h3>
           <p className="text-xl font-semibold text-gray-700">{pricetoString(endPrice)}</p>
         </div>
       )}
 
-      {!endPrice && (
+      {endPrice == 0 && (
         <div className="flex flex-col items-start flex-1 ml-10">
           <h3 className="text-sm text-gray-600">최저가</h3>
           <p className="text-xl font-semibold text-gray-700">{pricetoString(lowPrice)}</p>

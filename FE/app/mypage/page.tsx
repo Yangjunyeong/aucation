@@ -85,7 +85,7 @@ interface categoryLikeType {
 }
 const MyPage: NextPage = () => {
   // apiData
-  const [dataList,setDataList] = useState<any>()
+  const [dataList, setDataList] = useState<any>();
   // 프로필 이미지/ 네임 / 인포
   const router = useRouter();
   const [images, setImages] = useState<string>("");
@@ -118,13 +118,13 @@ const MyPage: NextPage = () => {
   const [shopNum, setShopNum] = useState<any>("");
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  
-  const apiUrl:any = {
+
+  const apiUrl: any = {
     경매: "members/mypage/auction",
     역경매: "members/mypage/reauction",
     할인: "members/mypage/discount",
     좋아요: "members/mypage/like",
-  }
+  };
   const categories: any = {
     경매: {
       판매: ["경매전", "경매중", "경매완료"],
@@ -140,7 +140,7 @@ const MyPage: NextPage = () => {
     },
     좋아요: ["경매", "역경매", "할인"],
   };
-  
+
   // 요소 정렬
   const itemsortList: string[] = ["최신순", "저가순", "고가순"];
 
@@ -277,11 +277,11 @@ const MyPage: NextPage = () => {
         toast.success("결제 성공");
         callApi("post", "/verifyIamport", {
           amount: response.paid_amount,
-          impUID: response.imp_uid
+          impUID: response.imp_uid,
         })
           .then(res => {
             console.log(res.data);
-            setIsOpen(false)
+            setIsOpen(false);
           })
           .catch(err => {
             console.log(JSON.stringify(data, null, 2));
@@ -326,7 +326,7 @@ const MyPage: NextPage = () => {
       console.log("1번카테고리 변경");
       secondCategoryHandler(Object.keys(categories[category])[0]);
     } else {
-      secondCategoryHandler("")
+      secondCategoryHandler("");
     }
   }, [category]);
   useEffect(() => {
@@ -341,7 +341,7 @@ const MyPage: NextPage = () => {
 
   // 데이터 불러오기
   useEffect(() => {
-    let data:any
+    let data: any;
     if (category !== "좋아요") {
       data = {
         productType: category,
@@ -360,14 +360,13 @@ const MyPage: NextPage = () => {
     // 유저 데이터 불러오기
     callApi("post", `${apiUrl[category]}`, data)
       .then(res => {
-        console.log(res.data);
-        setDataList(res.data)
+        setDataList(res.data);
       })
       .catch(err => {
         console.log(JSON.stringify(data, null, 2));
         console.log(err);
       });
-  },[thirdCategory])
+  }, [thirdCategory]);
 
   return (
     <div className="w-full px-80 py-20">
@@ -489,10 +488,12 @@ const MyPage: NextPage = () => {
                 </Modal> */}
               </div>
               <div className="flex justify-center text-xl items-center">
-                <span className="cursor-pointer underline" onClick={()=>setIsOpen(!isOpen)}>충전하기</span>
+                <span className="cursor-pointer underline" onClick={() => setIsOpen(!isOpen)}>
+                  충전하기
+                </span>
               </div>
             </div>
-              <PaymentModal onClose={()=>setIsOpen(false)} isOpen={isOpen} cash={cashHandler}/>
+            <PaymentModal onClose={() => setIsOpen(false)} isOpen={isOpen} cash={cashHandler} />
           </div>
         </div>
       </div>

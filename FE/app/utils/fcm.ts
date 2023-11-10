@@ -1,56 +1,65 @@
-// // https://github.com/godzz733/NeighBrew/tree/feat/BE/FCM/Front/src
-// import { initializeApp } from "firebase/app";
-// import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { initializeApp } from "firebase/app";
+import { getMessaging, onMessage, getToken } from "firebase/messaging";
+import { callApi } from "./api";
+import { noti } from "./toast";
+const firebaseConfig = {
+  apiKey: "AIzaSyAcROxN0Cs7nAlSMdzm_h-8tmNarPJoWzU",
+  authDomain: "aucation-f5a83.firebaseapp.com",
+  projectId: "aucation-f5a83",
+  storageBucket: "aucation-f5a83.appspot.com",
+  messagingSenderId: "409998959069",
+  appId: "1:409998959069:web:9ce727e4b1297228e49634",
+  measurementId: "G-755RTX3Q1G",
+};
+export const onMessageFCM = async () => {
+  // 브라우저에 알림 권한을 요청합니다.
+  const permission = await Notification.requestPermission();
+  if (permission !== "granted") return;
 
-// interface Config {
-//   apiKey: string;
-//   authDomain: string;
-//   projectId: string;
-//   storageBucket: string;
-//   messagingSenderId: string;
-//   appId: string;
-//   vapidKey: string;
-// }
+  // 이곳에도 아까 위에서 앱 등록할때 받은 'firebaseConfig' 값을 넣어주세요.
+  const firebaseApp = initializeApp(firebaseConfig);
 
-// const config: Config = {
-//   apiKey: import.meta.env.VITE_APP_FCM_API_KEY,
-//   authDomain: import.meta.env.VITE_APP_FCM_AUTH_DOMAIN,
-//   projectId: import.meta.env.VITE_APP_FCM_PROJECT_ID,
-//   storageBucket: import.meta.env.VITE_APP_FCM_STORAGE_BUCKET,
-//   messagingSenderId: import.meta.env.VITE_APP_FCM_MESSAGING_SENDER_ID,
-//   appId: import.meta.env.VITE_APP_FCM_APP_ID,
-//   vapidKey: import.meta.env.VITE_APP_FCM_VAPID,
-// };
+  const messaging = getMessaging(firebaseApp);
 
-// const app = initializeApp(config);
-// const messaging = getMessaging(app);
+  // 이곳 vapidKey 값으로 아까 토큰에서 사용한다고 했던 인증서 키 값을 넣어주세요.
+  getToken(messaging, {
+    vapidKey:
+      "BAioNavuRzqkuAY7bJ6MiOeq3YxnavlrcHHC11qNqkZrDzKLi8VoJlNQ6e2l3VOsbKqNJKM5UQ3fg0O_DR6qM6U",
+  })
+    .then(currentToken => {
+      if (currentToken) {
+        // 정상적으로 토큰이 발급되면 콘솔에 출력합니다.
+        console.log(currentToken);
+        callApi("POST", "/members/saveFCM", { token: currentToken });
+      } else {
+        console.log("No registration token available. Request permission to generate one.");
+      }
+    })
+    .catch(err => {
+      console.log("An error occurred while retrieving token. ", err);
+    });
 
-// // 토큰값 얻기
-// const getTokenAndHandle = () => {
-//   getToken(messaging)
-//     .then(currentToken => {
-//       if (currentToken) {
-//         // Send the token to your server and update the UI if necessary
-//         // ...
-//         console.log(currentToken);
-//       } else {
-//         // Show permission request UI
-//         console.log("No registration token available. Request permission to generate one.");
-//         // ...
-//       }
-//     })
-//     .catch(err => {
-//       console.log("An error occurred while retrieving token. ", err);
-//       // ...
-//     });
-// };
-
-// // 포그라운드 메시지 수신
-// const handleForegroundMessage = () => {
-//   onMessage(messaging, payload => {
-//     console.log("Message received. ", payload);
-//     // ...
-//   });
-// };
-
-// export { getTokenAndHandle, handleForegroundMessage };
+  // 메세지가 수신되면 역시 콘솔에 출력합니다.
+  onMessage(messaging, payload => {
+    console.log("Message received. ", payload);
+    if (payload.data!.status == "역경매") {
+      if (payload.data!.type == "chat") {
+        noti(payload.notification!.body!, `/dm/${payload.data!.prodPk}/1`);
+      } else {
+        noti(payload.notification!.body!, `/reverseauction/${payload.data!.prodPk}`);
+      }
+    } else if (payload.data!.status == "경매") {
+      if (payload.data!.type == "chat") {
+        noti(payload.notification!.body!, `/dm/${payload.data!.prodPk}/0`);
+      } else {
+        noti(payload.notification!.body!, `/bid/${payload.data!.auctionUUID}`);
+      }
+    } else {
+      if (payload.data!.type == "chat") {
+        noti(payload.notification!.body!, `/dm/${payload.data!.prodPk}/2`);
+      } else {
+        noti(payload.notification!.body!, `/detail/discount/${payload.data!.prodPk}`);
+      }
+    }
+  });
+};
