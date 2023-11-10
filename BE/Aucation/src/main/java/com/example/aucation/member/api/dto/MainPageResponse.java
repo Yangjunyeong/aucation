@@ -6,11 +6,13 @@ import com.example.aucation.discount.api.dto.DiscountListResponseItem;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Builder
 public class MainPageResponse {
+    LocalDateTime nowTime;
     List<AuctionIngResponseItem> hotAuctions;
     List<DiscountListResponseItem> discounts;
     List<ReAuctionResponseItem> recentAuctions;
