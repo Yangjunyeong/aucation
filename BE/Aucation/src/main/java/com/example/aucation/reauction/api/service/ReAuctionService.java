@@ -54,6 +54,10 @@ public class ReAuctionService {
         Pageable pageable = PageRequest.of(pageNum - 1, COUNT_IN_PAGE);
 
         AuctionListResponse response = auctionRepository.searchReAucToCondition(member, pageNum, sortRequest, pageable);
+        if(response == null){
+            log.info("********************** 경매 정보가 없습니다.");
+            throw new NotFoundException(ApplicationError.NOT_EXIST_AUCTION);
+        }
         response.getReItems().forEach(item->{
             if(item.getReAuctionLowBidPrice() == null){
                 item.setReAuctionLowBidPrice(item.getReAuctionStartPrice());
@@ -235,6 +239,10 @@ public class ReAuctionService {
 
         log.info("********************** 경매 정보 가져오기 시도");
         ReAuctionDetailResponse response = auctionRepository.searchDetailReAuc(auction,memberPk,checkTime,members);
+        if(response == null ){
+            log.info("********************** 경매 정보가 없습니다.");
+            throw new NotFoundException(ApplicationError.NOT_EXIST_AUCTION);
+        }
         if(response.getReAuctionLowPrice() == null){
             response.setReAuctionLowPrice(response.getReAuctionStartPrice());
         }
