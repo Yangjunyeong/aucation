@@ -82,7 +82,8 @@ export type DiscountItem = {
 };
 
 export type HomePageData = {
-  hotAuction: AuctionItem[];
+  nowTime: Date | null;
+  hotAuctions: AuctionItem[];
   discounts: DiscountItem[];
-  recentAutions: ReverseAuctionItem[];
+  recentAuctions: ReverseAuctionItem[];
 };

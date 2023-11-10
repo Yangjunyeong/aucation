@@ -12,6 +12,8 @@ import tw from "tailwind-styled-components";
 import { emailRegexp } from "@/app/utils/regexp";
 import { useRecoilState } from "recoil";
 import { authState } from "@/app/store/atoms";
+import MoveMap from "@/app/components/map/MoveMap";
+
 type Variant = "LOGIN" | "REGISTER";
 
 const AuthForm = () => {
@@ -29,6 +31,7 @@ const AuthForm = () => {
   const [verifiedcode, setVerifiedcode] = useState<boolean>(true); // 인증번호 맞는지
   const [verifynickname, setVerifynickname] = useState<boolean>(true);
   const [verifyid, setVerifyid] = useState<boolean>(true);
+  const [transActionLocation, setTransActionLocation] = useState<number[] | null>(null);
 
   const signOrlogin = () => {
     if (variant == "LOGIN") {
@@ -43,6 +46,8 @@ const AuthForm = () => {
       memberPw: password,
       memberEmail: email,
       memberNickname: nickname,
+      memberLng: transActionLocation ? transActionLocation[1] : "128",
+      memberLat: transActionLocation ? transActionLocation[0] : "37",
     };
     axios({
       method: "post",
@@ -324,6 +329,12 @@ const AuthForm = () => {
           />
         </div>
       </div>
+      {variant == "REGISTER" && (
+        <div className="w-[600px] h-[500px] mr-5 mb-5">
+          <MoveMap setTransActionLocation={setTransActionLocation} />
+        </div>
+      )}
+
       <div
         className="
         mt-4

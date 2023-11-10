@@ -16,7 +16,7 @@ interface CardProps {
   nowTime: Date | null;
 }
 
-const AuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
+const PreAuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
   const router = useRouter();
   const [likeCount, setLikeCount] = useState<number>(item.likeCnt);
   const [isLiked, setIsLiked] = useState<boolean>(item.isLike);
@@ -106,4 +106,4 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
   );
 };
 
-export default AuctionListCard;
+export default PreAuctionListCard;

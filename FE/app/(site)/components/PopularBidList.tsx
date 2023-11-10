@@ -8,12 +8,17 @@ import { ButtonGroupProps } from "react-multi-carousel/lib/types";
 import { BsArrowLeftCircle } from "react-icons/bs";
 import { BsArrowRightCircle } from "react-icons/bs";
 import Link from "next/link";
+import { AuctionItem, ReverseAuctionItem, DiscountItem } from "@/app/components/Card/cardType";
+import AuctionListCard from "@/app/components/Card/AutionListCard";
+import DiscountListCard from "@/app/components/Card/DiscountListCard";
+import ClipLoader from "react-spinners/ClipLoader";
 
-interface CarouselButtonGroupProps extends ButtonGroupProps {
-  className?: string;
-  next: () => void;
-  previous: () => void;
-}
+// interface CarouselButtonGroupProps extends ButtonGroupProps {
+//   className?: string;
+//   next: () => void;
+//   previous: () => void;
+
+// }
 
 // const CarouselButtonGroup: React.FC<ButtonGroupProps> = ({ next, previous }) => {
 //   return (
@@ -51,9 +56,22 @@ interface OwnProps {
   className?: string;
   moreShow?: boolean;
   goUrl?: string;
+  type: string;
+  item: AuctionItem[] | ReverseAuctionItem[] | DiscountItem[];
+  nowTime: Date | null;
+  isLoading: boolean;
 }
 
-const PopularBidList: React.FC<OwnProps> = ({ title, className, moreShow = false, goUrl }) => {
+const PopularBidList: React.FC<OwnProps> = ({
+  title,
+  className,
+  moreShow = false,
+  goUrl,
+  type,
+  item,
+  nowTime,
+  isLoading,
+}) => {
   const responsive = {
     superLargeDesktop: {
       // the naming can be any, depends on you.
@@ -74,7 +92,7 @@ const PopularBidList: React.FC<OwnProps> = ({ title, className, moreShow = false
     },
   };
   return (
-    <div className={`pt-14 pb-16 ${className} `}>
+    <div className={`pt-14 pb-10 ${className} `}>
       <div className="pb-10 px-14 flex flex-row justify-between items-center">
         <div className="text-3xl font-bold ">{title}</div>
         {moreShow && (
@@ -87,19 +105,50 @@ const PopularBidList: React.FC<OwnProps> = ({ title, className, moreShow = false
         )}
       </div>
 
-      <div className="px-5">
-        <Carousel
-          responsive={responsive}
-          infinite={true}
-          arrows={false}
-          {...(!moreShow && { renderButtonGroupOutside: true, customButtonGroup: <ButtonGroup /> })}
-        >
-          {dummyData.map((item, idx) => (
-            <div key={idx} className="w-full h-full flex justify-center items-center">
-              <Card item={item} />
-            </div>
-          ))}
-        </Carousel>
+      <div className="h-[600px]">
+        {isLoading ? (
+          <div className="flex justify-center items-center">
+            <ClipLoader color="#247eff" size={200} speedMultiplier={1} />
+          </div>
+        ) : (
+          <Carousel
+            className="h-full ml-10 flex pl-5"
+            responsive={responsive}
+            infinite={true}
+            arrows={false}
+            {...(!moreShow && {
+              renderButtonGroupOutside: true,
+              customButtonGroup: <ButtonGroup />,
+            })}
+          >
+            {type === "hotAution" &&
+              item &&
+              item.map((item, idx) => (
+                <div key={idx} className="w-[295px] h-[550px] flex justify-center items-center">
+                  <AuctionListCard item={item as AuctionItem} nowTime={nowTime} />
+                </div>
+              ))}
+
+            {type === "reverseAution" &&
+              item &&
+              item.map((item, idx) => (
+                <div key={idx} className="w-[295px] h-[550px]  flex justify-center items-center">
+                  <AuctionListCard
+                    item={item as ReverseAuctionItem}
+                    nowTime={nowTime}
+                    type="reverse"
+                  />
+                </div>
+              ))}
+            {type === "discounts" &&
+              item &&
+              item.map((item, idx) => (
+                <div key={idx} className="w-[295px] h-[550px] flex justify-center items-center">
+                  <DiscountListCard item={item as DiscountItem} nowTime={nowTime} />
+                </div>
+              ))}
+          </Carousel>
+        )}
       </div>
     </div>
   );
