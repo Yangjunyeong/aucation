@@ -88,6 +88,7 @@ public class FCMService {
 		for (LikeAuction likeAlram : likeAuctions) {
 			Map<String, String> data = new HashMap<>();
 			data.put("auctionUUID", auction.getAuctionUUID());
+			data.put("status", "경매");
 			Notification notification = Notification.builder()
 				.setTitle(ALRAM_TITLE)
 				.setBody(auction.getAuctionTitle() + ALRAM_BODY)
@@ -170,7 +171,7 @@ public class FCMService {
 			.orElseThrow(() -> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
 
 		Map<String, String> data = new HashMap<>();
-		data.put("prodPk", String.valueOf(auction.getId()));
+		data.put("auctionUUID", auction.getAuctionUUID());
 		data.put("status","경매");
 		Notification notification = Notification.builder()
 			.setTitle(auction.getAuctionTitle() + HIGH_ALRAM_TITLE)
