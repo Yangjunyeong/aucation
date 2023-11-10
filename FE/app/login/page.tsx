@@ -14,7 +14,7 @@ export default function Home() {
     py-12
     sm:px-6
     lg:px-8
-    bg-gray-100
+   
     "
     >
       <div className="w-[35%]">
@@ -25,7 +25,7 @@ export default function Home() {
          text-3xl
          font-bold
          tracking-tight
-         text-gray-900"
+         "
         >
           로그인
         </h2>

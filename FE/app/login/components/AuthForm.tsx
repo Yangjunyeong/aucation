@@ -12,7 +12,7 @@ import tw from "tailwind-styled-components";
 import { emailRegexp } from "@/app/utils/regexp";
 import { useRecoilState } from "recoil";
 import { authState } from "@/app/store/atoms";
-import MoveMap from "@/app/components/map/MoveMap";
+import StayMap from "@/app/components/map/StayMap";
 
 type Variant = "LOGIN" | "REGISTER";
 
@@ -31,7 +31,8 @@ const AuthForm = () => {
   const [verifiedcode, setVerifiedcode] = useState<boolean>(true); // 인증번호 맞는지
   const [verifynickname, setVerifynickname] = useState<boolean>(true);
   const [verifyid, setVerifyid] = useState<boolean>(true);
-  const [transActionLocation, setTransActionLocation] = useState<number[] | null>(null);
+  const [lat, setLat] = useState<number>(0);
+  const [lng, setLng] = useState<number>(0);
 
   const signOrlogin = () => {
     if (variant == "LOGIN") {
@@ -46,8 +47,8 @@ const AuthForm = () => {
       memberPw: password,
       memberEmail: email,
       memberNickname: nickname,
-      memberLng: transActionLocation ? transActionLocation[1] : "128",
-      memberLat: transActionLocation ? transActionLocation[0] : "37",
+      memberLng: lng,
+      memberLat: lat,
     };
     axios({
       method: "post",
@@ -220,6 +221,8 @@ const AuthForm = () => {
     setEmailVerify(e.target.value);
   }, []);
 
+  useEffect(() => {}, []);
+
   return (
     <div
       className="
@@ -331,7 +334,7 @@ const AuthForm = () => {
       </div>
       {variant == "REGISTER" && (
         <div className="w-[600px] h-[500px] mr-5 mb-5">
-          <MoveMap setTransActionLocation={setTransActionLocation} />
+          <StayMap inputLat={lat} inputLag={lng} />
         </div>
       )}
 
