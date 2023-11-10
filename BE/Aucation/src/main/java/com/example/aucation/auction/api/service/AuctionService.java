@@ -218,6 +218,10 @@ public class AuctionService {
 
 		log.info("********************** 경매 정보 가져오기 시도");
 		AuctionDetailResponse response = auctionRepository.searchDetailAuc(auction, memberPk, checkTime,member);
+		if(response == null ){
+			log.info("********************** 경매 정보가 없습니다.");
+			throw new NotFoundException(ApplicationError.NOT_EXIST_AUCTION);
+		}
 		log.info("********************** 경매 정보 가져오기 성공, AuctionPk = {}", response.getAuctionPk());
 
 		log.info("********************** 경매 사진 가져오기 시도");
