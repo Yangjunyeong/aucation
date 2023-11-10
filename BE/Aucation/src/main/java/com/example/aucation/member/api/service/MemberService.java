@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -249,6 +250,7 @@ public class MemberService {
 		List<DiscountListResponseItem> discounts = discountService.getDiscountToMainPage(memberPk);
 		List<ReAuctionResponseItem> recentAuctions = reAuctionService.getRecentReAucToMainPage(memberPk);
 		return MainPageResponse.builder()
+				.nowTime(LocalDateTime.now())
 			.hotAuctions(hotAuctions)
 			.discounts(discounts)
 			.recentAuctions(recentAuctions)
