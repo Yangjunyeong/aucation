@@ -53,9 +53,9 @@ public class CommonService {
 
 			// 필요한 정보 추출
 			String city = firstDocument.path("region_1depth_name").asText();
-			String street = firstDocument.path("region_2depth_name").asText();
-			String zipcode = firstDocument.path("region_3depth_name").asText();
-			return StreetResponse.builder().city(city).street(street).zipcode(zipcode).build();
+			String zipcode = firstDocument.path("region_2depth_name").asText();
+			String street = firstDocument.path("region_3depth_name").asText();
+			return StreetResponse.builder().city(city).zipcode(zipcode).street(street).build();
 
 		} catch (IOException e) {
 			e.printStackTrace();
