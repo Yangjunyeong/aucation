@@ -10,6 +10,6 @@ import lombok.Setter;
 public class StreetResponse {
 
 	private String city;
-	private String street;
 	private String zipcode;
+	private String street;
 }
