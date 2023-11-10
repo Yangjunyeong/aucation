@@ -27,19 +27,23 @@ public class WriteBackService {
 	private final RedisTemplate<String, RedisChatMessage> redisTemplate;
 
 	@Transactional
-	public void writeBackAuc(String redisKeyBase, String uuid) {
-		log.info(" *************** '경매장' 채팅 writeback 시작!! - writeBackAuc");
-		List<RedisChatMessage> chatList = redisTemplate.opsForList().range(redisKeyBase+":"+uuid, 0, -1);
+	public void writeBackAuc(String redisKey) {
+		log.info(" 		*************** '경매장' 채팅 writeback 시작!! - writeBackAuc");
+		List<RedisChatMessage> chatList = redisTemplate.opsForList().range(redisKey, 0, -1);
+		log.info(" 		*************** chatList: "+chatList.toString());
+
 		groupChatWriteBackRepository.saveAll(chatList);
-		redisTemplate.delete(redisKeyBase+":"+uuid);
+		redisTemplate.delete(redisKey);
 	}
 
 	@Transactional
-	public void writeBackElse(String redisKeyBase, String uuid) {
-		log.info(" *************** '개인' 채팅 writeback 시작!! - writeBackElse");
-		List<RedisChatMessage> chatList = redisTemplate.opsForList().range(redisKeyBase+":"+uuid, 0, -1);
+	public void writeBackElse(String redisKey) {
+		log.info(" 		*************** '개인' 채팅 writeback 시작!! - writeBackElse");
+		List<RedisChatMessage> chatList = redisTemplate.opsForList().range(redisKey, 0, -1);
+		log.info(" 		*************** chatList: "+chatList.toString());
+
 		chatWriteBackRepository.saveAll(chatList);
-		redisTemplate.delete(redisKeyBase+":"+uuid);
+		redisTemplate.delete(redisKey);
 	}
 
 }
