@@ -5,6 +5,8 @@ import RecoilRootProvider from "./utils/recoilRootProvider";
 import Navbar from "./components/navbar/Navbar";
 import Footer from "./components/footer/Footer";
 import ToasterContext from "./utils/ToasterContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <RecoilRootProvider>
         <body className={inter.className}>
           <Navbar />
+          <ToastContainer />
           <ToasterContext />
           {children}
           <Footer />

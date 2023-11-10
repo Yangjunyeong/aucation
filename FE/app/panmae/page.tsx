@@ -328,7 +328,15 @@ const Panmae = () => {
           <div className="flex flex-1">
             <div className="mr-14 w-3/8">
               <p className="text-2xl font-semibold">
-                {option !== "할인" ? <span>경매 시작 시간</span> : <span>가게 마감 시간</span>}{" "}
+                {option !== "할인" ? (
+                  option !== "BID" ? (
+                    <span>경매 진행 시간</span>
+                  ) : (
+                    <span>경매 시작 시간</span>
+                  )
+                ) : (
+                  <span>가게 마감 시간</span>
+                )}{" "}
                 <span className="text-red-500">*</span>
               </p>
             </div>
@@ -346,10 +354,17 @@ const Panmae = () => {
               >
                 <AiOutlineStop size={40} />
                 {option !== "할인" ? (
-                  <div>
-                    <p>경매 시작 시간은 최소 10분 이상이어야 합니다.</p>
-                    <p>경매 시작 시간 설정은 최대 24시간까지 가능합니다.</p>
-                  </div>
+                  option == "BID" ? (
+                    <div>
+                      <p>경매 시작 시간은 최소 10분 이상이어야 합니다.</p>
+                      <p>경매 시작 시간 설정은 최대 24시간까지 가능합니다.</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p>경매 진행 시간 내에 입찰을 선택하여야 합니다.</p>
+                      <p>경매 진행 시간 설정은 최대 24시간까지 가능합니다.</p>
+                    </div>
+                  )
                 ) : (
                   <div>
                     <p>손님에게 가게 마감 시간을 알려주세요!</p>

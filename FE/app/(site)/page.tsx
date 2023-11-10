@@ -9,8 +9,8 @@ import PopularBidList from "./components/PopularBidList";
 import MainFloor from "./components/MainFloor";
 import { HomePageData } from "../components/Card/cardType";
 import { callApi } from "../utils/api";
-
-import { AuctionData, ReverseAuctionData, DiscountData } from "../components/Card/cardType";
+import ClipLoader from "react-spinners/ClipLoader";
+import { onMessageFCM } from "../utils/fcm";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -20,7 +20,10 @@ export default function Home() {
     discounts: [],
     recentAuctions: [],
   });
-
+  useEffect(() => {
+    // if (!localStorage.getItem("token")) return;
+    onMessageFCM();
+  }, []);
   const callHomePageData = () => {
     setIsLoading(true);
     callApi("get", "/members/mainPage")

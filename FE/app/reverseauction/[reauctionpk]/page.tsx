@@ -86,6 +86,7 @@ const AuctionDetail = () => {
       .then(res => {
         toast.success("입찰에 성공하였습니다.");
         handleBidModalOpen();
+        router.refresh();
       })
       .catch(err => {
         console.log(err);
@@ -102,6 +103,7 @@ const AuctionDetail = () => {
       })
       .catch(err => {
         toast.error("부적절한 접근입니다.");
+        console.log(err);
         router.push("/");
       });
   };
@@ -205,10 +207,18 @@ const AuctionDetail = () => {
             />
           )}
           {data.isAction == 1 && (
-            <PriceBox startingPrice={data.reAuctionStartPrice} lowPrice={data.reAuctionLowPrice} />
+            <PriceBox
+              startingPrice={data.reAuctionStartPrice}
+              lowPrice={data.reAuctionLowPrice}
+              endPrice={0}
+            />
           )}
           {data.isAction == 0 && (
-            <PriceBox startingPrice={data.reAuctionStartPrice} lowPrice={data.reAuctionLowPrice} />
+            <PriceBox
+              startingPrice={data.reAuctionStartPrice}
+              lowPrice={data.reAuctionLowPrice}
+              endPrice={0}
+            />
           )}
 
           {/* 입찰버튼 */}
@@ -231,7 +241,7 @@ const AuctionDetail = () => {
           </div>
 
           <h1 className="mt-4 text-3xl font-bold">입찰 목록</h1>
-          {data.reAuctionBidItems && data.isOwner && (
+          {data.reAuctionBidItems && data.reAuctionBidItems.length != 0 && data.isOwner && (
             <div className="flex flex-row items-center">
               <button
                 className="absolute left-[12rem] text-5xl"
@@ -252,19 +262,29 @@ const AuctionDetail = () => {
               </button>
             </div>
           )}
-          {/* {data.ownBid && !data.isOwner && (
+          {data.ownBid && !data.isOwner && (
             <ReAuctionCheckout onClick={handleModalOpen} data={data.ownBid} canClick={false} />
-          )} */}
+          )}
 
           {data.selectedBid && data.isOwner && (
             <ReAuctionCheckout onClick={handleModalOpen} data={data.selectedBid} canClick={false} />
           )}
 
-          {!data.selectedBid && isModalOpen && (
+          {!data.selectedBid &&
+            data.reAuctionBidItems &&
+            data.reAuctionBidItems.length != 0 &&
+            isModalOpen && (
+              <Modal onClick={handleModalOpen}>
+                <ModalContent images={data.reAuctionBidItems[bidCnt].bidPhotos} />
+              </Modal>
+            )}
+
+          {data.ownBid && isModalOpen && (
             <Modal onClick={handleModalOpen}>
-              <ModalContent images={data.reAuctionBidItems[bidCnt].bidPhotos} />
+              <ModalContent images={data.ownBid.bidPhotos} />
             </Modal>
           )}
+
           {data.selectedBid && isModalOpen && (
             <Modal onClick={handleModalOpen}>
               <ModalContent images={data.selectedBid.bidPhotos} />

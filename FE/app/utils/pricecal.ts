@@ -19,5 +19,6 @@ export const pricetoString = (price: number) => {
     resultString = String(resultArray[i]) + unitWords[i] + resultString;
   }
 
+  if (resultString == "") resultString = "0";
   return resultString + "원";
 };
