@@ -8,6 +8,7 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -16,6 +17,7 @@ import javax.persistence.OneToMany;
 
 import com.example.aucation.common.entity.BaseEntity;
 import com.example.aucation.like.db.entity.LikeAuction;
+import com.example.aucation.member.db.entity.Address;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.photo.db.Photo;
 
@@ -49,6 +51,8 @@ public class Auction extends BaseEntity {
 	private LocalDateTime auctionStartDate;
 	private LocalDateTime auctionEndDate;
 
+	@Embedded
+	private Address address;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="auction_owner_pk")
@@ -75,7 +79,7 @@ public class Auction extends BaseEntity {
 				   Long lastModifiedBy, boolean isDeleted, String auctionUUID, AuctionStatus auctionStatus,
 				   String auctionTitle, String auctionType, int auctionStartPrice, int auctionEndPrice,
 				   double auctionMeetingLat, double auctionMeetingLng, String auctionDetail,LocalDateTime auctionStartDate, LocalDateTime auctionEndDate,Member owner
-	) {
+	,Address address) {
 		super(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy, isDeleted);
 		this.auctionUUID = auctionUUID;
 		this.auctionStatus = auctionStatus;
@@ -88,6 +92,7 @@ public class Auction extends BaseEntity {
 		this.auctionDetail = auctionDetail;
 		this.auctionStartDate = auctionStartDate;
 		this.auctionEndDate = auctionEndDate;
+		this.address = address;
 		setOwner(owner);
 	}
 

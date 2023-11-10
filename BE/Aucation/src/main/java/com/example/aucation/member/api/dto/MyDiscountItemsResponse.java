@@ -21,4 +21,7 @@ public class MyDiscountItemsResponse {
 	private LocalDateTime historyDoneDatetime;
 	private HistoryStatus historyStatus;
 	private String imgfile;
+	private String mycity;
+	private String zipcode;
+	private String street;
 }

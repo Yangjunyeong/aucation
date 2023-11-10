@@ -9,6 +9,8 @@ import com.example.aucation.reauction.api.dto.ReAuctionSelectRequest;
 import com.example.aucation.reauction.api.dto.ReAuctionSelectResponse;
 import com.example.aucation.reauction.api.service.ReAuctionService;
 import com.example.aucation.reauction.db.entity.ReAuctionBid;
+import com.google.firebase.messaging.FirebaseMessagingException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +36,8 @@ public class ReAuctionController {
 
     @PostMapping("/select")
     private ResponseEntity<?> selectReAuctionBid(@AuthorizedVariable Long memberPk,
-                                                 @RequestBody ReAuctionSelectRequest request){
+                                                 @RequestBody ReAuctionSelectRequest request) throws
+        FirebaseMessagingException {
         ReAuctionSelectResponse response = reAuctionService.selectBid(memberPk,request);
         return ResponseEntity.ok().body(response);
     }

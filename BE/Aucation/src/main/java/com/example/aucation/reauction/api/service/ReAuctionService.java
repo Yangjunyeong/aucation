@@ -12,6 +12,7 @@ import com.example.aucation.common.error.ApplicationError;
 import com.example.aucation.common.error.ApplicationException;
 import com.example.aucation.common.error.BadRequestException;
 import com.example.aucation.common.error.NotFoundException;
+import com.example.aucation.common.service.FCMService;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.member.db.repository.MemberRepository;
 import com.example.aucation.photo.api.service.PhotoService;
@@ -20,6 +21,8 @@ import com.example.aucation.reauction.api.dto.*;
 import com.example.aucation.reauction.db.entity.ReAucBidPhoto;
 import com.example.aucation.reauction.db.entity.ReAuctionBid;
 import com.example.aucation.reauction.db.repository.ReAuctionBidRepository;
+import com.google.firebase.messaging.FirebaseMessagingException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -43,6 +46,7 @@ public class ReAuctionService {
     private final ReAuctionBidRepository reAuctionBidRepository;
     private final ReAucBidPhotoService reAucBidPhotoService;
     private final AuctionHistoryRepository auctionHistoryRepository;
+    private final FCMService fcmService;
     private final int COUNT_IN_PAGE = 15;
 
     public AuctionListResponse getReAuctionList(Long memberPk, int pageNum, AuctionSortRequest sortRequest) {
@@ -120,7 +124,8 @@ public class ReAuctionService {
     }
 
     @Transactional
-    public ReAuctionSelectResponse selectBid(Long memberPk, ReAuctionSelectRequest request){
+    public ReAuctionSelectResponse selectBid(Long memberPk, ReAuctionSelectRequest request) throws
+        FirebaseMessagingException {
         log.info("********************** selectBid start");
         Auction auction = auctionRepository.findById(request.getReAuctionPk())
                 .orElseThrow(()-> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
@@ -166,9 +171,16 @@ public class ReAuctionService {
                 .historyStatus(HistoryStatus.BEFORE_CONFIRM)
                 .build();
         auctionHistoryRepository.save(auctionHistory);
+
+        fcmService.setAucEndAlarm(reAuctionBid.getAuction().getAuctionUUID(),reAuctionBid.getMember().getId());
+
+
+
         log.info("********************** 경매 내역 저장 완료");
 
         log.info("********************** selectBid end");
+
+
         return ReAuctionSelectResponse.builder()
                 .reAuctionPk(auction.getId())
                 .reAuctionSelectBidPrice(auction.getAuctionEndPrice())
@@ -217,10 +229,12 @@ public class ReAuctionService {
     }
 
     public Object getDetail(Long memberPk, Auction auction,int checkTime) {
+
+        Member members = memberRepository.findById(memberPk).orElseThrow(()->new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
         log.info("********************** ReAuction : getDetail() start");
 
         log.info("********************** 경매 정보 가져오기 시도");
-        ReAuctionDetailResponse response = auctionRepository.searchDetailReAuc(auction,memberPk,checkTime);
+        ReAuctionDetailResponse response = auctionRepository.searchDetailReAuc(auction,memberPk,checkTime,members);
         if(response.getReAuctionLowPrice() == null){
             response.setReAuctionLowPrice(response.getReAuctionStartPrice());
         }
@@ -235,7 +249,7 @@ public class ReAuctionService {
         response.setReAuctionPhoto(auctionPhotoUrl);
         log.info("********************** 경매 사진 가져오기 및 설정 성공, 사진 수 ={}", auctionPhotoUrl.size());
         log.info("********************** 해당 판매자 경매 정보 가져오기 시도");
-        List<AuctionDetailItem> auctionDetailItems = auctionRepository.searchDetailItems(response.getReAuctionOwnerPk(),auction);
+        List<AuctionDetailItem> auctionDetailItems = auctionRepository.searchDetailItems(response.getReAuctionOwnerPk(),auction,members);
         auctionDetailItems.forEach(auctionDetailItem -> {
             Photo photo = photoService.getOnePhoto(auctionDetailItem.getAuctionPk());
             auctionDetailItem.setAuctionPhoto(photo.getImgUrl());
@@ -334,7 +348,8 @@ public class ReAuctionService {
 
 
     public List<ReAuctionResponseItem> getRecentReAucToMainPage(Long memberPk) {
-        List<ReAuctionResponseItem> response = auctionRepository.searchRecentReAucToMainPage(memberPk);
+        Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+        List<ReAuctionResponseItem> response = auctionRepository.searchRecentReAucToMainPage(memberPk,member);
         response.forEach(item->{
             if(item.getReAuctionLowBidPrice() == null){
                 item.setReAuctionLowBidPrice(item.getReAuctionStartPrice());

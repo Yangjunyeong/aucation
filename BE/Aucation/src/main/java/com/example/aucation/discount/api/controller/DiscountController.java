@@ -23,6 +23,7 @@ import com.example.aucation.discount.api.dto.DiscountSortRequest;
 import com.example.aucation.discount.api.dto.EnterResponse;
 import com.example.aucation.discount.api.dto.PurchaseResponse;
 import com.example.aucation.discount.api.service.DiscountService;
+import com.google.firebase.messaging.FirebaseMessagingException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -47,7 +48,8 @@ public class DiscountController {
 	}
 
 	@GetMapping("/purchase/{discountUUID}")
-	private ResponseEntity<PurchaseResponse> purchase(@AuthorizedVariable Long memberPk, @PathVariable("discountUUID") String discountUUID){
+	private ResponseEntity<PurchaseResponse> purchase(@AuthorizedVariable Long memberPk, @PathVariable("discountUUID") String discountUUID) throws
+		FirebaseMessagingException {
 		return ResponseEntity.ok().body(discountService.purchase(memberPk,discountUUID));
 	}
 

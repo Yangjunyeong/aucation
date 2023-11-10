@@ -11,7 +11,10 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import com.example.aucation.auction.api.dto.*;
+import com.example.aucation.common.dto.StreetResponse;
+import com.example.aucation.common.service.CommonService;
 import com.example.aucation.common.service.FCMService;
+import com.example.aucation.member.db.entity.Address;
 import com.example.aucation.reauction.api.service.ReAucBidPhotoService;
 import com.example.aucation.reauction.api.service.ReAuctionService;
 import com.example.aucation.reauction.db.repository.ReAuctionBidRepository;
@@ -61,7 +64,7 @@ public class AuctionService {
 
 	private final PhotoService photoService;
 
-	private final FCMService fcmService;
+	private final CommonService commonService;
 	private final int COUNT_IN_PAGE = 15;
 
 
@@ -122,6 +125,7 @@ public class AuctionService {
 				.headCnt(headCnt)
 				.nowPrice(nowPrice)
 				.askPrice(askPrice)
+				.address(auction.getAddress())
 				.build();
 	}
 
@@ -130,6 +134,8 @@ public class AuctionService {
 		Member member = memberRepository.findById(memberPk)
 				.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 		String auctionUUID = PasswordGenerator.generate();
+
+		Address address = setMemberAddress(registerRequest.getAuctionMeetingLng(), registerRequest.getAuctionMeetingLat());
 
 		//경매라면
 		if (registerRequest.getAuctionStatus().equals(AuctionStatus.BID)) {
@@ -141,6 +147,7 @@ public class AuctionService {
 					.auctionMeetingLat(registerRequest.getAuctionMeetingLat())
 					.auctionMeetingLng(registerRequest.getAuctionMeetingLng())
 					.auctionEndPrice(0)
+					.address(address)
 					.auctionStartDate(LocalDateTime.now().plusMinutes(registerRequest.getAuctionStartAfterTime()))
 					.auctionEndDate(LocalDateTime.now().plusMinutes(registerRequest.getAuctionStartAfterTime()).plusMinutes(30))
 					.auctionStartPrice(registerRequest.getAuctionStartPrice())
@@ -167,6 +174,7 @@ public class AuctionService {
 					.auctionStartDate(LocalDateTime.now())
 					.auctionEndDate(LocalDateTime.now().plusMinutes(registerRequest.getAuctionStartAfterTime()))
 					.auctionStartPrice(registerRequest.getAuctionStartPrice())
+					.address(address)
 					.auctionUUID(auctionUUID)
 					.owner(member)
 					.build();
@@ -196,6 +204,9 @@ public class AuctionService {
 
 	@Transactional
 	public Object getDetail(Long memberPk, Long auctionPk) throws Exception {
+
+		Member member = memberRepository.findById(memberPk).orElseThrow(()-> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+
 		Auction auction = auctionRepository.findById(auctionPk)
 				.orElseThrow(() -> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
 		int checkTime = getAuctionTime(auction);
@@ -206,7 +217,7 @@ public class AuctionService {
 		log.info("********************** Auction : getDetail() start");
 
 		log.info("********************** 경매 정보 가져오기 시도");
-		AuctionDetailResponse response = auctionRepository.searchDetailAuc(auction, memberPk, checkTime);
+		AuctionDetailResponse response = auctionRepository.searchDetailAuc(auction, memberPk, checkTime,member);
 		log.info("********************** 경매 정보 가져오기 성공, AuctionPk = {}", response.getAuctionPk());
 
 		log.info("********************** 경매 사진 가져오기 시도");
@@ -218,7 +229,7 @@ public class AuctionService {
 		response.setAuctionPhoto(auctionPhotoUrl);
 		log.info("********************** 경매 사진 가져오기 및 설정 성공, 사진 수 ={}", auctionPhotoUrl.size());
 		log.info("********************** 해당 판매자 경매 정보 가져오기 시도");
-		List<AuctionDetailItem> auctionDetailItems = auctionRepository.searchDetailItems(response.getAuctionOwnerPk(), auction);
+		List<AuctionDetailItem> auctionDetailItems = auctionRepository.searchDetailItems(response.getAuctionOwnerPk(), auction,member);
 		auctionDetailItems.forEach(auctionDetailItem -> {
 			Photo photo = photoService.getOnePhoto(auctionDetailItem.getAuctionPk());
 			auctionDetailItem.setAuctionPhoto(photo.getImgUrl());
@@ -302,7 +313,8 @@ public class AuctionService {
 	}
 
 	public List<AuctionIngResponseItem> getHotAuctionsToMainPage(Long memberPk) {
-		List<AuctionIngResponseItem> response = auctionRepository.searchHotAuctionToMainPage(memberPk);
+		Member member = memberRepository.findById(memberPk).orElseThrow(()->new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+		List<AuctionIngResponseItem> response = auctionRepository.searchHotAuctionToMainPage(memberPk,member);
 		return response;
 	}
 
@@ -332,5 +344,13 @@ public class AuctionService {
 
 	}
 
+	private Address setMemberAddress(double auctionMeetingLng, double auctionMeetingLat) {
+		StreetResponse streetResponse = commonService.findstreet(auctionMeetingLng, auctionMeetingLat);
+		return Address.builder()
+			.city(streetResponse.getCity())
+			.zipcode(streetResponse.getZipcode())
+			.street(streetResponse.getStreet())
+			.build();
+	}
 
 }

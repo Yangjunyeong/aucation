@@ -19,6 +19,7 @@ import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.member.db.entity.QMember;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
@@ -39,7 +40,7 @@ public class DiscountRepositoryCustomImpl implements DiscountRepositoryCustom {
 	private final QDisPhoto qDisPhoto = QDisPhoto.disPhoto;
 	private final QMember qMember = QMember.member;
 	private final QLikeDiscount qLikeDiscount = QLikeDiscount.likeDiscount;
-	private final RedisTemplate<String, SaveAuctionBIDRedis> redisTemplate;
+
 
 	@Override
 	public DiscountListResponse searchListByCondition(Member member, int pageNum, DiscountSortRequest sortRequest,
@@ -53,6 +54,9 @@ public class DiscountRepositoryCustomImpl implements DiscountRepositoryCustom {
 					qDiscount.discountDiscountedPrice.as("discountedPrice"),
 					qDiscount.discountPrice.as("originalPrice"),
 					qDiscount.discountRate.as("discountRate"),
+					qDiscount.address.city.as("mycity"),
+					qDiscount.address.zipcode.as("zipcode"),
+					qDiscount.address.street.as("street"),
 					qDisPhoto.imgUrl.min().as("discountImg"),
 					qDiscount.discountEnd.as("discountEnd"),
 					qDiscount.discountUUID.as("discountUUID"),
@@ -74,6 +78,7 @@ public class DiscountRepositoryCustomImpl implements DiscountRepositoryCustom {
 					qDiscount.discountEnd.after(LocalDateTime.now()),
 				catalogEq(sortRequest.getDiscountCategory()),
 				keywordEq(sortRequest.getSearchType(), sortRequest.getSearchKeyword())
+				,isMyDiscount(member)
 			)
 			.leftJoin(qMember)
 				.on(qDiscount.owner.eq(qMember))
@@ -99,8 +104,12 @@ public class DiscountRepositoryCustomImpl implements DiscountRepositoryCustom {
 			.build();
 	}
 
+	private Predicate isMyDiscount(Member member) {
+		return qDiscount.address.city.eq(member.getAddress().getCity()).and(qDiscount.address.zipcode.eq((member.getAddress().getZipcode())));
+	}
+
 	@Override
-	public List<DiscountListResponseItem> searchDiscountToMainPage(Long memberPk) {
+	public List<DiscountListResponseItem> searchDiscountToMainPage(Long memberPk,Member member) {
 		JPAQuery<DiscountListResponseItem> query = queryFactory
 				.select(
 						Projections.bean(DiscountListResponseItem.class,
@@ -127,6 +136,7 @@ public class DiscountRepositoryCustomImpl implements DiscountRepositoryCustom {
 				).from(qDiscount)
 				.where(
 						qDiscount.discountEnd.after(LocalDateTime.now())
+					,isMyDiscount(member)
 				)
 				.leftJoin(qMember)
 				.on(qDiscount.owner.eq(qMember))

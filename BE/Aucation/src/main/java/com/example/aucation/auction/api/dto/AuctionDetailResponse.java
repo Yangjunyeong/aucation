@@ -30,7 +30,9 @@ public class AuctionDetailResponse {
     private Double auctionMeetingLng;
     private String auctionInfo;
     private Integer auctionStartPrice;
-
+    private String mycity;
+    private String zipcode;
+    private String street;
 
     private LocalDateTime nowTime;
     private LocalDateTime auctionStartTime;

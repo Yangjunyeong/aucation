@@ -20,12 +20,12 @@ public interface AuctionRepository extends JpaRepository<Auction,Long>, AuctionR
 												AuctionSortRequest sortRequest, Pageable pageable);
 	AuctionListResponse searchReAucToCondition(Member member, int pageNum,
 											   AuctionSortRequest searchCondition, Pageable pageable);
-	AuctionDetailResponse searchDetailAuc(Auction auction, Long memberPk,int auctionCondition);
+	AuctionDetailResponse searchDetailAuc(Auction auction, Long memberPk,int auctionCondition,Member member);
 
-	List<AuctionDetailItem> searchDetailItems(Long memberPk,Auction auction);
+	List<AuctionDetailItem> searchDetailItems(Long memberPk,Auction auction,Member member);
 
-	ReAuctionDetailResponse searchDetailReAuc(Auction auction, Long memberPk, int checkTime);
-	List<AuctionIngResponseItem> searchHotAuctionToMainPage(Long memberPk);
-	List<ReAuctionResponseItem> searchRecentReAucToMainPage(Long memberPk);
+	ReAuctionDetailResponse searchDetailReAuc(Auction auction, Long memberPk, int checkTime,Member member);
+	List<AuctionIngResponseItem> searchHotAuctionToMainPage(Long memberPk,Member memeber);
+	List<ReAuctionResponseItem> searchRecentReAucToMainPage(Long memberPk, Member member);
 
 }

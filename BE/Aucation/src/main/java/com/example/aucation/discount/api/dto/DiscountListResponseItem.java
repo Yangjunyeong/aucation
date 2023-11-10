@@ -26,4 +26,8 @@ public class DiscountListResponseItem{
 	private LocalDateTime discountEnd;  //
 	private String discountImg;  //
 	private String discountUUID;
+	private String mycity;
+	private String zipcode;
+	private String street;
+
 }

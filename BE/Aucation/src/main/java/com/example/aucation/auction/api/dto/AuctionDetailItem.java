@@ -12,4 +12,9 @@ public class AuctionDetailItem {
     private Integer auctionPrice;
     private String auctionPhoto;
     private Boolean isLike;
+    private String mycity;
+    private String zipcode;
+    private String street;
+
+
 }

@@ -20,4 +20,7 @@ public class AuctionIngResponseItem {
     private String auctionOwnerNickname; //
     private LocalDateTime auctionEndTime; //
     private String auctionImg;//
+    private String mycity;
+    private String zipcode;
+    private String street;
 }

@@ -40,6 +40,9 @@ public class ReAuctionDetailResponse {
     private int isAction;
     private Long likeCnt;
     private Boolean isLike;
+    private String mycity;
+    private String zipcode;
+    private String street;
 
     private List<AuctionDetailItem> reAuctionDetailItems;
     private List<ReAucBidResponse> reAuctionBidItems;

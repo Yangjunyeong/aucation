@@ -53,4 +53,7 @@ public class MypageItemsResponse {
 	private LocalDateTime historyDoneDateTime;
 
 	private String imgfile;
+	private String mycity;
+	private String zipcode;
+	private String street;
 }

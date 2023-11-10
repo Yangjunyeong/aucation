@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.example.aucation.discount.db.entity.Discount;
+import com.example.aucation.member.db.entity.Address;
 import com.example.aucation.member.db.entity.Member;
 
 import lombok.Builder;
@@ -36,6 +37,8 @@ public class EnterResponse {
 	private int likeCnt;
 	private int discountRate;
 
+	private Address address;
+
 	public static EnterResponse of(List<String> uuidImage, Discount discount, Member member,boolean isFalse, int likeCnt) {
 		return EnterResponse.builder()
 			.discountImgURL(uuidImage)
@@ -59,6 +62,7 @@ public class EnterResponse {
 			.memberPoint(member.getMemberPoint())
 			.memberPk(member.getId())
 			.myNickname(member.getMemberNickname())
+			.address(discount.getAddress())
 			.build();
 	}
 }

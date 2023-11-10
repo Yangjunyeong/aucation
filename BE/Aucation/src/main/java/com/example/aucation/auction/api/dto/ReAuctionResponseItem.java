@@ -17,4 +17,7 @@ public class ReAuctionResponseItem {
     private String reAuctionOwnerNickname; //
     private LocalDateTime reAuctionEndTime;  //
     private String reAuctionImg;  //
+    private String mycity;
+    private String zipcode;
+    private String street;
 }
