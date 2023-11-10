@@ -7,7 +7,7 @@ import { BsFillPersonFill } from "react-icons/bs";
 import Image from "next/image";
 import clsx from "clsx";
 import RowCountDown from "./RowCountDown";
-
+import Link from "next/link";
 interface ItemType {
   cardImgUrl: string;
   likeCount: Number;
@@ -39,7 +39,8 @@ const AuctionSell: React.FC<CardProps> = ({ item,likeHandler }) => {
   const [state, setState] = useState<string>("");
   const [liked, setLiked] = useState<boolean>(isLiked);
   const [nakchal, setNakchal] = useState<string>("낙찰")
-
+  const [prodPk, setProdPk] = useState<any>(106)
+  const [prodType, setProdType] = useState<any>(1)
 
   const stateHandler = (state: string) => {
     setState(state);
@@ -47,7 +48,6 @@ const AuctionSell: React.FC<CardProps> = ({ item,likeHandler }) => {
   };
 
   const clickHandler = () => {
-    console.log('클릭')
   }
   return (
     <>
@@ -149,8 +149,8 @@ const AuctionSell: React.FC<CardProps> = ({ item,likeHandler }) => {
                 <div className="flex mt-2 justify-between mr-20">
                   <div className="flex text-[22px] items-center text-red-500">경매 등록일 :&nbsp;<span className="text-[28px]">{auctionStartTime.toLocaleString()}</span></div>
                   <div className="flex text-[22px] items-center">최종 입찰가&nbsp;&nbsp;<span className="font-bold text-red-500 w-[100px] flex-nowrap overflow-hidden text-ellipsis">{highestPrice.toLocaleString()}</span>원</div>
-                  <span className="border-2 rounded-lg border-black text-black text-2xl font-bold py-2 px-2" onClick={clickHandler}>
-                    채팅
+                  <span className="border-2 rounded-lg border-black text-black text-2xl font-bold py-2 px-2">
+                    <Link href={`dm/${prodPk}/${prodType}`}>채팅</Link>
                   </span>
                 </div>
             )}

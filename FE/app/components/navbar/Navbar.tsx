@@ -14,9 +14,9 @@ const Navbar: React.FC = () => {
 
   const router = useRouter();
 
-  const checkAuth = (e: React.MouseEvent<HTMLButtonElement>) => {
-    console.log(auth);
-  };
+  // const checkAuth = (e: React.MouseEvent<HTMLButtonElement>) => {
+  //   console.log(auth);
+  // };
   const handleLogout = () => {
     // 로컬 스토리지에서 토큰 제거
     localStorage.removeItem("accessToken");
@@ -49,7 +49,7 @@ const Navbar: React.FC = () => {
         <div className="w-full h-28 flex flex-row items-center sticky top-0 z-50 bg-white px-48">
           <div className="w-1/4 ">
             <Link href={`/`} className="flex flex-row">
-              <Image src={Star} alt="별" />
+              <Image src={Star} alt="별" width={40} height={40} />
               <p className="font-bold text-4xl pl-3">Aucation</p>
             </Link>
           </div>
@@ -61,7 +61,7 @@ const Navbar: React.FC = () => {
               경매 상품
             </Link>
             <Link
-              href={`/`}
+              href={`/discount`}
               className="ml-14 text-27px whitespace-nowrap flex items-center hover:underline font-semibold"
             >
               할인 상품
