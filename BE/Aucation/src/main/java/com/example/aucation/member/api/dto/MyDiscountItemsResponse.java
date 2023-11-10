@@ -20,6 +20,7 @@ public class MyDiscountItemsResponse {
 	private LocalDateTime historyDatetime;
 	private LocalDateTime historyDoneDatetime;
 	private HistoryStatus historyStatus;
+	private String customerNickname;
 	private String imgfile;
 	private String mycity;
 	private String zipcode;

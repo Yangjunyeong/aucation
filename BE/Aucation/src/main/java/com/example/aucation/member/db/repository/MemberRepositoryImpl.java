@@ -82,6 +82,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qAuction.auctionEndPrice.as("auctionSuccessPay"),
 					qAuction.owner.id.as("ownerPk"),
 					qAuction.owner.memberNickname.as("ownerNicknname"),
+					qAuction.customer.memberNickname.as("customerNicknname"),
 					qAuction.address.city.as("mycity"),
 					qAuction.address.zipcode.as("zipcode"),
 					qAuction.address.street.as("street"),
@@ -179,6 +180,9 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		}
 	}
 
+
+	//역경매
+
 	@Override
 	public MyReverseResponse searchMyReversePage(Member member, MemberPageRequest memberPageRequest,
 		Pageable pageable) {
@@ -197,6 +201,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qAuction.auctionType.as("auctionType"),
 					qAuction.createdAt.as("registerDate"),
 					qAuction.owner.memberNickname.as("ownerNicknname"),
+					qAuction.customer.memberNickname.as("customerNickname"),
 					qAuction.address.city.as("mycity"),
 					qAuction.address.zipcode.as("zipcode"),
 					qAuction.address.street.as("street"),
@@ -315,6 +320,8 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		return null;
 	}
 
+	//판매자 판매 입장에선 구매자를 봐야함
+	//구매 입장에선 판매자를 봐야함
 	@Override
 	public MyDiscountResponse searchMyDiscountPage(Member member, MemberPageRequest memberPageRequest,
 		Pageable pageable) {
@@ -327,7 +334,8 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qDiscount.discountEnd.as("discountEnd"),
 					qDiscount.owner.id.as("ownerPk"),
 					qDiscount.customer.id.as("customerPk"),
-					qAuction.owner.memberNickname.as("ownerNicknname"),
+					qDiscount.owner.memberNickname.as("ownerNicknname"),
+					qDiscount.customer.memberNickname.as("customerNickname"),
 					qDiscount.id.as("discountPk"),
 					qDiscount.address.city.as("mycity"),
 					qDiscount.address.zipcode.as("zipcode"),
@@ -456,6 +464,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qAuction.id.as("auctionPk"),
 					qAuction.owner.id.as("ownerPk"),
 					qAuction.owner.memberNickname.as("ownerNicknname"),
+					qAuction.customer.memberNickname.as("customerNickname"),
 					qAuction.address.city.as("mycity"),
 					qAuction.address.zipcode.as("zipcode"),
 					qAuction.address.street.as("street"),
@@ -510,6 +519,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qDiscount.id.as("auctionPk"),
 					qDiscount.owner.id.as("ownerPk"),
 					qAuction.owner.memberNickname.as("ownerNicknname"),
+					qAuction.customer.memberNickname.as("customerNickname"),
 					qDiscount.address.city.as("mycity"),
 					qDiscount.address.zipcode.as("zipcode"),
 					qDiscount.address.street.as("street"),
@@ -545,67 +555,3 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			.build();
 	}
 }
-
-//경매-판매-경매전인상태 	:0
-//경매-판매-경매중인상태 	:1
-//경매-판매-경매끝난상태 	:2
-//경매-구매-낙찰			:3,4
-//역경매-판매				:5
-//역경매-구매				:6
-
-//경매-판매-경매전
-//경매제목
-//이미지사진
-//경매상태
-//경매등록일
-//경매시작가
-//경매시작일시
-//경매UUID
-
-//경매-판매-경매중
-//경매제목
-//이미지사진
-//경매상태
-//경매등록일
-//경매시작가
-//경매종료일시
-//경매UUID
-
-//경매-판매-경매완료
-//경매제목
-//이미지사진
-//경매상태
-//경매등록일
-//경매시작가
-//경매UUID
-//경매
-//낙찰상태
-//최종입찰가
-
-//경매-구매-낙찰
-//경매제목
-//이미지사진
-//경매제목
-//판매자이름
-//경매시작가
-//낙찰일시
-//낙찰가
-//등록일
-//auctionUUID
-
-//역경매-판매-동일
-//경매제목
-//이미지사진
-//구매자
-//입찰가
-//입찰날짜
-//등록일
-//역경매PK
-
-//역경매-구매
-//경매제목
-//이미지사진
-//경매이름
-//판매자
-//할인가격
-//예약일
