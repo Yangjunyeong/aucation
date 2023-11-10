@@ -70,7 +70,7 @@ const AuctionCountDown: React.FC<StateCardProps> = ({
   if (nowtime < endTime) {
     isPre ? (statusMessage = "경매시작") : (statusMessage = "경매종료");
   } else {
-    isPre ? (statusMessage = "경매중") : (statusMessage = "마감");
+    isPre ? (statusMessage = "경매중") : (statusMessage = "경매마감");
   }
 
   return (
