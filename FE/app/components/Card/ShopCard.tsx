@@ -22,7 +22,7 @@ interface ItemType {
 interface CardProps {
   item: ItemType;
 }
-const Card: React.FC<CardProps> = ({ item }) => {
+const ShopCard: React.FC<CardProps> = ({ item }) => {
   const {
     cardImgUrl,
     likeCount,
@@ -140,4 +140,4 @@ const Card: React.FC<CardProps> = ({ item }) => {
   );
 };
 
-export default Card;
+export default ShopCard;

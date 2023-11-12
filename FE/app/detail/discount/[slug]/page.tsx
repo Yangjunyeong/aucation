@@ -13,15 +13,19 @@ import StayMap from "../../../components/map/StayMap";
 import ColCard from "@/app/components/Card/ColCard";
 import { useEffect, useState } from "react";
 import DetailCarousel from "@/app/detail/components/DetailCarousel";
+
 // 더미데이터 임포트
 import dummyData from "@/app/detail/components/DummyData";
 import imageDataList from "@/app/detail/components/DummyImg";
 import { useParams, useRouter } from "next/navigation";
+
 // API 요청
 import { callApi } from "@/app/utils/api";
+
 // 타이머
 import DiscountDown from "../../components/DiscountDown";
 import MoonLoader from "react-spinners/MoonLoader";
+
 // 아이콘
 import { HiBuildingStorefront } from "react-icons/hi2";
 import { MdPayment } from "react-icons/md";

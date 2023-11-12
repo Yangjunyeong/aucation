@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 
 interface StateCardProps {
+  curTime: Date;
   auctionStartTime: Date;
   stateHandler:(state:string) => void;
 }
@@ -13,9 +14,9 @@ interface TimeLeft {
   seconds: number;
 }
 
-const CountDown: React.FC<StateCardProps> = ({ auctionStartTime,stateHandler }) => {
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const endTime = new Date(auctionStartTime.getTime() + 1 * 60 * 60 * 1000);
+const CountDown: React.FC<StateCardProps> = ({ auctionStartTime,stateHandler,curTime }) => {
+  const [currentTime, setCurrentTime] = useState(new Date(curTime));
+  const endTime = new Date(auctionStartTime.getTime() + 1 * 30 * 60 * 1000);
 
   const calcTime = (): TimeLeft => {
     let difference: number;
