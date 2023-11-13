@@ -46,13 +46,13 @@ const MoveMap = () => {
         //   setMarker([marker.getPosition().getLat(), marker.getPosition().getLng()]);
         // });
 
-        var marker = new window.kakao.maps.Marker(), // 클릭한 위치를 표시할 마커입니다
+        var marker = new window.kakao.maps.Marker({ position: map.getCenter() }), // 클릭한 위치를 표시할 마커입니다
           infowindow = new window.kakao.maps.InfoWindow({ zindex: 1 }); // 클릭한 위치에 대한 주소를 표시할 인포윈도우입니다
-
+        marker.setMap(map);
         // 현재 지도 중심좌표로 주소를 검색해서 지도 좌측 상단에 표시합니다
         searchAddrFromCoords(map.getCenter(), displayCenterInfo);
 
-        // 지도를 클릭했을 때 클릭 위치 좌표에 대한 주소정보를 표시하도록 이벤트를 등록합니다
+        // 지도를 클릭했을 때 클릭 위치 좌표에 대한 주소정보를 표시하도록 s이벤트를 등록합니다
         window.kakao.maps.event.addListener(map, "click", function (mouseEvent: any) {
           setMarker([marker.getPosition().getLat(), marker.getPosition().getLng()]);
           searchDetailAddrFromCoords(mouseEvent.latLng, function (result: any, status: any) {

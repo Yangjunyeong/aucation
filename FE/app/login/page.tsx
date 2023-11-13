@@ -1,6 +1,6 @@
 import Image from "next/image";
 import AuthForm from "./components/AuthForm";
-import logo from "@/app/images/logo.png";
+import logo2 from "@/app/images/logo2.png";
 
 export default function Home() {
   return (
@@ -18,7 +18,7 @@ export default function Home() {
     "
     >
       <div className="w-[35%]">
-        <Image alt="Logo" className="mx-auto w-auto" src={logo} />
+        <Image alt="Logo" className="mx-auto w-auto" src={logo2} />
         <h2
           className="mt-6
          text-center
