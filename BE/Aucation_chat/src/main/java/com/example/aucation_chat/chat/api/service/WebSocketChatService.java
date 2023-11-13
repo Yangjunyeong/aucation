@@ -37,8 +37,6 @@ public class WebSocketChatService {
 
 	@Autowired
 	private final RedisTemplate<String, RedisChatMessage> redisTemplate;
-	@Autowired
-	private final RedisTemplate<String, String> myStringRedisTemplate;
 
 	private final MemberRepository memberRepository;
 
@@ -99,7 +97,7 @@ public class WebSocketChatService {
 
 		// redis에 저장
 		redisTemplate.opsForList().rightPush("chat-auc:" + chatUUID, message);
-		setTTL("chat-auc:", chatUUID); // 첫 push 였다면 TTL 설정
+		// setTTL("chat-auc:", chatUUID); // 첫 push 였다면 TTL 설정
 
 		// RedisChatMessage -> ChatResponse
 		ChatResponse res = ChatResponse.builder()
@@ -143,7 +141,7 @@ public class WebSocketChatService {
 		// redis에 저장
 		String redisKeyBase = getRedisKeyBase(chatRequest.getChatUUID());
 		redisTemplate.opsForList().rightPush(redisKeyBase + chatRequest.getChatUUID(), message);
-		setTTL(redisKeyBase, chatRequest.getChatUUID()); // 첫 push 였다면 TTL 설정
+		// setTTL(redisKeyBase, chatRequest.getChatUUID()); // 첫 push 였다면 TTL 설정
 
 		return message;
 	}
@@ -151,9 +149,8 @@ public class WebSocketChatService {
 	private void setTTL(String redisKeyBase, String session) {
 		if (redisTemplate.opsForList().size(redisKeyBase + session) == 1) { // O(1)시간에 .size() 수행
 			log.info(" ******************** SET TTL start!!!!");
-			myStringRedisTemplate.opsForValue()
-				.set("ex:" + redisKeyBase + session, "key for expire", 30, TimeUnit.MINUTES); // ex:redisKeyBase:session
-			log.info(" ******************** ex:"+redisKeyBase+session+" 키의 만료시간이 설정되었습니다");
+			redisTemplate.expire(redisKeyBase+session, 60, TimeUnit.MINUTES);
+			log.info(" ******************** "+redisKeyBase+session+" 키의 만료시간이 설정되었습니다");
 
 		}
 	}
@@ -171,7 +168,7 @@ public class WebSocketChatService {
 		if (topic == null) {
 			log.info("************ topic이 없음!!!!");
 			// chatUUID을 가지는 key를 이용한 topic 생성
-			topic = new ChannelTopic(getRedisKeyBase(chatUUID) + chatUUID);
+			topic = new ChannelTopic("sub:"+getRedisKeyBase(chatUUID) + chatUUID);
 			redisMessageListener.addMessageListener(redisSubscriber, topic);  // pub/sub 통신을 위해 리스너를 설정. 대화가 가능해진다
 			log.info("**************** createTopic: " + topic + " listening ");
 			topics.put(chatUUID, topic);

@@ -20,8 +20,10 @@ import com.example.aucation_chat.common.redis.dto.RedisChatMessage;
 import io.lettuce.core.ReadFrom;
 import io.lettuce.core.cluster.ClusterClientOptions;
 import io.lettuce.core.cluster.ClusterTopologyRefreshOptions;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
+@Slf4j
 public class RedisConfig {
 	// @Value("${spring.redis.host}")
 	// private String host;
@@ -56,6 +58,7 @@ public class RedisConfig {
 			.build();
 
 		// 모든 클러스터 노드들 정보를 넣는다.
+		log.info(clusterNodes.toString());
 		RedisClusterConfiguration redisClusterConfiguration = new RedisClusterConfiguration(clusterNodes);
 		redisClusterConfiguration.setPassword(password);
 		return new LettuceConnectionFactory(redisClusterConfiguration, clientConfiguration);
@@ -75,23 +78,22 @@ public class RedisConfig {
 		return redisTemplate;
 	}
 
-	@Bean
-	RedisTemplate<String, String> myStringRedisTemplate() {
-		RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
-
-		redisTemplate.setConnectionFactory(redisConnectionFactory());
-
-		// StringRedisSerializer: binary 데이터로 저장되기 때문에 이를 String 으로 변환시켜주며(반대로도 가능) UTF-8 인코딩 방식을 사용
-		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new StringRedisSerializer());
-
-		return redisTemplate;
-	}
 
 	@Bean
 	public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory) {
 		RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
 		redisMessageListenerContainer.setConnectionFactory(redisConnectionFactory);
+
+		// // PUB/SUB 이벤트를 처리하는 리스너 등록
+		// // redisMessageListenerContainer.addMessageListener(redisSubscriber, new PatternTopic("__key*__:*"));
+		//
+		// // key expiration 이벤트를 처리하는 리스너 등록
+		// redisMessageListenerContainer.addMessageListener(redisKeyExpiredListener,
+		// 	new PatternTopic("__keyevent@*__:expired"));
+
+		redisMessageListenerContainer.setErrorHandler(
+			e -> log.error("There was an error in redis key expiration listener container", e));
+
 		return redisMessageListenerContainer;
 	}
 }
