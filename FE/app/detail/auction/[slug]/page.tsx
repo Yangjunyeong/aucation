@@ -4,7 +4,7 @@ import Image from "next/image";
 import BackBtn from "../../components/BackBtn";
 import LikeBtn from "../../components/LikeBtn";
 import profile from "@/app/images/bonobono.png";
-
+import Link from "next/link";
 import { RiAuctionLine } from "react-icons/ri";
 import { BsFillPersonFill } from "react-icons/bs";
 import PriceBox from "../../components/PriceBox";
@@ -22,6 +22,7 @@ import { callApi } from "@/app/utils/api";
 // 타이머
 import CountDown from "@/app/components/Card/ColCountDown";
 import MoonLoader from "react-spinners/MoonLoader";
+
 const AuctionDetail = () => {
   const [dataList, setDataList] = useState<any>();
   const [state, setState] = useState<string>();
@@ -33,6 +34,11 @@ const AuctionDetail = () => {
   // 좋아요
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [likeCount, setLikeCount] = useState<number>(0);
+
+  // 스테이트 핸들러
+  const stateHandler = (value: string) => {
+    setState(value);
+  };
 
   // 로딩
   const [loading, setLoading] = useState(true);
@@ -100,15 +106,21 @@ const AuctionDetail = () => {
               </h3>
             </div>
             <div>
-              <h2 className="text-2xl font-bold">{dataList.auctionOwnerNickname}</h2>
+              <Link
+              href={`/mypage/${dataList.auctionOwnerNickname}`}>
+                <h2 className="text-2xl font-bold">{dataList.auctionOwnerNickname}</h2>
+              </Link>
             </div>
           </div>
           <div className="flex-1 flex justify-end items-end">
-            <div className="mr-7 flex">
-              <BsFillPersonFill size={25} />
-              {dataList.auctionCurCnt}
+            {/* 참여중인 인원수 */}
+            <div className="flex w-[120px] items-end">
+              <BsFillPersonFill size={30} />
+              <span className="ml-2">{dataList?.auctionCurCnt}</span>
             </div>
-            {/* <h3 className="text-1xl font-thin "><CountDown stateHandler={stateHandler} currentTime={dataList.nowTime} auctionStartTime={dataList.auctionStartTime}/></h3> */}
+            <div className="mr-7 flex items-end">
+            <h3 className="flex text-1xl font-thin "><CountDown stateHandler={stateHandler} currentTime={new Date(dataList.nowTime)} auctionStartTime={new Date(dataList.auctionStartTime)}/></h3>
+            </div>
           </div>
         </div>
         <div className="border-t-2 border-gray-400 mt-10"></div>
@@ -140,7 +152,11 @@ const AuctionDetail = () => {
           }}
         >
           <RiAuctionLine size={32} color="#ffffff" />
-          <p className="text-2">입찰하러 가기</p>
+          <Link
+          href={`/bid/${dataList.auctionUuid}`}
+          >
+            <p className="text-2">입찰하러 가기</p>
+          </Link>
         </div>
 
         {/* 상품소개 */}

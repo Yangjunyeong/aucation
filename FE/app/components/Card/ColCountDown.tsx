@@ -15,7 +15,7 @@ interface TimeLeft {
 
 const CountDown: React.FC<StateCardProps> = ({ auctionStartTime, stateHandler, currentTime }) => {
   const [nowtime, setNowtime] = useState(currentTime);
-  const endTime = new Date(auctionStartTime.getTime() + 1 * 60 * 60 * 1000);
+  const endTime = new Date(auctionStartTime.getTime() + 1 * 30 * 60 * 1000);
 
   const calcTime = (): TimeLeft => {
     let difference: number;
@@ -73,10 +73,10 @@ const CountDown: React.FC<StateCardProps> = ({ auctionStartTime, stateHandler, c
   }
 
   return (
-    <span className="flex w-[155px] justify-end">
+    <span className="flex w-[200px] justify-end">
       <div
-        className={clsx(
-          statusMessage == "경매시작"
+        className={clsx("flex mr-2 items-center",
+          statusMessage == "종료"
             ? "text-red-500"
             : statusMessage == "경매종료"
             ? "text-customBlue"
@@ -85,10 +85,13 @@ const CountDown: React.FC<StateCardProps> = ({ auctionStartTime, stateHandler, c
       >
         {statusMessage}
       </div>
-      {days > 0 && <div>{days}:</div>}
-      {(days > 0 || hours > 0) && <div>&nbsp;{hours}&nbsp;:</div>}
-      {(days > 0 || hours > 0 || minutes > 0) && <div>&nbsp;{minutes}&nbsp;:</div>}
-      {nowtime <= endTime && <div>&nbsp;{seconds} 전</div>}
+      <div className="flex font-bold text-xl">
+
+        {days > 0 && <div>{days}:</div>}
+        {(days > 0 || hours > 0) && <div>&nbsp;{hours}&nbsp;:</div>}
+        {(days > 0 || hours > 0 || minutes > 0) && <div>&nbsp;{minutes}&nbsp;:</div>}
+        {nowtime <= endTime && <div className="font-semibold">&nbsp;{seconds} 전</div>}
+      </div>
     </span>
   );
 };
