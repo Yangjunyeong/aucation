@@ -111,7 +111,7 @@ const MyPage: NextPage = () => {
   const [pageNumber, setPageNumber] = useState<number>(1);
 
   // 소상공인 판단
-  const [isShop, setIsShop] = useState<any>(window.localStorage.getItem("role"));
+  const [isShop, setIsShop] = useState<any>("개인");
   const [shopNum, setShopNum] = useState<any>("");
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -275,7 +275,7 @@ const MyPage: NextPage = () => {
           .then(res => {
             console.log(res.data);
             setIsOpen(false);
-            setMyPoint(data.amount + myPoint)
+            setMyPoint(data.amount + myPoint);
           })
           .catch(err => {
             console.log(JSON.stringify(data, null, 2));
@@ -365,13 +365,9 @@ const MyPage: NextPage = () => {
   }, [thirdCategory]);
 
   if (dataList) {
-
     return (
       <div className="w-full px-80 py-20">
-        <Script
-          src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"
-          strategy="beforeInteractive"
-        />
+        <Script src="https://cdn.iamport.kr/v1/iamport.js" />
         {/* 프로필 영역 */}
         {/* 결제 */}
         <div>
@@ -410,7 +406,7 @@ const MyPage: NextPage = () => {
                   )}
                 </div>
                 {/* 소상공인 인증 */}
-  
+
                 {isShop == "개인" ? (
                   <div className="flex ml-[200px] text-xl items-center">
                     소상공인 이신가요? &nbsp;
@@ -494,7 +490,7 @@ const MyPage: NextPage = () => {
           </div>
         </div>
         <div className="border-t-2 border-gray-400 bottom-0"></div>
-  
+
         {/* 첫번째 카테고리 출력 및 클릭 효과 */}
         <div className="rounded-lg flex p-3 bg-gray-100 border border-gray-400 text-gray-700 mt-16 cursor-pointer">
           <div className="flex flex-1 h-20">
@@ -510,7 +506,7 @@ const MyPage: NextPage = () => {
             ))}
           </div>
         </div>
-  
+
         {/* 2번째 카테고리 출력 및 클릭 시 저장 */}
         <div className="flex mt-20 gap-3 items-center">
           <h2 className="font-semibold text-3xl w-[160px]">{category} 상품</h2>
@@ -532,7 +528,7 @@ const MyPage: NextPage = () => {
         </div>
         <div className="border-t-2 border-gray-400 bottom-0 mt-10"></div>
         {/* 카테고리 - 상태값 ex) 경매전/ 중 / 완료  */}
-  
+
         {/* 3번째 카테고리 출력 */}
         <div className="flex justify-between mt-10">
           <div className="flex">
@@ -560,11 +556,13 @@ const MyPage: NextPage = () => {
                   ))}
             </div>
             <div className="ml-4">
-              <span className="font-bold text-3xl ml-4 text-red-500">{dataList.mypageItems.length}</span>
+              <span className="font-bold text-3xl ml-4 text-red-500">
+                {dataList.mypageItems.length}
+              </span>
               {category !== "좋아요" && <span className="font-bold ml-2 text-3xl">개</span>}
             </div>
           </div>
-  
+
           {/* 솔트 */}
           <div className="flex text-lg font-semibold text-center cursor-pointer">
             {itemsortList.map((item, idx) => (
@@ -580,16 +578,16 @@ const MyPage: NextPage = () => {
             |
           </div>
         </div>
-  
+
         {/* 경매 - 판매 */}
         {category == "경매" && secondCategory == "판매" && (
           <div>
-            {dataList.mypageItems.map((item:any, idx:any) => (
+            {dataList.mypageItems.map((item: any, idx: any) => (
               <AuctionSell item={item} key={idx} />
             ))}
           </div>
         )}
-  
+
         {/* 경매 - 구매 */}
         {/* {category == "경매" && secondCategory == "구매" && (
           <div>
@@ -598,7 +596,7 @@ const MyPage: NextPage = () => {
             ))}
           </div>
         )} */}
-  
+
         {/* 역경매 판매 */}
         {/* {category == "역경매" && secondCategory == "판매" && (
           <div>
@@ -607,7 +605,7 @@ const MyPage: NextPage = () => {
             ))}
           </div>
         )} */}
-  
+
         {/* 역경매 구매 */}
         {/* {category == "역경매" && secondCategory == "구매" && (
           <div>
@@ -616,7 +614,7 @@ const MyPage: NextPage = () => {
             ))}
           </div>
         )} */}
-  
+
         {/* 할인 - 판매 */}
         {/* {category == "할인" && secondCategory == "판매" && (
           <div>
@@ -641,7 +639,7 @@ const MyPage: NextPage = () => {
             ))}
           </div>
         )} */}
-  
+
         {/* 페이지 네이션 */}
         <div className="flex justify-center mt-4">
           <Pagination
@@ -656,7 +654,6 @@ const MyPage: NextPage = () => {
         </div>
       </div>
     );
-
   }
 };
 export default MyPage;

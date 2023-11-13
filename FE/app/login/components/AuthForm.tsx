@@ -95,10 +95,10 @@ const AuthForm = () => {
         router.push("/");
       })
       .catch(err => {
-        console.log(err.data);
+        console.log(err);
         // console.log(err);
         // console.log(err.response);
-        toast.error(err.data);
+        toast.error(err.response.data);
       });
   };
 

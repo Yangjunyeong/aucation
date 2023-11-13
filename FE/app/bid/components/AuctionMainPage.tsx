@@ -92,15 +92,15 @@ const AuctionMainPage = () => {
       client.current!.subscribe(`/topic/sub/${uuid}`, res => {
         console.log(JSON.parse(res.body));
         const data = JSON.parse(res.body);
-        if (data.headCnt != null) {
-          setDatas((datas: auctionData) => {
-            return {
-              ...datas,
-              headCnt: data.headCnt,
-            };
-          });
-          return;
-        }
+        // if (data.headCnt != null) {
+        //   setDatas((datas: auctionData) => {
+        //     return {
+        //       ...datas,
+        //       headCnt: data.headCnt,
+        //     };
+        //   });
+        //   return;
+        // }
         if (data.messageType == "error") {
           if (data.memberPk == datas.memberPk) {
             toast.error(data.errMessage);
@@ -192,6 +192,9 @@ const AuctionMainPage = () => {
       })
       .catch(err => {
         if (err.response.data.code == "P002") {
+          toast.error(err.response.data.message);
+          router.push("/");
+        } else if (err.response.data.code == "P002") {
           toast.error(err.response.data.message);
           router.push("/");
         }
