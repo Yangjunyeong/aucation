@@ -7,6 +7,8 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 import com.example.aucation_chat.chat.api.dto.response.ChatResponse;
+import com.example.aucation_chat.common.error.ApplicationError;
+import com.example.aucation_chat.common.error.ApplicationException;
 import com.example.aucation_chat.common.redis.dto.RedisChatMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,7 +30,8 @@ public class RedisSubscriber implements MessageListener {
 			log.info(" subscriber listeneing ...............................");
 			// Redis에서 발행된 메시지의 채널 이름을 가져오는 부분
 			String channel = (String)redisTemplate.getStringSerializer().deserialize(message.getChannel());
-			log.info("      channel: "+channel);
+			log.info("      channel: "+channel); // sub:chat-auc:12345678
+
 
 			// message.getBody() : byte[] => String
 			String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
@@ -50,7 +53,12 @@ public class RedisSubscriber implements MessageListener {
 
 
 			// Websocket 구독자에게 채팅 메시지 전송
-			String auctionUUID = channel.split(":")[1];
+			String auctionUUID = "";
+			try {
+				auctionUUID = channel.split(":")[2];
+			} catch (Exception e) {
+				throw new ApplicationException(ApplicationError.INVALID_REDIS_KEY);
+			}
 			log.info("      auctionUUID: "+auctionUUID);
 			messagingTemplate.convertAndSend("/sub/" + auctionUUID,  res);
 			log.info(" subscriber listeneing 끝 ...............................");
