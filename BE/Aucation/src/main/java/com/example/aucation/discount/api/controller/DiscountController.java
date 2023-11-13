@@ -2,6 +2,7 @@ package com.example.aucation.discount.api.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,7 +50,7 @@ public class DiscountController {
 
 	@GetMapping("/purchase/{discountUUID}")
 	private ResponseEntity<PurchaseResponse> purchase(@AuthorizedVariable Long memberPk, @PathVariable("discountUUID") String discountUUID) throws
-		FirebaseMessagingException {
+		FirebaseMessagingException, ExecutionException, InterruptedException {
 		return ResponseEntity.ok().body(discountService.purchase(memberPk,discountUUID));
 	}
 

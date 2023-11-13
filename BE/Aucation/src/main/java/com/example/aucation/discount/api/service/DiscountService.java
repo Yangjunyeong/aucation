@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import com.example.aucation.common.dto.StreetResponse;
@@ -166,7 +167,10 @@ public class DiscountService {
 	}
 
 	@Transactional
-	public PurchaseResponse purchase(Long memberPk, String discountUUID) throws FirebaseMessagingException {
+	public PurchaseResponse purchase(Long memberPk, String discountUUID) throws
+		FirebaseMessagingException,
+		ExecutionException,
+		InterruptedException {
 
 		Member member = memberRepository.findById(memberPk)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));

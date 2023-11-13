@@ -35,6 +35,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor
@@ -132,7 +133,7 @@ public class ReAuctionService {
 
     @Transactional
     public ReAuctionSelectResponse selectBid(Long memberPk, ReAuctionSelectRequest request) throws
-        FirebaseMessagingException {
+        FirebaseMessagingException, ExecutionException, InterruptedException {
         log.info("********************** selectBid start");
         Auction auction = auctionRepository.findById(request.getReAuctionPk())
                 .orElseThrow(()-> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));

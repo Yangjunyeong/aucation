@@ -34,7 +34,7 @@ public class MypageItemsResponse {
 	//경매 최종낙찰가
 	private int auctionSuccessPay;
 	//시작가
-	private int auctionStarePrice;
+	private int auctionStartPrice;
 	// 판매
 	private Long ownerPk;
 	//경매 - 판매

@@ -1,5 +1,7 @@
 package com.example.aucation.common.redis.util;
 
+import java.util.concurrent.ExecutionException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.listener.KeyExpirationEventMessageListener;
@@ -46,6 +48,10 @@ public class RedisKeyExpiredListener extends KeyExpirationEventMessageListener {
             try {
                 auctionBidService.startAuction(aucUuid);
             } catch (FirebaseMessagingException e) {
+                throw new RuntimeException(e);
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }else {

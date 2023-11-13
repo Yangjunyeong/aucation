@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -251,7 +252,9 @@ public class AuctionBidService {
 		return null;
 	}
 
-	public void startAuction(String aucUuid) throws FirebaseMessagingException {
+	public void startAuction(String aucUuid) throws FirebaseMessagingException,
+		ExecutionException,
+		InterruptedException {
 		log.info("*********************** startAuction START !!");
 
 		// 경매 중인지를 파악하는 redis key 값
