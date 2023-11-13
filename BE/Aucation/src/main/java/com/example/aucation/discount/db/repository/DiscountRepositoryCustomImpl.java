@@ -51,6 +51,7 @@ public class DiscountRepositoryCustomImpl implements DiscountRepositoryCustom {
 				Projections.bean(DiscountListResponseItem.class,
 					qDiscount.id.as("discountPk"),
 					qDiscount.discountTitle.as("discountTitle"),
+					qDiscount.discountType.as("discountType"),
 					qDiscount.discountDiscountedPrice.as("discountedPrice"),
 					qDiscount.discountPrice.as("originalPrice"),
 					qDiscount.discountRate.as("discountRate"),
