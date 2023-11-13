@@ -5,7 +5,7 @@ import { AiOutlineArrowLeft, AiOutlineHeart } from "react-icons/ai";
 import { RiUserFill, RiTimerFlashLine } from "react-icons/ri";
 import { FaRegHandPaper } from "react-icons/fa";
 import dojang from "@/app/images/dojang.png";
-import { Stomp, CompatClient } from "@stomp/stompjs";
+import { Stomp, CompatClient, IStompSocket } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import calculateRemainingTime from "@/app/utils/timer";
 import { useParams, useRouter } from "next/navigation";
@@ -14,6 +14,9 @@ import toast from "react-hot-toast";
 import Modal from "@/app/components/Modal";
 import ModalContent from "@/app/reverseauction/components/ModalContent";
 import { pricetoString } from "@/app/utils/pricecal";
+import axios from "axios";
+
+
 
 export type auctionData = {
   memberPk: number; // 입찰을 위한 pk
@@ -89,6 +92,7 @@ const AuctionMainPage = () => {
     });
 
     client.current.connect({}, () => {
+      console.log(client.current?.webSocket?._transport? : as any?.url?.split("/")[5]); // Socket Session ID
       client.current!.subscribe(`/topic/sub/${uuid}`, res => {
         console.log(JSON.parse(res.body));
         const data = JSON.parse(res.body);
@@ -108,6 +112,8 @@ const AuctionMainPage = () => {
           } else if (data.code == "P002") {
             toast.error(data.message);
             router.push("/");
+            return;
+          } else {
             return;
           }
         }
@@ -194,7 +200,7 @@ const AuctionMainPage = () => {
         if (err.response.data.code == "P002") {
           toast.error(err.response.data.message);
           router.push("/");
-        } else if (err.response.data.code == "P002") {
+        } else if (err.response.data.code == "P009") {
           toast.error(err.response.data.message);
           router.push("/");
         }

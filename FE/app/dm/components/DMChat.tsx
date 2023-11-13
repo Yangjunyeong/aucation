@@ -44,7 +44,7 @@ const DMChat: React.FC<DMChatProps> = ({ prodPk, prodType, memberPk, setChatRoom
       client.current.deactivate();
     }
     client.current = Stomp.over(() => {
-      const ws = new SockJS(`${process.env.NEXT_PUBLIC_SERVER_URL}/chat-server`);
+      const ws = new SockJS(`${process.env.NEXT_PUBLIC_CHAT_SERVER_URL}/chat-server`);
       return ws;
     });
 
