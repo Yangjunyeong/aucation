@@ -6,69 +6,70 @@ import chatImg from "@/app/images/chatImg.png";
 import LikeBtn from "../../detail/components/LikeBtn";
 import Image from "next/image";
 import clsx from "clsx";
-
+import { callApi } from "@/app/utils/api";
+import formatKoreanCurrency from "../../utils/formatKoreanCurrency"
 import Link from "next/link";
 
 interface ItemType {
-  cardImgUrl: string;
-  likeCount: Number;
-  title: string;
-  highestPrice: Number;
-  isLiked: boolean;
-  nickname: string;
-  startPrice: Number;
-  isIndividual: boolean;
-  auctionStartTime: Date;
+  // 이미지, 등록일 x, 제목 x, 정가, 할인가, 좋아요
+  imgfile: string,
+  discountPrice: number,
+  discountDiscountedPrice:number,
+  isLike: boolean,
+  // 구매자
+  customerNickname: string
+  // x 마감시간
+  discountEnd: string,
+  // 제품 uuid, pk
+  discountUUID: string,
+  discountPk: number,
+  // 낙찰 상태, 일시, 확정일
+  historyStatus: string,
+  historyDatetime: string,
+  historyDoneDatetime: string,
+  // 유저pk, 소상공인pk
+  discountCustomerPk: number,
+  discountOwnerPk: number,
+  // x 시,구,동
+  mycity: string,
+  zipcode: string,
+  street: string,
 }
 
 interface CardProps {
   item: ItemType;
 }
 const DiscountBuy: React.FC<CardProps> = ({ item }) => {
-  const {
-    cardImgUrl,
-    likeCount,
-    title,
-    highestPrice,
-    isLiked,
-    nickname,
-    startPrice,
-    auctionStartTime,
-    isIndividual,
-  } = item;
-  const [state, setState] = useState<string>("");
-  const [liked, setLiked] = useState<boolean>(isLiked);
-  const [nakchal, setNakchal] = useState<string>("완료");
-  const likeHandler = (value: boolean) => {
-    console.log(liked);
-    setLiked(value);
+  const [isLiked, setIsLiked] = useState<boolean>(item.isLike);
+  const [prodType, setProdType] = useState<string>("2")
+  const likeHandler = (newLikeStatus: boolean) => {
+    setIsLiked(newLikeStatus); // 옵티미스틱 업데이트
+
+    callApi("get", `/discount/like/${item.discountPk}`)
+      .then(response => {
+        console.log("좋아요 성공", response);
+      })
+      .catch(error => {
+        console.log("좋아요 실패", error);
+      });
   };
 
-  const stateHandler = (state: string) => {
-    setState(state);
-    console.log("--------------->", state);
-  };
-
-  const clickHandler = () => {
-    console.log("클릭");
-  };
   return (
     <>
       <div
         className={clsx(
-          "flex rounded-lg overflow-hidden shadow-lg bg-white w-[1200px] h-[250px] mt-12 transition-transform transform duration-300 hover:scale-110",
-          nakchal == "낙찰" ? "border-2 border-blue-600" : "border-2 border-red-500"
+          "flex rounded-lg overflow-hidden shadow-lg bg-white w-[1200px] h-[280px] mt-12 hover:border-black",
+          item.historyStatus == "BEFORE_CONFIRM" ? "border-2 border-blue-300" :  "border-2 border-gray-300"
         )}
       >
         {/* 카드 이미지 */}
-        {nakchal == "낙찰" ? (
+        {item.historyStatus == "AFTER_CONFIRM" ? (
           <div>
-            <div className="relative w-[300px] h-[250px]">
+            <div className="relative w-[300px] h-[280px]">
               <Image
-                width={300}
-                height={250}
+                layout="fill"
                 className="transition-transform transform duration-300 hover:scale-110"
-                src={cardImgUrl}
+                src={item.imgfile}
                 alt="Building Image"
                 style={{ filter: "brightness(50%)" }}
               />
@@ -79,16 +80,15 @@ const DiscountBuy: React.FC<CardProps> = ({ item }) => {
           </div>
         ) : (
           <div>
-            <div className="relative w-[300px] h-[250px]">
+            <div className="relative w-[300px] h-[280px]">
               <Image
                 className="transition-transform transform duration-300 hover:scale-110"
-                src={cardImgUrl}
-                width={300}
-                height={250}
+                src={item.imgfile}
+                layout="fill"
                 alt="Building Image"
               />
               <div className="absolute top-3 right-4">
-                <LikeBtn isLiked={liked} likeHandler={likeHandler} />
+                <LikeBtn isLiked={isLiked} likeHandler={likeHandler} />
               </div>
             </div>
           </div>
@@ -101,52 +101,61 @@ const DiscountBuy: React.FC<CardProps> = ({ item }) => {
               <div
                 className={clsx(
                   "rounded-full border-2 px-3",
-                  nakchal == "낙찰"
-                    ? "border-blue-500 text-customBlue"
+                  item.historyStatus == "BEFORE_CONFIRM"
+                    ? "border-blue-500 text-customBlue" 
                     : "border-red-500 text-red-500"
                 )}
               >
-                {nakchal}
+                {item.historyStatus == "BEFORE_CONFIRM" ? "예약중" : "구매완료"}
               </div>
             </div>
             <div className="mr-16 text-xl">
               <span className="font-bold">등록일 :&nbsp;&nbsp;</span>
-              {auctionStartTime.toLocaleString()}
+              {/* {auctionStartTime.toLocaleString()} */}
             </div>
           </div>
           {/* 카드 제목 */}
           <div className="text-3xl h-[36px] font-bold mt-4 mr-20 whitespace-nowrap overflow-hidden text-ellipsis">
-            피츄카 팔아요 제발 사주세요 사주세요피츄카 팔아요 제발 사주세요 사주세요피츄카 팔아요
-            제발 사주세요 사주세요피츄카 팔아요 제발 사
+            {/* 제목 */}
           </div>
 
           {/* 판매자 */}
           <div className="flex mt-3 text-[22px] font-semibold">
             <div className="flex items-center">판매자 :&nbsp;</div>
             <div>
-              <Link
-                href={"/mypage"}
+            {/* <Link
+                href={`/other/${item.}`}
                 className="text-customLightTextColor text-lg hover:underline"
               >
-                <span className="text-3xl font-bold"> 한지우</span>
-              </Link>
+                <span className="text-3xl font-bold">{item.}</span>
+              </Link> */}
             </div>
           </div>
 
-          {/* 경매 시작가 */}
-          <div className="text-xl mt-2">
-            경매 시작가 : <span className="text-2xl font-bold text-customBlue">{startPrice.toLocaleString()} <span className="text-black">원</span></span>
+           {/* 가격 */}
+           <div className="flex text-xl place-items-end">
+            가격 :{" "}
+            <div className="text-black">
+              <div className="flex mt-3 text-[24px] font-semibold justify-center mr-2">
+                <div className="flex text-red-500">&nbsp;{}%&nbsp;</div>
+              </div>
+              <span className="ml-2 line-through">{formatKoreanCurrency(item.discountPrice).toLocaleString()}</span>
+            </div>
+            &nbsp; {"->"} <span className="text-2xl font-bold">&nbsp;{formatKoreanCurrency(item.discountDiscountedPrice)}</span>
           </div>
+
 
           {/* 낙찰일시 / 낙찰가 / 채팅 및 확정 버튼*/}
           <div className="flex text-xl mt-3 mr-14 font-thin justify-between items-center">
-            <div>낙찰일시 : <span className="font-light">{auctionStartTime.toLocaleString()}</span></div>
-            <div>낙찰가 : <span className={clsx("font-bold", nakchal == "낙찰" ? "text-customBlue" : "text-red-500")}>{highestPrice.toLocaleString()}</span>&nbsp;원</div>
+            <div>{item.historyStatus == "BEFORE_CONFIRM" ? "예약일" : "구매일시"} : 
+              <span className="font-light">{new Date(item.historyDatetime).toLocaleString()}</span>
+            </div>
             <div className="flex gap-6">
-              {nakchal == "낙찰" && <div className="flex border-2 px-4 py-1 rounded-lg">
-                <Image width={22} height={10} src={chatImg.src} alt="chat" /><span className="ml-1">채팅</span>
-                </div>}
-              <div className="border-2 px-5 py-1 rounded-lg">확정</div>
+              <div className="flex border-2 px-4 py-1 rounded-lg">
+                <Image width={22} height={10} src={chatImg.src} alt="chat" />
+                <Link href={`dm/${item.discountPk}/${prodType}`}>채팅</Link>
+                </div>
+              {item.historyStatus == "BEFORE_CONFIRM" && <div className="border-2 px-5 py-1 rounded-lg">확정</div>}
             </div>
           </div>
         </div>

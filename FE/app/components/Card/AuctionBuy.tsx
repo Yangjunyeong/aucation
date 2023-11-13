@@ -6,43 +6,74 @@ import chatImg from "@/app/images/chatImg.png";
 import LikeBtn from "../../detail/components/LikeBtn";
 import Image from "next/image";
 import clsx from "clsx";
-
+import { callApi } from "@/app/utils/api";
 import RowCountDown from "./RowCountDown";
 import Link from "next/link";
+import formatKoreanCurrency from "../../utils/formatKoreanCurrency"
 
 interface ItemType {
-  cardImgUrl: string;
-  likeCount: Number;
-  title: string;
-  highestPrice: Number;
-  isLiked: boolean;
-  nickname: string;
-  startPrice: Number;
-  isIndividual: boolean;
-  auctionStartTime: Date;
+  // 이미지
+  imgfile: string,
+  // 좋아요 여부
+  isLike:boolean;
+  // 경매 상태 
+  // x 경매, 역경매 여부 /BID
+  auctionStatus: string,
+  // 등록일
+  registerDate: Date,
+  // 제목
+  auctionTitle: number,
+  // x 판매자 닉네임
+  ownerNickname: string,
+  // 시작가
+  auctionStartPrice: number,
+  // 경매 시작시간,종료시간
+  auctionStartDate: Date,
+  auctionEndDate: Date,
+  // 경매장 입장
+  auctionUUID: string,
+  // prodPk - 채팅방
+  auctionPk: number,
+  // x 낙찰 여부
+  // x 경매전- null / b
+  // 낙찰이 되면 경매종료시점에서 내가 최고 입찰자이다? 그럼 BEFORE_CONFIRM, 구매 확정을 했을 경우 AFTER_CONFIRM
+  auctionHistory: string,
+  // 낙찰일시 - BEFORE_CONFIRM
+  historyDateTime: Date,
+  // 구매확정 일시 - 구매 확정
+  historyDoneDateTime: Date,
+  // 최종가
+  auctionSuccessPay: number,
+  // x 지역
+  mycity:string,
+  zipcode:string,
+  street:string,
+  // x 판매자 pk
+  ownerPk: number,
+  // x 카테고리
+  auctionType: string,
+  // x 구매자 닉네임
+  customerNicknname: string
 }
 
 interface CardProps {
-  item: ItemType;
+  item: ItemType
 }
 const AuctionBuy: React.FC<CardProps> = ({ item }) => {
-  const {
-    cardImgUrl,
-    likeCount,
-    title,
-    highestPrice,
-    isLiked,
-    nickname,
-    startPrice,
-    auctionStartTime,
-    isIndividual,
-  } = item;
   const [state, setState] = useState<string>("");
-  const [liked, setLiked] = useState<boolean>(isLiked);
-  const [nakchal, setNakchal] = useState<string>("완료");
-  const likeHandler = (value: boolean) => {
-    console.log(liked);
-    setLiked(value);
+  const [isLiked, setIsLiked] = useState<boolean>(item.isLike);
+  const [prodType, setProdType] = useState<string>("0")
+
+  const likeHandler = (newLikeStatus: boolean) => {
+    setIsLiked(newLikeStatus); // 옵티미스틱 업데이트
+
+    callApi("get", `/auction/like/${item.auctionPk}`)
+      .then(response => {
+        console.log("좋아요 성공", response);
+      })
+      .catch(error => {
+        console.log("좋아요 실패", error);
+      });
   };
 
   const stateHandler = (state: string) => {
@@ -57,19 +88,18 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
     <>
       <div
         className={clsx(
-          "flex rounded-lg overflow-hidden shadow-lg bg-white w-[1200px] h-[250px] mt-12 transition-transform transform duration-300 hover:scale-110",
-          nakchal == "낙찰" ? "border-2 border-blue-600" : "border-2 border-red-500"
+          "flex rounded-lg overflow-hidden shadow-lg bg-white w-[1200px] h-[270px] mt-12 hover:border-black",
+          item.auctionHistory == "BEFORE_CONFIRM" ? "border-2 border-red-500" : "border-2"
         )}
       >
         {/* 카드 이미지 */}
-        {nakchal == "낙찰" ? (
+        {item.auctionHistory == "AFTER_CONFIRM" ? (
           <div>
-            <div className="relative w-[300px] h-[250px]">
+            <div className="relative w-[300px] h-[270px]">
               <Image
-                width={300}
-                height={250}
+                layout="fill"
                 className="transition-transform transform duration-300 hover:scale-110"
-                src={cardImgUrl}
+                src={item.imgfile}
                 alt="Building Image"
                 style={{ filter: "brightness(50%)" }}
               />
@@ -80,16 +110,15 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
           </div>
         ) : (
           <div>
-            <div className="relative w-[300px] h-[250px]">
+            <div className="relative w-[300px] h-[270px]">
               <Image
                 className="transition-transform transform duration-300 hover:scale-110"
-                src={cardImgUrl}
-                width={300}
-                height={250}
+                src={item.imgfile}
+                layout="fill"
                 alt="Building Image"
               />
               <div className="absolute top-3 right-4">
-                <LikeBtn isLiked={liked} likeHandler={likeHandler} />
+                <LikeBtn isLiked={isLiked} likeHandler={likeHandler} />
               </div>
             </div>
           </div>
@@ -98,27 +127,26 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
           {/* 경매 상태 / 경매 마크 / 남은 시간 카운트*/}
           <div className="flex justify-between mt-3">
             <div className="flex gap-4 font-bold text-[16px] mt-[5px] ">
-              <div className="rounded-full border-2 px-3  border-gray-500">경매</div>
+              <div className="flex mt-1 text-xl rounded-full border-2 px-3 items-center border-gray-500">경매</div>
               <div
                 className={clsx(
-                  "rounded-full border-2 px-3",
-                  nakchal == "낙찰"
-                    ? "border-blue-500 text-customBlue"
-                    : "border-red-500 text-red-500"
+                  "flex items-center rounded-full border-2 px-3",
+                  item.auctionHistory == "BEFORE_CONFIRM"
+                    ? "border-red-500 text-red-500"
+                    : "border-black text-black"
                 )}
               >
-                {nakchal}
+               {item.auctionHistory == "BEFORE_CONFIRM" ? "낙찰" : "구매완료"}
               </div>
             </div>
             <div className="mr-16 text-xl">
               <span className="font-bold">등록일 :&nbsp;&nbsp;</span>
-              {auctionStartTime.toLocaleString()}
+              {item.auctionStartDate.toLocaleString()}
             </div>
           </div>
           {/* 카드 제목 */}
           <div className="text-3xl h-[36px] font-bold mt-4 mr-20 whitespace-nowrap overflow-hidden text-ellipsis">
-            피츄카 팔아요 제발 사주세요 사주세요피츄카 팔아요 제발 사주세요 사주세요피츄카 팔아요
-            제발 사주세요 사주세요피츄카 팔아요 제발 사
+            {item.auctionTitle}
           </div>
 
           {/* 판매자 */}
@@ -126,26 +154,26 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
             <div className="flex items-center">판매자 :&nbsp;</div>
             <div>
               <Link
-                href={"/mypage"}
+                href={`/other/${item.ownerNickname}`}
                 className="text-customLightTextColor text-lg hover:underline"
               >
-                <span className="text-3xl font-bold"> 한지우</span>
+                <span className="text-3xl font-bold">{item.ownerNickname}</span>
               </Link>
             </div>
           </div>
 
           {/* 경매 시작가 */}
           <div className="text-xl mt-2">
-            경매 시작가 : <span className="text-2xl font-bold text-customBlue">{startPrice.toLocaleString()} <span className="text-black">원</span></span>
+            경매 시작가 : <span className="text-2xl font-bold text-customBlue">{item.auctionStartPrice.toLocaleString()} <span className="text-black">원</span></span>
           </div>
 
-          {/* 낙찰일시 / 낙찰가 / 채팅 및 확정 버튼*/}
+          {/* 낙찰일시 / 낙찰가 / 채팅 및 확정 버튼*/} 
           <div className="flex text-xl mt-3 mr-14 font-thin justify-between items-center">
-            <div>낙찰일시 : <span className="font-light">{auctionStartTime.toLocaleString()}</span></div>
-            <div>낙찰가 : <span className={clsx("font-bold", nakchal == "낙찰" ? "text-customBlue" : "text-red-500")}>{highestPrice.toLocaleString()}</span>&nbsp;원</div>
+            <div>낙찰일시 : <span className="font-light">{item.auctionStartDate.toLocaleString()}</span></div>
+            <div>낙찰가 : <span className={clsx("font-bold", item.auctionHistory == "AFTER_CONFIRM" ? "text-customBlue" : "text-red-500")}>{formatKoreanCurrency(item.auctionSuccessPay)}</span>&nbsp;</div>
             <div className="flex gap-6">
-              {nakchal == "낙찰" && <div className="flex border-2 px-4 py-1 rounded-lg">
-                <Image width={22} height={10} src={chatImg.src} alt="chat" /><span className="ml-1">채팅</span>
+              {item.auctionHistory == "AFTER_CONFIRM" && <div className="flex border-2 px-4 py-1 rounded-lg">
+                <Image width={22} height={10} src={chatImg.src} alt="chat" /> <Link href={`dm/${item.auctionPk}/${prodType}`}>채팅</Link>
                 </div>}
               <div className="border-2 px-5 py-1 rounded-lg">확정</div>
             </div>
