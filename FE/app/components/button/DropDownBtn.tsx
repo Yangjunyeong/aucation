@@ -49,7 +49,7 @@ const DropdownButton: React.FC<Props> = ({ options, selectedOption, setSelectedO
       <p>{selectedOption}</p>
       <LuTriangle
         className={`transition-transform duration-300 ease-in-out transform ${
-          isShowToggle ? "rotate-180" : ""
+          isShowToggle ? "" : "rotate-180"
         }`}
         size={20}
       />

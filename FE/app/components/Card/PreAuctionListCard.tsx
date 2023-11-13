@@ -61,7 +61,7 @@ const PreAuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
           </div>
         </div>
         {/* 본문 */}
-        <div className="h-1/2 px-3 py-2">
+        <div className="h-1/2 px-3 py-1">
           <div className="flex items-center justify-between h-1/6 text-customLightTextColor">
             <p> 좋아요: {likeCount} 개</p>
           </div>
@@ -70,13 +70,17 @@ const PreAuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
             onClick={() => {
               EnterDetail(item.auctionPk);
             }}
-            className="cursor-pointer flex items-center justify-between h-1/4 font-extrabold text-2xl overflow-hidden"
+            className="cursor-pointer flex items-center justify-between h-1/5 font-extrabold text-2xl overflow-hidden"
           >
             <p> {item.auctionTitle}</p>
           </div>
 
-          <div className="flex items-center justify-between h-1/5 font-bold text-2xl">
-            <p> {formatKoreanCurrency(item.auctionStartPrice)}</p>
+          <div className="mt-2 text-base text-customLightTextColor mb-1">
+            카테고리: {item.auctionType}
+          </div>
+
+          <div className="flex items-center justify-between h-1/6 font-bold text-2xl">
+            <p> 시작가: {formatKoreanCurrency(item.auctionStartPrice)}</p>
           </div>
 
           <div className="flex items-center h-1/5 w-full border-2 rounded-3xl bg-customBgLightBlue text-lg">

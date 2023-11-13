@@ -42,6 +42,9 @@ const DiscountListCard: React.FC<CardProps> = ({ item, nowTime }) => {
   const EnterDetail = (slug: string) => {
     router.push(`/detail/discount/${slug}`);
   };
+  const EnterBid = () => {
+    router.push(`/bid/${item.discountUUID}`);
+  };
   return (
     <div className=" overflow-hidden h-full w-full rounded-lg shadow-lg bg-white hover:border-sky-500 hover:ring-8 hover:ring-sky-200 hover:ring-opacity-100">
       <div className="h-1/2 relative">
@@ -58,6 +61,12 @@ const DiscountListCard: React.FC<CardProps> = ({ item, nowTime }) => {
         />
         <div className="absolute top-2 right-2">
           <LikeBtn isLiked={isLiked} likeHandler={likeHandler} />
+        </div>
+        <div
+          onClick={() => EnterBid()}
+          className="rounded-lg absolute bottom-2 left-2 px-3 py-2 bg-custom-btn-gradient hover:bg-custom-btn-gradient-hover text-white cursor-pointer border-1"
+        >
+          바로입장
         </div>
       </div>
       {/* 본문 */}
@@ -77,31 +86,42 @@ const DiscountListCard: React.FC<CardProps> = ({ item, nowTime }) => {
           onClick={() => {
             EnterDetail(item.discountUUID);
           }}
-          className="cursor-pointer flex items-center justify-between h-[31%] font-extrabold text-2xl overflow-hidden"
+          className="cursor-pointer flex items-center justify-between h-[25%] font-extrabold text-2xl overflow-hidden"
         >
           <p> {item.discountTitle}</p>
         </div>
-
-        <div className="flex items-center justify-between mb-1 font-bold text-xl">
-          <p> 시작가 : {formatKoreanCurrency(item.originalPrice)}</p>
+        <div className="text-base text-customLightTextColor mb-1">
+          카테고리: {item.discountType}
         </div>
-        <div className="flex items-center justify-between mb-1 font-bold text-xl">
-          <p>{formatKoreanCurrency(item.discountedPrice)}</p>
+
+        <div className="flex items-center justify-between mb-1 font-bold text-lg text-customLightTextColor ">
+          <p>
+            {" "}
+            {item.discountRate}%{" "}
+            <span className="line-through">{formatKoreanCurrency(item.originalPrice)}</span>
+          </p>
+        </div>
+        <div className="flex items-center justify-between mb-1 font-bold text-2xl">
+          <p>
+            {" "}
+            할인가 :{" "}
+            <span className="text-red-600">{formatKoreanCurrency(item.discountedPrice)}</span>
+          </p>
         </div>
 
         <div className="flex items-center h-1/5 w-full border-2 rounded-3xl bg-customBgLightBlue text-lg">
-          {/* <div
+          <div
             className="bg-custom-btn-gradient flex items-center justify-center
             h-full rounded-3xl w-[40%] text-white"
           >
             {item.discountOwnerNickname ? "소상공인" : "개인"}
-          </div> */}
+          </div>
           <div className=" flex items-center w-[60%] justify-start overflow-hidden flex-grow whitespace-nowrap px-2 ">
             {item.discountOwnerNickname}
           </div>
         </div>
 
-        <div className="flex items-center justify-between h-1/6">
+        <div className="flex items-center justify-between h-1/6 pb-3">
           <AuctionCountDown
             currentTime={nowTime!}
             auctionEndTime={item.discountEnd}

@@ -36,7 +36,7 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime, type = "auction" 
     setLikeCount(newLikeStatus ? likeCount + 1 : likeCount - 1); // 좋아요 수 변경
 
     if (type === "reverse" && "reAuctionPk" in item) {
-      const apiEndpoint = `/reverse-auction/like/${item.reAuctionPk}`;
+      const apiEndpoint = `/auction/like/${item.reAuctionPk}`;
 
       callApi("get", apiEndpoint, { auctionPk: item.reAuctionPk })
         .then(response => {
@@ -64,6 +64,9 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime, type = "auction" 
       router.push(`/reverseauction/${pk}`);
     }
   };
+  const EnterBid = () => {
+    router.push(`/bid/${(item as AuctionItem).auctionUUID}`);
+  };
   return (
     <div className=" overflow-hidden h-full w-full rounded-lg shadow-lg bg-white hover:border-sky-500 hover:ring-8 hover:ring-sky-200 hover:ring-opacity-100">
       <div className="h-1/2 relative">
@@ -81,13 +84,20 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime, type = "auction" 
         <div className="absolute top-2 right-2">
           <LikeBtn isLiked={isLiked} likeHandler={likeHandler} />
         </div>
+        {type === "auction" && (
+          <div
+            onClick={() => EnterBid()}
+            className="rounded-lg absolute bottom-2 left-2 px-3 py-2 bg-custom-btn-gradient hover:bg-custom-btn-gradient-hover text-white cursor-pointer border-1"
+          >
+            바로입장
+          </div>
+        )}
       </div>
       {/* 본문 */}
       <div className="h-1/2 px-3 py-2">
         <div className="flex items-center justify-between text-customLightTextColor">
           <p> 좋아요: {likeCount} 개</p>
           <p>
-            `
             {"reAuctionPk" in item
               ? "입찰자: " + item.reAuctionBidCnt
               : "참여자: " + item.auctionCurCnt}{" "}
@@ -95,16 +105,21 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime, type = "auction" 
           </p>
         </div>
 
+        {/* 제목 */}
         <div
           onClick={() => {
             EnterDetail("reAuctionPk" in item ? item.reAuctionPk : item.auctionPk);
           }}
-          className="cursor-pointer flex items-center justify-between h-[31%] font-extrabold text-2xl overflow-hidden"
+          className="cursor-pointer flex items-center justify-between h-[25%] font-extrabold text-2xl overflow-hidden"
         >
           <p> {"reAuctionPk" in item ? item.reAuctionTitle : item.auctionTitle}</p>
         </div>
+        <div className="mt-2 text-base text-customLightTextColor mb-1">
+          카테고리: {"reAuctionPk" in item ? item.reAuctionType : item.auctionType}
+        </div>
 
-        <div className="flex items-center justify-between mb-1 font-bold text-xl">
+        {/* 가격 */}
+        <div className="flex items-center justify-between mb-1 font-bold text-lg text-customLightTextColor">
           <p>
             {" "}
             시작가 :{" "}
@@ -113,13 +128,15 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime, type = "auction" 
             )}
           </p>
         </div>
-        <div className="flex items-center justify-between mb-1 font-bold text-xl">
+        <div className="flex items-center justify-between mb-1 font-bold text-2xl">
           <p>
             {" "}
             입찰가 :{" "}
-            {formatKoreanCurrency(
-              "reAuctionPk" in item ? item.reAuctionLowBidPrice : item.auctionTopBidPrice
-            )}
+            <span className="text-red-600">
+              {formatKoreanCurrency(
+                "reAuctionPk" in item ? item.reAuctionLowBidPrice : item.auctionTopBidPrice
+              )}
+            </span>
           </p>
         </div>
 
@@ -137,7 +154,7 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime, type = "auction" 
           </div>
         </div>
 
-        <div className="flex items-center justify-between h-1/6">
+        <div className="flex items-center justify-between h-1/6 pb-3">
           <AuctionCountDown
             currentTime={nowTime!}
             auctionEndTime={"reAuctionPk" in item ? item.reAuctionEndTime : item.auctionEndTime}
