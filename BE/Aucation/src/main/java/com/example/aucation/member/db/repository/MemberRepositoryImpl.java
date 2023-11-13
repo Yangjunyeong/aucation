@@ -26,6 +26,7 @@ import com.example.aucation.member.api.dto.MyReverseResponse;
 import com.example.aucation.member.api.dto.MypageItemsResponse;
 import com.example.aucation.member.api.dto.MypageResponse;
 import com.example.aucation.member.db.entity.Member;
+import com.example.aucation.member.db.entity.QMember;
 import com.example.aucation.photo.db.QPhoto;
 import com.example.aucation.reauction.db.entity.QReAuctionBid;
 import com.querydsl.core.types.Order;
@@ -65,9 +66,12 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
 	private final QDisPhoto qDisPhoto = QDisPhoto.disPhoto;
 
+	private final QMember qMember = QMember.member;
+
 	@Override
-	public MypageResponse searchMyAuctionPage(Member member, MemberPageRequest memberPageRequest,
+		public MypageResponse searchMyAuctionPage(Member member, MemberPageRequest memberPageRequest,
 		Pageable pageable) {
+		log.info("이거진짜 씨빨 맞아");
 
 		//경매인지 아닌지 필터 ->
 		//경매전, 경매중, 경매완료 인지 -> startDate로 판단
@@ -77,12 +81,12 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 				Projections.bean(MypageItemsResponse.class,
 					qAuction.auctionTitle.as("auctionTitle"),
 					qAuction.auctionStartDate.as("auctionStartDate"),
-					qAuction.auctionStartPrice.as("auctionStarePrice"),
+					qAuction.auctionStartPrice.as("auctionStartPrice"),
 					qAuction.auctionEndDate.as("auctionEndDate"),
 					qAuction.auctionEndPrice.as("auctionSuccessPay"),
 					qAuction.owner.id.as("ownerPk"),
 					qAuction.owner.memberNickname.as("ownerNicknname"),
-					qAuction.customer.memberNickname.as("customerNicknname"),
+					qAuction.customer.id.as("customerPk"),
 					qAuction.address.city.as("mycity"),
 					qAuction.address.zipcode.as("zipcode"),
 					qAuction.address.street.as("street"),
@@ -109,9 +113,9 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 				))
 			.from(qAuction)
 			.leftJoin(qAuctionHistory)
-			.on(isAuction(memberPageRequest, member))
+			.on(qAuctionHistory.auction.id.eq(qAuction.id))
 			.leftJoin(qPhoto)
-			.on(qPhoto.auction.eq(qAuction))
+			.on(qPhoto.auction.id.eq(qAuction.id))
 			.where(chooseAuctionStatus(memberPageRequest.getAuctionStatus(), member))
 			.groupBy(qAuction, qAuctionHistory.historyStatus, qAuctionHistory.historyDateTime,
 				qAuctionHistory.historyDoneDateTime);
@@ -122,9 +126,9 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			.limit(pageable.getPageSize())
 			.orderBy(chooseFilter(memberPageRequest.getProductFilter()));
 
+
 		List<MypageItemsResponse> result = query.fetch();
 		double totalPage = Math.ceil((double)count / 5);
-
 		return MypageResponse.builder()
 			.memberDetail(member.getMemberDetail())
 			.memberPoint(member.getMemberPoint())
@@ -142,8 +146,8 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		if ("경매전".equals(auctionStatus)) {
 			return qAuction.owner.id.eq(member.getId())
 				.and(qAuction.auctionStartDate.after(now))
-				.and(qAuction.auctionStatus.eq(AuctionStatus.BID))
-				.and(qAuctionHistory.id.isNull());
+				.and(qAuction.auctionStatus.eq(AuctionStatus.BID));
+				//.and(qAuctionHistory.id.isNull());
 		} else if ("경매중".equals(auctionStatus)) {
 			// "판매" 및 "경매중" 경우에 대한 조건 추가
 			return qAuction.owner.id.eq(member.getId())
@@ -154,7 +158,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		} else if ("경매완료".equals(auctionStatus)) {
 			// "판매" 및 "경매완료" 경우에 대한 조건 추가
 			return qAuction.owner.id.eq(member.getId())
-				.and(qAuction.auctionStartDate.before(now))
+				.and(qAuction.auctionEndDate.before(now))
 				.and(qAuction.auctionStatus.eq(AuctionStatus.BID))
 				.and(qAuctionHistory.id.isNotNull());
 		} else if ("낙찰".equals(auctionStatus)) {
@@ -172,17 +176,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		return null;
 	}
 
-	private Predicate isAuction(MemberPageRequest memberPageRequest, Member member) {
-		if (memberPageRequest.getProductStatus().equals("판매")) {
-			return qAuction.eq(qAuctionHistory.auction).and(qAuctionHistory.owner.id.eq(member.getId()));
-		} else {
-			return qAuction.eq(qAuctionHistory.auction).and(qAuctionHistory.customer.id.eq(member.getId()));
-		}
-	}
-
-
 	//역경매
-
 	@Override
 	public MyReverseResponse searchMyReversePage(Member member, MemberPageRequest memberPageRequest,
 		Pageable pageable) {
@@ -200,8 +194,6 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qAuction.auctionStatus.as("auctionStatus"),
 					qAuction.auctionType.as("auctionType"),
 					qAuction.createdAt.as("registerDate"),
-					qAuction.owner.memberNickname.as("ownerNicknname"),
-					qAuction.customer.memberNickname.as("customerNickname"),
 					qAuction.address.city.as("mycity"),
 					qAuction.address.zipcode.as("zipcode"),
 					qAuction.address.street.as("street"),
@@ -296,7 +288,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 				.and(qAuctionHistory.historyDoneDateTime.isNotNull())
 				.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
 
-			//역경매 - 구매 : 내가 살려고 경매 자의로 올린것
+		//역경매 - 구매 : 내가 살려고 경매 자의로 올린것
 		} else if ("경매중".equals(auctionStatus)) {
 			return qReAuctionBid.auction.customer.id.eq(member.getId())
 				.and(qReAuctionBid.isNull())
@@ -316,7 +308,6 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 				.and(qAuction.auctionEndPrice.ne(-1))
 				.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
 		}
-
 		return null;
 	}
 
@@ -335,7 +326,6 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qDiscount.owner.id.as("ownerPk"),
 					qDiscount.customer.id.as("customerPk"),
 					qDiscount.owner.memberNickname.as("ownerNicknname"),
-					qDiscount.customer.memberNickname.as("customerNickname"),
 					qDiscount.id.as("discountPk"),
 					qDiscount.address.city.as("mycity"),
 					qDiscount.address.zipcode.as("zipcode"),
@@ -359,10 +349,10 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 				))
 			.from(qDiscount)
 			.leftJoin(qDiscountHistory)
-			.on(qDiscount.id.eq(qDiscountHistory.discount.id), isMember(memberPageRequest, member))
+			.on(qDiscount.id.eq(qDiscountHistory.discount.id))
 			.leftJoin(qDisPhoto)
 			.on(qDisPhoto.discount.eq(qDiscount))
-			.where(chooseDiscountStatus(memberPageRequest.getAuctionStatus(), member))
+			.where(isDiscountMember(memberPageRequest, member),chooseDiscountStatus(memberPageRequest.getAuctionStatus(), member))
 			.groupBy(qDiscount, qDiscountHistory.historyDatetime, qDiscountHistory.historyDoneDatetime
 				, qDiscountHistory.historyStatus);
 
@@ -388,18 +378,36 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
 	}
 
-	private Predicate isMember(MemberPageRequest memberPageRequest, Member member) {
+
+	// private Predicate isAuction(MemberPageRequest memberPageRequest, Member member) {
+	// 	if (memberPageRequest.getProductStatus().equals("판매")) {
+	// 		return qAuction.eq(qAuctionHistory.auction).and(qAuctionHistory.owner.id.eq(member.getId()));
+	// 	} else {
+	// 		return qAuction.eq(qAuctionHistory.auction).and(qAuctionHistory.customer.id.eq(member.getId()));
+	// 	}
+	// }
+	private Predicate isAuctionMember(MemberPageRequest memberPageRequest, Member member) {
 		if (memberPageRequest.getProductStatus().equals("판매")) {
-			return qDiscountHistory.owner.eq(member);
+			return qAuction.owner.eq(member);
 		} else {
-			return qDiscountHistory.customer.eq(member);
+			return qAuction.customer.eq(member);
+		}
+	}
+
+	private Predicate isDiscountMember(MemberPageRequest memberPageRequest, Member member) {
+		if (memberPageRequest.getProductStatus().equals("판매")) {
+			log.info("들어와야함");
+			log.info(String.valueOf(member.getId()));
+			return qDiscount.owner.id.eq(member.getId());
+		} else {
+			return qDiscount.customer.id.eq(member.getId());
 		}
 	}
 
 	private Predicate chooseDiscountStatus(String auctionStatus, Member member) {
 		if ("판매중".equals(auctionStatus)) {
-			return qDiscount.owner.id.eq(member.getId())
-				.and(qDiscountHistory.id.isNull());
+			return qDiscount.owner.id.eq(member.getId());
+				//.and(qDiscountHistory.id.isNull());
 		} else if ("판매대기".equals(auctionStatus)) {
 			// "판매" 및 "경매중" 경우에 대한 조건 추가
 			return qDiscount.owner.id.eq(member.getId())
@@ -464,7 +472,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qAuction.id.as("auctionPk"),
 					qAuction.owner.id.as("ownerPk"),
 					qAuction.owner.memberNickname.as("ownerNicknname"),
-					qAuction.customer.memberNickname.as("customerNickname"),
+					qAuction.customer.id.as("customerPk"),
 					qAuction.address.city.as("mycity"),
 					qAuction.address.zipcode.as("zipcode"),
 					qAuction.address.street.as("street"),
@@ -519,7 +527,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qDiscount.id.as("auctionPk"),
 					qDiscount.owner.id.as("ownerPk"),
 					qDiscount.owner.memberNickname.as("ownerNicknname"),
-					qDiscount.customer.memberNickname.as("customerNickname"),
+					qDiscount.customer.id.as("customerPk"),
 					qDiscount.address.city.as("mycity"),
 					qDiscount.address.zipcode.as("zipcode"),
 					qDiscount.address.street.as("street"),

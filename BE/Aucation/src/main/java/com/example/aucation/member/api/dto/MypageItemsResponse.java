@@ -58,5 +58,37 @@ public class MypageItemsResponse {
 	private String street;
 	private String ownerNicknname;
 	private Boolean isLike;
-	private String customerNicknname;
+	private Long customerPk;
 }
+					//
+					//
+					// qAuction.auctionTitle.as("auctionTitle"),
+					// 	qAuction.auctionStartDate.as("auctionStartDate"),
+					// 	qAuction.auctionStartPrice.as("auctionStarePrice"),
+					// 	qAuction.auctionEndDate.as("auctionEndDate"),
+					// 	qAuction.auctionEndPrice.as("auctionSuccessPay"),
+					// 	qAuction.owner.id.as("ownerPk"),
+					// 	qAuction.owner.memberNickname.as("ownerNicknname"),
+					// 	qAuction.customer.memberNickname.as("customerNicknname"),
+					// 	qAuction.address.city.as("mycity"),
+					// 	qAuction.address.zipcode.as("zipcode"),
+					// 	qAuction.address.street.as("street"),
+					// 	qAuction.auctionUUID.as("auctionUUID"),
+					// 	qAuction.id.as("auctionPk"),
+					// 	qAuction.auctionStatus.as("auctionStatus"),
+					// 	qAuction.auctionType.as("auctionType"),
+					// 	qAuction.createdAt.as("registerDate"),
+					// 	new CaseBuilder()
+					// 	.when(
+					// 	JPAExpressions.selectOne()
+					// 	.from(qLikeAuction)
+					// 	.where(qLikeAuction.auction.eq(qAuction)
+					// 	.and(qLikeAuction.member.id.eq(member.getId())))
+					// 	.exists()
+					// 	)
+					// 	.then(true)
+					// 	.otherwise(false)
+					// 	.as("isLike"),
+					// 	qAuctionHistory.historyStatus.as("auctionHistory"),
+					// 	qAuctionHistory.historyDateTime.as("historyDateTime"),
+					// 	qAuctionHistory.historyDoneDateTime.as("historyDoneDateTime")

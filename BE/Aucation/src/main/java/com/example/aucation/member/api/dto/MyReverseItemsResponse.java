@@ -32,5 +32,4 @@ public class MyReverseItemsResponse {
 	private String street;
 	private String ownerNicknname;
 	private Boolean isLike;
-	private String customerNickname;
 }
