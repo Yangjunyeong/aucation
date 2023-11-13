@@ -130,6 +130,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		List<MypageItemsResponse> result = query.fetch();
 		double totalPage = Math.ceil((double)count / 5);
 		return MypageResponse.builder()
+			.memberRole(member.getMemberRole())
 			.memberDetail(member.getMemberDetail())
 			.memberPoint(member.getMemberPoint())
 			.imgURL(member.getImageURL())
@@ -241,6 +242,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		double totalPage = Math.ceil((double)count / 5);
 
 		return MyReverseResponse.builder()
+			.memberRole(member.getMemberRole())
 			.memberDetail(member.getMemberDetail())
 			.memberPoint(member.getMemberPoint())
 			.imgURL(member.getImageURL())
@@ -371,6 +373,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		double totalPage = Math.ceil((double)count / 5);
 
 		return MyDiscountResponse.builder()
+			.memberRole(member.getMemberRole())
 			.memberDetail(member.getMemberDetail())
 			.memberPoint(member.getMemberPoint())
 			.imgURL(member.getImageURL())
@@ -503,6 +506,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		double totalPage = Math.ceil((double)count / 5);
 
 		return MyLikeResponse.builder()
+			.memberRole(member.getMemberRole())
 			.memberDetail(member.getMemberDetail())
 			.memberPoint(member.getMemberPoint())
 			.imgURL(member.getImageURL())
@@ -558,6 +562,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
 		return MyLikeResponse.builder()
 			.memberDetail(member.getMemberDetail())
+			.memberRole(member.getMemberRole())
 			.memberPoint(member.getMemberPoint())
 			.imgURL(member.getImageURL())
 			.memberNickname(member.getMemberNickname())
