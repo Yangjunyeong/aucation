@@ -41,7 +41,7 @@ public class WriteBackByRedisCapacityScheduler {
 	// @Scheduled(cron = "0 0/2 * * * *") // 2분마다 실행
 	@Transactional
 	public void writeBack() {
-		log.info(" ********************* writeBack 시도");
+		log.info(" ********************* writeBack 스케쥴러 시작 !!!!!");
 
 		List<RedisChatMessage> chatMessages = new ArrayList<>();
 		List<RedisChatMessage> groupChatMessages = new ArrayList<>();
@@ -58,13 +58,15 @@ public class WriteBackByRedisCapacityScheduler {
 				String redisKeyBase = key.split(":")[0];
 				String uuid = key.split(":")[1];
 
-				List<RedisChatMessage> temp = redisTemplate.opsForList().range(key, 0, -1);
 				if (redisKeyBase.equals("chat-auc")) {
 					Auction auction = auctionRepository.findByAuctionUUID(uuid)
 						.orElseThrow(() -> new NotFoundException(ApplicationError.AUCTION_NOT_FOUND));
-					log.info("	*********************** {}의 경매가 끝남 !!", key);
 					if (LocalDateTime.now().isAfter(auction.getAuctionEndDate())) {
+						log.info("	*********************** {}의 경매가 끝남 !!", key);
+						List<RedisChatMessage> temp = redisTemplate.opsForList().range(key, 0, -1);
 						groupChatMessages.addAll(temp);
+						redisTemplate.delete(key);
+
 					}
 
 				} else {
@@ -72,10 +74,11 @@ public class WriteBackByRedisCapacityScheduler {
 					Long size = redisTemplate.opsForList().size(key);
 					if(size>100) {
 						log.info("	*********************** {}의 사이즈가 100이 넘음 !!", key);
+						List<RedisChatMessage> temp = redisTemplate.opsForList().range(key, 0, -1);
 						chatMessages.addAll(temp);
+						redisTemplate.delete(key);
 					}
 				}
-				redisTemplate.delete(key);
 			} // end while
 
 			log.info(" *********************** 그룹&개인 메세지 saveAll 시작!!!");
