@@ -118,10 +118,12 @@ public class DiscountRepositoryCustomImpl implements DiscountRepositoryCustom {
 								qDiscount.discountDiscountedPrice.as("discountedPrice"),
 								qDiscount.discountPrice.as("originalPrice"),
 								qDiscount.discountRate.as("discountRate"),
+								qDiscount.discountType.as("discountType"),
 								qDisPhoto.imgUrl.min().as("discountImg"),
 								qDiscount.discountEnd.as("discountEnd"),
 								qDiscount.discountUUID.as("discountUUID"),
 								qMember.memberNickname.as("discountOwnerNickname"),
+								qLikeDiscount.countDistinct().as("likeCnt"),
 								new CaseBuilder()
 										.when(
 												JPAExpressions.selectOne()

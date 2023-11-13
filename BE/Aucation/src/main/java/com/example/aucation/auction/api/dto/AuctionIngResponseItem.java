@@ -1,7 +1,5 @@
 package com.example.aucation.auction.api.dto;
 
-import com.example.aucation.member.db.entity.Role;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.time.LocalDateTime;
