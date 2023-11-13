@@ -1,7 +1,9 @@
 package com.example.aucation_chat.common.util.scheduler;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -10,9 +12,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.aucation_chat.auction.db.entity.Auction;
+import com.example.aucation_chat.auction.db.repository.AuctionRepository;
 import com.example.aucation_chat.chat.db.repository.group.GroupChatWriteBackRepository;
 import com.example.aucation_chat.chat.db.repository.personal.ChatWriteBackRepository;
+import com.example.aucation_chat.common.error.ApplicationError;
+import com.example.aucation_chat.common.error.NotFoundException;
 import com.example.aucation_chat.common.redis.dto.RedisChatMessage;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,6 +33,8 @@ public class WriteBackByRedisCapacityScheduler {
 	private final GroupChatWriteBackRepository groupChatWriteBackRepository;
 
 	private final ChatWriteBackRepository chatWriteBackRepository;
+
+	private final AuctionRepository auctionRepository;
 
 	// 1시간 마다 100사이즈 넘는 Redis -> MySQL
 	@Scheduled(cron = "0 0 0/1 * * *") // 1시간마다 실행
@@ -45,21 +54,26 @@ public class WriteBackByRedisCapacityScheduler {
 			while (cursor.hasNext()) {
 				String key = cursor.next();
 
-				// 100사이즈가 넘는 key에 대해서만 DB로 write
-				Long size = redisTemplate.opsForList().size(key);
-				if (size < 100)
-					continue;
-
 				// redisKeyBase에 따라 실행될 batch문이 달라짐
 				String redisKeyBase = key.split(":")[0];
 				String uuid = key.split(":")[1];
-				log.info("	*********************** 100개가 넘음 redisKeyBase = {}, UUID = {} !!", redisKeyBase, uuid);
 
 				List<RedisChatMessage> temp = redisTemplate.opsForList().range(key, 0, -1);
 				if (redisKeyBase.equals("chat-auc")) {
-					groupChatMessages.addAll(temp);
+					Auction auction = auctionRepository.findByAuctionUUID(uuid)
+						.orElseThrow(() -> new NotFoundException(ApplicationError.AUCTION_NOT_FOUND));
+					log.info("	*********************** {}의 경매가 끝남 !!", key);
+					if (LocalDateTime.now().isAfter(auction.getAuctionEndDate())) {
+						groupChatMessages.addAll(temp);
+					}
+
 				} else {
-					chatMessages.addAll(temp);
+					// 100사이즈가 넘는 key에 대해서만 DB로 write
+					Long size = redisTemplate.opsForList().size(key);
+					if(size>100) {
+						log.info("	*********************** {}의 사이즈가 100이 넘음 !!", key);
+						chatMessages.addAll(temp);
+					}
 				}
 				redisTemplate.delete(key);
 			} // end while
@@ -67,7 +81,6 @@ public class WriteBackByRedisCapacityScheduler {
 			log.info(" *********************** 그룹&개인 메세지 saveAll 시작!!!");
 			groupChatWriteBackRepository.saveAll(groupChatMessages);
 			chatWriteBackRepository.saveAll(chatMessages);
-
 
 		} catch (Exception e) {
 			e.printStackTrace();
