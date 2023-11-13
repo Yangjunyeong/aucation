@@ -122,6 +122,7 @@ public class DiscountRepositoryCustomImpl implements DiscountRepositoryCustom {
 								qDiscount.discountEnd.as("discountEnd"),
 								qDiscount.discountUUID.as("discountUUID"),
 								qMember.memberNickname.as("discountOwnerNickname"),
+								qLikeDiscount.countDistinct().as("likeCnt"),
 								new CaseBuilder()
 										.when(
 												JPAExpressions.selectOne()
