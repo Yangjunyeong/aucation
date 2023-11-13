@@ -35,10 +35,10 @@ public class DiscountController {
 
 	private final DiscountService discountService;
 
-	@GetMapping("/place/{discountUUID}")
+	@GetMapping("/place/{prodPk}")
 	private ResponseEntity<EnterResponse> place(@AuthorizedVariable Long memberPk,
-		@PathVariable("discountUUID") String discountUUID) {
-		return ResponseEntity.ok().body(discountService.place(memberPk, discountUUID));
+		@PathVariable("prodPk") Long prodPk) {
+		return ResponseEntity.ok().body(discountService.place(memberPk, prodPk));
 	}
 
 	@PostMapping("/register")

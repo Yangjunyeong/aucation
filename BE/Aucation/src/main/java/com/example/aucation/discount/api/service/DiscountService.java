@@ -142,12 +142,12 @@ public class DiscountService {
 
 	@Transactional
 	/** 할인 매장 상세페이지 */
-	public EnterResponse place(Long memberPk, String discountUUID) {
+	public EnterResponse place(Long memberPk, Long prodPk) {
 
 		Member member = memberRepository.findById(memberPk)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 
-		Discount discount = discountRepository.findByDiscountUUID(discountUUID).orElseThrow(() -> new NotFoundException(
+		Discount discount = discountRepository.findById(prodPk).orElseThrow(() -> new NotFoundException(
 			ApplicationError.DISCOUNT_NOT_FOUND));
 
 		List<DisPhoto> disPhotos = disPhotoService.getPhoto(discount.getId());
