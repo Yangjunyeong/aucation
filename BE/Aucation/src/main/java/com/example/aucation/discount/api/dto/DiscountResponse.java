@@ -9,4 +9,5 @@ public class DiscountResponse {
 
 	private String message;
 	private String discountUUID;
+	private Long prodPk;
 }
