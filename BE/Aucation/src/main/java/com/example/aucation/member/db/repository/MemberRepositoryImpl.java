@@ -85,7 +85,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qAuction.auctionEndDate.as("auctionEndDate"),
 					qAuction.auctionEndPrice.as("auctionSuccessPay"),
 					qAuction.owner.id.as("ownerPk"),
-					qAuction.owner.memberNickname.as("ownerNicknname"),
+					qAuction.owner.memberNickname.as("ownerNickname"),
 					qAuction.customer.id.as("customerPk"),
 					qAuction.address.city.as("mycity"),
 					qAuction.address.zipcode.as("zipcode"),
@@ -192,6 +192,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qAuction.auctionUUID.as("auctionUUID"),
 					qAuction.id.as("auctionPk"),
 					qAuction.auctionStatus.as("auctionStatus"),
+					qAuction.owner.memberNickname.as("ownerNickname"),
 					qAuction.auctionType.as("auctionType"),
 					qAuction.createdAt.as("registerDate"),
 					qAuction.address.city.as("mycity"),
@@ -213,7 +214,10 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qAuctionHistory.historyStatus.as("auctionHistory"),
 					qAuctionHistory.historyDateTime.as("historyDateTime"),
 					qAuctionHistory.historyDoneDateTime.as("historyDoneDateTime"),
-					qPhoto.imgUrl.min().as("imgfile")
+					qPhoto.imgUrl.min().as("imgfile"),
+					new CaseBuilder()
+						.when(qReAuctionBid.id.sum().isNull()).then(0)
+						.otherwise(qReAuctionBid.id.sum().intValue()).as("reauctionCount")
 				))
 			.from(qAuction)
 			.leftJoin(qAuctionHistory)
@@ -319,12 +323,15 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		JPAQuery<MyDiscountItemsResponse> query = jpaQueryFactory
 			.select(
 				Projections.bean(MyDiscountItemsResponse.class,
+					qDiscount.discountStart.as("discountStart"),
+					qDiscount.discountTitle.as("discountTitle"),
 					qDiscount.discountDiscountedPrice.as("discountDiscountedPrice"),
 					qDiscount.discountPrice.as("discountPrice"),
+					qDiscount.discountRate.as("discountRate"),
 					qDiscount.discountEnd.as("discountEnd"),
 					qDiscount.owner.id.as("ownerPk"),
 					qDiscount.customer.id.as("customerPk"),
-					qDiscount.owner.memberNickname.as("ownerNicknname"),
+					qDiscount.owner.memberNickname.as("ownerNickname"),
 					qDiscount.id.as("discountPk"),
 					qDiscount.address.city.as("mycity"),
 					qDiscount.address.zipcode.as("zipcode"),
@@ -470,7 +477,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qAuction.auctionUUID.as("auctionUUID"),
 					qAuction.id.as("auctionPk"),
 					qAuction.owner.id.as("ownerPk"),
-					qAuction.owner.memberNickname.as("ownerNicknname"),
+					qAuction.owner.memberNickname.as("ownerNickname"),
 					qAuction.customer.id.as("customerPk"),
 					qAuction.address.city.as("mycity"),
 					qAuction.address.zipcode.as("zipcode"),
@@ -525,7 +532,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qDiscount.discountUUID.as("auctionUUID"),
 					qDiscount.id.as("auctionPk"),
 					qDiscount.owner.id.as("ownerPk"),
-					qDiscount.owner.memberNickname.as("ownerNicknname"),
+					qAuction.owner.memberNickname.as("ownerNickname"),
 					qDiscount.customer.id.as("customerPk"),
 					qDiscount.address.city.as("mycity"),
 					qDiscount.address.zipcode.as("zipcode"),

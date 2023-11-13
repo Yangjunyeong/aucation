@@ -26,6 +26,6 @@ public class MyLikeItemsResponse {
 	private String street;
 
 	private String ownerNicknname;
-	private String customerNickname;
+	private Long customerPk;
 	private Boolean isLike;
 }

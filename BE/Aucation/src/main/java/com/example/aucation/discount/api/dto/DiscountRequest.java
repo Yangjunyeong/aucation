@@ -1,8 +1,5 @@
 package com.example.aucation.discount.api.dto;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

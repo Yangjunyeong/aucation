@@ -27,5 +27,7 @@ public class MyDiscountItemsResponse {
 	private String street;
 	private Boolean isLike;
 	private Long customerPk;
-
+	private LocalDateTime discountStart;
+	private String discountTitle;
+	private int discountRate;
 }

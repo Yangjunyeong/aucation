@@ -99,7 +99,9 @@ public class DiscountService {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSS");
 		LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
 
-		Address address = setMemberAddress(discountRequest.getDiscountLng(), discountRequest.getDiscountLng());
+		log.info("discountRequest.getDiscountLng(): "+discountRequest.getDiscountLng());
+		log.info("discountRequest.getDiscountLat(): "+discountRequest.getDiscountLat());
+		Address address = setMemberAddress(discountRequest.getDiscountLng(), discountRequest.getDiscountLat());
 		// 할인상품 등록
 		Discount discount = Discount.builder()
 			.discountType(discountRequest.getDiscountType())
