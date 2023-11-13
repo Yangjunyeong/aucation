@@ -20,4 +20,5 @@ public class ReAuctionResponseItem {
     private String mycity;
     private String zipcode;
     private String street;
+    private String reAuctionType;
 }

@@ -23,4 +23,5 @@ public class AuctionIngResponseItem {
     private String mycity;
     private String zipcode;
     private String street;
+    private String auctionType;
 }

@@ -70,6 +70,7 @@ public class 	AuctionRepositoryImpl implements AuctionRepositoryCustom {
 					qAuction.auctionStartDate.as("auctionStartTime"),
 					qMember.memberNickname.as("auctionOwnerNickname"),
 					qMember.memberRole.eq(Role.SHOP).as("auctionOwnerIsShop"),
+					qAuction.auctionType.as("auctionType"),
 					qLikeAuction.countDistinct().as(likeCnt),
 					qPhoto.imgUrl.min().as("auctionImg"),
 					new CaseBuilder()
@@ -133,6 +134,7 @@ public class 	AuctionRepositoryImpl implements AuctionRepositoryCustom {
 					qAuction.auctionStartPrice.as("auctionStartPrice"),
 					qAuction.auctionEndDate.as("auctionEndTime"),
 					qMember.memberNickname.as("auctionOwnerNickname"),
+					qAuction.auctionType.as("auctionType"),
 					qLikeAuction.countDistinct().as(likeCnt),
 					qPhoto.imgUrl.min().as("auctionImg"),
 					new CaseBuilder()
@@ -211,6 +213,7 @@ public class 	AuctionRepositoryImpl implements AuctionRepositoryCustom {
 					qAuction.auctionStartPrice.as("reAuctionStartPrice"),
 					qReAuctionBid.reAucBidPrice.min().as("reAuctionLowBidPrice"),
 					qReAuctionBid.reAucBidPrice.countDistinct().as("reAuctionBidCnt"),
+					qAuction.auctionType.as("reAuctionType"),
 					qPhoto.imgUrl.min().as("reAuctionImg"),
 					qAuction.auctionEndDate.as("reAuctionEndTime"),
 					qMember.memberNickname.as("reAuctionOwnerNickname"),
@@ -567,7 +570,7 @@ public class 	AuctionRepositoryImpl implements AuctionRepositoryCustom {
 			return new OrderSpecifier<>(Order.DESC, likeCnt);
 		} else {
 			// 기본 정렬 방식
-			return new OrderSpecifier<>(Order.DESC, qAuction.auctionStartDate);
+			return new OrderSpecifier<>(Order.ASC, qAuction.auctionStartDate);
 		}
 	}
 }
