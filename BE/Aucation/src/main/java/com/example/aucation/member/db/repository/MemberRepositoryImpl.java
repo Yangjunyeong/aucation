@@ -210,14 +210,12 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 						.otherwise(false)
 						.as("isLike"),
 					qReAuctionBid.reAucBidDatetime.as("reAucBidDateTime"),
-					qReAuctionBid.reAucBidPrice.as("reAucBidPrice"),
 					qAuctionHistory.historyStatus.as("auctionHistory"),
 					qAuctionHistory.historyDateTime.as("historyDateTime"),
 					qAuctionHistory.historyDoneDateTime.as("historyDoneDateTime"),
+					qReAuctionBid.reAucBidPrice.min().as("reAucBidPrice"),
 					qPhoto.imgUrl.min().as("imgfile"),
-					new CaseBuilder()
-						.when(qReAuctionBid.id.sum().isNull()).then(0)
-						.otherwise(qReAuctionBid.id.sum().intValue()).as("reauctionCount")
+					qReAuctionBid.id.count().intValue().as("reauctionCount")
 				))
 			.from(qAuction)
 			.leftJoin(qAuctionHistory)
@@ -230,7 +228,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 				//판매인가 구매인가
 				chooseReverseStatus(memberPageRequest.getAuctionStatus(), member)
 			)
-			.groupBy(qAuction, qReAuctionBid.reAucBidDatetime, qReAuctionBid.reAucBidPrice,
+			.groupBy(qAuction, qReAuctionBid.reAucBidDatetime,
 				qAuctionHistory.historyDateTime, qAuctionHistory.historyDoneDateTime, qAuctionHistory.historyStatus);
 		long count = query.fetchCount();
 
