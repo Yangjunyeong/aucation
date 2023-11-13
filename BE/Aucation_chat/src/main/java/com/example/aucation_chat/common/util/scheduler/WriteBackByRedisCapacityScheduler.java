@@ -61,11 +61,14 @@ public class WriteBackByRedisCapacityScheduler {
 				} else {
 					chatMessages.addAll(temp);
 				}
-			}
+				redisTemplate.delete(key);
+			} // end while
 
 			log.info(" *********************** 그룹&개인 메세지 saveAll 시작!!!");
 			groupChatWriteBackRepository.saveAll(groupChatMessages);
 			chatWriteBackRepository.saveAll(chatMessages);
+
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
