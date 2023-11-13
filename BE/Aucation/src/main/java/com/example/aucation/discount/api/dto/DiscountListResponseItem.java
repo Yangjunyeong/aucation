@@ -19,6 +19,7 @@ public class DiscountListResponseItem{
 	private Boolean isLike; //
 	private Long likeCnt;   //
 	private String discountTitle; //
+	private String discountType; //
 	private Integer originalPrice; //
 	private Integer discountedPrice;
 	private Integer discountRate;

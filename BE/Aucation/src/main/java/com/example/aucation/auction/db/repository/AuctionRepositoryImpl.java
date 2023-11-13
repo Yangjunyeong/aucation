@@ -433,6 +433,7 @@ public class 	AuctionRepositoryImpl implements AuctionRepositoryCustom {
 					qAuction.address.city.as("mycity"),
 					qAuction.address.zipcode.as("zipcode"),
 					qAuction.address.street.as("street"),
+					qAuction.auctionType.as("auctionType"),
 					qMember.memberNickname.as("auctionOwnerNickname"),
 					new CaseBuilder()
 						.when(qMember.memberRole.eq(Role.SHOP))
@@ -501,6 +502,7 @@ public class 	AuctionRepositoryImpl implements AuctionRepositoryCustom {
 					qPhoto.imgUrl.min().as("reAuctionImg"),
 					qAuction.auctionEndDate.as("reAuctionEndTime"),
 					qMember.memberNickname.as("reAuctionOwnerNickname"),
+					qAuction.auctionType.as("reAuctionType"),
 					qLikeAuction.countDistinct().as(likeCnt),
 					new CaseBuilder()
 						.when(qMember.memberRole.eq(Role.SHOP))
