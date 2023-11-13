@@ -23,15 +23,27 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.aucation.auction.api.dto.AuctionIngResponseItem;
 import com.example.aucation.auction.api.dto.ReAuctionResponseItem;
 import com.example.aucation.auction.api.service.AuctionService;
+import com.example.aucation.auction.db.entity.Auction;
+import com.example.aucation.auction.db.repository.AuctionHistoryRepository;
+import com.example.aucation.auction.db.repository.AuctionRepository;
 import com.example.aucation.common.dto.EmailResponse;
 import com.example.aucation.common.dto.StreetResponse;
 import com.example.aucation.common.error.ApplicationError;
+import com.example.aucation.common.error.BadRequestException;
 import com.example.aucation.common.error.DuplicateException;
 import com.example.aucation.common.error.NotFoundException;
 import com.example.aucation.common.service.CommonService;
 import com.example.aucation.common.service.RegisterMail;
 import com.example.aucation.discount.api.dto.DiscountListResponseItem;
 import com.example.aucation.discount.api.service.DiscountService;
+import com.example.aucation.discount.db.entity.Discount;
+import com.example.aucation.discount.db.repository.DiscountHistoryRepository;
+import com.example.aucation.discount.db.repository.DiscountRepository;
+import com.example.aucation.disphoto.db.repository.DisPhotoRepository;
+import com.example.aucation.like.db.repository.LikeAuctionRepository;
+import com.example.aucation.like.db.repository.LikeDiscountRepository;
+import com.example.aucation.member.api.dto.DeleteRequest;
+import com.example.aucation.member.api.dto.DeleteResponse;
 import com.example.aucation.member.api.dto.DetailRequest;
 import com.example.aucation.member.api.dto.DetailResponse;
 import com.example.aucation.member.api.dto.ImageResponse;
@@ -50,7 +62,10 @@ import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.member.db.entity.Role;
 import com.example.aucation.member.db.entity.SocialType;
 import com.example.aucation.member.db.repository.MemberRepository;
+import com.example.aucation.photo.db.repository.PhotoRepository;
 import com.example.aucation.reauction.api.service.ReAuctionService;
+import com.example.aucation.reauction.db.repository.ReAucBidPhotoRepository;
+import com.example.aucation.reauction.db.repository.ReAuctionBidRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +74,26 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class MemberService {
+
+	private final AuctionHistoryRepository auctionHistoryRepository;
+
+	private final ReAucBidPhotoRepository reAucBidPhotoRepository;
+
+	private final DiscountHistoryRepository discountHistoryRepository;
+
+	private final DisPhotoRepository disPhotoRepository;
+
+	private final LikeAuctionRepository likeAuctionRepository;
+
+	private final LikeDiscountRepository likeDiscountRepository;
+
+	private final ReAuctionBidRepository reAuctionBidRepository;
+
+	private final DiscountRepository discountRepository;
+
+	private final PhotoRepository photoRepository;
+
+	private final AuctionRepository auctionRepository;
 
 	private final PasswordEncoder passwordEncoder;
 
@@ -78,6 +113,12 @@ public class MemberService {
 	private final String dirName = "profile";
 
 	private final AmazonS3Client amazonS3Client;
+
+	private static final String AUCTION = "경매";
+	private static final String RE_AUCTION = "역경매";
+	private static final String DISCOUNT = "할인";
+
+	private static final String SUCCESS_REMOVE_ITEMS = "성공적으로 상품을 삭제하였습니다";
 
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
@@ -250,7 +291,7 @@ public class MemberService {
 		List<DiscountListResponseItem> discounts = discountService.getDiscountToMainPage(memberPk);
 		List<ReAuctionResponseItem> recentAuctions = reAuctionService.getRecentReAucToMainPage(memberPk);
 		return MainPageResponse.builder()
-				.nowTime(LocalDateTime.now())
+			.nowTime(LocalDateTime.now())
 			.hotAuctions(hotAuctions)
 			.discounts(discounts)
 			.recentAuctions(recentAuctions)
@@ -264,5 +305,51 @@ public class MemberService {
 			.zipcode(streetResponse.getZipcode())
 			.street(streetResponse.getStreet())
 			.build();
+	}
+
+	@Transactional
+	public DeleteResponse deleteprod(Long memberPk, DeleteRequest deleteRequest) {
+
+		Member member = memberRepository.findById(memberPk)
+			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+
+		//경매일때
+		if (deleteRequest.getStatus().equals(AUCTION)) {
+			Auction auction = auctionRepository.findByIdAndThinkDate(deleteRequest.getProdPk())
+				.orElseThrow(() -> new BadRequestException(ApplicationError.STARTED_AUCTION));
+			likeAuctionRepository.deleteByAuctionId(auction.getId());
+			photoRepository.deleteByAuctionId(auction.getId());
+			auctionRepository.deleteById(auction.getId());
+			return DeleteResponse.builder().message(SUCCESS_REMOVE_ITEMS).build();
+
+		} else if (deleteRequest.getStatus().equals(RE_AUCTION)) {
+			Auction auction = auctionRepository.findById(deleteRequest.getProdPk())
+				.orElseThrow(() -> new BadRequestException(ApplicationError.NOT_EXIST_AUCTION));
+
+			if (auctionHistoryRepository.existsAuctionHistoryByAuction(auction)) {
+				throw new BadRequestException(ApplicationError.NOT_SELL_REAUCTION);
+			}
+			likeAuctionRepository.deleteByAuctionId(auction.getId());
+			//역경매 내가 올린거 삭제
+			photoRepository.deleteByAuctionId(auction.getId());
+			//만약 auctionHistory가 존재한다면 남이올린다고 올린사진 삭제
+			reAucBidPhotoRepository.deleteByAuctionId(auction.getId());
+			reAuctionBidRepository.deleteByAuctionAndAuctionId(auction.getId());
+
+			auctionRepository.deleteById(auction.getId());
+			return DeleteResponse.builder().message(SUCCESS_REMOVE_ITEMS).build();
+		}
+		Discount discount = discountRepository.findById(deleteRequest.getProdPk())
+			.orElseThrow(() -> new NotFoundException(ApplicationError.DISCOUNT_NOT_FOUND));
+
+		if (discountHistoryRepository.existsDiscountHistoryByDiscount(discount)) {
+			throw new BadRequestException(ApplicationError.NOT_SELL_DISCOUNT);
+		}
+		likeDiscountRepository.delete(discount.getId());
+		discountHistoryRepository.delete(discount.getId());
+		disPhotoRepository.delete(discount.getId());
+		discountRepository.delete(discount.getId());
+		return DeleteResponse.builder().message(SUCCESS_REMOVE_ITEMS).build();
+
 	}
 }
