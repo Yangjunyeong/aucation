@@ -15,4 +15,5 @@ public interface LikeAuctionRepository extends JpaRepository<LikeAuction,Long> {
 
 	List<LikeAuction> findByAuctionId(Long id);
 
+	void deleteByAuctionId(Long id);
 }

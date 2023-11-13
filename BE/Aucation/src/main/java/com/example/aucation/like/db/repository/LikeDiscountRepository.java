@@ -3,6 +3,7 @@ package com.example.aucation.like.db.repository;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -19,4 +20,8 @@ public interface LikeDiscountRepository extends JpaRepository<LikeDiscount, Long
 
 	@Query("SELECT COUNT(ld) FROM LikeDiscount ld WHERE ld.discount = :discount AND ld.member = :member")
 	int countByDiscountAndMember(@Param("discount") Discount discount, @Param("member") Member member);
+
+	@Modifying
+	@Query("DELETE FROM LikeDiscount r WHERE r.discount.id = :discount")
+	void delete(Long discount);
 }

@@ -6,6 +6,8 @@ import java.util.Optional;
 import com.example.aucation.discount.api.dto.DiscountListResponseItem;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.example.aucation.auction.api.dto.AuctionSortRequest;
@@ -26,4 +28,7 @@ public interface DiscountRepository extends JpaRepository<Discount,Long>, Discou
 
 	List<DiscountListResponseItem> searchDiscountToMainPage(Long memberPk,Member member);
 
+	@Modifying
+	@Query("DELETE FROM Discount r WHERE r.id = :id")
+	void delete(Long id);
 }

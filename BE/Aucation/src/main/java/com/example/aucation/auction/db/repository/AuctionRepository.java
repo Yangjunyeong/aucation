@@ -4,11 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.aucation.auction.api.dto.*;
+import com.example.aucation.common.entity.BaseEntity;
 import com.example.aucation.member.db.entity.Member;
 import com.example.aucation.reauction.api.dto.ReAuctionDetailResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.aucation.auction.db.entity.Auction;
+
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -28,4 +31,6 @@ public interface AuctionRepository extends JpaRepository<Auction,Long>, AuctionR
 	List<AuctionIngResponseItem> searchHotAuctionToMainPage(Long memberPk,Member memeber);
 	List<ReAuctionResponseItem> searchRecentReAucToMainPage(Long memberPk, Member member);
 
+	@Query("SELECT a FROM Auction a WHERE a.id = :prodPk AND a.auctionStartDate > CURRENT_TIMESTAMP")
+	Optional<Auction> findByIdAndThinkDate(Long prodPk);
 }

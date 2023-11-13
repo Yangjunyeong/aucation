@@ -3,6 +3,7 @@ package com.example.aucation.member.api.controller;
 import java.io.IOException;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.aucation.common.dto.EmailResponse;
 import com.example.aucation.common.service.FCMService;
 import com.example.aucation.common.support.AuthorizedVariable;
+import com.example.aucation.member.api.dto.DeleteRequest;
+import com.example.aucation.member.api.dto.DeleteResponse;
 import com.example.aucation.member.api.dto.DetailRequest;
 import com.example.aucation.member.api.dto.DetailResponse;
 import com.example.aucation.member.api.dto.FCMTokenReq;
@@ -134,6 +137,11 @@ public class MemberController {
 	@GetMapping("/mainPage")
 	public ResponseEntity<?> getMainPage(@AuthorizedVariable Long memberPk){
 		return ResponseEntity.ok().body(memberService.getMainPageInfo(memberPk));
+	}
+
+	@DeleteMapping("/delete")
+	public ResponseEntity<DeleteResponse> deleteprod(@AuthorizedVariable Long memberPk,@RequestBody DeleteRequest deleteRequest){
+		return ResponseEntity.ok().body(memberService.deleteprod(memberPk,deleteRequest));
 	}
 
 }
