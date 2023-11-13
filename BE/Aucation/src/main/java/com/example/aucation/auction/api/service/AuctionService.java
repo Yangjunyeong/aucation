@@ -327,6 +327,11 @@ public class AuctionService {
 	public List<AuctionIngResponseItem> getHotAuctionsToMainPage(Long memberPk) {
 		Member member = memberRepository.findById(memberPk).orElseThrow(()->new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 		List<AuctionIngResponseItem> response = auctionRepository.searchHotAuctionToMainPage(memberPk,member);
+
+
+
+
+
 		return response;
 	}
 
