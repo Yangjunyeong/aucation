@@ -234,7 +234,7 @@ public class AuctionBidService {
 				//5.secondUserPoint (최고였던 입찰자의 모든 돈 - 어떤 누군가)
 				//6.ask		(현재 호가 - 나)
 
-				fcmService.setAucHighAlram(secondUser, auctionUUID);
+				//fcmService.setAucHighAlram(secondUser, auctionUUID);
 
 				return BidResponse.builder()
 					.firstUserPoint(firstPoint)

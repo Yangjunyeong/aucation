@@ -72,7 +72,8 @@ public class AuctionService {
 	public PlaceResponse place(Long memberPk, String auctionUUID) throws Exception {
 		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID)
 				.orElseThrow(() -> new Exception("auction이 없습니다"));
-
+	
+		isNotStartAuction(auction);
 		isExistAuction(auction);
 
 		Member member = memberRepository.findById(memberPk)
@@ -127,6 +128,13 @@ public class AuctionService {
 				.askPrice(askPrice)
 				.address(auction.getAddress())
 				.build();
+	}
+
+	private void isNotStartAuction(Auction auction) {
+		LocalDateTime now = LocalDateTime.now();
+		if(now.isBefore(auction.getAuctionStartDate())){
+			throw new BadRequestException(ApplicationError.EARLY_START_AUCTION);
+		}
 	}
 
 	@Transactional
