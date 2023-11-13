@@ -3,6 +3,7 @@ package com.example.aucation.common.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,7 +75,10 @@ public class FCMService {
 	}
 
 	@Transactional
-	public void setAucAlram(String auctionUUID) throws FirebaseMessagingException {
+	public void setAucAlram(String auctionUUID) throws
+		FirebaseMessagingException,
+		ExecutionException,
+		InterruptedException {
 		//UUID로 auction 검색
 		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
@@ -86,6 +90,10 @@ public class FCMService {
 		}
 		//각 해당하는 사람들한테 메세지 전송
 		for (LikeAuction likeAlram : likeAuctions) {
+
+			if(likeAlram.getMember().getMemberFCMToken()==null){
+				continue;
+			}
 			Map<String, String> data = new HashMap<>();
 			data.put("auctionUUID", auction.getAuctionUUID());
 			data.put("status", "경매");
@@ -95,22 +103,30 @@ public class FCMService {
 				.setBody(auction.getAuctionTitle() + ALRAM_BODY)
 				.build();
 
+
 			com.google.firebase.messaging.Message message = com.google.firebase.messaging.Message.builder()
 				.setToken(likeAlram.getMember().getMemberFCMToken())
 				.setNotification(notification)
 				.putAllData(data)
 				.build();
 
-			firebaseMessaging.send(message);
+			this.firebaseMessaging.sendAsync(message).get();
 		}
 
 	}
 
 	@Transactional
-	public void setAucEndAlarm(String auctionUUID, Long memberPk) throws FirebaseMessagingException {
+	public void setAucEndAlarm(String auctionUUID, Long memberPk) throws
+		FirebaseMessagingException,
+		ExecutionException,
+		InterruptedException {
 
 		Member member = memberRepository.findById(memberPk)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+
+		if(member.getMemberFCMToken()==null){
+			return;
+		}
 
 		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
@@ -135,15 +151,23 @@ public class FCMService {
 			.putAllData(data)
 			.build();
 
-		firebaseMessaging.send(message);
+		this.firebaseMessaging.sendAsync(message).get();
 
 	}
 
 	@Transactional
-	public void setDisAucAlarm(String discountUUID, Long memberPk) throws FirebaseMessagingException {
+	public void setDisAucAlarm(String discountUUID, Long memberPk) throws
+		FirebaseMessagingException,
+		ExecutionException,
+		InterruptedException {
+
 
 		Member member = memberRepository.findById(memberPk)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+
+		if(member.getMemberFCMToken()==null){
+			return;
+		}
 
 		Discount discount = discountRepository.findByDiscountUUID(discountUUID)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.DISCOUNT_NOT_FOUND));
@@ -164,11 +188,18 @@ public class FCMService {
 			.putAllData(data)
 			.build();
 
-		firebaseMessaging.send(message);
+		this.firebaseMessaging.sendAsync(message).get();
 	}
 
 	@Transactional
-	public void setAucHighAlram(Member secondUser, String auctionUUID) throws FirebaseMessagingException {
+	public void setAucHighAlram(Member secondUser, String auctionUUID) throws
+		FirebaseMessagingException,
+		ExecutionException,
+		InterruptedException {
+
+		if(secondUser.getMemberFCMToken()==null){
+			return;
+		}
 
 		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
@@ -188,16 +219,22 @@ public class FCMService {
 			.putAllData(data)
 			.build();
 
-		firebaseMessaging.send(message);
+		this.firebaseMessaging.sendAsync(message).get();
 
 	}
 
 	@Transactional
-	public void setReAucAlram(Long auctionId, Long memberPk) throws FirebaseMessagingException {
+	public void setReAucAlram(Long auctionId, Long memberPk) throws
+		FirebaseMessagingException,
+		ExecutionException,
+		InterruptedException {
 
 		Member member = memberRepository.findById(memberPk)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 
+		if(member.getMemberFCMToken()==null){
+			return;
+		}
 		Auction auction = auctionRepository.findById(auctionId)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
 
@@ -217,7 +254,7 @@ public class FCMService {
 			.putAllData(data)
 			.build();
 
-		firebaseMessaging.send(message);
+		this.firebaseMessaging.sendAsync(message).get();
 
 
 	}

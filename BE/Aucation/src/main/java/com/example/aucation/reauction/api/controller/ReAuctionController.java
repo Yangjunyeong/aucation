@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api/v1/reauction")
@@ -37,7 +38,7 @@ public class ReAuctionController {
     @PostMapping("/select")
     private ResponseEntity<?> selectReAuctionBid(@AuthorizedVariable Long memberPk,
                                                  @RequestBody ReAuctionSelectRequest request) throws
-        FirebaseMessagingException {
+        FirebaseMessagingException, ExecutionException, InterruptedException {
         ReAuctionSelectResponse response = reAuctionService.selectBid(memberPk,request);
         return ResponseEntity.ok().body(response);
     }
