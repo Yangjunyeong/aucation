@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,6 +76,7 @@ public class FCMService {
 	}
 
 	@Transactional
+	@Async("asyncTask")
 	public void setAucAlram(String auctionUUID) throws
 		FirebaseMessagingException,
 		ExecutionException,
@@ -116,6 +118,7 @@ public class FCMService {
 	}
 
 	@Transactional
+	@Async("asyncTask")
 	public void setAucEndAlarm(String auctionUUID, Long memberPk) throws
 		FirebaseMessagingException,
 		ExecutionException,
@@ -156,6 +159,7 @@ public class FCMService {
 	}
 
 	@Transactional
+	@Async("asyncTask")
 	public void setDisAucAlarm(String discountUUID, Long memberPk) throws
 		FirebaseMessagingException,
 		ExecutionException,
@@ -192,6 +196,7 @@ public class FCMService {
 	}
 
 	@Transactional
+	@Async("asyncTask")
 	public void setAucHighAlram(Member secondUser, String auctionUUID) throws
 		FirebaseMessagingException,
 		ExecutionException,
@@ -224,6 +229,7 @@ public class FCMService {
 	}
 
 	@Transactional
+	@Async("asyncTask")
 	public void setReAucAlram(Long auctionId, Long memberPk) throws
 		FirebaseMessagingException,
 		ExecutionException,
@@ -253,6 +259,7 @@ public class FCMService {
 			.setNotification(notification)
 			.putAllData(data)
 			.build();
+
 
 		this.firebaseMessaging.sendAsync(message).get();
 

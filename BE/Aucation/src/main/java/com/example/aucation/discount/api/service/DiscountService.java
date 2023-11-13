@@ -122,7 +122,7 @@ public class DiscountService {
 		disPhotoService.uploadDiscount(multipartFiles, discountUUID);
 
 		// 메세지 반환
-		return DiscountResponse.builder().message(SUCCESS_REGISTER_MESSAGE).discountUUID(discountUUID).build();
+		return DiscountResponse.builder().message(SUCCESS_REGISTER_MESSAGE).discountUUID(discountUUID).prodPk(discount.getId()).build();
 	}
 
 	private Address setMemberAddress(double discountLng, double discountLat) {
