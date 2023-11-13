@@ -30,7 +30,13 @@ export const onMessageFCM = async () => {
       if (currentToken) {
         // 정상적으로 토큰이 발급되면 콘솔에 출력합니다.
         console.log(currentToken);
-        callApi("POST", "/members/saveFCM", { token: currentToken });
+        callApi("POST", "/members/saveFCM", { token: currentToken })
+          .then(res => {
+            console.log(res.data);
+          })
+          .catch(err => {
+            console.log(err);
+          });
       } else {
         console.log("No registration token available. Request permission to generate one.");
       }
