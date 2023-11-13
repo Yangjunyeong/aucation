@@ -65,6 +65,8 @@ public class WriteBackByRedisCapacityScheduler {
 					log.info("	*********************** {}의 경매가 끝남 !!", key);
 					if (LocalDateTime.now().isAfter(auction.getAuctionEndDate())) {
 						groupChatMessages.addAll(temp);
+						redisTemplate.delete(key);
+
 					}
 
 				} else {
@@ -73,9 +75,9 @@ public class WriteBackByRedisCapacityScheduler {
 					if(size>100) {
 						log.info("	*********************** {}의 사이즈가 100이 넘음 !!", key);
 						chatMessages.addAll(temp);
+						redisTemplate.delete(key);
 					}
 				}
-				redisTemplate.delete(key);
 			} // end while
 
 			log.info(" *********************** 그룹&개인 메세지 saveAll 시작!!!");
