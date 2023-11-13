@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import sellfinish from "@/app/images/sellfinish.png";
+import sellfinish from "@/app/images/sellfinish.png"
 import LikeBtn from "../../detail/components/LikeBtn";
 import { BsFillPersonFill } from "react-icons/bs";
 import Image from "next/image";
@@ -25,7 +25,7 @@ interface ItemType {
   // x 판매자 닉네임
   ownerNicknname: string,
   // 시작가
-  auctionStarePrice: number,
+  auctionStartPrice: number,
   // 경매 시작시간,종료시간
   auctionStartDate: Date,
   auctionEndDate: Date,
@@ -51,16 +51,19 @@ interface ItemType {
   ownerPk: number,
   // x 카테고리
   auctionType: string,
+  // x 구매자 닉네임
+  customerNicknname: string
 }
 
 interface CardProps {
   item: ItemType
 }
 
-const AuctionSell: React.FC<CardProps> = ({ item}) => {
+const AuctionSell: React.FC<CardProps> = ({ item }) => {
+  // 경매전, 중, 완료 체크
   const [state, setState] = useState<string>("");
   const [isLiked, setIsLiked] = useState<boolean>(item.isLike);
-  const [nakchal, setNakchal] = useState<string>("낙찰")
+  // 채팅방 - 경매0 역경매1 할인2
   const [prodType, setProdType] = useState<string>("0")
 
   const stateHandler = (state: string) => {
@@ -85,12 +88,12 @@ const AuctionSell: React.FC<CardProps> = ({ item}) => {
     <>
       <div
         className={clsx(
-          "flex rounded-lg overflow-hidden shadow-lg bg-white w-[1200px] h-[250px] mt-12  hover:",
+          "flex rounded-lg overflow-hidden shadow-lg bg-white w-[1200px] h-[250px] mt-12 hover:border-black",
           state == "경매종료"
-            ? "border-2 border-red-500"
+            ? "border-2 border-red-500 "
             : state == "경매시작"
             ? "border-2 border-blue-600"
-            : ""
+            : "border-2 border-gray-400 "
         )}
       >
         {/* 카드 이미지 */}
@@ -98,8 +101,7 @@ const AuctionSell: React.FC<CardProps> = ({ item}) => {
           <div>
             <div className="relative w-[300px] h-[250px]">
               <Image
-                width={300}
-                height={250}
+                layout="fill"
                 className="transition-transform transform duration-300 hover:scale-110"
                 src={item.imgfile}
                 alt="Building Image"
@@ -130,9 +132,9 @@ const AuctionSell: React.FC<CardProps> = ({ item}) => {
           <div className="flex justify-between mt-3">
             <div className="flex gap-4 font-bold text-[16px] mt-[5px] ">
               <div className="flex font-sans text-2xl items-center mt-[2px]">
-                {state === "경매시작" && <span className="text-customBlue">경매전</span>}
-                {state === "경매종료" && <span className="text-red-500">경매중</span>}
-                {state === "종료" && <span>경매완료</span>}
+                {state === "경매시작" && <span className="text-customBlue">판매전</span>}
+                {state === "경매종료" && <span className="text-red-500">판매중</span>}
+                {state === "종료" && <span>판매종료</span>}
               </div>
 
               <div className="flex mt-1 text-xl rounded-full border-2 px-3 items-center border-gray-500">경매</div>
@@ -152,7 +154,7 @@ const AuctionSell: React.FC<CardProps> = ({ item}) => {
             <span
               className={clsx("text-4xl font-bold", state == "종료" ? "" : "text-customBlue")}
             >
-              &nbsp;{formatKoreanCurrency(item.auctionStarePrice)}
+              &nbsp;{formatKoreanCurrency(item.auctionStartPrice)}
             </span>
           </div>
 
@@ -160,7 +162,7 @@ const AuctionSell: React.FC<CardProps> = ({ item}) => {
             {state === "경매시작" && (
               <div className="flex mt-2 justify-between mr-20">
                 <div className="flex text-2xl items-center">경매 등록일 :&nbsp;<span className="text-[28px]">{new Date(item.registerDate).toLocaleString()}</span></div>
-                <span className="border-2 rounded-lg border-black text-black text-2xl font-bold py-2 px-2">
+                <span className="border-2 rounded-lg border-black text-black text-2xl font-bold py-2 px-2 cursor-pointer">
                   삭제하기
                 </span>
               </div>
@@ -181,7 +183,7 @@ const AuctionSell: React.FC<CardProps> = ({ item}) => {
             {state === "종료" && (
                 <div className="flex mt-2 justify-between mr-20">
                   <div className="flex text-[22px] items-center text-red-500">경매 등록일 :&nbsp;<span className="text-[28px]">{new Date(item.registerDate).toLocaleDateString()}</span></div>
-                  <div className="flex text-[22px] items-center">최종 입찰가&nbsp;&nbsp;<span className="font-bold text-red-500 w-[100px] flex-nowrap overflow-hidden text-ellipsis">{item.auctionSuccessPay.toLocaleString()}</span>원</div>
+                  <div className="flex text-[22px] items-center">최종 입찰가&nbsp;&nbsp;<span className="flex mr-1 font-bold text-red-500 w-[100px] justify-end flex-nowrap overflow-hidden text-ellipsis">{item.auctionSuccessPay.toLocaleString()}</span>원</div>
                   <span className="border-2 rounded-lg border-black text-black text-2xl font-bold py-2 px-2">
                     <Link href={`dm/${item.auctionPk}/${prodType}`}>채팅</Link>
                   </span>

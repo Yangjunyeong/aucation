@@ -15,6 +15,8 @@ import UpdateBtn from "./components/UpdateBtn";
 
 // 모달 컨텐츠
 import Modal from "@/app/components/Modal";
+// 더미
+import DummyUserData from "./components/DummyUserData";
 
 // 카테고리 박스
 import CategoryBox from "./components/CategoryBox";
@@ -102,9 +104,9 @@ const MyPage: NextPage = () => {
   const [myPoint, setMyPoint] = useState(0);
 
   // 현재 선택된 카테고리 및 카테고리 목록
-  const [category, setCategory] = useState<string>("경매");
+  const [category, setCategory] = useState<string>("할인");
   const [secondCategory, setSecondCategory] = useState<any>("판매");
-  const [thirdCategory, setThirdCategory] = useState<string>("경매전");
+  const [thirdCategory, setThirdCategory] = useState<string>("판매중");
   const [itemsort, setItemsort] = useState<string>("최신순");
 
   // 현재 페이지
@@ -124,7 +126,7 @@ const MyPage: NextPage = () => {
   };
   const categories: any = {
     경매: {
-      판매: ["경매전", "경매중", "경매완료"],
+      판매: ["판매전", "판매중", "판매완료"],
       구매: ["낙찰", "경매완료"],
     },
     역경매: {
@@ -289,12 +291,6 @@ const MyPage: NextPage = () => {
     IMP.request_pay(data, callback);
   };
 
-  // 좋아요 버튼 누를경우 pk, IsLiked값을 post로 전달
-  const handleLike = (pk: number, isLiked: boolean) => {
-    // pk와 isLiked값 post요청 보내기
-    console.log("좋아요 ");
-  };
-
   // 페이지
   const handlePageChange = (page: number) => {
     setPageNumber(page);
@@ -337,7 +333,6 @@ const MyPage: NextPage = () => {
     let data: any;
     if (category !== "좋아요") {
       data = {
-        productType: category,
         productStatus: secondCategory,
         auctionStatus: thirdCategory,
         productFilter: itemsort,
@@ -349,7 +344,7 @@ const MyPage: NextPage = () => {
         myPageNum: pageNumber,
       };
     }
-
+    console.log(apiUrl[category], data,"주소랑 데이터")
     // 유저 데이터 불러오기
     callApi("post", `${apiUrl[category]}`, data)
       .then(res => {
@@ -357,12 +352,13 @@ const MyPage: NextPage = () => {
         setDataList(res.data);
         setUsername(res.data.memberNickname);
         setMyPoint(res.data.memberPoint);
+        setInfo(res.data.memberDetail);
       })
       .catch(err => {
         console.log(JSON.stringify(data, null, 2));
         console.log(err);
       });
-  }, [thirdCategory]);
+  }, [thirdCategory, itemsort]);
 
   if (dataList) {
     return (
@@ -488,7 +484,6 @@ const MyPage: NextPage = () => {
               <PaymentModal onClose={() => setIsOpen(false)} isOpen={isOpen} cash={cashHandler} />
             </div>
           </div>
-        </div>
         <div className="border-t-2 border-gray-400 bottom-0"></div>
 
         {/* 첫번째 카테고리 출력 및 클릭 효과 */}
@@ -511,7 +506,7 @@ const MyPage: NextPage = () => {
         <div className="flex mt-20 gap-3 items-center">
           <h2 className="font-semibold text-3xl w-[160px]">{category} 상품</h2>
           {/* 상품개수 바인딩 */}
-          {/* <h2 className="text-red-600  text-4xl font-bold ml-2">{dataList.mypageItems?.length}</h2> */}
+          <h2 className="text-red-600  text-4xl font-bold ml-2">{dataList.mypageItems?.length}</h2>
           {/* 카테고리 - 판매/구매 */}
           <div className={clsx("flex gap-3 items-center", category !== "좋아요" ? "" : "hidden")}>
             {Object.keys(categories[category]).map((item, idx) => (
@@ -582,55 +577,60 @@ const MyPage: NextPage = () => {
         {/* 경매 - 판매 */}
         {category == "경매" && secondCategory == "판매" && (
           <div>
-            {dataList.mypageItems.map((item: any, idx: any) => (
+            {/* DummyUserData.mypageItems */}
+            {dataList.mypageItems?.map((item: any, idx: any) => (
               <AuctionSell item={item} key={idx} />
             ))}
           </div>
         )}
 
         {/* 경매 - 구매 */}
-        {/* {category == "경매" && secondCategory == "구매" && (
+        {category == "경매" && secondCategory == "구매" && (
           <div>
+            {/* dataList.mypageItems? */}
             {dataList.mypageItems?.map((item:any, idx:any) => (
               <AuctionBuy item={item} key={idx} />
             ))}
           </div>
-        )} */}
+        )}
 
         {/* 역경매 판매 */}
-        {/* {category == "역경매" && secondCategory == "판매" && (
+        {category == "역경매" && secondCategory == "판매" && (
           <div>
+            {/* {dataList.mypageItems?.map((item:any, idx:any) => ( */}
             {dataList.mypageItems?.map((item:any, idx:any) => (
               <ReAuctionSell item={item} key={idx} />
             ))}
           </div>
-        )} */}
+        )}
 
         {/* 역경매 구매 */}
-        {/* {category == "역경매" && secondCategory == "구매" && (
+        {category == "역경매" && secondCategory == "구매" && (
           <div>
+            {/* {dataList.mypageItems?.map((item:any, idx:any) => ( */}
             {dataList.mypageItems?.map((item:any, idx:any) => (
               <ReAuctionBuy item={item} key={idx} />
             ))}
           </div>
-        )} */}
+        )}
 
         {/* 할인 - 판매 */}
-        {/* {category == "할인" && secondCategory == "판매" && (
+        {category == "할인" && secondCategory == "판매" && (
           <div>
+            {/* {dataList.mypageItems?.map((item:any, idx:any) => ( */}
             {dataList.mypageItems?.map((item:any, idx:any) => (
               <DiscountSell item={item} key={idx} thirdCategory={thirdCategory!} />
             ))}
           </div>
-        )} */}
+        )}
         {/* 할인 - 구매 */}
-        {/* {category == "할인" && secondCategory == "구매" && (
+        {category == "할인" && secondCategory == "구매" && (
           <div>
             {dataList.mypageItems?.map((item:any, idx:any) => (
               <DiscountBuy item={item} key={idx} />
             ))}
           </div>
-        )} */}
+        )}
         {/* 좋아요 */}
         {/* {category == "좋아요" && (
           <div className="flex flex-wrap justify-between">
@@ -653,6 +653,7 @@ const MyPage: NextPage = () => {
           />
         </div>
       </div>
+    </div>
     );
   }
 };
