@@ -221,7 +221,27 @@ const AuthForm = () => {
     setEmailVerify(e.target.value);
   }, []);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const { geolocation } = navigator;
+    geolocation.getCurrentPosition(
+      position => {
+        // success.
+        setLat(position.coords.latitude);
+        setLng(position.coords.longitude);
+        console.log(position.coords);
+      },
+      error => {
+        console.warn("Fail to fetch current location", error);
+        setLat(37);
+        setLng(127);
+      },
+      {
+        enableHighAccuracy: false,
+        maximumAge: 0,
+        timeout: Infinity,
+      }
+    );
+  }, []);
 
   return (
     <div
@@ -333,7 +353,8 @@ const AuthForm = () => {
         </div>
       </div>
       {variant == "REGISTER" && (
-        <div className="w-[600px] h-[500px] mr-5 mb-5">
+        <div className="w-full h-[500px] mr-5 mb-10">
+          <Label htmlFor="map">우리 동네 확인 {"(현재 내 위치 기준)"}</Label>
           <StayMap inputLat={lat} inputLag={lng} />
         </div>
       )}

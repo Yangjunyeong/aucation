@@ -21,7 +21,7 @@ const indicatorStyles: CSSProperties = {
 };
 
 const Banner: React.FC = () => {
-  const imgIdx = [1, 2, 3, 4];
+  const imgIdx = [1, 2, 3, 4, 5];
 
   return (
     <div className="h-full">
