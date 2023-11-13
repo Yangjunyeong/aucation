@@ -61,8 +61,8 @@ public class WriteBackByRedisCapacityScheduler {
 				if (redisKeyBase.equals("chat-auc")) {
 					Auction auction = auctionRepository.findByAuctionUUID(uuid)
 						.orElseThrow(() -> new NotFoundException(ApplicationError.AUCTION_NOT_FOUND));
-					log.info("	*********************** {}의 경매가 끝남 !!", key);
 					if (LocalDateTime.now().isAfter(auction.getAuctionEndDate())) {
+						log.info("	*********************** {}의 경매가 끝남 !!", key);
 						List<RedisChatMessage> temp = redisTemplate.opsForList().range(key, 0, -1);
 						groupChatMessages.addAll(temp);
 						redisTemplate.delete(key);
