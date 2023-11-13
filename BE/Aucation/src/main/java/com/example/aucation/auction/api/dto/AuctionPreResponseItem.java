@@ -18,4 +18,5 @@ public class AuctionPreResponseItem{
     private String mycity;
     private String zipcode;
     private String street;
+    private String auctionType;
 }
