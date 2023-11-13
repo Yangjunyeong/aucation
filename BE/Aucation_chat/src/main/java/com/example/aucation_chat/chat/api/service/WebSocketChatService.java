@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.aucation_chat.chat.api.dto.request.ChatRequestPubSub;
 import com.example.aucation_chat.chat.db.entity.personal.ChatRoom;
+import com.example.aucation_chat.chat.db.repository.group.GroupChatRoomRepository;
 import com.example.aucation_chat.chat.db.repository.personal.ChatRoomRepository;
 import com.example.aucation_chat.common.error.ApplicationError;
 import com.example.aucation_chat.common.error.NotFoundException;
@@ -41,6 +42,8 @@ public class WebSocketChatService {
 	private final MemberRepository memberRepository;
 
 	private final ChatRoomRepository chatRoomRepository;
+
+	private final GroupChatRoomRepository groupChatRoomRepository;
 
 	// 쪽지방(topic)에 발행되는 메시지 처리하는 리스너
 	private final RedisMessageListenerContainer redisMessageListener;
@@ -80,7 +83,7 @@ public class WebSocketChatService {
 		String messageTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(DateFormatPattern.get()));
 
 		// chatUUID로 chatPk 찾기
-		long chatPk = chatRoomRepository.findByChatSession(chatUUID)
+		long chatPk = groupChatRoomRepository.findByChatSession(chatUUID)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.CHATTING_ROOM_NOT_FOUND))
 			.getChatPk();
 
