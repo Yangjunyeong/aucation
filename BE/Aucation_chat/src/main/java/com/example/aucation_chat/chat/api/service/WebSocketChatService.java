@@ -97,7 +97,7 @@ public class WebSocketChatService {
 
 		// redis에 저장
 		redisTemplate.opsForList().rightPush("chat-auc:" + chatUUID, message);
-		setTTL("chat-auc:", chatUUID); // 첫 push 였다면 TTL 설정
+		// setTTL("chat-auc:", chatUUID); // 첫 push 였다면 TTL 설정
 
 		// RedisChatMessage -> ChatResponse
 		ChatResponse res = ChatResponse.builder()
@@ -141,7 +141,7 @@ public class WebSocketChatService {
 		// redis에 저장
 		String redisKeyBase = getRedisKeyBase(chatRequest.getChatUUID());
 		redisTemplate.opsForList().rightPush(redisKeyBase + chatRequest.getChatUUID(), message);
-		setTTL(redisKeyBase, chatRequest.getChatUUID()); // 첫 push 였다면 TTL 설정
+		// setTTL(redisKeyBase, chatRequest.getChatUUID()); // 첫 push 였다면 TTL 설정
 
 		return message;
 	}
