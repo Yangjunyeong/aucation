@@ -58,7 +58,6 @@ public class RedisConfig {
 			.build();
 
 		// 모든 클러스터 노드들 정보를 넣는다.
-		log.info(clusterNodes.toString());
 		RedisClusterConfiguration redisClusterConfiguration = new RedisClusterConfiguration(clusterNodes);
 		redisClusterConfiguration.setPassword(password);
 		return new LettuceConnectionFactory(redisClusterConfiguration, clientConfiguration);
