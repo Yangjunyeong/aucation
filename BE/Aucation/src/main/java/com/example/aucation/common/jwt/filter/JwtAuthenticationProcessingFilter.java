@@ -92,7 +92,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
 	private boolean isNotRequiredJwtAuthencation(HttpServletRequest request) {
 		return tokenAUthorizationWhiteList.stream().anyMatch(uri -> request.getRequestURI().contains(uri))
-			|| (request.getRequestURI().equals(CONTEXT_PATH + SIGNUP_URI) && request.getMethod().equals(HttpMethod.POST.name()));
+			||(request.getRequestURI().equals("/api/v1/members/mainPage")) ||(request.getRequestURI().equals(CONTEXT_PATH + SIGNUP_URI) && request.getMethod().equals(HttpMethod.POST.name()));
 
 	}
 
