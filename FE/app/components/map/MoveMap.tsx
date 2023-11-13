@@ -38,7 +38,7 @@ const MoveMap: React.FC<OwnProps> = ({ setTransActionLocation }) => {
         // var marker = new window.kakao.maps.Marker({
         //   position: markerPosition,
         // });
-        var marker = new window.kakao.maps.Marker(), // 클릭한 위치를 표시할 마커입니다
+        var marker = new window.kakao.maps.Marker({ position: map.getCenter() }), // 클릭한 위치를 표시할 마커입니다
           infowindow = new window.kakao.maps.InfoWindow({ zindex: 1 }); // 클릭한 위치에 대한 주소를 표시할 인포윈도우입니다
         marker.setMap(map);
         // marker.setDraggable(true);

@@ -108,7 +108,7 @@ const StayMap: React.FC<KakaoMapProp> = ({ inputLat, inputLag }) => {
 
   return (
     <main className="w-full flex flex-col items-center justify-center">
-      <div className="w-[600px] h-[500px]">
+      <div className="w-full h-[500px]">
         <div id="map" style={{ width: "100%", height: "100%" }} className="rounded-2xl">
           {/* 왼쪽 위 어쩌고 */}
           <div className="flex w-[210px] border-2 bg-opacity-70 border-gray-300 ml-3 absolute z-40 px-1 py-3 top-3 rounded-2xl text-sm bg-white">
