@@ -473,7 +473,7 @@ public class 	AuctionRepositoryImpl implements AuctionRepositoryCustom {
 		List<AuctionIngResponseItem> result = query.fetch();
 
 		for (AuctionIngResponseItem item : result) {
-			List<SaveAuctionBIDRedis> bidList = redisTemplate.opsForList().range(item.getAuctionUUID()
+			List<SaveAuctionBIDRedis> bidList = redisTemplate.opsForList().range("auc-ing-log:"+item.getAuctionUUID()
 				, 0, -1);
 			if (bidList == null || bidList.isEmpty()) {
 				item.setAuctionTopBidPrice(item.getAuctionStartPrice());
