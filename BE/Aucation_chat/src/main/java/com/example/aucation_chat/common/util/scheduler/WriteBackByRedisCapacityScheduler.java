@@ -41,7 +41,7 @@ public class WriteBackByRedisCapacityScheduler {
 	// @Scheduled(cron = "0 0/2 * * * *") // 2분마다 실행
 	@Transactional
 	public void writeBack() {
-		log.info(" ********************* writeBack 시도");
+		log.info(" ********************* writeBack 스케쥴러 시작 !!!!!");
 
 		List<RedisChatMessage> chatMessages = new ArrayList<>();
 		List<RedisChatMessage> groupChatMessages = new ArrayList<>();
