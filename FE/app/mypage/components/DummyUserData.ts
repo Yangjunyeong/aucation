@@ -1,39 +1,98 @@
 import exp from "constants"
 
-interface DummyUserData {
-    cardImgUrl: string
-    likeCount: number
-    auctionStartTime: Date
-    title: string
-    highestPrice: number
-    isLiked: boolean
-    nickname: string
-    startPrice: number
-    isIndividual: boolean
-}
 
-const DummyUserData: DummyUserData[] = [
-{
-    cardImgUrl: "https://cdn.thecolumnist.kr/news/photo/202302/1885_4197_221.jpg",
-    likeCount: 100,
-    auctionStartTime: new Date("2023-11-03T14:32:30"),
-    title: "상품 제목 1",
-    highestPrice: 500000,
-    isLiked: true,
-    nickname: "사용자1",
-    startPrice: 20000,
-    isIndividual: true,
-  },
-  {
-    cardImgUrl: "https://cdn.thecolumnist.kr/news/photo/202302/1885_4197_221.jpg",
-    likeCount: 200,
-    auctionStartTime: new Date("2023-11-02T14:32:30"),
-    title: "상품 제목 2",
-    highestPrice: 60000,
-    isLiked: false,
-    nickname: "사용자2",
-    startPrice: 30000,
-    isIndividual: false,
-  },
-]
+const DummyUserData: any = [
+    {
+      auctionTitle: "qwe",
+      auctionStarePrice: 123123,
+      auctionSuccessPay: 111,
+      ownerPk: 8,
+      customerPk: 9,
+      auctionUUID: "P7Xuh1rj",
+      auctionPk: 152,
+      auctionStatus: "REVERSE_BID",
+      ownerNickname: "",
+      mycity: "",
+      zipcode: "",
+      street: "",
+      isLike: false,
+      auctionType: "도서/티켓/문구",
+      registerDate: "2023-11-08T16:04:39.768489",
+      reAucBidDateTime: "2023-11-08T15:54:46.141489",
+      reAucBidPrice: 100,
+      imgfile: "https://aucation-bucket.s3.ap-northeast-2.amazonaws.com/auction/P7Xuh1rj/%20%EB%A7%A4%EB%AC%BC%EC%82%AC%EC%A7%84.png",
+      auctionHistory: "BEFORE_CONFIRM",
+      historyDateTime: "2023-11-08T16:33:57.680123",
+      historyDoneDateTime: null,
+      customerNicknname: ""
+    },
+    {
+      auctionTitle: "qwe",
+      auctionStarePrice: 123123,
+      auctionSuccessPay: 111,
+      ownerPk: 8,
+      customerPk: 9,
+      auctionUUID: "P7Xuh1rj",
+      auctionPk: 152,
+      auctionStatus: "REVERSE_BID",
+      auctionType: "도서/티켓/문구",
+      registerDate: "2023-11-08T16:04:39.768489",
+      reAucBidDateTime: "2023-11-08T15:56:10.025504",
+      reAucBidPrice: 1111,
+      imgfile: "https://aucation-bucket.s3.ap-northeast-2.amazonaws.com/auction/P7Xuh1rj/%20%EB%A7%A4%EB%AC%BC%EC%82%AC%EC%A7%84.png",
+      ownerNickname: "",
+      auctionHistory: "BEFORE_CONFIRM",
+      historyDateTime: "2023-11-08T16:33:57.680123",
+      historyDoneDateTime: null,
+      customerNicknname: ""
+    },
+    {
+      auctionTitle: "qwe",
+      auctionStarePrice: 123123,
+      auctionSuccessPay: 111,
+      ownerPk: 8,
+      customerPk: 9,
+      auctionUUID: "P7Xuh1rj",
+      auctionPk: 152,
+      auctionStatus: "REVERSE_BID",
+      ownerNickname: "",
+      mycity: "",
+      zipcode: "",
+      street: "",
+      isLike: false,
+      auctionType: "도서/티켓/문구",
+      registerDate: "2023-11-08T16:04:39.768489",
+      reAucBidDateTime: "2023-11-08T15:54:46.141489",
+      reAucBidPrice: 100,
+      imgfile: "https://aucation-bucket.s3.ap-northeast-2.amazonaws.com/auction/P7Xuh1rj/%20%EB%A7%A4%EB%AC%BC%EC%82%AC%EC%A7%84.png",
+      auctionHistory: "BEFORE_CONFIRM",
+      historyDateTime: "2023-11-08T16:33:57.680123",
+      historyDoneDateTime: null,
+      customerNicknname: ""
+    },
+    {
+      auctionTitle: "qwe",
+      auctionStarePrice: 123123,
+      auctionSuccessPay: 111,
+      ownerPk: 8,
+      customerPk: 9,
+      auctionUUID: "P7Xuh1rj",
+      auctionPk: 152,
+      auctionStatus: "REVERSE_BID",
+      ownerNickname: "",
+      mycity: "",
+      zipcode: "",
+      street: "",
+      isLike: false,
+      auctionType: "도서/티켓/문구",
+      registerDate: "2023-11-08T16:04:39.768489",
+      reAucBidDateTime: "2023-11-08T15:54:46.141489",
+      reAucBidPrice: 100,
+      imgfile: "https://aucation-bucket.s3.ap-northeast-2.amazonaws.com/auction/P7Xuh1rj/%20%EB%A7%A4%EB%AC%BC%EC%82%AC%EC%A7%84.png",
+      auctionHistory: "BEFORE_CONFIRM",
+      historyDateTime: "2023-11-08T16:33:57.680123",
+      historyDoneDateTime: null,
+      customerNicknname: ""
+    }
+  ]
 export default DummyUserData
