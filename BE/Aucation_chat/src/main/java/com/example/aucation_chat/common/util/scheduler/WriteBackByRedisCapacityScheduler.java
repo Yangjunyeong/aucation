@@ -58,12 +58,12 @@ public class WriteBackByRedisCapacityScheduler {
 				String redisKeyBase = key.split(":")[0];
 				String uuid = key.split(":")[1];
 
-				List<RedisChatMessage> temp = redisTemplate.opsForList().range(key, 0, -1);
 				if (redisKeyBase.equals("chat-auc")) {
 					Auction auction = auctionRepository.findByAuctionUUID(uuid)
 						.orElseThrow(() -> new NotFoundException(ApplicationError.AUCTION_NOT_FOUND));
 					log.info("	*********************** {}의 경매가 끝남 !!", key);
 					if (LocalDateTime.now().isAfter(auction.getAuctionEndDate())) {
+						List<RedisChatMessage> temp = redisTemplate.opsForList().range(key, 0, -1);
 						groupChatMessages.addAll(temp);
 						redisTemplate.delete(key);
 
@@ -74,6 +74,7 @@ public class WriteBackByRedisCapacityScheduler {
 					Long size = redisTemplate.opsForList().size(key);
 					if(size>100) {
 						log.info("	*********************** {}의 사이즈가 100이 넘음 !!", key);
+						List<RedisChatMessage> temp = redisTemplate.opsForList().range(key, 0, -1);
 						chatMessages.addAll(temp);
 						redisTemplate.delete(key);
 					}
