@@ -19,16 +19,7 @@ export default function Home() {
     >
       <div className="w-[35%]">
         <Image alt="Logo" className="mx-auto w-auto" src={logo2} />
-        <h2
-          className="mt-6
-         text-center
-         text-3xl
-         font-bold
-         tracking-tight
-         "
-        >
-          로그인
-        </h2>
+        
         <AuthForm />
       </div>
     </div>

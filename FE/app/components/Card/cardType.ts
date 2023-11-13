@@ -10,6 +10,7 @@ export type AuctionItem = {
   isLike: boolean; // 사용자 좋아요 여부
   auctionPk: number;
   auctionUUID: number; // 경매입장을 위한 UUID
+  auctionType: string; // 카테고리 종류
   auctionTitle: string; // 상품이름
   auctionStartPrice: number; // 경매 시작가
   auctionTopBidPrice: number; // 경매 입찰가
@@ -32,6 +33,7 @@ export type PreAuctionItem = {
   isLike: boolean; // 사용자 좋아요 여부
   auctionPk: number;
   auctionTitle: string; // 상품이름
+  auctionType: string; //
   auctionStartPrice: number; // 경매 시작가
   auctionOwnerIsShop: boolean; // 소상공인여부
   auctionOwnerNickname: string; // 판매자 닉네임
@@ -51,6 +53,7 @@ export type ReverseAuctionItem = {
   isLike: boolean; // 사용자 좋아요 여부
   reAuctionPk: number;
   reAuctionTitle: string; // 상품이름
+  reAuctionType: string;
   reAuctionStartPrice: number; // 경매 시작가
   reAuctionLowBidPrice: number; // 경매 최저가
   reAuctionBidCnt: number; // 총 입찰한 사람 수
@@ -77,6 +80,7 @@ export type DiscountItem = {
   discountRate: number; // 할인률
   discountOwnerNickname: string; // 소상공인여부
   discountUUID: string; //
+  discountType: string; //
   discountEnd: Date; // 할인 마감시간
   discountImg: string; // 할인 사진 url
 };

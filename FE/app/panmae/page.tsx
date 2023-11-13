@@ -144,12 +144,14 @@ const Panmae = () => {
           }
         })
         .catch(err => {
+          console.log();
           console.log(err);
         })
         .finally(() => {
           setLoading(false);
         });
     } else {
+      // if (discountPrice! < price)
       const time = timeToDate(hour, minute);
       const formData = new FormData();
       formData.append("discountTitle", productname);
@@ -175,8 +177,8 @@ const Panmae = () => {
       callApi("post", "/discount/register", formData)
         .then(res => {
           console.log(res);
-          const uuid = res.data.discountUUID;
-          router.push(`discount/${uuid}`);
+          const prodPk = res.data.prodPk;
+          router.push(`/detail/discount/${prodPk}`);
         })
         .catch(err => {
           console.log(err);
@@ -190,6 +192,7 @@ const Panmae = () => {
   useEffect(() => {
     // 브라우저에서 로컬 스토리지에 접근하여 토큰 확인
     const accessToken = window.localStorage.getItem("accessToken");
+    console.log(auth);
 
     // 토큰이 없는 경우 로그인 페이지로 리다이렉션
     if (!accessToken) {
@@ -302,7 +305,8 @@ const Panmae = () => {
               거래지역 <span className="text-red-500">*</span>
             </h1>
             <div className="mt-14 text-customLightTextColor">
-              지도 위에 마우스 클릭을 통해 <br />내 주변에서 원하는 거래 지역을 선택할 수 있어요
+              지도 위에 마우스 클릭을 통해 <br />내 주변에서 원하는 거래 지역을 <br />
+              선택할 수 있어요
             </div>
           </div>
           <div className="w-[600px] h-[500px] mr-5 mb-5">
@@ -318,7 +322,10 @@ const Panmae = () => {
               경매 종류 <span className="text-red-500">*</span>
             </h1>
             <div>
-              <TypeOfSales option={option} optionHandler={optionHandler} isShopper={auth.role} />
+              {auth.role && (
+                <TypeOfSales option={option} optionHandler={optionHandler} isShopper={auth.role} />
+              )}
+
               <div className={clsx(`flex text-[var(--c-blue)] mt-3`, option ? "invisible" : "")}>
                 <AiOutlineStop size={24} />
                 <span>경매의 종류를 선택해 주세요</span>

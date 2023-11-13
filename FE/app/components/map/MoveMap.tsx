@@ -118,6 +118,7 @@ const MoveMap: React.FC<OwnProps> = ({ setTransActionLocation }) => {
         // success.
         setLat(position.coords.latitude);
         setLng(position.coords.longitude);
+        setTransActionLocation([position.coords.latitude, position.coords.longitude]);
         console.log(position.coords);
       },
       error => {

@@ -246,12 +246,23 @@ const AuthForm = () => {
   return (
     <div
       className="
-    mt-8
+    mt-6
     w-full
     flex-row
     items-center
     "
     >
+      <h2
+        className="
+         text-center
+         text-4xl
+         font-bold
+         tracking-tight
+         mb-10
+         "
+      >
+        {variant === "LOGIN" ? "로그인" : "회원가입"}
+      </h2>
       <div className="my-5">
         <Label htmlFor="id">아이디</Label>
         <div
@@ -263,7 +274,7 @@ const AuthForm = () => {
             verify={verifyid}
             id="id"
             type="text"
-            placeholder={"Ex:auction"}
+            placeholder={"아이디를 입력하세요"}
             value={id}
             onChange={onChangeId}
           />
@@ -344,7 +355,7 @@ const AuthForm = () => {
           <Input
             id="password"
             type="password"
-            placeholder={""}
+            placeholder={"비밀번호를 입력하세요"}
             value={password}
             onChange={onChangePassword}
             verify={true}
@@ -367,30 +378,27 @@ const AuthForm = () => {
         justify-center
       "
       >
-        {variant == "LOGIN" ? (
-          <button onClick={signOrlogin}>로그인</button>
-        ) : (
-          <button onClick={signOrlogin}>회원가입</button>
-        )}
+        <button onClick={signOrlogin} className="hover:text-red-500 text-xl">
+          {variant === "LOGIN" ? "로그인" : "회원가입"}
+        </button>
       </div>
-      <div className="flex items-center justify-center text-gray-500 my-4">
-        <div className="border-t border-gray-400 flex-grow"></div>
-        <div className="border-t border-gray-400 flex-grow"></div>
-      </div>
+
+      <div className="border-t border-gray-400 flex-grow my-6"></div>
+
       {variant == "LOGIN" ? (
         <div className="flex items-center justify-center">
-          <p>
+          <p className="text-xl">
             계정이 없으신가요?{" "}
-            <button onClick={toggleVariant} className="font-bold text-xl ">
+            <button onClick={toggleVariant} className="font-bold text-2xl hover:text-red-500">
               회원가입
             </button>
           </p>
         </div>
       ) : (
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center ">
           <p>
             이미 계정이 있나요?{" "}
-            <button onClick={toggleVariant} className="font-bold text-xl ">
+            <button onClick={toggleVariant} className="font-bold text-2xl hover:text-red-500 ">
               로그인
             </button>
           </p>
@@ -403,7 +411,7 @@ export default AuthForm;
 
 const Label = tw.label`
 block
-text-sm
+text-base
 font-medium
 leading-6
 text-gray-900"

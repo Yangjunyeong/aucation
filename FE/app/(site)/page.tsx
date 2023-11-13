@@ -11,8 +11,16 @@ import { HomePageData } from "../components/Card/cardType";
 import { callApi } from "../utils/api";
 import ClipLoader from "react-spinners/ClipLoader";
 import { onMessageFCM } from "../utils/fcm";
+import { useRecoilValue } from "recoil";
+import { authState } from "../store/atoms";
 
 export default function Home() {
+  // const api = axios.create({
+  //   baseURL: "/api/v1",
+  //   timeout: 2000,
+  //   headers: { "X-Custom-Header": "foobar" },
+  // });
+  const recoilValue = useRecoilValue(authState);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<HomePageData>({
     nowTime: null,
@@ -30,6 +38,7 @@ export default function Home() {
       .then(res => {
         console.log("홈페이지 데이터", res);
         setData(res.data);
+        console.log("리코일", recoilValue);
       })
       .catch(err => {
         console.log("홈페이지 데이터 에러", err);
@@ -41,6 +50,7 @@ export default function Home() {
 
   useEffect(() => {
     callHomePageData();
+    console.log;
   }, []);
 
   return (

@@ -62,7 +62,7 @@ const AuctionDetail = () => {
       .then(res => {
         setDataList(res.data);
         setIsLiked(res.data.isLike);
-        setLikeCount(res.data.likeCnt)
+        setLikeCount(res.data.likeCnt);
         console.log(res);
       })
       .catch(err => {
@@ -77,8 +77,8 @@ const AuctionDetail = () => {
         {/* 좋아요 버튼 및 뒤로가기 버튼 */}
         <div className="flex justify-between">
           <BackBtn />
-            <div className="flex items-center">
-              <LikeBtn isLiked={isLiked} likeHandler={likeHandler} />
+          <div className="flex items-center">
+            <LikeBtn isLiked={isLiked} likeHandler={likeHandler} />
             <span className="ml-1">{likeCount}</span>
           </div>
         </div>
@@ -106,8 +106,7 @@ const AuctionDetail = () => {
               </h3>
             </div>
             <div>
-              <Link
-              href={`/mypage/${dataList.auctionOwnerNickname}`}>
+              <Link href={`/other/${dataList.auctionOwnerPk}`}>
                 <h2 className="text-2xl font-bold">{dataList.auctionOwnerNickname}</h2>
               </Link>
             </div>
@@ -119,7 +118,13 @@ const AuctionDetail = () => {
               <span className="ml-2">{dataList?.auctionCurCnt}</span>
             </div>
             <div className="mr-7 flex items-end">
-            <h3 className="flex text-1xl font-thin "><CountDown stateHandler={stateHandler} currentTime={new Date(dataList.nowTime)} auctionStartTime={new Date(dataList.auctionStartTime)}/></h3>
+              <h3 className="flex text-1xl font-thin ">
+                <CountDown
+                  stateHandler={stateHandler}
+                  currentTime={new Date(dataList.nowTime)}
+                  auctionStartTime={new Date(dataList.auctionStartTime)}
+                />
+              </h3>
             </div>
           </div>
         </div>
@@ -152,9 +157,7 @@ const AuctionDetail = () => {
           }}
         >
           <RiAuctionLine size={32} color="#ffffff" />
-          <Link
-          href={`/bid/${dataList.auctionUuid}`}
-          >
+          <Link href={`/bid/${dataList.auctionUuid}`}>
             <p className="text-2">입찰하러 가기</p>
           </Link>
         </div>

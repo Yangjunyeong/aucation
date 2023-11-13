@@ -11,7 +11,7 @@ import { callApi } from "../../utils/api";
 import Pagination from "react-js-pagination";
 import "../components/Paging.css";
 import { AuctionData, AuctionItem, PreAuctionData } from "../../components/Card/cardType";
-import dummyData from "../components/dummyData";
+
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ClipLoader from "react-spinners/ClipLoader";
@@ -43,7 +43,7 @@ const AuctionList = ({ params }: { params: PageParams }) => {
 
   const tmp = new Date();
 
-  const tapList = ["경매중", "경매전", "삽니다"];
+  const tapList = ["경매중", "경매전", "역경매"];
   const localCategoryList = ["전체", ...CategoryNameList];
 
   const orderTypeList: orderType[] = [
@@ -71,7 +71,7 @@ const AuctionList = ({ params }: { params: PageParams }) => {
       case "경매전":
         router.push("/auction/before");
         break;
-      case "삽니다":
+      case "역경매":
         router.push("/auction/reverse-auction");
         break;
       default:
@@ -174,7 +174,7 @@ const AuctionList = ({ params }: { params: PageParams }) => {
       ) : data.preItems.length > 0 ? (
         <div className="grid grid-cols-5 gap-x-6 gap-y-10">
           {data.preItems.map(item => (
-            <div key={item.auctionPk} className="shadow-lg h-[500px] rounded-lg">
+            <div key={item.auctionPk} className="shadow-lg h-[600px] rounded-lg">
               <PreAuctionListCard item={item} nowTime={data.nowTime} />
             </div>
           ))}
