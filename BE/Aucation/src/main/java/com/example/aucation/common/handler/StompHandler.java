@@ -5,10 +5,12 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Component
 public class StompHandler implements ChannelInterceptor {
 
 	@Override
@@ -18,7 +20,8 @@ public class StompHandler implements ChannelInterceptor {
 			String auctionUUID = (String)message.getPayload();
 			log.info(auctionUUID);
 		}else if(StompCommand.DISCONNECT == accessor.getCommand()){
-
+			String auctionUUID = (String)message.getPayload();
+			log.info(auctionUUID);
 		}
 
 		return message;

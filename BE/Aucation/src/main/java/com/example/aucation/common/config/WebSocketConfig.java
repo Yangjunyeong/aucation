@@ -5,15 +5,23 @@ import java.util.List;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConverter;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import com.example.aucation.common.handler.StompHandler;
+
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 // @EnableWebSocket // 웹소켓 활성화
 @EnableWebSocketMessageBroker
+@RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+	private final StompHandler stompHandler;
 
 	// stomp 설정
 	@Override
@@ -44,7 +52,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 		messageConverters.add(new MappingJackson2MessageConverter());
 		return false;
 	}
-
+	@Override
+	public void configureClientInboundChannel(ChannelRegistration registration) {
+		registration.interceptors(stompHandler);
+	}
 
 	// stomp가 아닌 websocket방식에서 쓰임
 	// @Override
