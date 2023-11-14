@@ -9,32 +9,34 @@ import clsx from "clsx";
 import { GoReport } from "react-icons/go";
 import Link from "next/link";
 import { callApi } from "@/app/utils/api";
-import formatKoreanCurrency from "../../utils/formatKoreanCurrency"
-import {BiMap} from "react-icons/bi"
+import formatKoreanCurrency from "../../utils/formatKoreanCurrency";
+import { BiMap } from "react-icons/bi";
 interface ItemType {
-  // 이미지, 등록일 x, 제목 x, 정가, 할인가, 좋아요
-  imgfile: string,
-  discountPrice: number,
-  discountDiscountedPrice:number,
-  isLike: boolean,
+  // 이미지, 등록일 x, 제목 x, 정가, 할인가, 좋아요, 할인률
+  imgfile: string;
+  discountTitle: string;
+  discountPrice: number;
+  discountDiscountedPrice: number;
+  isLike: boolean;
+  discountRate?: number;
   // 구매자
-  customerNickname: string
+  customerNickname: string;
   // x 마감시간
-  discountEnd: string,
+  discountEnd: string;
   // 제품 uuid, pk
-  discountUUID: string,
-  discountPk: number,
+  discountUUID: string;
+  discountPk: number;
   // 낙찰 상태, 일시, 확정일
-  historyStatus: string,
-  historyDatetime: string,
-  historyDoneDatetime: string,
+  historyStatus: string;
+  historyDatetime: string;
+  historyDoneDatetime: string;
   // 유저pk, 소상공인pk
-  discountCustomerPk: number,
-  discountOwnerPk: number,
+  discountCustomerPk: number;
+  discountOwnerPk: number;
   // x 시,구,동
-  mycity: string,
-  zipcode: string,
-  street: string,
+  mycity: string;
+  zipcode: string;
+  street: string;
 }
 
 interface CardProps {
@@ -43,7 +45,7 @@ interface CardProps {
 }
 const DiscountSell: React.FC<CardProps> = ({ item, thirdCategory }) => {
   const [isLiked, setIsLiked] = useState<boolean>(item.isLike);
-  const [prodType, setProdType] = useState<string>("2")
+  const [prodType, setProdType] = useState<string>("2");
   const likeHandler = (newLikeStatus: boolean) => {
     setIsLiked(newLikeStatus); // 옵티미스틱 업데이트
 
@@ -55,7 +57,6 @@ const DiscountSell: React.FC<CardProps> = ({ item, thirdCategory }) => {
         console.log("좋아요 실패", error);
       });
   };
-
 
   return (
     <>
@@ -115,18 +116,19 @@ const DiscountSell: React.FC<CardProps> = ({ item, thirdCategory }) => {
           {/* 카드 제목 */}
           <div className="text-3xl h-[36px] font-bold mt-4 mr-20 whitespace-nowrap overflow-hidden text-ellipsis">
             {/* 제목 */}
+            {item.discountTitle}
           </div>
           {/* 구매자 */}
           {(thirdCategory == "예약중" || thirdCategory == "판매완료") && (
             <div className="flex mt-2 text-[22px] font-semibold">
               <div className="flex items-center">구매자 :&nbsp;</div>
               <div>
-              <Link
-                href={`/other/${item.customerNickname}`}
-                className="text-customLightTextColor text-lg hover:underline"
-              >
-                <span className="text-3xl font-bold">{item.customerNickname}</span>
-              </Link>
+                <Link
+                  href={`/other/${item.customerNickname}`}
+                  className="text-customLightTextColor text-lg hover:underline"
+                >
+                  <span className="text-3xl font-bold">{item.customerNickname}</span>
+                </Link>
               </div>
             </div>
           )}
@@ -135,26 +137,44 @@ const DiscountSell: React.FC<CardProps> = ({ item, thirdCategory }) => {
             가격 :{" "}
             <div className="text-black">
               <div className="flex mt-3 text-[24px] font-semibold justify-center mr-2">
-                <div className="flex text-red-500">&nbsp;{}%&nbsp;</div>
+                {item.discountRate && <div className="flex text-red-500">&nbsp;{item.discountRate.toLocaleString()}%&nbsp;</div>}
               </div>
-              <span className="ml-2 line-through">{formatKoreanCurrency(item.discountPrice).toLocaleString()}</span>
+              <span className="ml-2 line-through">
+                {formatKoreanCurrency(item.discountPrice).toLocaleString()}
+              </span>
             </div>
-            &nbsp; {"->"} <span className="text-2xl font-bold">&nbsp;{formatKoreanCurrency(item.discountDiscountedPrice)}</span>
+            &nbsp; {"->"}{" "}
+            <span className="text-2xl font-bold">
+              &nbsp;{formatKoreanCurrency(item.discountDiscountedPrice)}
+            </span>
           </div>
 
           {/*  / / 채팅 및 신고 버튼 */}
           <div className="flex text-xl mr-14 font-thin justify-between items-center">
             {thirdCategory === "예약중" ? (
               <div>
-                낙찰 일시 : <span className="font-light">{new Date(item.historyDatetime).toLocaleString()}</span>
+                낙찰 일시 :{" "}
+                <span className="font-light">
+                  {new Date(item.historyDatetime).toLocaleString()}
+                </span>
               </div>
             ) : thirdCategory === "판매완료" ? (
               <div>
-                확정 일시 : <span className="font-light">{new Date(item.historyDoneDatetime).toLocaleString()}</span>
+                확정 일시 :{" "}
+                <span className="font-light">
+                  {new Date(item.historyDoneDatetime).toLocaleString()}
+                </span>
               </div>
-            ) : <div className="flex items-center mt-8">
-                <BiMap size={25}/><span>{item.mycity}{item.zipcode}{item.street}</span>
-              </div>}
+            ) : (
+              <div className="flex items-center mt-8">
+                <BiMap size={25} />
+                <span>
+                  {item.mycity}
+                  {item.zipcode}
+                  {item.street}
+                </span>
+              </div>
+            )}
 
             <div className="flex">
               {thirdCategory !== "판매중" ? (
@@ -169,7 +189,9 @@ const DiscountSell: React.FC<CardProps> = ({ item, thirdCategory }) => {
                   </div>
                 </div>
               ) : (
-                <span className="flex mt-4 cursor-pointer border-2 text-red-500 border-red-500 px-4 py-1 rounded-lg">삭제하기</span>
+                <span className="flex mt-4 cursor-pointer border-2 text-red-500 border-red-500 px-4 py-1 rounded-lg">
+                  삭제하기
+                </span>
               )}
             </div>
           </div>

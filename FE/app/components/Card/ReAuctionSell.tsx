@@ -124,7 +124,7 @@ const ReAuctionSell: React.FC<CardProps> = ({ item }) => {
               </div>
             </div>
             <div className="mr-16 mt-1 text-xl">
-              등록일 :&nbsp;<span className="text-2xl">{new Date(item.auctionStartDate).toLocaleString()}</span>
+              등록일 :&nbsp;<span className="text-2xl">{new Date(item.registerDate).toLocaleString()}</span>
             </div>
           </div>
           {/* 카드 제목 */}

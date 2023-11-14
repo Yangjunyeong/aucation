@@ -57,9 +57,10 @@ interface ItemType {
 
 interface CardProps {
   item: ItemType
+  deleteHandler: (prodPk:number) => void
 }
 
-const AuctionSell: React.FC<CardProps> = ({ item }) => {
+const AuctionSell: React.FC<CardProps> = ({ item, deleteHandler}) => {
   // 경매전, 중, 완료 체크
   const [state, setState] = useState<string>("");
   const [isLiked, setIsLiked] = useState<boolean>(item.isLike);
@@ -88,7 +89,7 @@ const AuctionSell: React.FC<CardProps> = ({ item }) => {
     <>
       <div
         className={clsx(
-          "flex rounded-lg overflow-hidden shadow-lg bg-white w-[1200px] h-[250px] mt-12 hover:border-black",
+          "flex rounded-lg overflow-hidden shadow-lg bg-white w-[1280px] h-[250px] mt-12 hover:border-black",
           state == "경매종료"
             ? "border-2 border-red-500 "
             : state == "경매시작"
@@ -162,7 +163,7 @@ const AuctionSell: React.FC<CardProps> = ({ item }) => {
             {state === "경매시작" && (
               <div className="flex mt-2 justify-between mr-20">
                 <div className="flex text-2xl items-center">경매 등록일 :&nbsp;<span className="text-[28px]">{new Date(item.registerDate).toLocaleString()}</span></div>
-                <span className="border-2 rounded-lg border-black text-black text-2xl font-bold py-2 px-2 cursor-pointer">
+                <span className="border-2 rounded-lg border-black text-black text-2xl font-bold py-2 px-2 cursor-pointer" onClick={()=>deleteHandler(item.auctionPk)}>
                   삭제하기
                 </span>
               </div>
