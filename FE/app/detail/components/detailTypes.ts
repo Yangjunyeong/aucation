@@ -16,6 +16,7 @@ export type AuctionDetailData = {
   auctionStartTime: Date;
   auctionStatus: string; // "BID" 이외의 다른 가능한 값이 있다면 추가합니다
   auctionTitle: string;
+  auctionTopPrice?: number;
   auctionType: string;
   auctionUuid: string;
   isAction: number; // 불리언 또는 숫자가 될 수 있습니다 (API 설계에 따라 다름)

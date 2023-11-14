@@ -40,7 +40,7 @@ const Panmae = () => {
 
   const [transActionLocation, setTransActionLocation] = useState<number[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [isDoingSubmit, setIsDoingSubmit] = useState(false);
   const imgRef = useRef<HTMLInputElement>(null);
   const saveImgFile = () => {
     const file = imgRef.current!.files![0];
@@ -102,14 +102,16 @@ const Panmae = () => {
     setDescription(event.target.value);
   };
   const submitHandler = () => {
+    setIsDoingSubmit(true);
     if (
       !option ||
       !productname ||
       !category ||
-      (hour === 0 && minute === 0) ||
+      // (hour === 0 && minute === 0) ||
       imagefiles.length === 0
     ) {
       alert("필수 항목을 모두 채워주세요!");
+      setIsDoingSubmit(false);
       return;
     }
     if (option !== "할인") {
@@ -153,6 +155,7 @@ const Panmae = () => {
     } else {
       if (discountPrice! > price) {
         alert("할인가가 정가보다 높습니다!!");
+        setIsDoingSubmit(false);
         return;
       }
       const time = timeToDate(hour, minute);
@@ -455,13 +458,14 @@ const Panmae = () => {
         <div className="w-full h-80 flex items-center justify-end">
           <button
             onClick={submitHandler}
+            disabled={isDoingSubmit}
             className="
             w-1/5 p-10 
             bg-custom-btn-gradient-red
             text-2xl 
             transition duration-300 
             hover:bg-custom-btn-gradient-red-hover 
-            text-white rounded-md text-center my-auto"
+            text-white rounded-md text-center my-auto "
           >
             등록하기
           </button>

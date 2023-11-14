@@ -13,6 +13,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { onMessageFCM } from "../utils/fcm";
 import { useRecoilValue } from "recoil";
 import { authState } from "../store/atoms";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   // const api = axios.create({
@@ -20,6 +21,7 @@ export default function Home() {
   //   timeout: 2000,
   //   headers: { "X-Custom-Header": "foobar" },
   // });
+  const router = useRouter();
   const recoilValue = useRecoilValue(authState);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<HomePageData>({
@@ -49,8 +51,12 @@ export default function Home() {
   };
 
   useEffect(() => {
+    const accessToken = window.localStorage.getItem("accessToken");
+    if (!accessToken) {
+      router.push("/login");
+    }
     callHomePageData();
-    console.log;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

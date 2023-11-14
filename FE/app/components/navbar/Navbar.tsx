@@ -8,6 +8,7 @@ import NavBtn from "../button/MainBtn";
 import { useRecoilState } from "recoil";
 import { authState } from "@/app/store/atoms";
 import Link from "next/link";
+import logo2 from "@/app/images/logo2.png";
 const Navbar: React.FC = () => {
   const [auth, setAuth] = useRecoilState(authState);
   const [check, setCheck] = useState<boolean>(false);
@@ -21,13 +22,14 @@ const Navbar: React.FC = () => {
     // 로컬 스토리지에서 토큰 제거
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("role");
     localStorage.removeItem("recoil-persist");
 
     // 로그인 상태 업데이트
     setAuth({ isLoggedIn: false, role: "" });
 
     // 홈페이지로 리디렉션
-    router.push("/");
+    router.push("/login");
   };
   useEffect(() => {
     const checkLocalStorageToken = () => {
@@ -47,10 +49,11 @@ const Navbar: React.FC = () => {
     <div>
       {check && (
         <div className="w-full h-28 flex flex-row items-center sticky top-0 z-50 bg-white px-48">
-          <div className="w-1/4 ">
-            <Link href={`/`} className="flex flex-row">
+          <div className="w-1/3 ">
+            <Link href={`/`} className="flex flex-row items-center">
               <Image src={Star} alt="별" width={40} height={40} />
-              <p className="font-bold text-4xl pl-3">Aucation</p>
+              {/* <p className="font-bold text-4xl pl-3">Aucation</p> */}
+              <Image src={logo2} alt="Aucation" width={220} height={130} />
             </Link>
           </div>
           <div className="flex flex-row w-auto">

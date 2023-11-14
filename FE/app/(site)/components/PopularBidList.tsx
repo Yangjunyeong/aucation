@@ -38,7 +38,7 @@ const ButtonGroup = ({ next, previous, goToSlide, ...rest }: any) => {
     carouselState: { currentSlide },
   } = rest;
   return (
-    <div className="items-end text-3xl mb-4 absolute flex top-[570px] left-[1575px] ">
+    <div className="items-end text-3xl mb-4 absolute flex top-[-80px] left-[1380px] ">
       <button className="block p-3" onClick={() => previous()}>
         {" "}
         <BsArrowLeftCircle />
