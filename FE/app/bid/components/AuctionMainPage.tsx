@@ -16,8 +16,6 @@ import ModalContent from "@/app/reverseauction/components/ModalContent";
 import { pricetoString } from "@/app/utils/pricecal";
 import axios from "axios";
 
-
-
 export type auctionData = {
   memberPk: number; // 입찰을 위한 pk
   ownerPk: number;
@@ -91,8 +89,8 @@ const AuctionMainPage = () => {
       return ws;
     });
 
+    const _transport = (client.current!.webSocket as any)?._transport.url.split("/")[5];
     client.current.connect({}, () => {
-      console.log(client.current?.webSocket?._transport? : as any?.url?.split("/")[5]); // Socket Session ID
       client.current!.subscribe(`/topic/sub/${uuid}`, res => {
         console.log(JSON.parse(res.body));
         const data = JSON.parse(res.body);
