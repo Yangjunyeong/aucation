@@ -291,7 +291,7 @@ public class AuctionBidService {
 		List<SaveAuctionBIDRedis> auctionBidList = redisTemplate.opsForList().range(key, 0, -1);
 
 		// 최고가 판별 ( 최고가 + 가장 먼저 입찰한 사용자)
-		if (auctionBidList == null || auctionBidList.size() < 1) {
+		if (auctionBidList == null || auctionBidList.isEmpty()) {
 			log.info("*********************** 경매 낙찰자 없음 !!");
 			auction.updateAuctionToEndCustomerIsNone(-1);
 			return;
