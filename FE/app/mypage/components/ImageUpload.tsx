@@ -1,12 +1,13 @@
-import React, { useState, useRef, ChangeEvent } from "react";
+import React, { useState, useRef, ChangeEvent, useEffect } from "react";
 import Image from "next/image";
 import defaultprofile from "@/app/images/defaultprofile.png";
 
 interface ImageUploadProps {
   onImageUpload: (file: File) => void;
+  imageURL:string;
 }
 
-const ImageUpload: React.FC<ImageUploadProps> = ({ onImageUpload }) => {
+const ImageUpload: React.FC<ImageUploadProps> = ({ onImageUpload, imageURL }) => {
   const [images, setImages] = useState<string>("");
   const [imgFile, setImgFile] = useState<File | null>(null);
   const imgRef = useRef<HTMLInputElement>(null);
@@ -23,6 +24,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageUpload }) => {
       onImageUpload(file);
     }
   };
+  useEffect(() => {
+    setImages(imageURL)
+  },[imageURL])
 
   return (
     <div className="relative w-[310px] h-[310px]">
@@ -33,7 +37,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageUpload }) => {
           alt="이미지 등록"
           className="hover:cursor-pointer"
         />
-        <div className="text-black">가나다라asdfsdf</div>
         <input
           type="file"
           id="img_file"

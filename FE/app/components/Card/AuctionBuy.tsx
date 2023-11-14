@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import nakchalImg from "@/app/images/nakchal.png";
+import sellfinish from "@/app/images/sellfinish.png";
 import chatImg from "@/app/images/chatImg.png";
 import LikeBtn from "../../detail/components/LikeBtn";
 import Image from "next/image";
@@ -22,7 +23,7 @@ interface ItemType {
   // 등록일
   registerDate: Date;
   // 제목
-  auctionTitle: number;
+  auctionTitle: string;
   // x 판매자 닉네임
   ownerNickname: string;
   // 시작가
@@ -60,7 +61,6 @@ interface CardProps {
   item: ItemType;
 }
 const AuctionBuy: React.FC<CardProps> = ({ item }) => {
-  const [state, setState] = useState<string>("");
   const [isLiked, setIsLiked] = useState<boolean>(item.isLike);
   const [prodType, setProdType] = useState<string>("0");
 
@@ -76,131 +76,122 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
       });
   };
 
-  const stateHandler = (state: string) => {
-    setState(state);
-    console.log("--------------->", state);
-  };
-
-  const clickHandler = () => {
-    console.log("클릭");
-  };
   return (
     <>
-    <div className={clsx("flex rounded-lg overflow-hidden shadow-lg bg-white w-[1280px] h-[270px] mt-12 hover:border-black",
-        item.auctionHistory == "BEFORE_CONFIRM" ? "border-2 border-red-500" : "border-2"
-      )}
-    >
-      {/* 카드 이미지 */}
-      {item.auctionHistory == "AFTER_CONFIRM" ? (
-        <div>
-          <div className="relative w-[300px] h-[270px]">
-            <Image
-              layout="fill"
-              className="transition-transform transform duration-300 hover:scale-110"
-              src={item.imgfile}
-              alt="Building Image"
-              style={{ filter: "brightness(50%)" }}
-            />
-            <div className="absolute top-10 left-[23%]">
-              <Image width={160} height={192} src={nakchalImg.src} alt="nakchal" />
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div>
-          <div className="relative w-[300px] h-[270px]">
-            <Image
-              className="transition-transform transform duration-300 hover:scale-110"
-              src={item.imgfile}
-              layout="fill"
-              alt="Building Image"
-            />
-            <div className="absolute top-3 right-4">
-              <LikeBtn isLiked={isLiked} likeHandler={likeHandler} />
-            </div>
-          </div>
-        </div>
-      )}
-      <div className="w-[900px] ml-7">
-        {/* 경매 상태 / 경매 마크 / 남은 시간 카운트*/}
-        <div className="flex justify-between mt-3">
-          <div className="flex gap-4 font-bold text-[16px] mt-[5px] ">
-            <div className="flex mt-1 text-xl rounded-full border-2 px-3 items-center border-gray-500">
-              경매
-            </div>
-            <div
-              className={clsx(
-                "flex items-center rounded-full border-2 px-3",
-                item.auctionHistory == "BEFORE_CONFIRM"
-                  ? "border-red-500 text-red-500"
-                  : "border-black text-black"
-              )}
-            >
-              {item.auctionHistory == "BEFORE_CONFIRM" ? "낙찰" : "구매완료"}
-            </div>
-          </div>
-          <div className="mr-16 text-xl">
-            <span className="font-bold">등록일 :&nbsp;&nbsp;</span>
-            {item.registerDate.toLocaleString()}
-          </div>
-        </div>
-        {/* 카드 제목 */}
-        <div className="text-3xl h-[36px] font-bold mt-4 mr-20 whitespace-nowrap overflow-hidden text-ellipsis">
-          {item.auctionTitle}
-        </div>
-
-        {/* 판매자 */}
-        <div className="flex mt-3 text-[22px] font-semibold">
-          <div className="flex items-center">판매자 :&nbsp;</div>
+      <div className="flex rounded-lg overflow-hidden shadow-lg bg-white w-[1280px] h-[280px] mt-12 hover:border border-blue-400">
+        {/* 카드 이미지 */}
+        {item.auctionHistory == "AFTER_CONFIRM" ? (
           <div>
-            <Link
-              href={`/other/${item.ownerNickname}`}
-              className="text-customLightTextColor text-lg hover:underline"
-            >
-              <span className="text-3xl font-bold">{item.ownerNickname}</span>
-            </Link>
+            <div className="relative w-[300px] h-[270px]">
+              <Image
+                layout="fill"
+                className="transition-transform transform duration-300 hover:scale-110"
+                src={item.imgfile}
+                alt={item.auctionTitle}
+                style={{ filter: "brightness(50%)" }}
+              />
+              <div className="absolute top-10 left-[25%]">
+                <Image width={160} height={192} src={sellfinish.src} alt="sellfinish" />
+              </div>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div>
+            <div className="relative w-[300px] h-[270px]">
+              <Image
+                className="transition-transform transform duration-300 hover:scale-110"
+                src={item.imgfile}
+                layout="fill"
+                alt={item.auctionTitle}
+                style={{ filter: "brightness(50%)" }}
+              />
+              <div className="absolute top-3 right-4">
+                <LikeBtn isLiked={isLiked} likeHandler={likeHandler} />
+              </div>
+            </div>
+          </div>
+        )}
+        <div className="w-[900px] ml-7">
+          {/* 경매 상태 / 경매 마크 / 남은 시간 카운트*/}
+          <div className="flex h-[60px] justify-between items-center">
+            <div className="flex text-[22px] gap-4 font-bold">
+              <div className="rounded-lg border-[0.1px] px-3 items-center border-gray-500">
+                경매
+              </div>
+              <div
+                className={clsx(
+                  "flex items-center rounded-lg",
+                  item.auctionHistory == "BEFORE_CONFIRM"
+                    ? "border-red-500 text-red-500"
+                    : "border-black text-black"
+                )}
+              >
+                {item.auctionHistory == "BEFORE_CONFIRM" ? "낙찰" : "구매완료"}
+              </div>
+            </div>
+            <div className="mr-16 text-xl">
+              <span className="font-bold">등록일 :&nbsp;&nbsp;</span>
+              {item.registerDate.toLocaleString()}
+            </div>
+          </div>
+          {/* 카드 제목 */}
+          <div className="text-3xl h-[36px] font-bold mt-4 mr-20 whitespace-nowrap overflow-hidden text-ellipsis">
+            {item.auctionTitle}
+          </div>
 
-        {/* 경매 시작가 */}
-        <div className="text-xl mt-2">
-          경매 시작가 :{" "}
-          <span className="text-2xl font-bold text-customBlue">
-            {item.auctionStartPrice.toLocaleString()} <span className="text-black">원</span>
-          </span>
-        </div>
-
-        {/* 낙찰일시 / 낙찰가 / 채팅 및 확정 버튼*/}
-        <div className="flex text-xl mt-3 mr-14 font-thin justify-between items-center">
-          {item.historyDatetime && (
+          {/* 판매자 */}
+          <div className="flex mt-3 text-[22px] font-semibold">
+            <div className="flex items-center">판매자 :&nbsp;</div>
             <div>
-              낙찰일시 : <span className="font-light">{item.historyDatetime.toLocaleString()}</span>
+              <Link
+                href={`/other/${item.ownerNickname}`}
+                className="text-customLightTextColor text-lg hover:underline"
+              >
+                <span className="text-3xl font-bold">{item.ownerNickname}</span>
+              </Link>
             </div>
-          )}
-          <div>
-            낙찰가 :{" "}
-            <span
-              className={clsx(
-                "font-bold",
-                item.auctionHistory == "AFTER_CONFIRM" ? "text-customBlue" : "text-red-500"
-              )}
-            >
-              {formatKoreanCurrency(item.auctionSuccessPay)}
-            </span>
-            &nbsp;
           </div>
-          <div className="flex gap-6">
-            {item.auctionHistory == "AFTER_CONFIRM" && (
-              <div className="flex border-2 px-4 py-1 rounded-lg">
-                <Image width={22} height={10} src={chatImg.src} alt="chat" />{" "}
-                <Link href={`dm/${item.auctionPk}/${prodType}`}>채팅</Link>
+
+          {/* 경매 시작가 */}
+          <div className="text-xl mt-2">
+            경매 시작가 :{" "}
+            <span className="text-2xl font-bold text-customBlue">
+              {item.auctionStartPrice.toLocaleString()} <span className="text-black">원</span>
+            </span>
+          </div>
+
+          {/* 낙찰일시 / 낙찰가 / 채팅 및 확정 버튼*/}
+          <div className="flex text-xl mt-3 mr-14 font-thin justify-between items-center">
+            {item.historyDatetime && (
+              <div>
+                낙찰일시 :{" "}
+                <span className="font-light">{item.historyDatetime.toLocaleString()}</span>
               </div>
             )}
-            <div className="border-2 px-5 py-1 rounded-lg">확정</div>
+            <div>
+              낙찰가 :{" "}
+              <span
+                className={clsx(
+                  "font-bold",
+                  item.auctionHistory == "AFTER_CONFIRM" ? "text-customBlue" : "text-red-500"
+                )}
+              >
+                {formatKoreanCurrency(item.auctionSuccessPay)}
+              </span>
+              &nbsp;
+            </div>
+            <div className="flex gap-6">
+              {item.auctionHistory == "AFTER_CONFIRM" && (
+                <div className="flex border-2 px-4 py-1 rounded-lg">
+                  <Image width={22} height={10} src={chatImg.src} alt="chat" />{" "}
+                  <Link href={`dm/${item.auctionPk}/${prodType}`}>채팅</Link>
+                </div>
+              )}
+              <div className="border-2 px-5 py-1 rounded-lg">확정</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </>
   );
 };
