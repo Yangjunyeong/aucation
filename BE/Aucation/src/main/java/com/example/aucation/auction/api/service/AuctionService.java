@@ -265,12 +265,12 @@ public class AuctionService {
 		} else if (checkTime < 2) {
 			log.info("********************** 경매 중 정보 설정 시도");
 			response.setAuctionAskPrice(response.getAuctionStartPrice());
+			response.setAuctionBidCnt(redisRepository.getUserCount(response.getAuctionUuid()));
 			List<SaveAuctionBIDRedis> bids =
 					redisTemplate.opsForList().range("auc-ing-log:" + response.getAuctionUuid(), 0, -1);
 			Collections.sort(bids);
 			if (!bids.isEmpty()) {
 				response.setAuctionTopPrice(bids.get(0).getBidPrice());
-				response.setAuctionBidCnt((long) bids.size());
 			}
 			response.setAuctionEndPrice(null);
 			log.info("********************** 경매 중 정보 설정 완료");
@@ -331,11 +331,6 @@ public class AuctionService {
 	public List<AuctionIngResponseItem> getHotAuctionsToMainPage(Long memberPk) {
 		Member member = memberRepository.findById(memberPk).orElseThrow(()->new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
 		List<AuctionIngResponseItem> response = auctionRepository.searchHotAuctionToMainPage(memberPk,member);
-
-
-
-
-
 		return response;
 	}
 
