@@ -1,15 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import sellfinish from "@/app/images/sellfinish.png"
 import LikeBtn from "../../detail/components/LikeBtn";
 import { BsFillPersonFill } from "react-icons/bs";
 import Image from "next/image";
 import clsx from "clsx";
 import RowCountDown from "./RowCountDown";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { callApi } from "@/app/utils/api";
 import formatKoreanCurrency from "../../utils/formatKoreanCurrency"
+import {FaMapMarkerAlt} from "react-icons/fa"
+import {RiAuctionLine} from "react-icons/ri"
+import {BsChatRightDots} from "react-icons/bs"
 interface ItemType {
   // 이미지
   imgfile: string,
@@ -21,7 +25,7 @@ interface ItemType {
   // 등록일
   registerDate: Date,
   // 제목
-  auctionTitle: number,
+  auctionTitle: string,
   // x 판매자 닉네임
   ownerNicknname: string,
   // 시작가
@@ -31,7 +35,7 @@ interface ItemType {
   auctionEndDate: Date,
   // 경매장 입장
   auctionUUID: string,
-  // prodPk - 채팅방
+  // prodPk - 채팅방, 디테일
   auctionPk: number,
   // x 낙찰 여부
   // x 경매전- null / b
@@ -61,9 +65,10 @@ interface CardProps {
 }
 
 const AuctionSell: React.FC<CardProps> = ({ item, deleteHandler}) => {
+  const router = useRouter();
   // 경매전, 중, 완료 체크
   const [state, setState] = useState<string>("");
-  const [isLiked, setIsLiked] = useState<boolean>(item.isLike);
+  const [isLiked, setIsLiked] = useState<boolean>(false);
   // 채팅방 - 경매0 역경매1 할인2
   const [prodType, setProdType] = useState<string>("0")
 
@@ -77,35 +82,41 @@ const AuctionSell: React.FC<CardProps> = ({ item, deleteHandler}) => {
 
     callApi("get", `/auction/like/${item.auctionPk}`)
       .then(response => {
-        
         console.log("좋아요 성공", response);
       })
       .catch(error => {
         console.log("좋아요 실패", error);
       });
   };
+  const toDetail = () => {
+    router.push(`/detail/auction/${item.auctionPk}`);
+  }
+  const toBid = (e:React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+    router.push(`/bid/${item.auctionUUID}`)
+  }
+  const cardDelete = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+    deleteHandler(item.auctionPk)
+  }
+  const toChat = (e:React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+    router.push(`dm/${item.auctionPk}/${prodType}`)
+  }
 
   return (
     <>
-      <div
-        className={clsx(
-          "flex rounded-lg overflow-hidden shadow-lg bg-white w-[1280px] h-[250px] mt-12 hover:border-black",
-          state == "경매종료"
-            ? "border-2 border-red-500 "
-            : state == "경매시작"
-            ? "border-2 border-blue-600"
-            : "border-2 border-gray-400 "
-        )}
-      >
+      <div className="flex rounded-lg overflow-hidden shadow-lg bg-white w-[1280px] h-[280px] mt-12 hover:border border-blue-400" >
         {/* 카드 이미지 */}
-        {state == "종료" ? (
+        {item.historyDoneDateTime !== null ? (
           <div>
-            <div className="relative w-[300px] h-[250px]">
+            <div className="relative w-[300px] h-[280px]">
               <Image
+                src={item.imgfile}
+                alt={item.auctionTitle}
+                onClick={toDetail}
                 layout="fill"
                 className="transition-transform transform duration-300 hover:scale-110"
-                src={item.imgfile}
-                alt="Building Image"
                 style={{ filter: "brightness(50%)" }}
               />
               <div className="absolute top-10 left-[25%]">
@@ -113,14 +124,29 @@ const AuctionSell: React.FC<CardProps> = ({ item, deleteHandler}) => {
               </div>
             </div>
           </div>
+        ) :  state == "종료" && item.historyDoneDateTime === null ? (
+          <div>
+            
+            <div className="relative w-[300px] h-[280px]">
+              <Image
+                onClick={toDetail}
+                layout="fill"
+                className="transition-transform transform duration-300 hover:scale-110"
+                src={item.imgfile}
+                alt={item.auctionTitle}
+                style={{ filter: "brightness(50%)" }}
+              />
+            </div>
+        </div>
         ) : (
           <div>
-            <div className="relative w-[300px] h-[250px]">
+            <div className="relative w-[300px] h-[280px]">
               <Image
+                onClick={toDetail}
                 className="transition-transform transform duration-300 hover:scale-110 overflow-hidden"
                 src={item.imgfile}
                 layout="fill"
-                alt="Building Image"
+                alt={item.auctionTitle}
               />
               <div className="absolute top-3 right-4">
                 <LikeBtn isLiked={isLiked} likeHandler={likeHandler} />
@@ -128,32 +154,32 @@ const AuctionSell: React.FC<CardProps> = ({ item, deleteHandler}) => {
             </div>
           </div>
         )}
-        <div className="w-[900px] ml-7">
+        <div className="w-[900px] ml-7" onClick={toDetail}>
           {/* 경매 상태 / 경매 마크 / 남은 시간 카운트*/}
-          <div className="flex justify-between mt-3">
-            <div className="flex gap-4 font-bold text-[16px] mt-[5px] ">
-              <div className="flex font-sans text-2xl items-center mt-[2px]">
-                {state === "경매시작" && <span className="text-customBlue">판매전</span>}
-                {state === "경매종료" && <span className="text-red-500">판매중</span>}
-                {state === "종료" && <span>판매종료</span>}
-              </div>
+          <div className="flex h-[60px] justify-between items-center">
+            <div className="flex text-[22px] gap-4 font-bold">
+              <span className="rounded-lg border-[0.1px] px-3 items-center border-gray-500">경매</span>
+              <span className="font-sans">
+                {state === "경매시작" && <span className="text-customBlue">경매전</span>}
+                {state === "경매종료" && <span className="text-red-500">경매중</span>}
+                {state === "종료" && <span>경매종료</span>}
+              </span>
 
-              <div className="flex mt-1 text-xl rounded-full border-2 px-3 items-center border-gray-500">경매</div>
             </div>
-            <div className="mr-16 text-xl">
+            <div className="text-xl">
               <RowCountDown curTime={new Date()} auctionStartTime={new Date(item.auctionStartDate)} stateHandler={stateHandler} />
             </div>
           </div>
           {/* 카드 제목 */}
-          <div className="text-3xl h-[36px] font-bold mt-4 mr-20 whitespace-nowrap overflow-hidden text-ellipsis">
+          <div className="text-5xl h-[70px] font-bold mr-20 whitespace-nowrap overflow-hidden text-ellipsis">
             {item.auctionTitle}
           </div>
 
           {/* 경매 시작가 */}
-          <div className="mt-5 text-[24px] font-semibold">
+          <div className="text-[24px] h-[50px] font-semibold">
             경매시작가 :
             <span
-              className={clsx("text-4xl font-bold", state == "종료" ? "" : "text-customBlue")}
+              className={clsx("text-3xl font-bold", state == "종료" ? "" : "text-customBlue")}
             >
               &nbsp;{formatKoreanCurrency(item.auctionStartPrice)}
             </span>
@@ -161,35 +187,43 @@ const AuctionSell: React.FC<CardProps> = ({ item, deleteHandler}) => {
 
           {/* 경매 종료일 / 삭제버튼*/}
             {state === "경매시작" && (
-              <div className="flex mt-2 justify-between mr-20">
-                <div className="flex text-2xl items-center">경매 등록일 :&nbsp;<span className="text-[28px]">{new Date(item.registerDate).toLocaleString()}</span></div>
-                <span className="border-2 rounded-lg border-black text-black text-2xl font-bold py-2 px-2 cursor-pointer" onClick={()=>deleteHandler(item.auctionPk)}>
-                  삭제하기
-                </span>
+              <div className="flex h-[45px] items-center">
+                <div className="text-[22px]">경매 등록일 :&nbsp;<span className="text-[24px]">{new Date(item.registerDate).toLocaleString()}</span></div>
+
               </div>
             )}
             
             {state === "경매종료" && (
-              <div className="flex mt-2 justify-between mr-20">
-              <div className="flex text-[22px] items-center">경매 등록일 :&nbsp;<span className="text-[28px]">{new Date(item.registerDate).toLocaleString()}</span></div>
-              <span className="border-2 rounded-lg border-red-500 text-red-500 text-2xl font-bold py-2 px-4">
-                <Link
-                href={`/bid/${item.auctionUUID}`}>
-                <span>경매장 입장</span>
-                </Link>
-              </span>
+              <div className="flex h-[45px] items-center">
+              <div className="text-[22px]">경매 등록일 :&nbsp;<span className="text-[24px]">{new Date(item.registerDate).toLocaleString()}</span></div>
               </div>
 
             )}
             {state === "종료" && (
-                <div className="flex mt-2 justify-between mr-20">
-                  <div className="flex text-[22px] items-center text-red-500">경매 등록일 :&nbsp;<span className="text-[28px]">{new Date(item.registerDate).toLocaleDateString()}</span></div>
-                  <div className="flex text-[22px] items-center">최종 입찰가&nbsp;&nbsp;<span className="flex mr-1 font-bold text-red-500 w-[100px] justify-end flex-nowrap overflow-hidden text-ellipsis">{item.auctionSuccessPay.toLocaleString()}</span>원</div>
-                  <span className="border-2 rounded-lg border-black text-black text-2xl font-bold py-2 px-2">
-                    <Link href={`dm/${item.auctionPk}/${prodType}`}>채팅</Link>
-                  </span>
+                <div className="flex h-[45px] items-center">
+                  {/* <div className="flex text-[22px]">경매 등록일 :&nbsp;<span className="text-[28px]">{new Date(item.registerDate).toLocaleDateString()}</span></div> */}
+                  <div className="flex text-[22px] items-center">최종 입찰가&nbsp;&nbsp;<span className="flex mr-2 font-bold text-red-500 w-[100px] justify-end flex-nowrap overflow-hidden text-ellipsis">{item.auctionSuccessPay.toLocaleString()}</span>원</div>
                 </div>
             )}
+            <div className="flex items-center h-[55px] justify-between">
+              <div className="flex">
+                <FaMapMarkerAlt size={25}/><span className="ml-2 text-[16px]">{item.mycity}&nbsp;{item.street}&nbsp;{item.zipcode}</span>
+              </div>
+                {state == "경매종료" ? 
+                <span className="border-[0.1px] rounded-lg mb-8 border-red-300 text-red-500 text-2xl font-semibold py-1 px-3 cursor-pointer" onClick={toBid}>
+                  <div className="flex items-center"><RiAuctionLine size={22}/><span className="ml-1">경매장 입장</span></div>
+                </span> : ""}
+                {state == "종료" ?
+                  <span className="flex items-center border-[0.1px] rounded-lg mb-8 border-gray-300 text-black text-2xl font-bold py-1 px-3 cursor-pointer" onClick={toChat}>
+                    <BsChatRightDots size={22}/><span className="ml-2">채팅</span>
+                  </span>
+                  : ""
+                }
+              
+              {state == "경매시작" && (<span className="border-[0.1px] mb-8 rounded-lg border-gray-300 text-black text-2xl font-bold py-1 px-3 cursor-pointer" onClick={cardDelete}>
+                  삭제하기
+              </span>)}
+            </div>
           </div>
       </div>
     </>
