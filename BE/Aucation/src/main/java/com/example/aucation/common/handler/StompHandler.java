@@ -17,10 +17,10 @@ public class StompHandler implements ChannelInterceptor {
 	public Message<?> preSend(Message<?> message, MessageChannel channel) {
 		StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 		if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
-			String auctionUUID = (String)message.getPayload();
+			String auctionUUID = String.valueOf(message.getPayload());
 			log.info(auctionUUID);
 		}else if(StompCommand.DISCONNECT == accessor.getCommand()){
-			String auctionUUID = (String)message.getPayload();
+			String auctionUUID = String.valueOf(message.getPayload());
 			log.info(auctionUUID);
 		}
 
