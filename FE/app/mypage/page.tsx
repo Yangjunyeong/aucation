@@ -344,7 +344,7 @@ const MyPage: NextPage = () => {
         myPageNum: pageNumber,
       };
     }
-    console.log(apiUrl[category], data,"주소랑 데이터")
+    console.log(apiUrl[category], data, "주소랑 데이터");
     // 유저 데이터 불러오기
     callApi("post", `${apiUrl[category]}`, data)
       .then(res => {
@@ -484,155 +484,157 @@ const MyPage: NextPage = () => {
               <PaymentModal onClose={() => setIsOpen(false)} isOpen={isOpen} cash={cashHandler} />
             </div>
           </div>
-        <div className="border-t-2 border-gray-400 bottom-0"></div>
+          <div className="border-t-2 border-gray-400 bottom-0"></div>
 
-        {/* 첫번째 카테고리 출력 및 클릭 효과 */}
-        <div className="rounded-lg flex p-3 bg-gray-100 border border-gray-400 text-gray-700 mt-16 cursor-pointer">
-          <div className="flex flex-1 h-20">
-            {Object.keys(categories).map((item, idx) => (
-              <CategoryBox
-                name={item}
-                selectedCategory={category}
-                key={idx}
-                categoryHandler={categoryHandler}
-                css="flex items-center justify-center text-2xl flex-1 font-semibold "
-                dynamicCss={"first"}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* 2번째 카테고리 출력 및 클릭 시 저장 */}
-        <div className="flex mt-20 gap-3 items-center">
-          <h2 className="font-semibold text-3xl w-[160px]">{category} 상품</h2>
-          {/* 상품개수 바인딩 */}
-          <h2 className="text-red-600  text-4xl font-bold ml-2">{dataList.mypageItems?.length}</h2>
-          {/* 카테고리 - 판매/구매 */}
-          <div className={clsx("flex gap-3 items-center", category !== "좋아요" ? "" : "hidden")}>
-            {Object.keys(categories[category]).map((item, idx) => (
-              <CategoryBox
-                name={item}
-                selectedCategory={secondCategory!}
-                key={idx}
-                categoryHandler={secondCategoryHandler}
-                css="border-2 ml-4 rounded-lg text-xl px-3 py-1 font-bold cursor-pointer transition-transform transform duration-300 hover:scale-110"
-                dynamicCss={"second"}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="border-t-2 border-gray-400 bottom-0 mt-10"></div>
-        {/* 카테고리 - 상태값 ex) 경매전/ 중 / 완료  */}
-
-        {/* 3번째 카테고리 출력 */}
-        <div className="flex justify-between mt-10">
-          <div className="flex">
-            <div className="flex gap-4 text-xl font-semibold h-[35px] items-center cursor-pointer">
-              {category !== "좋아요"
-                ? categories[category][secondCategory]?.map((item: any, idx: any) => (
-                    <CategoryBox
-                      name={item}
-                      selectedCategory={thirdCategory!}
-                      key={idx}
-                      categoryHandler={thirdCategoryHandler}
-                      css="flex items-center justify-center font-semibold "
-                      dynamicCss={"second"}
-                    />
-                  ))
-                : categories[category]?.map((item: any, idx: any) => (
-                    <CategoryBox
-                      name={item}
-                      selectedCategory={thirdCategory!}
-                      key={idx}
-                      categoryHandler={thirdCategoryHandler}
-                      css="flex items-center justify-center font-semibold "
-                      dynamicCss={"second"}
-                    />
-                  ))}
-            </div>
-            <div className="ml-4">
-              <span className="font-bold text-3xl ml-4 text-red-500">
-                {dataList.mypageItems.length}
-              </span>
-              {category !== "좋아요" && <span className="font-bold ml-2 text-3xl">개</span>}
+          {/* 첫번째 카테고리 출력 및 클릭 효과 */}
+          <div className="rounded-lg flex p-3 bg-gray-100 border border-gray-400 text-gray-700 mt-16 cursor-pointer">
+            <div className="flex flex-1 h-20">
+              {Object.keys(categories).map((item, idx) => (
+                <CategoryBox
+                  name={item}
+                  selectedCategory={category}
+                  key={idx}
+                  categoryHandler={categoryHandler}
+                  css="flex items-center justify-center text-2xl flex-1 font-semibold "
+                  dynamicCss={"first"}
+                />
+              ))}
             </div>
           </div>
 
-          {/* 솔트 */}
-          <div className="flex text-lg font-semibold text-center cursor-pointer">
-            {itemsortList.map((item, idx) => (
-              <div key={idx}>
-                <div
-                  className={clsx("text-lg", itemsort == item ? "font-bold text-customBlue" : "")}
-                  onClick={() => itemSortHandler(item)}
-                >
-                  <span className="text-black">|</span>&nbsp;{item}&nbsp;
-                </div>
+          {/* 2번째 카테고리 출력 및 클릭 시 저장 */}
+          <div className="flex mt-20 gap-3 items-center">
+            <h2 className="font-semibold text-3xl w-[160px]">{category} 상품</h2>
+            {/* 상품개수 바인딩 */}
+            <h2 className="text-red-600  text-4xl font-bold ml-2">
+              {dataList.mypageItems?.length}
+            </h2>
+            {/* 카테고리 - 판매/구매 */}
+            <div className={clsx("flex gap-3 items-center", category !== "좋아요" ? "" : "hidden")}>
+              {Object.keys(categories[category]).map((item, idx) => (
+                <CategoryBox
+                  name={item}
+                  selectedCategory={secondCategory!}
+                  key={idx}
+                  categoryHandler={secondCategoryHandler}
+                  css="border-2 ml-4 rounded-lg text-xl px-3 py-1 font-bold cursor-pointer transition-transform transform duration-300 hover:scale-110"
+                  dynamicCss={"second"}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="border-t-2 border-gray-400 bottom-0 mt-10"></div>
+          {/* 카테고리 - 상태값 ex) 경매전/ 중 / 완료  */}
+
+          {/* 3번째 카테고리 출력 */}
+          <div className="flex justify-between mt-10">
+            <div className="flex">
+              <div className="flex gap-4 text-xl font-semibold h-[35px] items-center cursor-pointer">
+                {category !== "좋아요"
+                  ? categories[category][secondCategory]?.map((item: any, idx: any) => (
+                      <CategoryBox
+                        name={item}
+                        selectedCategory={thirdCategory!}
+                        key={idx}
+                        categoryHandler={thirdCategoryHandler}
+                        css="flex items-center justify-center font-semibold "
+                        dynamicCss={"second"}
+                      />
+                    ))
+                  : categories[category]?.map((item: any, idx: any) => (
+                      <CategoryBox
+                        name={item}
+                        selectedCategory={thirdCategory!}
+                        key={idx}
+                        categoryHandler={thirdCategoryHandler}
+                        css="flex items-center justify-center font-semibold "
+                        dynamicCss={"second"}
+                      />
+                    ))}
               </div>
-            ))}
-            |
-          </div>
-        </div>
+              <div className="ml-4">
+                <span className="font-bold text-3xl ml-4 text-red-500">
+                  {dataList.mypageItems.length}
+                </span>
+                {category !== "좋아요" && <span className="font-bold ml-2 text-3xl">개</span>}
+              </div>
+            </div>
 
-        {/* 경매 - 판매 */}
-        {category == "경매" && secondCategory == "판매" && (
-          <div>
-            {/* DummyUserData.mypageItems */}
-            {dataList.mypageItems?.map((item: any, idx: any) => (
-              <AuctionSell item={item} key={idx} />
-            ))}
+            {/* 솔트 */}
+            <div className="flex text-lg font-semibold text-center cursor-pointer">
+              {itemsortList.map((item, idx) => (
+                <div key={idx}>
+                  <div
+                    className={clsx("text-lg", itemsort == item ? "font-bold text-customBlue" : "")}
+                    onClick={() => itemSortHandler(item)}
+                  >
+                    <span className="text-black">|</span>&nbsp;{item}&nbsp;
+                  </div>
+                </div>
+              ))}
+              |
+            </div>
           </div>
-        )}
 
-        {/* 경매 - 구매 */}
-        {category == "경매" && secondCategory == "구매" && (
-          <div>
-            {/* dataList.mypageItems? */}
-            {dataList.mypageItems?.map((item:any, idx:any) => (
-              <AuctionBuy item={item} key={idx} />
-            ))}
-          </div>
-        )}
+          {/* 경매 - 판매 */}
+          {category == "경매" && secondCategory == "판매" && (
+            <div>
+              {/* DummyUserData.mypageItems */}
+              {dataList.mypageItems?.map((item: any, idx: any) => (
+                <AuctionSell item={item} key={idx} />
+              ))}
+            </div>
+          )}
 
-        {/* 역경매 판매 */}
-        {category == "역경매" && secondCategory == "판매" && (
-          <div>
-            {/* {dataList.mypageItems?.map((item:any, idx:any) => ( */}
-            {dataList.mypageItems?.map((item:any, idx:any) => (
-              <ReAuctionSell item={item} key={idx} />
-            ))}
-          </div>
-        )}
+          {/* 경매 - 구매 */}
+          {category == "경매" && secondCategory == "구매" && (
+            <div>
+              {/* dataList.mypageItems? */}
+              {dataList.mypageItems?.map((item: any, idx: any) => (
+                <AuctionBuy item={item} key={idx} />
+              ))}
+            </div>
+          )}
 
-        {/* 역경매 구매 */}
-        {category == "역경매" && secondCategory == "구매" && (
-          <div>
-            {/* {dataList.mypageItems?.map((item:any, idx:any) => ( */}
-            {dataList.mypageItems?.map((item:any, idx:any) => (
-              <ReAuctionBuy item={item} key={idx} />
-            ))}
-          </div>
-        )}
+          {/* 역경매 판매 */}
+          {category == "역경매" && secondCategory == "판매" && (
+            <div>
+              {/* {dataList.mypageItems?.map((item:any, idx:any) => ( */}
+              {dataList.mypageItems?.map((item: any, idx: any) => (
+                <ReAuctionSell item={item} key={idx} />
+              ))}
+            </div>
+          )}
 
-        {/* 할인 - 판매 */}
-        {category == "할인" && secondCategory == "판매" && (
-          <div>
-            {/* {dataList.mypageItems?.map((item:any, idx:any) => ( */}
-            {dataList.mypageItems?.map((item:any, idx:any) => (
-              <DiscountSell item={item} key={idx} thirdCategory={thirdCategory!} />
-            ))}
-          </div>
-        )}
-        {/* 할인 - 구매 */}
-        {category == "할인" && secondCategory == "구매" && (
-          <div>
-            {dataList.mypageItems?.map((item:any, idx:any) => (
-              <DiscountBuy item={item} key={idx} />
-            ))}
-          </div>
-        )}
-        {/* 좋아요 */}
-        {/* {category == "좋아요" && (
+          {/* 역경매 구매 */}
+          {category == "역경매" && secondCategory == "구매" && (
+            <div>
+              {/* {dataList.mypageItems?.map((item:any, idx:any) => ( */}
+              {dataList.mypageItems?.map((item: any, idx: any) => (
+                <ReAuctionBuy item={item} key={idx} />
+              ))}
+            </div>
+          )}
+
+          {/* 할인 - 판매 */}
+          {category == "할인" && secondCategory == "판매" && (
+            <div>
+              {/* {dataList.mypageItems?.map((item:any, idx:any) => ( */}
+              {dataList.mypageItems?.map((item: any, idx: any) => (
+                <DiscountSell item={item} key={idx} thirdCategory={thirdCategory!} />
+              ))}
+            </div>
+          )}
+          {/* 할인 - 구매 */}
+          {category == "할인" && secondCategory == "구매" && (
+            <div>
+              {dataList.mypageItems?.map((item: any, idx: any) => (
+                <DiscountBuy item={item} key={idx} />
+              ))}
+            </div>
+          )}
+          {/* 좋아요 */}
+          {/* {category == "좋아요" && (
           <div className="flex flex-wrap justify-between">
             {categoryLikedata.map((item, idx) => (
               <LikeCard item={item} key={idx} likeHandler={value => handleLike(idx, value)} />
@@ -640,20 +642,20 @@ const MyPage: NextPage = () => {
           </div>
         )} */}
 
-        {/* 페이지 네이션 */}
-        <div className="flex justify-center mt-4">
-          <Pagination
-            activePage={pageNumber}
-            itemsCountPerPage={5}
-            totalItemsCount={999}
-            pageRangeDisplayed={5}
-            prevPageText={"‹"}
-            nextPageText={"›"}
-            onChange={handlePageChange}
-          />
+          {/* 페이지 네이션 */}
+          <div className="flex justify-center mt-4">
+            <Pagination
+              activePage={pageNumber}
+              itemsCountPerPage={5}
+              totalItemsCount={999}
+              pageRangeDisplayed={5}
+              prevPageText={"‹"}
+              nextPageText={"›"}
+              onChange={handlePageChange}
+            />
+          </div>
         </div>
       </div>
-    </div>
     );
   }
 };

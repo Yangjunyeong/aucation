@@ -12,7 +12,7 @@ import Pagination from "react-js-pagination";
 import "../components/Paging.css";
 import { ReverseAuctionData } from "../../components/Card/cardType";
 import AuctionListCard from "../../components/Card/AutionListCard";
-import dummyData from "../components/dummyData";
+
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ClipLoader from "react-spinners/ClipLoader";
@@ -23,7 +23,7 @@ type PageParams = {
 
 const ReverseAuctionList = ({ params }: { params: PageParams }) => {
   const router = useRouter();
-  const [selectedTap, setSelectedTap] = useState("삽니다"); // 상단 탭, 경매 유형
+  const [selectedTap, setSelectedTap] = useState("역경매"); // 상단 탭, 경매 유형
   const [selectedCategory, setSelectedCategory] = useState<string>("전체"); // 카테고리
   const [searchType, setSearchType] = useState<searchType>({ id: 0, typeName: "제목" }); // 검색유형
   const [searchKeyword, setSearchKeyword] = useState<string>(""); // 검색키워드
@@ -40,7 +40,7 @@ const ReverseAuctionList = ({ params }: { params: PageParams }) => {
     reItems: [], // 경매 아이템 목록
   });
 
-  const tapList = ["경매중", "경매전", "삽니다"];
+  const tapList = ["경매중", "경매전", "역경매"];
   const localCategoryList = ["전체", ...CategoryNameList];
 
   const orderTypeList: orderType[] = [
@@ -68,7 +68,7 @@ const ReverseAuctionList = ({ params }: { params: PageParams }) => {
       case "경매전":
         router.push("/auction/before");
         break;
-      case "삽니다":
+      case "역경매":
         router.push("/auction/reverse-auction");
         break;
       default:
@@ -171,7 +171,7 @@ const ReverseAuctionList = ({ params }: { params: PageParams }) => {
       ) : data.reItems.length > 0 ? (
         <div className="grid grid-cols-5 gap-x-6 gap-y-10">
           {data.reItems.map(item => (
-            <div key={item.reAuctionPk} className="shadow-lg h-[500px] rounded-lg">
+            <div key={item.reAuctionPk} className="shadow-lg h-[600px] rounded-lg">
               <AuctionListCard item={item} nowTime={data.nowTime} type={"reverse"} />
             </div>
           ))}

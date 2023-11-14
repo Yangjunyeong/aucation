@@ -60,11 +60,11 @@ const DiscountDetail = () => {
   };
 
   useEffect(() => {
-    callApi("get", `discount/place/${prodPk}`)
+    callApi("get", `/discount/place/${prodPk}`)
       .then(res => {
         setDataList(res.data);
         setIsLiked(res.data.like);
-        setLikeCount(res.data.likeCnt)
+        setLikeCount(res.data.likeCnt);
         console.log(res);
       })
       .catch(err => {

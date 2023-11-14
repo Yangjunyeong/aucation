@@ -141,7 +141,7 @@ const DiscountList = () => {
       ) : data.items.length > 0 ? (
         <div className="grid grid-cols-5 gap-x-6 gap-y-10">
           {data.items.map(item => (
-            <div key={item.discountPk} className="shadow-lg h-[500px] rounded-lg">
+            <div key={item.discountPk} className="shadow-lg h-[600px] rounded-lg">
               <DiscountListCard item={item} nowTime={data.nowTime} />
             </div>
           ))}
