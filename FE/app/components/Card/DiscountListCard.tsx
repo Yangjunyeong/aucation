@@ -39,8 +39,8 @@ const DiscountListCard: React.FC<CardProps> = ({ item, nowTime }) => {
         console.log("좋아요 실패", error);
       });
   };
-  const EnterDetail = (slug: string) => {
-    router.push(`/detail/discount/${slug}`);
+  const EnterDetail = (pk: number) => {
+    router.push(`/detail/discount/${pk}`);
   };
   const EnterBid = () => {
     router.push(`/bid/${item.discountUUID}`);
@@ -50,7 +50,7 @@ const DiscountListCard: React.FC<CardProps> = ({ item, nowTime }) => {
       <div className="h-1/2 relative">
         <Image
           onClick={() => {
-            EnterDetail(item.discountUUID);
+            EnterDetail(item.discountPk);
           }}
           src={item.discountImg}
           alt={item.discountTitle}
@@ -64,7 +64,7 @@ const DiscountListCard: React.FC<CardProps> = ({ item, nowTime }) => {
         </div>
         <div
           onClick={() => EnterBid()}
-          className="rounded-lg absolute bottom-2 left-2 px-3 py-2 bg-custom-btn-gradient hover:bg-custom-btn-gradient-hover text-white cursor-pointer border-1"
+          className="rounded-lg absolute bottom-2 left-2 px-3 py-2 bg-customBgBlue hover:bg-custom-btn-gradient-hover text-white cursor-pointer border-1"
         >
           바로입장
         </div>
@@ -84,7 +84,7 @@ const DiscountListCard: React.FC<CardProps> = ({ item, nowTime }) => {
 
         <div
           onClick={() => {
-            EnterDetail(item.discountUUID);
+            EnterDetail(item.discountPk);
           }}
           className="cursor-pointer flex items-center justify-between h-[25%] font-extrabold text-2xl overflow-hidden"
         >
@@ -111,7 +111,7 @@ const DiscountListCard: React.FC<CardProps> = ({ item, nowTime }) => {
 
         <div className="flex items-center h-1/5 w-full border-2 rounded-3xl bg-customBgLightBlue text-lg">
           <div
-            className="bg-custom-btn-gradient flex items-center justify-center
+            className="bg-customBgBlue flex items-center justify-center
             h-full rounded-3xl w-[40%] text-white"
           >
             {item.discountOwnerNickname ? "소상공인" : "개인"}

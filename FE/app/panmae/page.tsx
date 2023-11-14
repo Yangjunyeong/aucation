@@ -151,7 +151,10 @@ const Panmae = () => {
           setLoading(false);
         });
     } else {
-      // if (discountPrice! < price)
+      if (discountPrice! > price) {
+        alert("할인가가 정가보다 높습니다!!");
+        return;
+      }
       const time = timeToDate(hour, minute);
       const formData = new FormData();
       formData.append("discountTitle", productname);
@@ -414,7 +417,7 @@ const Panmae = () => {
                 className={clsx(`flex text-[var(--c-blue)] ml-10 mt-3`, price ? "invisible" : "")}
               >
                 <AiOutlineStop size={24} />
-                <span>할인 가격을 입력해 주세요</span>
+                <span>할인 가격은 정가 이하로 입력 가능합니다.</span>
               </div>
             </div>
             <div className="text-2xl pl-16 mt-3">원</div>

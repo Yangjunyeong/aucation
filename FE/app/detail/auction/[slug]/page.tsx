@@ -63,10 +63,10 @@ const AuctionDetail = () => {
         setDataList(res.data);
         setIsLiked(res.data.isLike);
         setLikeCount(res.data.likeCnt);
-        console.log(res);
+        console.log("디테일 페이지 데이터", res);
       })
       .catch(err => {
-        console.log(err);
+        console.log("디테일 페이지 에러", err);
         router.push("/");
       });
   }, [auctionPk]);
@@ -79,7 +79,7 @@ const AuctionDetail = () => {
           <BackBtn />
           <div className="flex items-center">
             <LikeBtn isLiked={isLiked} likeHandler={likeHandler} />
-            <span className="ml-1">{likeCount}</span>
+            <span className="ml-2 text-2xl">{likeCount}</span>
           </div>
         </div>
 
@@ -173,7 +173,7 @@ const AuctionDetail = () => {
         {/* 경매중인 상품 */}
         <div className="mt-16">
           <div className="mb-3">
-            <span className="text-2xl font-bold">사용자01</span>{" "}
+            <span className="text-2xl font-bold">{dataList.auctionOwnerNickname}</span>{" "}
             <span className="text-2xl font-sans">님의 경매중인 상품</span>
           </div>
           <div className="flex flex-wrap gap-8">
