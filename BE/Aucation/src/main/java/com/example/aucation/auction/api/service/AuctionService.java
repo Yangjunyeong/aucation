@@ -148,7 +148,9 @@ public class AuctionService {
 		String auctionUUID = PasswordGenerator.generate();
 
 		Address address = setMemberAddress(registerRequest.getAuctionMeetingLng(), registerRequest.getAuctionMeetingLat());
-
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime auctionStartDate = now.plusMinutes(registerRequest.getAuctionStartAfterTime());
+		LocalDateTime auctionEndDate = auctionStartDate.plusMinutes(30);
 		//경매라면
 		if (registerRequest.getAuctionStatus().equals(AuctionStatus.BID)) {
 			Auction auction = Auction.builder()
@@ -160,8 +162,8 @@ public class AuctionService {
 					.auctionMeetingLng(registerRequest.getAuctionMeetingLng())
 					.auctionEndPrice(0)
 					.address(address)
-					.auctionStartDate(LocalDateTime.now().plusMinutes(registerRequest.getAuctionStartAfterTime()))
-					.auctionEndDate(LocalDateTime.now().plusMinutes(registerRequest.getAuctionStartAfterTime()).plusMinutes(30))
+					.auctionStartDate(auctionStartDate)
+					.auctionEndDate(auctionEndDate)
 					.auctionStartPrice(registerRequest.getAuctionStartPrice())
 					.auctionUUID(auctionUUID)
 					.owner(member)
@@ -183,8 +185,8 @@ public class AuctionService {
 					.auctionMeetingLat(registerRequest.getAuctionMeetingLat())
 					.auctionMeetingLng(registerRequest.getAuctionMeetingLng())
 					.auctionEndPrice(0)
-					.auctionStartDate(LocalDateTime.now())
-					.auctionEndDate(LocalDateTime.now().plusMinutes(registerRequest.getAuctionStartAfterTime()))
+					.auctionStartDate(now)
+					.auctionEndDate(auctionStartDate)
 					.auctionStartPrice(registerRequest.getAuctionStartPrice())
 					.address(address)
 					.auctionUUID(auctionUUID)

@@ -443,13 +443,13 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 	private OrderSpecifier chooseFilter(String productFilter) {
 		if (productFilter.equals("최신순")) {
 			// 높은 가격 순
-			return new OrderSpecifier<>(Order.DESC, qAuction.auctionStartDate);
+			return new OrderSpecifier<>(Order.ASC, qAuction.auctionStartDate);
 		} else if (productFilter.equals("고가순")) {
 			// 낮은 가격 순
-			return new OrderSpecifier<>(Order.ASC, qAuction.auctionStartPrice);
+			return new OrderSpecifier<>(Order.DESC, qAuction.auctionStartPrice);
 		} else if (productFilter.equals("저가순")) {
 			// 기본 정렬 방식
-			return new OrderSpecifier<>(Order.DESC, qAuction.auctionStartPrice);
+			return new OrderSpecifier<>(Order.ASC, qAuction.auctionStartPrice);
 		}
 		return null;
 	}
@@ -457,13 +457,13 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 	private OrderSpecifier chooseDiscount(String productFilter) {
 		if (productFilter.equals("최신순")) {
 			// 높은 가격 순
-			return new OrderSpecifier<>(Order.DESC, qDiscount.discountStart);
+			return new OrderSpecifier<>(Order.ASC, qDiscount.discountStart);
 		} else if (productFilter.equals("고가순")) {
 			// 낮은 가격 순
-			return new OrderSpecifier<>(Order.ASC, qDiscount.discountPrice);
+			return new OrderSpecifier<>(Order.DESC, qDiscount.discountPrice);
 		} else if (productFilter.equals("저가순")) {
 			// 기본 정렬 방식
-			return new OrderSpecifier<>(Order.DESC, qDiscount.discountPrice);
+			return new OrderSpecifier<>(Order.ASC, qDiscount.discountPrice);
 		}
 		return null;
 	}

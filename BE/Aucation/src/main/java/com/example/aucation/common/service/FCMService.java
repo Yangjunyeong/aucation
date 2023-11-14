@@ -76,7 +76,7 @@ public class FCMService {
 	}
 
 	@Transactional
-	@Async("asyncTask")
+	@Async("threadExecutor")
 	public void setAucAlram(String auctionUUID) throws
 		FirebaseMessagingException,
 		ExecutionException,
@@ -118,7 +118,7 @@ public class FCMService {
 	}
 
 	@Transactional
-	@Async("asyncTask")
+	@Async("threadExecutor")
 	public void setAucEndAlarm(String auctionUUID, Long memberPk) throws
 		FirebaseMessagingException,
 		ExecutionException,
@@ -159,7 +159,7 @@ public class FCMService {
 	}
 
 	@Transactional
-	@Async("asyncTask")
+	@Async("threadExecutor")
 	public void setDisAucAlarm(String discountUUID, Long memberPk) throws
 		FirebaseMessagingException,
 		ExecutionException,
@@ -196,7 +196,7 @@ public class FCMService {
 	}
 
 	@Transactional
-	@Async("asyncTask")
+	@Async("threadExecutor")
 	public void setAucHighAlram(Member secondUser, String auctionUUID) throws
 		FirebaseMessagingException,
 		ExecutionException,
@@ -229,7 +229,7 @@ public class FCMService {
 	}
 
 	@Transactional
-	@Async("asyncTask")
+	@Async("threadExecutor")
 	public void setReAucAlram(Long auctionId, Long memberPk) throws
 		FirebaseMessagingException,
 		ExecutionException,

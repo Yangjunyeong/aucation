@@ -8,12 +8,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Executor;
 
 import com.example.aucation.discount.db.entity.Discount;
 import com.example.aucation.discount.db.repository.DiscountRepository;
 import com.example.aucation.photo.db.PhotoStatus;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3Client;
@@ -41,20 +47,43 @@ public class PhotoService {
 
 	private final AuctionRepository auctionRepository;
 
+	@Qualifier("threadExecutor")
+	@Autowired
+	private Executor executor;
+
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
 
 	final String dirName = "auction";
 
-	public void upload(List<MultipartFile> files, String auctionUUID) throws IOException {
+
+	public void upload(List<MultipartFile> files, String auctionUUID) {
 		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID).orElseThrow(()->new BadRequestException(
 			ApplicationError.AWS_S3_SAVE_ERROR));
 
-		for(MultipartFile multipartFile: files) {
-			File uploadFile = convertToFile(multipartFile)
-				.orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 변환에 실패했습니다."));
+		files.forEach(file -> {
+			try {
+				this.uploadS3Object(auction,file);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		});
 
-			String fileName = dirName + "/" + auctionUUID + "/" +" " + uploadFile.getName();
+	}
+
+	protected void uploadS3Object(Auction auction, MultipartFile files) throws IOException {
+
+		Runnable runnable = () -> {
+			log.info("Thread Name : {}", Thread.currentThread().getName());
+			File uploadFile = null;
+			try {
+				uploadFile = convertToFile(files)
+					.orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 변환에 실패했습니다."));
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+
+			String fileName = dirName + "/" + auction.getAuctionUUID() + "/" + " " + uploadFile.getName();
 
 			String uploadImageUrl = putS3(uploadFile, fileName);
 
@@ -65,10 +94,10 @@ public class PhotoService {
 				.auction(auction)
 				.build();
 			photoRepository.save(profileImg);
-		}
-
-
+		};
+		executor.execute(runnable);
 	}
+
 	public String putS3(File uploadFile, String fileName) {
 		amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile)
 			.withCannedAcl(CannedAccessControlList.PublicRead));
