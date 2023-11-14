@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.example.aucation.auction.api.dto.*;
 import com.example.aucation.common.dto.StreetResponse;
+import com.example.aucation.common.redis.db.repository.RedisRepository;
 import com.example.aucation.common.service.CommonService;
 import com.example.aucation.common.service.FCMService;
 import com.example.aucation.member.db.entity.Address;
@@ -65,6 +66,8 @@ public class AuctionService {
 	private final PhotoService photoService;
 
 	private final CommonService commonService;
+
+	private final RedisRepository redisRepository;
 	private final int COUNT_IN_PAGE = 15;
 
 
@@ -72,7 +75,10 @@ public class AuctionService {
 	public PlaceResponse place(Long memberPk, String auctionUUID) throws Exception {
 		Auction auction = auctionRepository.findByAuctionUUID(auctionUUID)
 				.orElseThrow(() -> new Exception("auction이 없습니다"));
-	
+
+		int headCnt = (int)redisRepository.getUserCount(auctionUUID);
+		headCnt+=1;
+
 		isNotStartAuction(auction);
 		isExistAuction(auction);
 
@@ -91,7 +97,6 @@ public class AuctionService {
 
 		int nowPrice = 0;
 		int askPrice = 0;
-		int headCnt = 0;
 		boolean isBid = false;
 
 		if (bids.isEmpty()) {
@@ -101,7 +106,6 @@ public class AuctionService {
 			Collections.sort(bids);
 			nowPrice = bids.get(0).getBidPrice();
 			askPrice = nowPrice + bids.get(0).getAskPrice();
-			headCnt = bids.get(0).getHeadCnt();
 			if (Objects.equals(bids.get(0).getPurchasePk(), memberPk)) {
 				isBid = true;
 			}
