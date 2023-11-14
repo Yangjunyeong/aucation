@@ -91,16 +91,12 @@ const nextConfig = {
         destination: "/:path*",
       },
       {
-        source: "/:path*",
-        destination: `${process.env.NEXT_PUBLIC_SERVER_URL}/:path*`,
-      },
-      {
         source: "/api/v1/:path*",
         destination: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/:path*`,
       },
       {
         source: "/api/v2/:path*",
-        destination: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v2/:path*`,
+        destination: `${process.env.NEXT_PUBLIC_CHAT_SERVER_URL}/api/v2/:path*`,
       },
     ];
   },

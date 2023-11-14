@@ -172,7 +172,7 @@ const AuctionDetail = () => {
                 </h3>
               </div>
               <div>
-                <h2 className="text-2xl font-bold">인형뽑기가게사장</h2>
+                <h2 className="text-2xl font-bold">{data.reAuctionOwnerNickname}</h2>
               </div>
             </div>
             <div className="flex-1 flex justify-end items-end">
@@ -240,7 +240,7 @@ const AuctionDetail = () => {
             </div>
           </div>
 
-          <h1 className="mt-4 text-3xl font-bold">입찰 목록</h1>
+          <h1 className="mt-20 text-3xl font-bold">입찰 목록</h1>
           {data.reAuctionBidItems && data.reAuctionBidItems.length != 0 && data.isOwner && (
             <div className="flex flex-row items-center">
               <button
@@ -308,6 +308,7 @@ const AuctionDetail = () => {
               />
             </Modal>
           )}
+          {!data.ownBid && !data.selectedBid && <div className="h-[20rem]"></div>}
         </>
       )}
     </div>

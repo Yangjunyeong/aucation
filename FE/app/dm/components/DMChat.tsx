@@ -44,7 +44,7 @@ const DMChat: React.FC<DMChatProps> = ({ prodPk, prodType, memberPk, setChatRoom
       client.current.deactivate();
     }
     client.current = Stomp.over(() => {
-      const ws = new SockJS(`${process.env.NEXT_PUBLIC_SERVER_URL}/chat-server`);
+      const ws = new SockJS(`${process.env.NEXT_PUBLIC_CHAT_SERVER_URL}/chat-server`);
       return ws;
     });
 
@@ -107,7 +107,7 @@ const DMChat: React.FC<DMChatProps> = ({ prodPk, prodType, memberPk, setChatRoom
       data: {
         memberPk: memberPk,
         prodPk: prodPk,
-        prodType: prodType,
+        prodType: parseInt(prodType),
       },
     })
       .then(res => {
@@ -117,7 +117,7 @@ const DMChat: React.FC<DMChatProps> = ({ prodPk, prodType, memberPk, setChatRoom
         setChats(res.data.chatList);
       })
       .catch(err => {
-        console.log(err);
+        // console.log(err);
         toast.error("정상적이지 않은 접근입니다.");
         router.push("/");
       });
