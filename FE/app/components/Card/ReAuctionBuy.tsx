@@ -14,7 +14,6 @@ interface ItemType {
   auctionTitle: string,
   auctionStartPrice: number,
   customerNickname: string,
-  reAucBidPrice: number,
   reAucBidDateTime: string
   registerDate: string,
   isLike: boolean
@@ -41,7 +40,9 @@ interface ItemType {
   // 경매 시작시간
   auctionStartDate: string,
   // 최저가
-  lowPrice: number,
+  reAucBidPrice: number,
+  // 입찰 수
+  reauctionCount: number,
 }
 interface CardProps {
   item: ItemType;
@@ -158,7 +159,7 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item }) => {
           {item.historyDateTime == null && (
             <div className="text-xl mt-2  ">
               최저가 :&nbsp;
-              <span className="text-2xl font-bold text-red-500">{formatKoreanCurrency(item.lowPrice)}</span> 
+              <span className="text-2xl font-bold text-red-500">{formatKoreanCurrency(item.reAucBidPrice)}</span> 
             </div>
           )}
           {/* 입찰완료/경매종료 - 최종가 */}
@@ -173,7 +174,7 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item }) => {
           {item.historyDateTime == null && (
             <div className="flex justify-between mr-20">
               <div className="flex mt-2 text-2xl items-center">
-                <span className="font-bold text-red-500 text-[28px] ml-2">12명</span> 입찰중
+                <span className="font-bold text-red-500 text-[28px] ml-2">{item.reauctionCount}</span>&nbsp;명 입찰중
               </div>
               <div className="flex gap-5">
                 <span className="border-2 cursor-pointer rounded-lg border-red-500 text-red-500 text-2xl font-bold py-1 px-2">

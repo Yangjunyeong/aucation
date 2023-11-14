@@ -126,7 +126,7 @@ const MyPage: NextPage = () => {
   };
   const categories: any = {
     경매: {
-      판매: ["판매전", "판매중", "판매완료"],
+      판매: ["경매전", "경매중", "경매완료"],
       구매: ["낙찰", "경매완료"],
     },
     역경매: {
@@ -244,8 +244,50 @@ const MyPage: NextPage = () => {
 
   // 요소 정렬
   const itemSortHandler = (value: string) => {
-    console.log(value, "클릭");
     setItemsort(value);
+  };
+  // 카드 삭제
+  const deleteHandler = (prodPk: number) => {
+    const data = {
+      status: category,
+      prodPk: prodPk,
+    };
+    console.log(JSON.stringify(data, null, 2));
+    callApi("delete", "/members/delete", data)
+      .then(res => {
+        let data: any;
+        if (category !== "좋아요") {
+          data = {
+            productStatus: secondCategory,
+            auctionStatus: thirdCategory,
+            productFilter: itemsort,
+            myPageNum: pageNumber,
+          };
+        } else {
+          data = {
+            productStatus: thirdCategory,
+            myPageNum: pageNumber,
+          };
+        }
+        console.log(res);
+        callApi("post", `${apiUrl[category]}`, data)
+          .then(res => {
+            console.log(res.data);
+            setDataList(res.data);
+            setUsername(res.data.memberNickname);
+            setMyPoint(res.data.memberPoint);
+            setInfo(res.data.memberDetail);
+            setIsShop(res.data.memberRole);
+          })
+          .catch(err => {
+            console.log(JSON.stringify(data, null, 2));
+            console.log(err);
+          });
+      })
+      .catch(err => {
+        console.log(JSON.stringify(data, null, 2));
+        console.log(err);
+      });
   };
 
   const cashHandler = (value: any) => {
@@ -353,12 +395,13 @@ const MyPage: NextPage = () => {
         setUsername(res.data.memberNickname);
         setMyPoint(res.data.memberPoint);
         setInfo(res.data.memberDetail);
+        setIsShop(res.data.memberRole);
       })
       .catch(err => {
         console.log(JSON.stringify(data, null, 2));
         console.log(err);
       });
-  }, [thirdCategory, itemsort]);
+  }, [thirdCategory, itemsort, pageNumber]);
 
   if (dataList) {
     return (
@@ -375,16 +418,16 @@ const MyPage: NextPage = () => {
             </label>
             {/* 사용자 이름, 정보 업데이트 */}
             <div className="flex-col ml-10">
-              <div className="flex mt-2 h-[60px]">
-                <span className="flex items-center mt-1 w-[60px]">
-                  {isShop == "소상공인" ? (
-                    <HiBuildingStorefront size={70} />
+              <div className="flex h-[75px]">
+                <span className="flex items-center w-[50px]">
+                  {isShop == "SHOP" ? (
+                    <HiBuildingStorefront size={40} />
                   ) : (
-                    <BsPersonFill size={70} />
+                    <BsPersonFill size={40} />
                   )}
                 </span>
                 {/* 유저네임/ 유저네임 인풋 */}
-                <div className="flex text-2xl mt-1 items-center font-semibold w-[240px] whitespace-nowrap overflow-hidden text-ellipsis">
+                <div className="flex text-2xl ml-3 items-center font-semibold w-[240px] whitespace-nowrap overflow-hidden text-ellipsis">
                   {!usernameUpdate && <div className="font-bold">{username}</div>}
                   {usernameUpdate && (
                     <ProfileInput value={username} onChange={handleUsernameChange} size="medium" />
@@ -403,7 +446,7 @@ const MyPage: NextPage = () => {
                 </div>
                 {/* 소상공인 인증 */}
 
-                {isShop == "개인" ? (
+                {isShop !== "SHOP" ? (
                   <div className="flex ml-[200px] text-xl items-center">
                     소상공인 이신가요? &nbsp;
                     <Link
@@ -443,18 +486,18 @@ const MyPage: NextPage = () => {
               {/* 사용자 정보창 / 사용자 정보 업데이트창 */}
               <div>
                 {!userInfoUpdate && (
-                  <div className="text-xl flex-  mt-3 rounded-2xl h-[140px] w-[850px] border border-customGray px-4 py-3 overflow-y-auto">
+                  <div className="text-xl pr-4 py-3 leading-[1.57] rounded-2xl h-[167px] w-[850px] whitespace-pre-wrap overflow-y-auto">
                     {info}
                   </div>
                 )}
                 {userInfoUpdate && (
-                  <div className="mt-3">
+                  <div>
                     <ProfileInput value={info} onTextAreaChange={handleInfoChange} size="large" />
                   </div>
                 )}
               </div>
               {/* 수정버튼 */}
-              <div className="flex mt-[15px] w-[930px] justify-between">
+              <div className="flex h-[56px] items-center justify-between">
                 {!userInfoUpdate && (
                   <UpdateBtn onUpdate={handleUserInfoUpdate} buttonText="소개글 수정" />
                 )}
@@ -463,22 +506,15 @@ const MyPage: NextPage = () => {
                     <UpdateBtn onUpdate={handleInfoUpdateConfirm} buttonText="확인" />
                   </div>
                 )}
-                <div className="flex ml-[200px] items-center text-xl">
+                <div className="flex text-xl">
                   내 포인트 :&nbsp;
-                  <span className="flex justify-between text-2xl font-bold">
-                    {myPoint}&nbsp;
-                    <span onClick={pointModalHandler}>
-                      <BiWon size={30} />
-                    </span>
+                  <span className="font-bold">{myPoint.toLocaleString()}</span>&nbsp;
+                  <span className="flex items-center" onClick={pointModalHandler}>
+                    <BiWon size={25} />
                   </span>
-                  {/* <Modal onClick={pointModalHandler}>
-                    <ModalContent/>
-                  </Modal> */}
-                </div>
-                <div className="flex justify-center text-xl items-center">
-                  <span className="cursor-pointer underline" onClick={() => setIsOpen(!isOpen)}>
-                    충전하기
-                  </span>
+                <span className="cursor-pointer underline ml-6" onClick={() => setIsOpen(!isOpen)}>
+                  충전하기
+                </span>
                 </div>
               </div>
               <PaymentModal onClose={() => setIsOpen(false)} isOpen={isOpen} cash={cashHandler} />
@@ -577,17 +613,17 @@ const MyPage: NextPage = () => {
           </div>
 
           {/* 경매 - 판매 */}
-          {category == "경매" && secondCategory == "판매" && (
+          {category == "경매" && secondCategory == "판매" && dataList.mypageItems.length > 0 && (
             <div>
               {/* DummyUserData.mypageItems */}
               {dataList.mypageItems?.map((item: any, idx: any) => (
-                <AuctionSell item={item} key={idx} />
+                <AuctionSell item={item} key={idx} deleteHandler={deleteHandler} />
               ))}
             </div>
           )}
 
           {/* 경매 - 구매 */}
-          {category == "경매" && secondCategory == "구매" && (
+          {category == "경매" && secondCategory == "구매" && dataList.mypageItems.length > 0 && (
             <div>
               {/* dataList.mypageItems? */}
               {dataList.mypageItems?.map((item: any, idx: any) => (
@@ -597,7 +633,7 @@ const MyPage: NextPage = () => {
           )}
 
           {/* 역경매 판매 */}
-          {category == "역경매" && secondCategory == "판매" && (
+          {category == "역경매" && secondCategory == "판매" && dataList.mypageItems.length > 0 && (
             <div>
               {/* {dataList.mypageItems?.map((item:any, idx:any) => ( */}
               {dataList.mypageItems?.map((item: any, idx: any) => (
@@ -607,7 +643,7 @@ const MyPage: NextPage = () => {
           )}
 
           {/* 역경매 구매 */}
-          {category == "역경매" && secondCategory == "구매" && (
+          {category == "역경매" && secondCategory == "구매" && dataList.mypageItems.length > 0 && (
             <div>
               {/* {dataList.mypageItems?.map((item:any, idx:any) => ( */}
               {dataList.mypageItems?.map((item: any, idx: any) => (
@@ -617,7 +653,7 @@ const MyPage: NextPage = () => {
           )}
 
           {/* 할인 - 판매 */}
-          {category == "할인" && secondCategory == "판매" && (
+          {category == "할인" && secondCategory == "판매" && dataList.mypageItems.length > 0 && (
             <div>
               {/* {dataList.mypageItems?.map((item:any, idx:any) => ( */}
               {dataList.mypageItems?.map((item: any, idx: any) => (
@@ -626,7 +662,7 @@ const MyPage: NextPage = () => {
             </div>
           )}
           {/* 할인 - 구매 */}
-          {category == "할인" && secondCategory == "구매" && (
+          {category == "할인" && secondCategory == "구매" && dataList.mypageItems.length > 0 && (
             <div>
               {dataList.mypageItems?.map((item: any, idx: any) => (
                 <DiscountBuy item={item} key={idx} />
