@@ -85,10 +85,10 @@ public class PersonalChatService {
 				.orElseThrow(() -> new NotFoundException(ApplicationError.AUCTION_NOT_FOUND));
 			// type과 pk 간의 일치 검사
 			if(type==0){
-				if(auction.getAuctionStatus() == AuctionStatus.BID)
+				if(auction.getAuctionStatus() != AuctionStatus.BID)
 					throw new ApplicationException(ApplicationError.INVALID_PRODUCT);
 			} else if(type==1){
-				if(auction.getAuctionStatus() == AuctionStatus.REVERSE_BID)
+				if(auction.getAuctionStatus() != AuctionStatus.REVERSE_BID)
 					throw new ApplicationException(ApplicationError.INVALID_PRODUCT);
 			}
 			// if(!(type== 0 && auction.getAuctionStatus() == AuctionStatus.BID))
