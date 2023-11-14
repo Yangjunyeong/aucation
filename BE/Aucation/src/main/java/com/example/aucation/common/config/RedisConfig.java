@@ -53,6 +53,18 @@ public class RedisConfig {
 	}
 
 	@Bean
+	public RedisTemplate<String, Object> redisTemplateString() {
+		RedisTemplate<String, Object> redisTemplateString = new RedisTemplate<>();
+
+		redisTemplateString.setConnectionFactory(redisConnectionFactory());
+
+		redisTemplateString.setKeySerializer(new StringRedisSerializer());
+
+		redisTemplateString.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
+
+		return redisTemplateString;
+	}
+	@Bean
 	public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory){
 		RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
 		redisMessageListenerContainer.setConnectionFactory(redisConnectionFactory);

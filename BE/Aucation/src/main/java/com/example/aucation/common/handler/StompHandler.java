@@ -26,10 +26,8 @@ public class StompHandler implements ChannelInterceptor {
 	private final RedisRepository redisRepository;
 
 	private final SimpMessagingTemplate template;
-
 	private static final String COUNT = "count";
 
-	//private final AuctionBidService auctionBidService;
 
 	@Override
 	public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -45,24 +43,17 @@ public class StompHandler implements ChannelInterceptor {
 			redisRepository.setUserEnterInfo(sessionId,auctionUUID);
 			redisRepository.plusUserCount(auctionUUID);
 			enterAuction(auctionUUID);
-
-
-			//레디스 만들어야함
-
-			//log.info("AuctionUUID: " + auctionUUID);
-
+			log.info("SUBSCRIBED {}, {}", sessionId, auctionUUID);
 		}else if(StompCommand.DISCONNECT == accessor.getCommand()){
 			String sessionId = accessor.getSessionId();
-			String destination = accessor.getDestination();
-			String[] destinationParts = destination.split("/");
-			String auctionUUID = destinationParts[destinationParts.length - 1];
+			String auctionUUID = redisRepository.getUserEnterRoomId(sessionId);
 
 			redisRepository.minusUserCount(auctionUUID);
 
 			exitAuction(auctionUUID);
 
 			redisRepository.removeUserEnterInfo(sessionId);
-
+			log.info("DISCONNECT {}, {}", sessionId, auctionUUID);
 		}
 
 		return message;
