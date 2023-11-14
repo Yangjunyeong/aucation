@@ -2,6 +2,7 @@ package com.example.aucation.auction.api.controller;
 
 import com.example.aucation.auction.api.dto.BidResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -16,13 +17,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = {@Lazy})
 public class WebsocketAuctionController {
 
 	private final AuctionBidService auctionBidService;
 
-	@Autowired
-	private SimpMessagingTemplate template; //특정 Broker로 메세지를 전달
+	private final SimpMessagingTemplate template; //특정 Broker로 메세지를 전달
 
 	// 클라이언트가 send 하는 경로
 	//stompConfig에서 설정한 applicationDestinationPrefixes와 @MessageMapping 경로가 병합됨

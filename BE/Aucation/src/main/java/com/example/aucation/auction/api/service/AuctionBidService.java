@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.aucation.auction.api.dto.BidResponse;
+import com.example.aucation.auction.api.dto.EnterResponse;
+import com.example.aucation.auction.api.dto.ExitResponse;
 import com.example.aucation.auction.api.dto.WebSocketErrorMessage;
 import com.example.aucation.auction.db.entity.Auction;
 import com.example.aucation.auction.db.entity.AuctionHistory;
@@ -31,6 +34,7 @@ import com.example.aucation.common.entity.HistoryStatus;
 import com.example.aucation.common.error.ApplicationError;
 import com.example.aucation.common.error.ApplicationException;
 import com.example.aucation.common.error.NotFoundException;
+import com.example.aucation.common.redis.db.repository.RedisRepository;
 import com.example.aucation.common.redis.dto.SaveAuctionBIDRedis;
 import com.example.aucation.common.service.FCMService;
 import com.example.aucation.common.util.DateFormatPattern;
@@ -42,12 +46,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = {@Lazy})
 @Slf4j
 public class AuctionBidService {
 
-	@Autowired
-	private SimpMessagingTemplate template; //특정 Broker로 메세지를 전달
+	private final SimpMessagingTemplate template; //특정 Broker로 메세지를 전달
 
 	private final AuctionService auctionService;
 
@@ -66,6 +69,8 @@ public class AuctionBidService {
 	private final SimpUserRegistry simpUserRegistry;
 
 	private final FCMService fcmService;
+
+	private final RedisRepository redisRepository;
 	private static final String HAVE_NO_MONEY = "돈이 없습니다 빨리 충전해주세요";
 
 	private static final String HIGH_BID_NO_BID = "최고 입찰자입니다 당신은 지금 입찰하지못합니다.";
@@ -73,6 +78,8 @@ public class AuctionBidService {
 	private static final String ERROR = "error";
 
 	private static final String COMPLETE = "pass";
+
+	private static final String COUNT = "count";
 
 	@Transactional
 	public BidResponse isService(long highPurchasePk, String auctionUUID) throws Exception {
@@ -118,6 +125,7 @@ public class AuctionBidService {
 	private BidResponse processFirstBid(Member member, int firstPoint, int bid, Auction auction, int peopleCount,
 		String auctionUUID) {
 		//처음 입찰이니까 현재있는돈에서 입찰가를 뺀다 (금액을 지불한다)
+		int headCnt = (int)redisRepository.getUserCount(auctionUUID);
 		firstPoint -= auction.getAuctionStartPrice();
 		//애초에 0이면 돈없으니까 빠꾸
 		if (firstPoint < 0) {
@@ -143,7 +151,7 @@ public class AuctionBidService {
 				.bidPrice(auction.getAuctionStartPrice())
 				.askPrice(curBid)
 				.purchasePk(member.getId())
-				.headCnt(peopleCount)
+				.headCnt(headCnt)
 				.build();
 			saveBIDRedis("auc-ing-log:" + auction.getAuctionUUID(), saveAuctionBIDRedis);
 
@@ -152,13 +160,14 @@ public class AuctionBidService {
 			//2.firstBid 	(현재 최고 입찰가 - 나)
 			//3.firstUser	(현재 최고 입찰자 - 나)
 			//4.ask		(현재 최고 입찰가 - 나)
+
 			return BidResponse.builder()
 				.firstUserPoint(firstPoint)
 				.firstBid(auction.getAuctionStartPrice())
 				.firstUser(member.getId())
 				.secondUserPoint(0)
 				.secondUser(0)
-				.headCnt(peopleCount)
+				.headCnt(headCnt)
 				.askPrice(auction.getAuctionStartPrice() + curBid)
 				.messageType(COMPLETE)
 				.build();
@@ -169,7 +178,7 @@ public class AuctionBidService {
 	private BidResponse processNotFirstBid(Member member, List<SaveAuctionBIDRedis> bids, int firstPoint,
 		Auction auction, int peopleCount, String auctionUUID) throws
 		FirebaseMessagingException, ExecutionException, InterruptedException {
-
+		int headCnt = (int)redisRepository.getUserCount(auctionUUID);
 		// 최고 입찰가와 최고 입찰자 현재 입찰가를 확인해야함
 		int highBidPrice = 0;
 		Long highPurchasePk = 0L;
@@ -223,7 +232,7 @@ public class AuctionBidService {
 					.askPrice(curBid)
 					.bidPrice(preBid + highBidPrice)
 					.purchasePk(member.getId())
-					.headCnt(peopleCount)
+					.headCnt(headCnt)
 					.build();
 				saveBIDRedis("auc-ing-log:" + auction.getAuctionUUID(), saveAuctionBIDRedis);
 
@@ -243,7 +252,7 @@ public class AuctionBidService {
 					.firstUser(member.getId())
 					.secondUser(secondUser.getId())
 					.secondUserPoint(secondUserPoint)
-					.headCnt(peopleCount)
+					.headCnt(headCnt)
 					.askPrice(highBidPrice + preBid + curBid)
 					.messageType(COMPLETE)
 					.build();
@@ -385,5 +394,31 @@ public class AuctionBidService {
 			return true;
 		}
 		return false;
+	}
+
+	public void exitAuction(String auctionUUID) {
+		int headCnt = (int)redisRepository.getUserCount(auctionUUID);
+		//만약 DISCONNECT 된다면
+		//모든유저에게 headCnt가 -1가 되는것을 보여줘야함
+
+		ExitResponse exitResponse= ExitResponse.builder()
+			.headCnt(headCnt)
+			.messageType(COUNT)
+			.build();
+
+		//saveBIDRedis("auc-ing-log:" + auction.getAuctionUUID(), );
+		//template.convertAndSend("/topic/sub/" + auctionUUID, exitResponse);
+
+	}
+
+	public void enterAuction(String auctionUUID) {
+		int headCnt = (int)redisRepository.getUserCount(auctionUUID);
+
+		EnterResponse enterRequest = EnterResponse.builder()
+			.headCnt(headCnt)
+			.messageType(COUNT)
+			.build();
+
+		//template.convertAndSend("/topic/sub/" + auctionUUID, enterRequest);
 	}
 }
