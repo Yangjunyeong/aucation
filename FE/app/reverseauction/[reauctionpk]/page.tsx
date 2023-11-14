@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 import ReAuctionCarousel from "../components/ReAuctionCarousel";
 import ReAuctionCheckout from "../components/ReAuctionCheckout";
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
+import Link from "next/link";
 
 const AuctionDetail = () => {
   const router = useRouter();
@@ -171,9 +172,9 @@ const AuctionDetail = () => {
                   {data.reAuctionOwnerMemberRole == "SHOP" ? "소상공인" : "개인판매자"}
                 </h3>
               </div>
-              <div>
+              <Link href={`/other/${data.reAuctionOwnerPk}`}>
                 <h2 className="text-2xl font-bold">{data.reAuctionOwnerNickname}</h2>
-              </div>
+              </Link>
             </div>
             <div className="flex-1 flex justify-end items-end">
               <div className="mr-7 flex">

@@ -16,6 +16,10 @@ const PriceInput: React.FC<PriceInputProps> = ({ priceHandler }) => {
     if (onlyNumber === "") {
       onlyNumber = "0";
     }
+    if (onlyNumber.length > 8) {
+      alert("1억원 이상 입력할 수 없습니다.");
+      return;
+    }
     priceHandler(parseInt(onlyNumber));
     setText(parseInt(onlyNumber));
   };

@@ -21,7 +21,10 @@ const indicatorStyles: CSSProperties = {
 };
 
 const Banner: React.FC = () => {
-  const imgIdx = [1, 2, 3, 4, 5];
+  function createArray(n: number) {
+    return Array.from({ length: n }, (_, i) => i + 1);
+  }
+  const imgIdx = createArray(5);
 
   return (
     <div className="h-full">

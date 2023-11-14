@@ -80,7 +80,13 @@ const PreAuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
           </div>
 
           <div className="flex items-center justify-between h-1/6 font-bold text-2xl">
-            <p> 시작가: {formatKoreanCurrency(item.auctionStartPrice)}</p>
+            <p>
+              {" "}
+              시작가:{" "}
+              <span className="text-customBlue">
+                {formatKoreanCurrency(item.auctionStartPrice)}
+              </span>
+            </p>
           </div>
 
           <div className="flex items-center h-1/5 w-full border-2 rounded-3xl bg-customBgLightBlue text-lg">

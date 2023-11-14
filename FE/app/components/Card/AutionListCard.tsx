@@ -87,7 +87,7 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime, type = "auction" 
         {type === "auction" && (
           <div
             onClick={() => EnterBid()}
-            className="rounded-lg absolute bottom-2 left-2 px-3 py-2 bg-custom-btn-gradient hover:bg-custom-btn-gradient-hover text-white cursor-pointer border-1"
+            className="rounded-lg absolute bottom-2 left-2 px-3 py-2 bg-customBgBlue hover:bg-custom-btn-gradient-hover text-white cursor-pointer border-1"
           >
             바로입장
           </div>
@@ -142,7 +142,7 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime, type = "auction" 
 
         <div className="flex items-center h-1/5 w-full border-2 rounded-3xl bg-customBgLightBlue text-lg">
           <div
-            className="bg-custom-btn-gradient flex items-center justify-center
+            className="bg-customBgBlue flex items-center justify-center
             h-full rounded-3xl w-[40%] text-white"
           >
             {("reAuctionPk" in item ? item.reAuctionOwnerIsShop : item.auctionOwnerIsShop)
@@ -160,15 +160,6 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime, type = "auction" 
             auctionEndTime={"reAuctionPk" in item ? item.reAuctionEndTime : item.auctionEndTime}
             stateHandler={auctionStateHandler}
           />
-          {/* <p>
-            {item.auctionEndTime && !!isNaN(item.auctionEndTime.getTime())
-              ? new Intl.DateTimeFormat("ko-KR", {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                }).format(new Date(item.auctionEndTime))
-              : "유효하지 않은 날짜"}
-          </p> */}
-          {/* <div>{tmp}</div> */}
         </div>
       </div>
     </div>
