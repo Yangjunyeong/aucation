@@ -11,7 +11,7 @@ const ProfileInput: React.FC<InputProps> = ({ value, onChange, onTextAreaChange,
   if (size === 'large') {
     return (
       <textarea
-        className="flex border-2 text-2xl border-gray-400 px-2 rounded-md focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed h-[140px] w-[800px]"
+        className="flex border-2 text-2xl border-gray-400 px-2 rounded-sm focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed h-[167px] w-[850px]"
         value={value}
         onChange={onTextAreaChange}
       />
