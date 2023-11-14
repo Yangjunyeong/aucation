@@ -54,7 +54,8 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="px-48">
+    // <main className="px-48">
+    <main>
       <div>
         <Banner />
       </div>

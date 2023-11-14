@@ -92,8 +92,8 @@ const PopularBidList: React.FC<OwnProps> = ({
     },
   };
   return (
-    <div className={`pt-14 pb-10 ${className} `}>
-      <div className="pb-10 px-14 flex flex-row justify-between items-center">
+    <div className={`pt-14 pb-10 ${className} px-48`}>
+      <div className="pb-10 flex flex-row justify-between items-center">
         <div className="text-3xl font-bold ">{title}</div>
         {moreShow && (
           <Link

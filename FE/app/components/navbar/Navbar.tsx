@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Star from "@/app/images/Star.png";
+import Logo from "@/app/images/aucation_logo.png";
+
 import { useRouter } from "next/navigation";
 import NavBtn from "../button/MainBtn";
 import { useRecoilState } from "recoil";
@@ -46,11 +48,12 @@ const Navbar: React.FC = () => {
   return (
     <div>
       {check && (
-        <div className="w-full h-28 flex flex-row items-center sticky top-0 z-50 bg-white px-48">
+        <div className="w-full h-28 flex flex-row items-center sticky top-0 z-50 bg-customBasic px-48">
           <div className="w-1/4 ">
             <Link href={`/`} className="flex flex-row">
-              <Image src={Star} alt="별" width={40} height={40} />
-              <p className="font-bold text-4xl pl-3">Aucation</p>
+
+              <Image src={Logo} alt="로고" />
+              
             </Link>
           </div>
           <div className="flex flex-row w-auto">
@@ -75,7 +78,7 @@ const Navbar: React.FC = () => {
             {auth.isLoggedIn ? (
               <a
                 onClick={handleLogout}
-                className="ml-14 text-2xl flex items-center hover:underline cursor-pointer"
+                className="ml-14  text-27px flex items-center hover:underline cursor-pointer"
               >
                 로그아웃
               </a>
@@ -87,7 +90,7 @@ const Navbar: React.FC = () => {
 
             <Link
               href={auth.isLoggedIn ? "/mypage" : "/login"}
-              className="ml-14 text-2xl flex items-center hover:underline"
+              className="ml-14  text-27px flex items-center hover:underline"
             >
               마이페이지
             </Link>
