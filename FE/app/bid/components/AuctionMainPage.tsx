@@ -55,7 +55,7 @@ const AuctionMainPage = () => {
     headCnt: 0, // 현재 접속자수
     highBid: false, // 현재 자신이 최고가인 사람인지 여부
   });
-
+  const [headCnt, setHeadCnt] = useState<number>(0); // 현재 접속자수
   const [remainTime, setRemainTime] = useState<string>("00:00:00"); // 남은 시간
   const [isModal, setIsModal] = useState<boolean>(false); // 모달 여부
   const [isBid, setIsBid] = useState<boolean>(false); // 입찰 여부
@@ -88,22 +88,15 @@ const AuctionMainPage = () => {
       const ws = new SockJS(`${process.env.NEXT_PUBLIC_SERVER_URL}/auc-server`);
       return ws;
     });
-
-    const _transport = (client.current!.webSocket as any)?._transport.url.split("/")[5];
     client.current.connect({}, () => {
+      // const _transport = (client.current!.webSocket as any)?._transport.url.split("/")[5];
       client.current!.subscribe(`/topic/sub/${uuid}`, res => {
         console.log(JSON.parse(res.body));
         const data = JSON.parse(res.body);
-        // if (data.headCnt != null) {
-        //   setDatas((datas: auctionData) => {
-        //     return {
-        //       ...datas,
-        //       headCnt: data.headCnt,
-        //     };
-        //   });
-        //   return;
-        // }
-        if (data.messageType == "error") {
+        if (data.messageType == "count") {
+          console.log(data.headCnt, 1231241245125124);
+          setHeadCnt(data.headCnt);
+        } else if (data.messageType == "error") {
           if (data.memberPk == datas.memberPk) {
             toast.error(data.errMessage);
             return;
@@ -153,7 +146,9 @@ const AuctionMainPage = () => {
   }, []);
   useEffect(() => {
     if (datas.memberPk != 0) {
-      connectToWebSocket();
+      if (!client.current) {
+        connectToWebSocket();
+      }
     }
     setIsBid(datas.highBid);
   }, [datas]);
@@ -193,6 +188,7 @@ const AuctionMainPage = () => {
             highBid: res.data.highBid,
           };
         });
+        setHeadCnt(res.data.headCnt);
       })
       .catch(err => {
         if (err.response.data.code == "P002") {
@@ -255,7 +251,7 @@ const AuctionMainPage = () => {
           "
         >
           <RiUserFill size="24"></RiUserFill>
-          <p className="text-base px-2">{datas.headCnt}</p>
+          <p className="text-base px-2">{headCnt}</p>
           <RiTimerFlashLine size="24"></RiTimerFlashLine>
           <div className="w-20">
             <p className="text-base px-2">{remainTime}</p>
