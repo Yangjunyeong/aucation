@@ -13,7 +13,7 @@ public class AuctionIngResponseItem {
     private String auctionTitle;  //
     private Integer auctionStartPrice;  //
     private Integer auctionTopBidPrice;
-    private Integer auctionCurCnt;
+    private Long auctionCurCnt;
     private Boolean auctionOwnerIsShop; //
     private String auctionOwnerNickname; //
     private LocalDateTime auctionEndTime; //

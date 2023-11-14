@@ -151,7 +151,6 @@ public class AuctionBidService {
 				.bidPrice(auction.getAuctionStartPrice())
 				.askPrice(curBid)
 				.purchasePk(member.getId())
-				.headCnt(headCnt)
 				.build();
 			saveBIDRedis("auc-ing-log:" + auction.getAuctionUUID(), saveAuctionBIDRedis);
 
@@ -232,7 +231,6 @@ public class AuctionBidService {
 					.askPrice(curBid)
 					.bidPrice(preBid + highBidPrice)
 					.purchasePk(member.getId())
-					.headCnt(headCnt)
 					.build();
 				saveBIDRedis("auc-ing-log:" + auction.getAuctionUUID(), saveAuctionBIDRedis);
 
@@ -348,6 +346,10 @@ public class AuctionBidService {
 		log.info("*********************** REDIS LOG DATA DELETE !!");
 		redisTemplate.delete(key);
 		log.info("*********************** REDIS LOG DATA DELETE DONE !!");
+
+		log.info("*********************** REDIS AUCTION CURRENT CNT DATA DELETE !!");
+		redisTemplate.delete(aucUuid);
+		log.info("*********************** REDIS AUCTION CURRENT CNT DATA DELETE DONE !!");
 
 		log.info("*********************** endAuction START !!");
 	}

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+import com.example.aucation.common.redis.db.repository.RedisRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -51,7 +52,10 @@ public class 	AuctionRepositoryImpl implements AuctionRepositoryCustom {
 	private final QAuctionBid qAuctionBid = QAuctionBid.auctionBid;
 	private final QMember qMember = QMember.member;
 	private final QPhoto qPhoto = QPhoto.photo;
+
 	private final RedisTemplate<String, SaveAuctionBIDRedis> redisTemplate;
+
+	private final RedisRepository redisRepository;
 
 	@Override
 	public AuctionListResponse searchPreAucToCondition(Member member, int pageNum,
@@ -177,16 +181,17 @@ public class 	AuctionRepositoryImpl implements AuctionRepositoryCustom {
 		List<AuctionIngResponseItem> result = query.fetch();
 
 		for (AuctionIngResponseItem item : result) {
-			List<SaveAuctionBIDRedis> bidList = redisTemplate.opsForList().range(item.getAuctionUUID()
+			Long headCnt = redisRepository.getUserCount(item.getAuctionUUID());
+			item.setAuctionCurCnt(headCnt);
+
+			List<SaveAuctionBIDRedis> bidList = redisTemplate.opsForList().range("auc-ing-log:"+item.getAuctionUUID()
 				, 0, -1);
 			if (bidList == null || bidList.isEmpty()) {
 				item.setAuctionTopBidPrice(item.getAuctionStartPrice());
-				item.setAuctionCurCnt(0);
 				continue;
 			}
 			Collections.sort(bidList);
 			item.setAuctionTopBidPrice(bidList.get(0).getBidPrice());
-			item.setAuctionCurCnt(bidList.get(0).getHeadCnt());
 		}
 
 		return AuctionListResponse.builder()
@@ -474,16 +479,17 @@ public class 	AuctionRepositoryImpl implements AuctionRepositoryCustom {
 		List<AuctionIngResponseItem> result = query.fetch();
 
 		for (AuctionIngResponseItem item : result) {
+			Long headCnt = redisRepository.getUserCount(item.getAuctionUUID());
+			item.setAuctionCurCnt(headCnt);
+
 			List<SaveAuctionBIDRedis> bidList = redisTemplate.opsForList().range("auc-ing-log:"+item.getAuctionUUID()
 				, 0, -1);
 			if (bidList == null || bidList.isEmpty()) {
 				item.setAuctionTopBidPrice(item.getAuctionStartPrice());
-				item.setAuctionCurCnt(0);
 				continue;
 			}
 			Collections.sort(bidList);
 			item.setAuctionTopBidPrice(bidList.get(0).getBidPrice());
-			item.setAuctionCurCnt(bidList.get(0).getHeadCnt());
 		}
 		return result;
 	}

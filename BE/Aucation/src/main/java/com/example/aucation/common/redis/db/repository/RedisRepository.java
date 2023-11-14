@@ -6,11 +6,13 @@ import javax.annotation.Resource;
 
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Service
+@Component
 @Slf4j
 public class RedisRepository {
 
@@ -42,8 +44,6 @@ public class RedisRepository {
 	}
 
 	public long getUserCount(String auctionUUID) {
-		log.info(String.valueOf(Optional.ofNullable(valueOps.get(USER_COUNT + "_" + auctionUUID))));
-		log.info("asdasdas"+auctionUUID);
 		return Long.valueOf(Optional.ofNullable(valueOps.get(USER_COUNT + "_" + auctionUUID)).orElse("0"));
 	}
 

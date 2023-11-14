@@ -9,7 +9,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Pageable;
 
-import com.example.aucation.common.redis.dto.SaveAuctionBIDRedis;
 import com.example.aucation.discount.api.dto.DiscountListResponse;
 import com.example.aucation.discount.api.dto.DiscountListResponseItem;
 import com.example.aucation.discount.api.dto.DiscountSortRequest;
