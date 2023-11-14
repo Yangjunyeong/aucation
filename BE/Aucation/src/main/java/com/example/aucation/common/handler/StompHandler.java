@@ -18,7 +18,9 @@ public class StompHandler implements ChannelInterceptor {
 		StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 		if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
 			String auctionUUID = String.valueOf(message.getPayload());
+			String auctionUUID2 = (String) message.getHeaders().get("sessionId");
 			log.info(auctionUUID);
+			log.info(auctionUUID2);
 		}else if(StompCommand.DISCONNECT == accessor.getCommand()){
 			String auctionUUID = String.valueOf(message.getPayload());
 			log.info(auctionUUID);
