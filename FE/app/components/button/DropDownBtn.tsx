@@ -56,7 +56,7 @@ const DropdownButton: React.FC<Props> = ({ options, selectedOption, setSelectedO
       {isShowToggle && (
         <div
           className={clsx(
-            `absolute z-10 top-full left-0 mt-2  rounded-md shadow-lg bg-white divide-y divide-gray-100`,
+            `absolute z-10 top-full left-0 mt-2  rounded-2xl border border-customGray bg-white divide-y divide-gray-100`,
             {
               //
               "w-[600px]": size === "big",

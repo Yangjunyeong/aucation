@@ -16,11 +16,10 @@ const OrderTypeBtn: React.FC<OwnProps> = ({ orderType, selectedOrderType, setOrd
       className={clsx(
         "text-xl",
         "border",
-        "border-customGray",
         "rounded-3xl px-4 py-2",
         "hover:cursor-pointer",
         { "text-customBlue border-customBlue": selectedOrderType },
-        { " text-customGray bg-cutomBasic hover:text-customBlue hover:border-customBlue": !selectedOrderType }
+        { "border-customGray text-customGray  hover:text-customBlue hover:border-customBlue": !selectedOrderType }
       )}
     >
       {orderType.typeName}

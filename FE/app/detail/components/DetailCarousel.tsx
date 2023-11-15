@@ -30,7 +30,7 @@ const DetailCarousel: React.FC<DetailImgProps> = ({ imglist }) => {
   }, []);
 
   return (
-    <div className="h-[500px] w-[600px]">
+    <div className="h-[500px]">
       <Carousel
         showArrows={true}
         infiniteLoop={true}

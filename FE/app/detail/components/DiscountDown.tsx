@@ -67,9 +67,9 @@ const DiscountDown: React.FC<StateCardProps> = ({ stateHandler, currentTime, end
   }
 
   return (
-    <span className="flex w-[250px] justify-end text-xl font-sans">
+    <span className="flex w-full justify-end text-customLightTextColor">
       <div
-        className={clsx(
+        className={clsx("flex mr-2 items-center font-medium",
           statusMessage == "종료"
             ? "text-red-500"
             : statusMessage == "할인종료"
@@ -79,7 +79,7 @@ const DiscountDown: React.FC<StateCardProps> = ({ stateHandler, currentTime, end
       >
         {statusMessage}
       </div>
-    <div className="flex font-bold ">
+    <div className="flex font-medium ">
       {days > 0 && <div>{days}:</div>}
       {(days > 0 || hours > 0) && <div>&nbsp;{hours}&nbsp;:</div>}
       {(days > 0 || hours > 0 || minutes > 0) && <div>&nbsp;{minutes}&nbsp;:</div>}

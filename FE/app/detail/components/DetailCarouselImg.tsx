@@ -12,8 +12,9 @@ const DetailCarouselImg: React.FC<OwnProps> = ({ item }) => {
   }, []);
 
   return (
-    <div className="flex w-[600px] h-[500px]">
-      <Image src={item} alt="detailcarousel" width={600} height={500} />
+    <div className="flex h-[500px]">
+      {/* w-[600px] h-[500px] */}
+      <Image src={item} alt="detailcarousel" width={600} height={500} className="rounded-lg"/>
     </div>
   );
 };

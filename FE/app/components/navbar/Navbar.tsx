@@ -54,45 +54,45 @@ const Navbar: React.FC = () => {
           <div className="w-1/3 ">
             <Link href={`/`} className="flex flex-row">
 
-              <Image src={Logo} alt="로고" />
+              <Image src={Logo} alt="로고" className="object-contain" />
               
             </Link>
           </div>
-          <div className="flex flex-row w-auto">
+          <div className="flex flex-row w-auto gap-8 ml-8">
             <Link
               href={`/auction/holding`}
-              className={`ml-14 text-27px whitespace-nowrap flex items-center font-semibold hover:underline`}
+              className={`text-22px whitespace-nowrap flex items-center font-semibold hover:text-customLightTextColor`}
             >
               경매 상품
             </Link>
             <Link
               href={`/discount`}
-              className="ml-14 text-27px whitespace-nowrap flex items-center hover:underline font-semibold"
+              className="text-22px whitespace-nowrap flex items-center hover:text-customLightTextColor font-semibold"
             >
               할인 상품
             </Link>
           </div>
-          <div className="flex flex-row-reverse  justify-start w-full ">
+          <div className="flex flex-row-reverse  justify-start w-full gap-8">
             <Link href={auth.isLoggedIn ? "/panmae" : "/login"}>
-              <NavBtn className="ml-14 px-4">경매 올리기</NavBtn>
+              <NavBtn className="px-4">경매 올리기</NavBtn>
             </Link>
 
             {auth.isLoggedIn ? (
               <a
                 onClick={handleLogout}
-                className="ml-14  text-27px flex items-center hover:underline cursor-pointer"
+                className="text-22px flex items-center hover:text-customLightTextColor cursor-pointer"
               >
                 로그아웃
               </a>
             ) : (
-              <Link href={`/login`} className="ml-14 text-2xl flex items-center hover:underline">
+              <Link href={`/login`} className="text-22px flex items-center hover:text-customLightTextColor">
                 로그인
               </Link>
             )}
 
             <Link
               href={auth.isLoggedIn ? "/mypage" : "/login"}
-              className="ml-14  text-27px flex items-center hover:underline"
+              className="text-22px flex items-center hover:text-customLightTextColor"
             >
               마이페이지
             </Link>

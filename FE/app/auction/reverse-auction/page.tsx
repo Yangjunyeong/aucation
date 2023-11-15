@@ -126,7 +126,7 @@ const ReverseAuctionList = ({ params }: { params: PageParams }) => {
       </div>
 
       <div className="flex flex-row h-[75px] items-center justify-between mb-7 mt-2">
-        <div className="flex flex-row space-x-8">
+        <div className="flex flex-row gap-5">
           <DropdownButton
             options={localCategoryList}
             selectedOption={selectedCategory}
@@ -143,7 +143,7 @@ const ReverseAuctionList = ({ params }: { params: PageParams }) => {
           ))}
         </div>
 
-        <div className="flex flex-row space-x-8">
+        <div className="flex flex-row gap-5">
           <DropdownButton
             options={searchTypeList.map(st => st.typeName)}
             selectedOption={searchType.typeName}
