@@ -67,7 +67,7 @@ public class ReAuctionService {
         return response;
     }
     @Transactional
-    public OwnReAucBidResponse bidReAuction(Long memberPk, ReAuctionBidRequest reAuctionBidRequest,
+        public OwnReAucBidResponse bidReAuction(Long memberPk, ReAuctionBidRequest reAuctionBidRequest,
                                             List<MultipartFile> multipartFiles) throws Exception{
         log.info("********************** bidReAuction start");
         Auction auction = auctionRepository.findById(reAuctionBidRequest.getReAuctionPk())

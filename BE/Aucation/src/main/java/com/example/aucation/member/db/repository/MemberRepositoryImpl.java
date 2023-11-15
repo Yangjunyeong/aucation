@@ -220,7 +220,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			.leftJoin(qAuctionHistory)
 			.on(qAuctionHistory.auction.eq(qAuction))
 			.leftJoin(qReAuctionBid)
-			.on(qReAuctionBid.auction.eq(qAuction))
+			.on(qReAuctionBid.auction.eq(qAuction).and(isReauctionMethod(memberPageRequest,member.getId())))
 			.leftJoin(qPhoto)
 			.on(qPhoto.auction.eq(qAuction))
 			.where(
@@ -249,6 +249,17 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			.totalPage((int)totalPage)
 			.mypageItems(result)
 			.build();
+	}
+
+	private Predicate isReauctionMethod(MemberPageRequest memberPageRequest, Long id) {
+
+		if(memberPageRequest.getProductStatus().equals("구매")){
+			if(memberPageRequest.getAuctionStatus().equals("경매중")){
+				return qAuction.customer.id.eq((Long)null);
+			}
+			return qAuction.customer.id.eq(qReAuctionBid.member.id);
+		}
+		return null;
 	}
 
 	private Predicate isAuctionHistory(MemberPageRequest memberPageRequest, Member member) {
