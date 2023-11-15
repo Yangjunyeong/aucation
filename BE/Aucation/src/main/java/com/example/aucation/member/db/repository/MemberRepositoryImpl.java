@@ -71,8 +71,6 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 	@Override
 		public MypageResponse searchMyAuctionPage(Member member, MemberPageRequest memberPageRequest,
 		Pageable pageable) {
-		log.info("이거진짜 씨빨 맞아");
-
 		//경매인지 아닌지 필터 ->
 		//경매전, 경매중, 경매완료 인지 -> startDate로 판단
 		//
@@ -279,14 +277,14 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		} else if ("낙찰".equals(auctionStatus)) {
 			// "판매" 및 "경매중" 경우에 대한 조건 추가
 			return qAuction.customer.id.eq(member.getId())
-				.and(qAuctionHistory.isNotNull())
+				.and(qAuctionHistory.isNotNull().and(qAuctionHistory.historyStatus.eq(HistoryStatus.BEFORE_CONFIRM)))
 				.and(qAuctionHistory.historyDateTime.isNotNull())
 				.and(qAuctionHistory.historyDoneDateTime.isNull())
 				.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
 		} else if ("거래완료".equals(auctionStatus)) {
 			// "판매" 및 "경매완료" 경우에 대한 조건 추가
 			return qAuction.customer.id.eq(member.getId())
-				.and(qAuctionHistory.isNotNull())
+				.and(qAuctionHistory.isNotNull().and(qAuctionHistory.historyStatus.eq(HistoryStatus.AFTER_CONFIRM)))
 				.and(qAuctionHistory.historyDateTime.isNotNull())
 				.and(qAuctionHistory.historyDoneDateTime.isNotNull())
 				.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
@@ -295,12 +293,14 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		} else if ("경매중".equals(auctionStatus)) {
 			return qAuction.owner.id.eq(member.getId())
 				.and(qReAuctionBid.isNull())
+				.and(qAuctionHistory.isNull())
 				.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
 
 		} else if ("입찰완료".equals(auctionStatus)) {
 			// "구매" 및 "구매완료" 경우에 대한 조건 추가
 			return qAuction.owner.id.eq(member.getId())
 				.and(qReAuctionBid.isNotNull())
+				.and(qAuctionHistory.isNotNull().and(qAuctionHistory.historyStatus.eq(HistoryStatus.BEFORE_CONFIRM)))
 				.and(qAuction.auctionEndPrice.eq(-1))
 				.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
 
@@ -308,6 +308,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			// "구매" 및 "구매완료" 경우에 대한 조건 추가
 			return qAuction.owner.id.eq(member.getId())
 				.and(qReAuctionBid.isNotNull())
+				.and(qAuctionHistory.isNotNull().and(qAuctionHistory.historyStatus.eq(HistoryStatus.AFTER_CONFIRM)))
 				.and(qAuction.auctionEndPrice.ne(-1))
 				.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
 		}
