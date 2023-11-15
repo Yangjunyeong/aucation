@@ -12,6 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MyLikeItemsResponse {
+	private int auctionStartPrice;
 	private AuctionStatus auctionStatus;
 	private String auctionTitle;
 	private String auctionUUID;
