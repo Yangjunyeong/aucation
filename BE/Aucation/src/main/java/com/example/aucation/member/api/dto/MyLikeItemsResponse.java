@@ -28,4 +28,6 @@ public class MyLikeItemsResponse {
 	private String ownerNicknname;
 	private Long customerPk;
 	private Boolean isLike;
+	private LocalDateTime auctionStartDate;
+	private LocalDateTime auctionEndDate;
 }

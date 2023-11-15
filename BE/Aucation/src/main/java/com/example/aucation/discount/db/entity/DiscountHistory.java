@@ -63,4 +63,12 @@ public class DiscountHistory extends BaseEntity {
 	public void updateStatus() {
 		this.historyStatus = HistoryStatus.AFTER_CONFIRM;
 	}
+
+	public void updateStatusSell() {
+		this.historyStatus=HistoryStatus.AFTER_CONFIRM;
+	}
+
+	public void updateStatusTime() {
+		this.historyDoneDatetime=LocalDateTime.now();
+	}
 }

@@ -474,6 +474,8 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		JPAQuery<MyLikeItemsResponse> query = jpaQueryFactory
 			.select(
 				Projections.bean(MyLikeItemsResponse.class,
+					qAuction.auctionStartDate.as("auctionStartDate"),
+					qAuction.auctionEndDate.as("auctionEndDate"),
 					qAuction.auctionStatus.as("auctionStatus"),
 					qAuction.auctionTitle.as("auctionTitle"),
 					qAuction.auctionUUID.as("auctionUUID"),
@@ -531,6 +533,8 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		JPAQuery<MyLikeItemsResponse> query = jpaQueryFactory
 			.select(
 				Projections.bean(MyLikeItemsResponse.class,
+					qDiscount.discountStart.as("auctionStartDate"),
+					qDiscount.discountEnd.as("auctionEndDate"),
 					qDiscount.discountTitle.as("auctionTitle"),
 					qDiscount.discountUUID.as("auctionUUID"),
 					qDiscount.id.as("auctionPk"),
