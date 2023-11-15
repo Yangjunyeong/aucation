@@ -556,7 +556,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qDiscount.address.zipcode.as("zipcode"),
 					qDiscount.address.street.as("street"),
 					qDiscountHistory.historyStatus.as("historyStatus"),
-					qDiscount.createdAt.as("likeDateTime"),
+					qLikeDiscount.createdAt.as("likeDateTime"),
 					qPhoto.imgUrl.min().as("imgfile")
 				))
 			.from(qDiscount)
