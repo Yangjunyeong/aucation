@@ -270,9 +270,10 @@ public class AuctionService {
 			response.setAuctionBidCnt(redisRepository.getUserCount(response.getAuctionUuid()));
 			List<SaveAuctionBIDRedis> bids =
 					redisTemplate.opsForList().range("auc-ing-log:" + response.getAuctionUuid(), 0, -1);
-			Collections.sort(bids);
-			if (!bids.isEmpty()) {
+			if (bids != null && !bids.isEmpty()) {
+				Collections.sort(bids);
 				response.setAuctionTopPrice(bids.get(0).getBidPrice());
+				response.setAuctionAskPrice(bids.get(0).getAskPrice() + bids.get(0).getBidPrice());
 			}
 			response.setAuctionEndPrice(null);
 			log.info("********************** 경매 중 정보 설정 완료");

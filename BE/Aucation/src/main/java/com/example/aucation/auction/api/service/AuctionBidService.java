@@ -348,7 +348,7 @@ public class AuctionBidService {
 		log.info("*********************** REDIS LOG DATA DELETE DONE !!");
 
 		log.info("*********************** REDIS AUCTION CURRENT CNT DATA DELETE !!");
-		redisTemplate.delete(aucUuid);
+		redisTemplate.delete("USER_COUNT_" + aucUuid);
 		log.info("*********************** REDIS AUCTION CURRENT CNT DATA DELETE DONE !!");
 
 		log.info("*********************** endAuction START !!");
