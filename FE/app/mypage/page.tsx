@@ -35,7 +35,6 @@ import DiscountSell from "../components/Card/DiscountSell";
 import DiscountBuy from "../components/Card/DiscountBuy";
 // api요청
 import { callApi } from "../utils/api";
-import { userInfo } from "os";
 
 // 페이지 네이션
 import Pagination from "react-js-pagination";
@@ -52,8 +51,6 @@ import Link from "next/link";
 import { HiBuildingStorefront } from "react-icons/hi2";
 import { BsPersonFill } from "react-icons/bs";
 import { BiWon } from "react-icons/bi";
-import { icons } from "react-icons";
-
 // 모달
 import PaymentModal from "../components/modal/PaymentModal";
 
