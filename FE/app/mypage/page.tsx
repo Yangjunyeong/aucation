@@ -120,7 +120,7 @@ const MyPage: NextPage = () => {
     경매: "members/mypage/auction",
     역경매: "members/mypage/reauction",
     할인: "members/mypage/discount",
-    좋아요: "members/mypage/like",
+    좋아요: "members/mypage/likeauction",
   };
   const categories: any = {
     경매: {
@@ -135,7 +135,9 @@ const MyPage: NextPage = () => {
       판매: ["판매중", "예약중", "판매완료"],
       구매: ["예약중", "구매완료"],
     },
-    좋아요: ["경매", "역경매", "할인"],
+    좋아요: {
+      전체: ["경매", "역경매", "할인"],
+    },
   };
 
   // 요소 정렬
@@ -196,7 +198,7 @@ const MyPage: NextPage = () => {
   const handleUsernameChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setUsername(e.target.value);
   };
-    const handleInfoChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+  const handleInfoChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setInfo(e.target.value);
   };
 
@@ -208,10 +210,12 @@ const MyPage: NextPage = () => {
   const shopModalHandler = () => {
     setIsShopModal(!isShopModal);
   };
+
   // 사업자 등록번호 입력
   const shopInputHandler = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setShopNum(e.target.value);
   };
+
   const shopRegistHandler = () => {
     const data = {
       smallkey: shopNum,
@@ -354,18 +358,28 @@ const MyPage: NextPage = () => {
   useEffect(() => {
     if (category !== "좋아요") {
       console.log("1번카테고리 변경");
-      secondCategoryHandler(Object.keys(categories[category])[0]);
+      const firstCategory = Object.keys(categories[category])[0];
+      secondCategoryHandler(firstCategory);
     } else {
-      secondCategoryHandler("");
+      secondCategoryHandler("전체");
     }
   }, [category]);
+
   useEffect(() => {
     if (category !== "좋아요") {
-      console.log("2번카테고리 변경");
-      thirdCategoryHandler(categories[category][secondCategory!][0]);
+      console.log("2번 카테고리 변경");
+      const secondCategoryData = categories[category][secondCategory];
+      if (secondCategoryData && secondCategoryData.length > 0) {
+        const defaultThirdCategory = secondCategoryData[0];
+        thirdCategoryHandler(defaultThirdCategory);
+      } else {
+        // 두 번째 카테고리 데이터가 없을 때 처리
+        console.error("두 번째 카테고리 데이터가 없습니다.");
+        // 아니면 디폴트값을 설정하거나 다른 대응을 취할 수 있습니다.
+      }
     } else {
-      console.log("2번카테고리 변경");
-      thirdCategoryHandler("경매");
+      const defaultThirdCategory = categories[category]["전체"][0];
+      thirdCategoryHandler(defaultThirdCategory);
     }
   }, [category, secondCategory]);
 
@@ -414,9 +428,14 @@ const MyPage: NextPage = () => {
       });
   }, [thirdCategory, itemsort, pageNumber]);
 
+  const tmp2 = () => {
+    console.log(categories[category][secondCategory], category, secondCategory, thirdCategory);
+  };
+
   if (dataList) {
     return (
       <div className="w-full px-80 py-20">
+        <div onClick={tmp2}>버튼</div>
         <Script src="https://cdn.iamport.kr/v1/iamport.js" />
         {/* 프로필 영역 */}
         {/* 결제 */}
@@ -561,16 +580,20 @@ const MyPage: NextPage = () => {
             </h2>
             {/* 카테고리 - 판매/구매 */}
             <div className={clsx("flex gap-3 items-center", category !== "좋아요" ? "" : "hidden")}>
-              {Object.keys(categories[category]).map((item, idx) => (
-                <CategoryBox
-                  name={item}
-                  selectedCategory={secondCategory!}
-                  key={idx}
-                  categoryHandler={secondCategoryHandler}
-                  css="border-2 ml-4 rounded-lg text-xl px-3 py-1 font-bold cursor-pointer transition-transform transform duration-300 hover:scale-110"
-                  dynamicCss={"second"}
-                />
-              ))}
+              {category !== "좋아요" && (
+                <>
+                  {Object.keys(categories[category]).map((item, idx) => (
+                    <CategoryBox
+                      name={item}
+                      selectedCategory={secondCategory!}
+                      key={idx}
+                      categoryHandler={secondCategoryHandler}
+                      css="border-2 ml-4 rounded-lg text-xl px-3 py-1 font-bold cursor-pointer transition-transform transform duration-300 hover:scale-110"
+                      dynamicCss={"second"}
+                    />
+                  ))}
+                </>
+              )}
             </div>
           </div>
           <div className="border-t-2 border-gray-400 bottom-0 mt-10"></div>
@@ -580,27 +603,29 @@ const MyPage: NextPage = () => {
           <div className="flex justify-between mt-10">
             <div className="flex">
               <div className="flex gap-4 text-xl font-semibold h-[35px] items-center cursor-pointer">
-                {category !== "좋아요"
-                  ? categories[category][secondCategory]?.map((item: any, idx: any) => (
-                      <CategoryBox
-                        name={item}
-                        selectedCategory={thirdCategory!}
-                        key={idx}
-                        categoryHandler={thirdCategoryHandler}
-                        css="flex items-center justify-center font-semibold "
-                        dynamicCss={"second"}
-                      />
-                    ))
-                  : categories[category]?.map((item: any, idx: any) => (
-                      <CategoryBox
-                        name={item}
-                        selectedCategory={thirdCategory!}
-                        key={idx}
-                        categoryHandler={thirdCategoryHandler}
-                        css="flex items-center justify-center font-semibold "
-                        dynamicCss={"second"}
-                      />
-                    ))}
+                {category !== "좋아요" &&
+                  categories[category][secondCategory]?.map((item: any, idx: any) => (
+                    <CategoryBox
+                      name={item}
+                      selectedCategory={thirdCategory!}
+                      key={idx}
+                      categoryHandler={thirdCategoryHandler}
+                      css="flex items-center justify-center font-semibold "
+                      dynamicCss={"second"}
+                    />
+                  ))}
+
+                {category == "좋아요" &&
+                  categories[category][secondCategory]?.map((item: any, idx: any) => (
+                    <CategoryBox
+                      name={item}
+                      selectedCategory={thirdCategory}
+                      key={idx}
+                      categoryHandler={thirdCategoryHandler}
+                      css="flex items-center justify-center font-semibold "
+                      dynamicCss={"second"}
+                    />
+                  ))}
               </div>
               <div className="ml-4">
                 <span className="font-bold text-3xl ml-4 text-red-500">
@@ -648,11 +673,12 @@ const MyPage: NextPage = () => {
           )}
 
           {/* 역경매 판매 */}
+          {/* dataList.mypageItems.length > 0 && */}
           {category == "역경매" && secondCategory == "판매" && dataList.mypageItems.length > 0 && (
             <div>
               {/* {dataList.mypageItems?.map((item:any, idx:any) => ( */}
-              {dataList.mypageItems?.map((item: any, idx: any) => (
-                <ReAuctionSell item={item} key={idx} />
+              {dataList.mypageItems.map((item: any, idx: any) => (
+                <ReAuctionSell item={item} key={idx} deleteHandler={deleteHandler} />
               ))}
             </div>
           )}
@@ -662,7 +688,7 @@ const MyPage: NextPage = () => {
             <div>
               {/* {dataList.mypageItems?.map((item:any, idx:any) => ( */}
               {dataList.mypageItems?.map((item: any, idx: any) => (
-                <ReAuctionBuy item={item} key={idx} />
+                <ReAuctionBuy item={item} key={idx} deleteHandler={deleteHandler} />
               ))}
             </div>
           )}
@@ -672,7 +698,12 @@ const MyPage: NextPage = () => {
             <div>
               {/* {dataList.mypageItems?.map((item:any, idx:any) => ( */}
               {dataList.mypageItems?.map((item: any, idx: any) => (
-                <DiscountSell item={item} key={idx} thirdCategory={thirdCategory!} />
+                <DiscountSell
+                  item={item}
+                  key={idx}
+                  thirdCategory={thirdCategory!}
+                  deleteHandler={deleteHandler}
+                />
               ))}
             </div>
           )}
@@ -684,14 +715,17 @@ const MyPage: NextPage = () => {
               ))}
             </div>
           )}
+          <div className="flex">
+
           {/* 좋아요 */}
-          {/* {category == "좋아요" && (
-          <div className="flex flex-wrap justify-between">
-            {categoryLikedata.map((item, idx) => (
-              <LikeCard item={item} key={idx} likeHandler={value => handleLike(idx, value)} />
-            ))}
+          {category == "좋아요" && (
+            <div className="flex flex-wrap gap-[26px]">
+              {dataList.mypageItems?.map((item: any, idx: any) => (
+                <LikeCard item={item} key={idx} />
+              ))}
+            </div>
+          )}
           </div>
-        )} */}
 
           {/* 페이지 네이션 */}
           <div className="flex justify-center mt-4">
