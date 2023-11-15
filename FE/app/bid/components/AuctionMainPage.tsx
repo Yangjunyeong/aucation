@@ -96,6 +96,7 @@ const AuctionMainPage = () => {
         if (data.messageType == "count") {
           console.log(data.headCnt, 1231241245125124);
           setHeadCnt(data.headCnt);
+          return
         } else if (data.messageType == "error") {
           if (data.memberPk == datas.memberPk) {
             toast.error(data.errMessage);
