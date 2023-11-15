@@ -26,9 +26,11 @@ public class MyLikeResponse {
 
 	private List<MyLikeItemsResponse> mypageItems;
 
+	private long count;
+
 	@Builder
 	public MyLikeResponse(String memberNickname, Role memberRole, String memberDetail, String imgURL, int memberPoint,
-		int currentPage, int totalPage, List<MyLikeItemsResponse> mypageItems) {
+		int currentPage, int totalPage, List<MyLikeItemsResponse> mypageItems,long count) {
 		this.memberNickname = memberNickname;
 		this.memberRole = memberRole;
 		this.memberDetail = memberDetail;
@@ -37,5 +39,6 @@ public class MyLikeResponse {
 		this.currentPage = currentPage;
 		this.totalPage = totalPage;
 		this.mypageItems = mypageItems;
+		this.count =count;
 	}
 }

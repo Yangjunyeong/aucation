@@ -110,6 +110,8 @@ public class MemberService {
 	private final CommonService commonService;
 	private final int COUNT_IN_PAGE = 5;
 
+	private final int COUNT_IN_PAGE_LIKE = 8;
+
 	private final String dirName = "profile";
 
 	private final AmazonS3Client amazonS3Client;
@@ -198,7 +200,7 @@ public class MemberService {
 	@Transactional
 	public MyLikeResponse likeauction(Long memberPk, LikePageRequest likePageRequest) {
 		Member member = existsMemberPk(memberPk);
-		Pageable pageable = PageRequest.of(likePageRequest.getMyPageNum() - 1, COUNT_IN_PAGE);
+		Pageable pageable = PageRequest.of(likePageRequest.getMyPageNum() - 1, COUNT_IN_PAGE_LIKE);
 		if (likePageRequest.getProductStatus().equals("할인")) {
 			return memberRepository.searchMyDisLike(member, likePageRequest, pageable);
 		}

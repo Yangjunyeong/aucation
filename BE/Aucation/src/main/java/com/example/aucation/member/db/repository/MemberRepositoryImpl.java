@@ -135,6 +135,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			.memberNickname(member.getMemberNickname())
 			.currentPage(memberPageRequest.getMyPageNum() - 1)
 			.totalPage((int)totalPage)
+			.count(count)
 			.mypageItems(result)
 			.build();
 
@@ -248,6 +249,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			.currentPage(memberPageRequest.getMyPageNum() - 1)
 			.totalPage((int)totalPage)
 			.mypageItems(result)
+			.count(count)
 			.build();
 	}
 
@@ -394,6 +396,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			.currentPage(memberPageRequest.getMyPageNum() - 1)
 			.totalPage((int)totalPage)
 			.mypageItems(result)
+			.count(count)
 			.build();
 
 	}
@@ -529,6 +532,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			.currentPage(likePageRequest.getMyPageNum() - 1)
 			.totalPage((int)totalPage)
 			.mypageItems(result)
+			.count(count)
 			.build();
 
 	}
@@ -574,7 +578,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
 		List<MyLikeItemsResponse> result = query.fetch();
 
-		double totalPage = Math.ceil((double)count / 5);
+		double totalPage = Math.ceil((double)count / 8);
 
 		return MyLikeResponse.builder()
 			.memberDetail(member.getMemberDetail())
@@ -585,6 +589,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			.currentPage(likePageRequest.getMyPageNum() - 1)
 			.totalPage((int)totalPage)
 			.mypageItems(result)
+			.count(count)
 			.build();
 	}
 }

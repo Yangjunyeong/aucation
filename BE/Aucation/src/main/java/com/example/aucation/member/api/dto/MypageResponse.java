@@ -26,11 +26,13 @@ public class MypageResponse {
 
 	private int totalPage;
 
+	private long count;
+
 	private List<MypageItemsResponse> mypageItems;
 
 	@Builder
 	public MypageResponse(String memberNickname, Role memberRole, String memberDetail, String imgURL, int memberPoint,
-		int currentPage, int totalPage, List<MypageItemsResponse> mypageItems) {
+		int currentPage, int totalPage, List<MypageItemsResponse> mypageItems,long count) {
 		this.memberNickname = memberNickname;
 		this.memberRole = memberRole;
 		this.memberDetail = memberDetail;
@@ -39,5 +41,6 @@ public class MypageResponse {
 		this.currentPage = currentPage;
 		this.totalPage = totalPage;
 		this.mypageItems = mypageItems;
+		this.count=count;
 	}
 }

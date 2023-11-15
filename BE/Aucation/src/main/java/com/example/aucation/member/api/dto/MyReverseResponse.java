@@ -24,13 +24,14 @@ public class MyReverseResponse {
 	private int currentPage;
 
 	private int totalPage;
+	private long count;
 
 	private List<MyReverseItemsResponse> MypageItems;
 
 	@Builder
 	public MyReverseResponse(String memberNickname, Role memberRole, String memberDetail, String imgURL,
 		int memberPoint,
-		int currentPage, int totalPage, List<MyReverseItemsResponse> mypageItems) {
+		int currentPage, int totalPage, List<MyReverseItemsResponse> mypageItems,long count) {
 		this.memberNickname = memberNickname;
 		this.memberRole = memberRole;
 		this.memberDetail = memberDetail;
@@ -39,5 +40,6 @@ public class MyReverseResponse {
 		this.currentPage = currentPage;
 		this.totalPage = totalPage;
 		MypageItems = mypageItems;
+		this.count=count;
 	}
 }
