@@ -1,6 +1,6 @@
 import Image from "next/image";
 import AuthForm from "./components/AuthForm";
-import logo2 from "@/app/images/logo2.png";
+import logo2 from "@/app/images/aucation_logo.png";
 
 export default function Home() {
   return (

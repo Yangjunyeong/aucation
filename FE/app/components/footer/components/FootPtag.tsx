@@ -5,7 +5,7 @@ interface OwnProps {
 }
 
 const FootPtag: React.FC<OwnProps> = ({ children }) => {
-  return <p className="mb-4">{children}</p>;
+  return <p className="mb-4 text-customBasic">{children}</p>;
 };
 
 export default FootPtag;

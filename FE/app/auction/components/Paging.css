@@ -1,8 +1,9 @@
 .pagination {
   display: flex;
   justify-content: center;
-  margin-top: 15px;
-  margin-bottom: 40px;
+  margin-top: 50px;
+  margin-bottom: 100px;
+  gap: 5px;
 }
 
 ul {
@@ -14,13 +15,11 @@ ul.pagination li {
   display: inline-block;
   width: 50px;
   height: 50px;
-  border: 1px solid #e2e2e2;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 1.2rem; /* 글꼴 크기 증가 */
   cursor: pointer;
-  margin-right: 5px;
 }
 
 ul.pagination li:first-child {
@@ -33,8 +32,8 @@ ul.pagination li:last-child {
 
 ul.pagination li {
   text-decoration: none;
-  color: #337ab7;
-  font-size: 1.5rem;
+  color: #646C76;
+  font-size: 1.35rem;
 }
 
 ul.pagination li.active a {
@@ -42,7 +41,8 @@ ul.pagination li.active a {
 }
 
 ul.pagination li.active {
-  background-image: linear-gradient(170deg, #5bf, #51f);
+  background-color: #247eff;
+  border-radius: 9999px;
 }
 
 ul.pagination li:hover {
@@ -50,7 +50,7 @@ ul.pagination li:hover {
 }
 
 ul.pagination li a.active {
-  color: blue;
+  color: #F8F9FB;
 }
 
 .page-selection {

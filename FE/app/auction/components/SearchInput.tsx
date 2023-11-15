@@ -30,23 +30,23 @@ const SearchInput: React.FC<OwnProps> = ({ searchHandler, setSearchKeyword }) =>
 
   return (
     <div
-      className={`flex space-x-2 border-2 rounded-3xl px-4 py-2
-      ${isFocused ? "border-sky-500 ring-2 ring-sky-200 ring-opacity-50" : "border-customGray"} 
-      items-center 
+      className={`flex space-x-2 border rounded-3xl px-4 py-2
+      ${isFocused ? "border-sky-500 ring-2 ring-sky-200 ring-opacity-50" : "border-customGray border"} 
+      items-center border
       `}
     >
       <input
         value={inputValue}
         onChange={e => setInputValue(e.target.value)}
         placeholder="검색어를 입력하세요"
-        className="focus:outline-none "
+        className="focus:outline-none"
         onFocus={() => setIsFocused(true)} // input에 focus가 되면 isFocused를 true로 설정
         onBlur={() => setIsFocused(false)} // input에서 focus가 사라지면 isFocused를 false로 설정
         onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
           enterSearchClick(e);
         }}
       />
-      <div onClick={handleSearchClick} className=" hover:cursor-pointer">
+      <div onClick={handleSearchClick} className=" hover:cursor-pointer text-customGray">
         <FiSearch size={25} />
       </div>
     </div>

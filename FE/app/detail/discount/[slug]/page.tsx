@@ -75,7 +75,7 @@ const DiscountDetail = () => {
 
   if (dataList) {
     return (
-      <div className="w-full  px-80 py-20" style={{ backgroundColor: "var(--c-white)" }}>
+      <div className="w-full  px-72 py-20" >
         {/* 좋아요 버튼 및 뒤로가기 버튼 */}
         <div className="flex justify-between">
           <BackBtn />
@@ -89,7 +89,8 @@ const DiscountDetail = () => {
         <div className="mt-10">
           <p>{}</p>
           <h2 className="text-4xl font-bold">{dataList.discountTitle}</h2>
-          {dataList.discountType}
+          <span className="text-customBlue">할인</span>
+          <span className="text-customLightTextColor ml-3">{dataList.discountType}</span>
         </div>
         {/* 경매자 프로필 및 경매참여 인원, 경매까지 시간 */}
         <div className="flex mt-10">
@@ -105,15 +106,15 @@ const DiscountDetail = () => {
             <div className="flex items-center">
               <HiBuildingStorefront size={30} />
               &nbsp;
-              <h3 className="text-xl font-thin text-black">소상공인</h3>
+              <h3 className="text-xl font-normal">소상공인</h3>
             </div>
             <div>
               <h2 className="text-2xl font-bold">{dataList.ownerName}</h2>
             </div>
           </div>
           <div className="flex-1 flex justify-end items-end">
-            <div className="mr-7 flex">{dataList.auctionCurCnt}</div>
-            <h3 className="text-1xl font-thin ">
+            {/* <div className="mr-7 flex">{dataList.auctionCurCnt}</div> */}
+            <h3 className="font-normal">
               <DiscountDown
                 stateHandler={stateHandler}
                 currentTime={dataList.discountCur}
@@ -125,12 +126,12 @@ const DiscountDetail = () => {
         <div className="border-t-2 border-gray-400 mt-10"></div>
 
         {/* 상품 이미지 및 지도 */}
-        <div className="flex flex-row mt-5">
-          <div className="flex flex-1 flex-col">
+        <div className="flex flex-row mt-8 gap-3">
+          <div className="flex flex-col w-full">
             <h2 className="text-2xl text-left mb-5">상품사진</h2>
             <DetailCarousel imglist={dataList.discountImgURL} />
           </div>
-          <div className="flex flex-1 flex-col">
+          <div className="flex flex-col w-full">
             <h2 className="text-2xl text-left mb-5">거래 위치(협의가능)</h2>
             <StayMap inputLag={dataList.discountLng} inputLat={dataList.discountLat} />
           </div>
@@ -145,20 +146,19 @@ const DiscountDetail = () => {
 
         {/* 입찰버튼 */}
         <div
-          className="fixed bottom-4 right-4 rounded-lg text-white flex items-center gap-2 p-6 shadow-2xl shadow-black text-[22px] mr-64 mb-8 z-50"
-          style={{
-            backgroundColor: "var(--c-blue)",
-          }}
+          className="fixed bottom-4 right-4 rounded-xl flex items-center gap-2 p-6  
+          text-[22px] mr-64 mb-8 z-50 bg-custom-btn-gradient hover:bg-custom-btn-gradient-hover hover:cursor-pointer shadow-xl"
+
         >
-          <MdPayment size={32} color="#ffffff" />
-          <p className="text-2">입찰하러 가기</p>
+          <MdPayment size={32} color="#F8F9FB" />
+          <p className="text-2 text-customBasic">입찰하러 가기</p>
         </div>
 
         {/* 상품소개 */}
-        <div className="mt-40">
+        <div className="mt-12 mb-20">
           <h2 className="text-3xl font-bold">상품소개</h2>
           <div className="rounded-lg flex flex-row items-center p-6 bg-gray-100 border border-gray-400 mt-6">
-            <h2 className="text-1xl font-sans">{dataList.discountDetail}</h2>
+            <h2 className="text-1xl font-sans text-customLightTextColor">{dataList.discountDetail}</h2>
           </div>
         </div>
 

@@ -5,7 +5,7 @@ import GrayPtag from "./components/GrayPtag";
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-customGray text-white py-10 px-48">
+    <footer className="bg-customGray text-white py-20 px-14">
       <div className="flex flex-row space-x-32">
         <Link href={"/"}>
           <h1 className="text-6xl  font-bold">AUCATION</h1>
@@ -28,7 +28,7 @@ const Footer: React.FC = () => {
           <GrayPtag>위치기반서비스 이용약관</GrayPtag>
         </div>
       </div>
-      <div className="border-t-2 border-customGray m-8 "></div>
+      <div className="border-t-2 border-customGray my-8"></div>
       <div className="flex flex-row space-x-16">
         <div className="grid grid-cols-1 gap-y-1 text-xl">
           <GrayPtag>

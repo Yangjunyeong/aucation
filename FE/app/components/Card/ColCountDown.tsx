@@ -73,9 +73,9 @@ const CountDown: React.FC<StateCardProps> = ({ auctionStartTime, stateHandler, c
   }
 
   return (
-    <span className="flex w-[200px] justify-end">
+    <span className="flex w-full justify-end text-customLightTextColor">
       <div
-        className={clsx("flex mr-2 items-center",
+        className={clsx("flex mr-2 items-center font-medium",
           statusMessage == "종료"
             ? "text-red-500"
             : statusMessage == "경매종료"
@@ -85,12 +85,12 @@ const CountDown: React.FC<StateCardProps> = ({ auctionStartTime, stateHandler, c
       >
         {statusMessage}
       </div>
-      <div className="flex font-bold text-xl">
+      <div className="flex font-medium">
 
         {days > 0 && <div>{days}:</div>}
         {(days > 0 || hours > 0) && <div>&nbsp;{hours}&nbsp;:</div>}
         {(days > 0 || hours > 0 || minutes > 0) && <div>&nbsp;{minutes}&nbsp;:</div>}
-        {nowtime <= endTime && <div className="font-semibold">&nbsp;{seconds} 전</div>}
+        {nowtime <= endTime && <div className="font-medium">&nbsp;{seconds} 전</div>}
       </div>
     </span>
   );

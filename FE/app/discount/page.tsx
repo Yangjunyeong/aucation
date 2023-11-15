@@ -88,11 +88,11 @@ const DiscountList = () => {
 
   return (
     <div className="px-48 ">
-      <div className="flex flex-row space-x-10 h-[100px] items-center">
+      <div className="flex flex-row space-x-10 h-[100px] items-center mt-10">
         <div className="font-black text-5xl">소상공인 할인제품</div>
       </div>
 
-      <div className="flex flex-row h-[75px] items-center justify-between mb-7">
+      <div className="flex flex-row h-[75px] items-center justify-between mb-7 mt-2">
         <div className="flex flex-row space-x-8">
           <DropdownButton
             options={localCategoryList}

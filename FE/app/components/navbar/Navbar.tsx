@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Star from "@/app/images/Star.png";
+import Logo from "@/app/images/aucation_logo.png";
+
 import { useRouter } from "next/navigation";
 import NavBtn from "../button/MainBtn";
 import { useRecoilState } from "recoil";
@@ -48,49 +50,49 @@ const Navbar: React.FC = () => {
   return (
     <div>
       {check && (
-        <div className="w-full h-28 flex flex-row items-center sticky top-0 z-50 bg-white px-48">
+        <div className="w-full h-28 flex flex-row items-center sticky top-0 z-50 bg-customBasic px-48 border-b border-customLightBlue">
           <div className="w-1/3 ">
-            <Link href={`/`} className="flex flex-row items-center">
-              <Image src={Star} alt="별" width={40} height={40} />
-              {/* <p className="font-bold text-4xl pl-3">Aucation</p> */}
-              <Image src={logo2} alt="Aucation" width={220} height={130} />
+            <Link href={`/`} className="flex flex-row">
+
+              <Image src={Logo} alt="로고" className="object-contain" />
+              
             </Link>
           </div>
-          <div className="flex flex-row w-auto">
+          <div className="flex flex-row w-auto gap-8 ml-8">
             <Link
               href={`/auction/holding`}
-              className={`ml-14 text-27px whitespace-nowrap flex items-center font-semibold hover:underline`}
+              className={`text-22px whitespace-nowrap flex items-center font-semibold hover:text-customLightTextColor`}
             >
               경매 상품
             </Link>
             <Link
               href={`/discount`}
-              className="ml-14 text-27px whitespace-nowrap flex items-center hover:underline font-semibold"
+              className="text-22px whitespace-nowrap flex items-center hover:text-customLightTextColor font-semibold"
             >
               할인 상품
             </Link>
           </div>
-          <div className="flex flex-row-reverse  justify-start w-full ">
+          <div className="flex flex-row-reverse  justify-start w-full gap-8">
             <Link href={auth.isLoggedIn ? "/panmae" : "/login"}>
-              <NavBtn className="ml-14 px-4">경매 올리기</NavBtn>
+              <NavBtn className="px-4">경매 올리기</NavBtn>
             </Link>
 
             {auth.isLoggedIn ? (
               <a
                 onClick={handleLogout}
-                className="ml-14 text-2xl flex items-center hover:underline cursor-pointer"
+                className="text-22px flex items-center hover:text-customLightTextColor cursor-pointer"
               >
                 로그아웃
               </a>
             ) : (
-              <Link href={`/login`} className="ml-14 text-2xl flex items-center hover:underline">
+              <Link href={`/login`} className="text-22px flex items-center hover:text-customLightTextColor">
                 로그인
               </Link>
             )}
 
             <Link
               href={auth.isLoggedIn ? "/mypage" : "/login"}
-              className="ml-14 text-2xl flex items-center hover:underline"
+              className="text-22px flex items-center hover:text-customLightTextColor"
             >
               마이페이지
             </Link>

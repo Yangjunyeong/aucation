@@ -130,7 +130,7 @@ const AuctionDetail = () => {
   }, []);
 
   return (
-    <div className="w-full  px-80 py-20" style={{ backgroundColor: "var(--c-white)" }}>
+    <div className="w-full  px-72 py-20" >
       {data && (
         <>
           {/* 좋아요 버튼 및 뒤로가기 버튼 */}

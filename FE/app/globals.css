@@ -10,11 +10,12 @@
 
 html {
   height: 100%;
-  width: 1920px;
+  width: 100vw;
 }
 
 body {
   height: 100%;
+  color: #1e1e1e;
 }
 
 ::-webkit-scrollbar {

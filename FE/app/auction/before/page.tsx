@@ -116,7 +116,7 @@ const AuctionList = ({ params }: { params: PageParams }) => {
 
   return (
     <div className="px-48 ">
-      <div className="flex flex-row space-x-10 h-[100px] items-center">
+      <div className="flex flex-row space-x-10 h-[100px] items-center mt-10">
         <div className="font-black text-5xl">경매 상품</div>
         {tapList.map((tap: string, idx) => (
           <HeaderTap
@@ -128,8 +128,8 @@ const AuctionList = ({ params }: { params: PageParams }) => {
         ))}
       </div>
 
-      <div className="flex flex-row h-[75px] items-center justify-between mb-7">
-        <div className="flex flex-row space-x-8">
+      <div className="flex flex-row h-[75px] items-center justify-between mb-7 mt-2">
+        <div className="flex flex-row gap-5">
           <DropdownButton
             options={localCategoryList}
             selectedOption={selectedCategory}
@@ -146,7 +146,7 @@ const AuctionList = ({ params }: { params: PageParams }) => {
           ))}
         </div>
 
-        <div className="flex flex-row space-x-8">
+        <div className="flex flex-row gap-5">
           <DropdownButton
             options={searchTypeList.map(st => st.typeName)}
             selectedOption={searchType.typeName}
