@@ -301,7 +301,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			return qAuction.owner.id.eq(member.getId())
 				.and(qReAuctionBid.isNotNull())
 				.and(qAuctionHistory.isNotNull().and(qAuctionHistory.historyStatus.eq(HistoryStatus.BEFORE_CONFIRM)))
-				.and(qAuction.auctionEndPrice.eq(-1))
+				.and(qAuction.auctionEndPrice.ne(-1))
 				.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
 
 		} else if ("경매종료".equals(auctionStatus)) {
