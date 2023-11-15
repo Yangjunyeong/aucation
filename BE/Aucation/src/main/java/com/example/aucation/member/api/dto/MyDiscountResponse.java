@@ -26,10 +26,12 @@ public class MyDiscountResponse {
 
 	private List<MyDiscountItemsResponse> mypageItems;
 
+	private long count;
+
 	@Builder
 	public MyDiscountResponse(String memberNickname, Role memberRole, String memberDetail, String imgURL,
 		int memberPoint,
-		int currentPage, int totalPage, List<MyDiscountItemsResponse> mypageItems) {
+		int currentPage, int totalPage, List<MyDiscountItemsResponse> mypageItems,long count) {
 		this.memberNickname = memberNickname;
 		this.memberRole = memberRole;
 		this.memberDetail = memberDetail;
@@ -38,5 +40,6 @@ public class MyDiscountResponse {
 		this.currentPage = currentPage;
 		this.totalPage = totalPage;
 		this.mypageItems = mypageItems;
+		this.count =count;
 	}
 }
