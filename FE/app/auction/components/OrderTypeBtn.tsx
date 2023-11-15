@@ -9,18 +9,18 @@ interface OwnProps {
 
 const OrderTypeBtn: React.FC<OwnProps> = ({ orderType, selectedOrderType, setOrderType }) => {
   return (
-    <div
+    <div 
       onClick={() => {
         setOrderType(orderType);
       }}
       className={clsx(
-        "text-xl font-semibold",
-        "border-2",
+        "text-xl",
+        "border",
         "border-customGray",
         "rounded-3xl px-4 py-2",
         "hover:cursor-pointer",
-        { "text-white bg-custom-btn-gradient": selectedOrderType },
-        { " text-black bg-cutomBasic hover:bg-customBgLightBlue": !selectedOrderType }
+        { "text-customBlue border-customBlue": selectedOrderType },
+        { " text-customGray bg-cutomBasic hover:text-customBlue hover:border-customBlue": !selectedOrderType }
       )}
     >
       {orderType.typeName}

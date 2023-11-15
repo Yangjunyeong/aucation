@@ -34,7 +34,13 @@ const config: Config = {
       },
       borderColor: {
         customGray: "#9EA6B2",
+        customBlue: "#247eff",
+        customLightBlue : "#D4E0FF",
       },
+      ringColor:{
+        customBlue : "#247eff",
+        customLightBlue : "#D4E0FF",
+      },  
       fontSize: {
         "27px": "27px",
       },

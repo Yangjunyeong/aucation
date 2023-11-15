@@ -9,22 +9,23 @@ const Button: React.FC<ButtonProps> = ({ onClick, children }) => {
   return (
     <div
       className="
-        bg-sky-100
-        hover:bg-sky-200
+        bg-customBgLightBlue
+        hover:brightness-95
         rounded-md
         ring-1
         ring-inset
-        ring-blue-200
-        h-14
+        ring-customLightBlue
+        w-1/5
         p-4
         inline-block
-        w-[20%]
         text-center
         align-middle
-    "
-    >
+        "
+      // w-[20%]
+      // h-14
+        >
       <button onClick={onClick}>
-        <p className="mx-auto">{children}</p>
+        <p className="mx-auto break-keep">{children}</p>
       </button>
     </div>
   );

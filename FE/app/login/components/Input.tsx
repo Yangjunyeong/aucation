@@ -30,8 +30,8 @@ const Input: React.FC<InputProps> = ({
     }
   };
   return (
-    <div className="w-full">
-      <div className="">
+    <div className="w-full h-14">
+      <div className="h-full">
         <input
           value={value}
           onChange={onChange}
@@ -50,13 +50,13 @@ const Input: React.FC<InputProps> = ({
             shadow-sm
             ring-1
             ring-inset
-            ring-blue-200
+            ring-customLightBlue
             placeholder:text-gray-400
             focus:ring-2
             focus:ring-inset
             focus:ring-sky-200
             
-            h-14`,
+            h-full  `,
             verify ? "ring-blue-200" : "ring-red-400"
           )}
         />

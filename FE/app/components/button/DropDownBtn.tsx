@@ -39,14 +39,14 @@ const DropdownButton: React.FC<Props> = ({ options, selectedOption, setSelectedO
       onClick={() => setIsShowToggle(!isShowToggle)}
       ref={dropdownRef}
       className={clsx(
-        "text-xl font-semibold border-2 rounded-3xl px-4 py-2 hover:cursor-pointer flex flex-row items-center space-x-2 relative",
+        "text-customLightTextColor text-xl border rounded-3xl px-4 py-2 hover:cursor-pointer flex flex-row items-center space-x-2 relative",
         {
           "border-customGray": !isShowToggle,
           "border-sky-500 ring-2 ring-sky-200 ring-opacity-50": isShowToggle,
         }
       )}
     >
-      <p>{selectedOption}</p>
+      <p className="text-customBlue">{selectedOption}</p>
       <LuTriangle
         className={`transition-transform duration-300 ease-in-out transform ${
           isShowToggle ? "" : "rotate-180"

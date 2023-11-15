@@ -48,7 +48,7 @@ const Navbar: React.FC = () => {
   return (
     <div>
       {check && (
-        <div className="w-full h-28 flex flex-row items-center sticky top-0 z-50 bg-customBasic px-48">
+        <div className="w-full h-28 flex flex-row items-center sticky top-0 z-50 bg-customBasic px-48 border-b border-customLightBlue">
           <div className="w-1/4 ">
             <Link href={`/`} className="flex flex-row">
 
