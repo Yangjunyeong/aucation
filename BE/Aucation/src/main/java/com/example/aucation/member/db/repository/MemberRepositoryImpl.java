@@ -337,6 +337,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qDiscount.address.zipcode.as("zipcode"),
 					qDiscount.address.street.as("street"),
 					qDiscount.discountUUID.as("discountUUID"),
+					qDiscount.createdAt.as("registerDate"),
 					new CaseBuilder()
 						.when(
 							JPAExpressions.selectOne()
