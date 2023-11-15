@@ -217,7 +217,7 @@ public class MemberService {
 		}
 	}
 
-	private void validateMemberEmail(String memberEmail) {
+	public void validateMemberEmail(String memberEmail) {
 		if (memberRepository.existsByMemberEmail(memberEmail)) {
 			throw new DuplicateException(ApplicationError.DUPLICATE_MEMBER_EMAIL);
 		}
