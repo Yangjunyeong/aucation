@@ -204,7 +204,7 @@ const Panmae = () => {
     if (!accessToken) {
       router.push("/login");
     }
-  }, [router]);
+  }, [auth, router]);
 
   return (
     <div className="w-full px-60 py-20">
