@@ -15,9 +15,10 @@ const config: Config = {
         "custom-btn-gradient": "linear-gradient(170deg, #6BA8FF, #247EFF)",
         "custom-btn-gradient-hover": "linear-gradient(170deg, #3467F9, #3467F9)",
         "custom-btn-gradient-red": "linear-gradient(170deg, #f43, #f15)",
-        "custom-btn-gradient-red-hover": "linear-gradient(170deg, #8b0000, #e74c3c)",
+        "custom-btn-gradient-red-hover": "linear-gradient(170deg, #8b0000, #8b0000)",
         "highlight-effect": "linear-gradient(180deg, transparent, transparent, var(--custom-bg-lightblue))",
         "blue-gradient": "linear-gradient(170deg, #0033CC, #33599CC)",
+        "lightblue-highlight" : "linear-gradient(to top, #D4E0FF 50%, transparent 50%)",
       },
       backgroundColor: {
         customBasic: "#F8F9FB", // 커스텀 기본 색

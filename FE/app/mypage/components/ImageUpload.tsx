@@ -30,12 +30,13 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageUpload, imageURL }) =>
 
   return (
     <div className="relative w-[310px] h-[310px]">
+       {/* w-[310px] h-[310px] */}
       <label htmlFor="img_file">
         <Image
           src={images || defaultprofile}
           layout="fill"
           alt="이미지 등록"
-          className="hover:cursor-pointer"
+          className="hover:cursor-pointer object-fill"
         />
         <input
           type="file"

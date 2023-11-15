@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Star from "@/app/images/Star.png";
 import { MdCancel } from "react-icons/md";
+import { TbPigMoney } from "react-icons/tb";
+
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -110,12 +112,11 @@ const PaymentModal: React.FC<ModalProps> = ({ isOpen, onClose, cash }) => {
       className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center"
       onClick={onBackGruondClick}
     >
-      <div className="bg-white p-8 w-[30%] h-[60%] rounded-md shadow-lg z-50">
-        <div className="w-full text-4xl font-extrabold flex justify-center space-x-4 mb-16">
-          <Image src={Star} alt={"별"} className="h-8 w-auto" />
-          <p>옥케머니 충전하기</p>
+      <div className="bg-white p-10 w-[700px] rounded-xl shadow-lg z-50">
+        <div className="w-full text-3xl font-bold flex justify-center space-x-4 mb-16">
+          <TbPigMoney className=" text-customBlue bg-customBgLightBlue rounded-full w-[50px] h-[50px]"/> <p className="bg-lightblue-highlight">옥케머니 충전하기</p>
         </div>
-        <div className="w-full h-10 text-3xl font-extrabold flex items-center space-x-4 mb-16">
+        <div className="w-full h-10 text-xl flex place-content-center space-x-4 mb-16">
           <div className="h-12 w-12">
             <Image
               layout="responsive"
@@ -128,11 +129,11 @@ const PaymentModal: React.FC<ModalProps> = ({ isOpen, onClose, cash }) => {
           </div>
 
           <p>
-            카카오 페이<span className="text-customLightTextColor">로 결제하기</span>{" "}
+            <span className="font-semibold">카카오 페이</span><span className="text-customLightTextColor">로 결제하기</span>{" "}
           </p>
         </div>
 
-        <div className="pr-5 flex">
+        <div className=" flex">
           <input
             type="text"
             value={formattedAmount === "" ? "" : formattedAmount}
@@ -142,37 +143,37 @@ const PaymentModal: React.FC<ModalProps> = ({ isOpen, onClose, cash }) => {
             onFocus={onFocusHandler}
             // onKeyDown={handleKeyDown}
             placeholder="금액을 입력하세요"
-            className="text-2xl focus:outline-none focus:border-blue-500 border-b-2 border-customGray w-full"
+            className="focus:outline-none focus:border-blue-500 border-b-2 border-customGray w-full"
           />
-          <div onClick={() => setAmount(0)} className="w-5 h-full ml-2 text-3xl cursor-pointer">
+          <div onClick={() => setAmount(0)} className="w-5 h-full ml-2 text-2xl cursor-pointer text-customLightTextColor  ">
             <MdCancel />
           </div>
         </div>
 
-        <div className=" w-full mt-12 grid grid-cols-5">
+        <div className=" w-full mt-12 grid grid-cols-5 gap-2">
           {buttonNum.map(item => (
             <div
               key={item.num}
               onClick={() => addButtonHandler(item.num)}
-              className="flex justify-center items-center border-2 py-5 cursor-pointer hover:border-none hover:border-sky-500 hover:ring-8 hover:ring-sky-200 hover:ring-opacity-100"
+              className="text-customGray flex justify-center items-center rounded-full border-2 py-3 cursor-pointer hover:border-none hover:border-sky-500 hover:ring-8 hover:ring-sky-200 hover:ring-opacity-100"
             >
               {item.formatNum}
             </div>
           ))}
         </div>
 
-        <div className="flex mt-10 justify-evenly">
+        <div className="flex mt-10 justify-end gap-3">
           <div
-            className="flex items-center justify-center w-[30%] border-2 text-3xl cursor-pointer text-white bg-custom-btn-gradient hover:bg-custom-btn-gradient-hover py-6"
+            onClick={onClose}
+            className="w-[100px] text-center cursor-pointer text-customLightTextColor rounded-full border-2 py-3"
+          >
+            취소
+          </div>
+          <div
+            className="text-center w-[100px] cursor-pointer text-customBasic rounded-full bg-customBgBlue hover:bg-custom-btn-gradient-hover py-3"
             onClick={cashHandler}
           >
             결제
-          </div>
-          <div
-            onClick={onClose}
-            className="flex items-center justify-center w-[30%] border-2 text-3xl cursor-pointer text-white bg-custom-btn-gradient-red hover:bg-custom-btn-gradient-red-hover py-6"
-          >
-            취소
           </div>
         </div>
       </div>

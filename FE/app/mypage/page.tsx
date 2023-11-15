@@ -440,50 +440,52 @@ const MyPage: NextPage = () => {
         {/* 프로필 영역 */}
         {/* 결제 */}
         <div>
-          <div className="border-t-2 border-gray-400"></div>
-          <div className="flex">
+          <div className="border-t border-customGray"></div>
+          <div className="flex gap-6 ">
             {/* 이미지 업로드 */}
-            <label htmlFor="img_file">
+            <label htmlFor="img_file" className="">
               <ImageUpload onImageUpload={handleImageUpload} imageURL={images} />
             </label>
             {/* 사용자 이름, 정보 업데이트 */}
-            <div className="flex-col ml-10">
-              <div className="flex h-[75px]">
-                <span className="flex items-center w-[50px]">
-                  {isShop == "SHOP" ? (
-                    <HiBuildingStorefront size={40} />
-                  ) : (
-                    <BsPersonFill size={40} />
-                  )}
-                </span>
-                {/* 유저네임/ 유저네임 인풋 */}
-                <div className="flex text-2xl ml-3 items-center font-semibold w-[240px] whitespace-nowrap overflow-hidden text-ellipsis">
-                  {!usernameUpdate && <div className="font-bold">{username}</div>}
-                  {usernameUpdate && (
-                    <ProfileInput value={username} onChange={handleUsernameChange} size="medium" />
-                  )}
+            <div className="flex-col w-full">
+              <div className="flex mt-5 w-full place-content-between">
+                <div className="flex gap-5">
+                  <span className="flex items-center w-[50px]">
+                    {isShop == "SHOP" ? (
+                      <HiBuildingStorefront size={40} />
+                    ) : (
+                      <BsPersonFill size={40} />
+                    )}
+                  </span>
+                  {/* 유저네임/ 유저네임 인풋 */}
+                  <div className="flex text-lg max-w-[200px] items-center align-bottom">
+                    {!usernameUpdate && <div className="font-bold whitespace-nowrap overflow-hidden text-ellipsis">{username}</div>}
+                    {usernameUpdate && (
+                      <ProfileInput value={username} onChange={handleUsernameChange} size="medium" />
+                    )}
+                  </div>
+                  {/* 수정버튼 */}
+                  <div className="flex items-center">
+                    {!usernameUpdate && (
+                      <UpdateBtn onUpdate={handleUsernameUpdate} buttonText="수정하기" />
+                    )}
+                    {usernameUpdate && (
+                      <div className="flex">
+                        <UpdateBtn onUpdate={handleNameUpdateConfirm} buttonText="확인" />
+                      </div>
+                    )}
+                  </div>
                 </div>
-                {/* 수정버튼 */}
-                <div className="flex items-center ml-4">
-                  {!usernameUpdate && (
-                    <UpdateBtn onUpdate={handleUsernameUpdate} buttonText="수정하기" />
-                  )}
-                  {usernameUpdate && (
-                    <div className="flex w-[130px]">
-                      <UpdateBtn onUpdate={handleNameUpdateConfirm} buttonText="확인" />
-                    </div>
-                  )}
-                </div>
-                {/* 소상공인 인증 */}
 
+                {/* 소상공인 인증 */}
                 {isShop !== "SHOP" ? (
-                  <div className="flex ml-[200px] text-xl items-center">
+                  <div className="flex items-center">
                     소상공인 이신가요? &nbsp;
                     <Link
                       href={"/mypage"}
-                      className="text-customLightTextColor text-lg hover:underline"
+                      className="text-customBlue text-lg hover:underline"
                     >
-                      <span className="text-xl underline font-bold" onClick={shopModalHandler}>
+                      <span className="text-customBlue font-bold" onClick={shopModalHandler}>
                         인증하기
                       </span>
                     </Link>
@@ -516,7 +518,7 @@ const MyPage: NextPage = () => {
               {/* 사용자 정보창 / 사용자 정보 업데이트창 */}
               <div>
                 {!userInfoUpdate && (
-                  <div className="text-xl pr-4 py-3 leading-[1.57] rounded-2xl h-[167px] w-[850px] whitespace-pre-wrap overflow-y-auto">
+                  <div className="pr-4 py-3 leading-[1.57] rounded-2xl h-[167px] w-4/5 break-all whitespace-pre-wrap overflow-y-auto">
                     {info}
                   </div>
                 )}
@@ -536,14 +538,14 @@ const MyPage: NextPage = () => {
                     <UpdateBtn onUpdate={handleInfoUpdateConfirm} buttonText="확인" />
                   </div>
                 )}
-                <div className="flex text-xl">
+                <div className="flex text-lg">
                   내 포인트 :&nbsp;
                   <span className="font-bold">{myPoint.toLocaleString()}</span>&nbsp;
                   <span className="flex items-center" onClick={pointModalHandler}>
                     <BiWon size={25} />
                   </span>
                   <span
-                    className="cursor-pointer underline ml-6"
+                    className="cursor-pointer ml-6 text-customBlue font-bold"
                     onClick={() => setIsOpen(!isOpen)}
                   >
                     충전하기
@@ -553,7 +555,7 @@ const MyPage: NextPage = () => {
               <PaymentModal onClose={() => setIsOpen(false)} isOpen={isOpen} cash={cashHandler} />
             </div>
           </div>
-          <div className="border-t-2 border-gray-400 bottom-0"></div>
+          <div className="border-t border-customGray"></div>
 
           {/* 첫번째 카테고리 출력 및 클릭 효과 */}
           <div className="rounded-lg flex p-3 bg-gray-100 border border-gray-400 text-gray-700 mt-16 cursor-pointer">
@@ -573,9 +575,9 @@ const MyPage: NextPage = () => {
 
           {/* 2번째 카테고리 출력 및 클릭 시 저장 */}
           <div className="flex mt-20 gap-3 items-center">
-            <h2 className="font-semibold text-3xl w-[160px]">{category} 상품</h2>
+            <h2 className="font-semibold text-2xl">{category} 상품</h2>
             {/* 상품개수 바인딩 */}
-            <h2 className="text-red-600  text-4xl font-bold ml-2">
+            <h2 className="text-red-600  text-2xl font-bold ml-2">
               {dataList.mypageItems?.length}
             </h2>
             {/* 카테고리 - 판매/구매 */}
@@ -588,7 +590,7 @@ const MyPage: NextPage = () => {
                       selectedCategory={secondCategory!}
                       key={idx}
                       categoryHandler={secondCategoryHandler}
-                      css="border-2 ml-4 rounded-lg text-xl px-3 py-1 font-bold cursor-pointer transition-transform transform duration-300 hover:scale-110"
+                      css="border ml-4 rounded-xl text-lg px-3 py-1 cursor-pointer transition-transform transform duration-300 hover:scale-110"
                       dynamicCss={"second"}
                     />
                   ))}
@@ -596,7 +598,7 @@ const MyPage: NextPage = () => {
               )}
             </div>
           </div>
-          <div className="border-t-2 border-gray-400 bottom-0 mt-10"></div>
+          <div className="border-t border-customGray mt-10"></div>
           {/* 카테고리 - 상태값 ex) 경매전/ 중 / 완료  */}
 
           {/* 3번째 카테고리 출력 */}
@@ -628,22 +630,22 @@ const MyPage: NextPage = () => {
                   ))}
               </div>
               <div className="ml-4">
-                <span className="font-bold text-3xl ml-4 text-red-500">
+                <span className="font-bold text-xl ml-4 text-red-500">
                   {dataList.mypageItems.length}
                 </span>
-                {category !== "좋아요" && <span className="font-bold ml-2 text-3xl">개</span>}
+                {category !== "좋아요" && <span className="font-bold ml-2 text-xl">개</span>}
               </div>
             </div>
 
             {/* 솔트 */}
-            <div className="flex text-lg font-semibold text-center cursor-pointer">
+            <div className="flex text-lg font-semibold text-center cursor-pointer text-customGray">
               {itemsortList.map((item, idx) => (
                 <div key={idx}>
                   <div
                     className={clsx("text-lg", itemsort == item ? "font-bold text-customBlue" : "")}
                     onClick={() => itemSortHandler(item)}
                   >
-                    <span className="text-black">|</span>&nbsp;{item}&nbsp;
+                    <span>|</span>&nbsp;{item}&nbsp;
                   </div>
                 </div>
               ))}
