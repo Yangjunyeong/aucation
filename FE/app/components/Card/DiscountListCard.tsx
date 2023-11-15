@@ -46,7 +46,7 @@ const DiscountListCard: React.FC<CardProps> = ({ item, nowTime }) => {
     router.push(`/bid/${item.discountUUID}`);
   };
   return (
-    <div className=" overflow-hidden h-full w-full rounded-lg shadow-lg bg-white hover:ring-5 hover:ring-customLightBlue hover:ring-opacity-100">
+    <div className=" overflow-hidden h-full w-full rounded-lg shadow-lg bg-white hover:border-sky-500 hover:ring-8 hover:ring-sky-200 hover:ring-opacity-100">
       <div className="h-1/2 relative">
         <Image
           onClick={() => {
@@ -92,7 +92,7 @@ const DiscountListCard: React.FC<CardProps> = ({ item, nowTime }) => {
             }}
             className="cursor-pointer flex items-center justify-between font-extrabold text-2xl"
           >
-            <p className="h-[80px] overflow-hidden text-ellipsis break-all"> {item.discountTitle}</p>
+            <p className="max-h-[80px] overflow-hidden text-ellipsis break-all"> {item.discountTitle}</p>
           </div>
           <div className="text-base text-customGray">
             카테고리 {item.discountType}
@@ -132,7 +132,7 @@ const DiscountListCard: React.FC<CardProps> = ({ item, nowTime }) => {
         </div>  
 
         {/* 경매종료시간 */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between text-[16px]">
           <AuctionCountDown
             currentTime={nowTime!}
             auctionEndTime={item.discountEnd}

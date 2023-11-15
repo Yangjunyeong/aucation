@@ -74,7 +74,7 @@ const AuctionCountDown: React.FC<StateCardProps> = ({
   }
 
   return (
-    <span className="flex w-full justify-start">
+    <span className="flex w-full">
       <div
         className={clsx(
           "pr-2",

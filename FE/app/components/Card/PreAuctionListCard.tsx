@@ -61,47 +61,50 @@ const PreAuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
           </div>
         </div>
         {/* 본문 */}
-        <div className="h-1/2 px-3 py-1">
-          <div className="flex items-center justify-between h-1/6 text-customLightTextColor">
-            <p> 좋아요: {likeCount} 개</p>
+        <div className="h-1/2 px-3 py-2 flex flex-col place-content-between">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-customGray">좋아요 {likeCount} 개</p>
           </div>
 
-          <div
-            onClick={() => {
-              EnterDetail(item.auctionPk);
-            }}
-            className="cursor-pointer flex items-center justify-between h-1/5 font-extrabold text-2xl overflow-hidden"
-          >
-            <p> {item.auctionTitle}</p>
+          {/* 제목과 카테고리 */}
+          <div>
+            <div
+              onClick={() => {
+                EnterDetail(item.auctionPk);
+              }}
+              className="cursor-pointer flex items-center justify-between font-extrabold text-2xl overflow-hidden"
+            >
+              <p className="max-h-[80px] overflow-hidden text-ellipsis break-all"> {item.auctionTitle}</p>
+            </div>
+            <div className="text-base text-customGray">
+              카테고리 {item.auctionType}
+            </div>
           </div>
 
-          <div className="mt-2 text-base text-customLightTextColor mb-1">
-            카테고리: {item.auctionType}
-          </div>
 
-          <div className="flex items-center justify-between h-1/6 font-bold text-2xl">
+          <div className="flex items-center justify-between font-bold text-xl">
             <p>
               {" "}
-              시작가:{" "}
+              시작가{" "}
               <span className="text-customBlue">
                 {formatKoreanCurrency(item.auctionStartPrice)}
               </span>
             </p>
           </div>
 
-          <div className="flex items-center h-1/5 w-full border-2 rounded-3xl bg-customBgLightBlue text-lg">
+          <div className="flex items-center w-full rounded-3xl bg-customBgLightBlue py-[3px]">
             <div
-              className="bg-custom-btn-gradient flex items-center justify-center
-            h-full rounded-3xl w-[40%] text-white"
+              className="bg-customBgBlue flex items-center justify-center
+            h-full rounded-3xl w-[40%] text-white ml-1"
             >
               {item.auctionOwnerIsShop ? "소상공인" : "개인"}
             </div>
-            <div className=" flex items-center w-[60%] justify-start overflow-hidden flex-grow whitespace-nowrap px-2 ">
-              {item.auctionOwnerNickname}
+            <div className=" flex items-center w-[60%] justify-start overflow-hidden flex-grow whitespace-nowrap pl-[5px] ">
+            <p className="truncate">{item.auctionOwnerNickname}</p>
             </div>
           </div>
 
-          <div className="flex items-center justify-between h-1/6">
+          <div className="flex items-center justify-between text-[16px]">
             <AuctionCountDown
               currentTime={nowTime!}
               auctionEndTime={item.auctionStartTime}
