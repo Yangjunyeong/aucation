@@ -1,5 +1,6 @@
 package com.example.aucation.auction.api.controller;
 
+import com.example.aucation.auction.api.dto.AuctionConfirmRequest;
 import com.example.aucation.auction.api.dto.AuctionSortRequest;
 import java.io.IOException;
 import java.util.List;
@@ -69,6 +70,12 @@ public class AuctionController {
 	private ResponseEntity<?> likeAuction(@AuthorizedVariable Long memberPk, @PathVariable Long auctionPk) throws Exception {
 		auctionService.setLikeAuction(memberPk,auctionPk);
 		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/confirm")
+	private ResponseEntity<?> confirmReAuctionBid(@AuthorizedVariable Long memberPk,
+												  @RequestBody AuctionConfirmRequest request){
+		return ResponseEntity.ok().body(auctionService.confirmBid(memberPk,request));
 	}
 
 

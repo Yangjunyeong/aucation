@@ -338,11 +338,6 @@ public class AuctionBidService {
 		auction.updateAuctionToEnd(auctionBidList.get(topPrice).getBidPrice(), customer);
 		log.info("*********************** 경매 정보 저장 성공 !!");
 
-		Member owner = auction.getOwner();
-		owner.setMemberPoint(owner.getMemberPoint() + auctionBidList.get(topPrice).getBidPrice());
-
-		memberRepository.save(owner);
-
 		log.info("*********************** REDIS LOG DATA DELETE !!");
 		redisTemplate.delete(key);
 		log.info("*********************** REDIS LOG DATA DELETE DONE !!");
