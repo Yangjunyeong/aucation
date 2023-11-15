@@ -30,4 +30,5 @@ public class MyDiscountItemsResponse {
 	private LocalDateTime discountStart;
 	private String discountTitle;
 	private int discountRate;
+	private LocalDateTime registerDate;
 }
