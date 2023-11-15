@@ -61,7 +61,7 @@ const PriceBox: React.FC<PriceBoxProps> = ({
           </div>
         </>
       )}
-      {discountPer && (
+      {discountPer || discountPer == "0" && (
         <>
           <div className="border-l border-gray-400 h-20"></div>
           <div className="flex flex-col items-start flex-1 ml-10">

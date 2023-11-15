@@ -29,6 +29,7 @@ import MoonLoader from "react-spinners/MoonLoader";
 // 아이콘
 import { HiBuildingStorefront } from "react-icons/hi2";
 import { MdPayment } from "react-icons/md";
+import Link from "next/link";
 // 카운트
 const DiscountDetail = () => {
   const [dataList, setDataList] = useState<any>();
@@ -147,12 +148,15 @@ const DiscountDetail = () => {
 
         {/* 입찰버튼 */}
         <div
-          className="fixed bottom-4 right-4 rounded-xl flex items-center gap-2 p-6  
-          text-[22px] mr-64 mb-8 z-50 bg-custom-btn-gradient hover:bg-custom-btn-gradient-hover hover:cursor-pointer shadow-xl"
-
+          className="fixed bottom-4 right-4 rounded-lg text-white flex items-center gap-2 p-6 shadow-2xl shadow-black text-[22px] mr-64 mb-8 z-50 cursor-pointer"
+          style={{
+            backgroundColor: "var(--c-blue)",
+          }}
         >
+          <Link href={`/bid/${dataList.discountUUID}`} className="flex">
           <MdPayment size={32} color="#F8F9FB" />
-          <p className="text-2 text-customBasic">구매하기</p>
+            <p className="text-2">구매하러 가기</p>
+          </Link>
         </div>
 
         {/* 상품소개 */}

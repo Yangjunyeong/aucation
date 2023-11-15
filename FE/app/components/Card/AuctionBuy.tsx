@@ -1,17 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import nakchalImg from "@/app/images/nakchal.png";
 import sellfinish from "@/app/images/sellfinish.png";
-import chatImg from "@/app/images/chatImg.png";
 import LikeBtn from "../../detail/components/LikeBtn";
 import Image from "next/image";
 import clsx from "clsx";
 import { callApi } from "@/app/utils/api";
-import RowCountDown from "./RowCountDown";
-import Link from "next/link";
 import formatKoreanCurrency from "../../utils/formatKoreanCurrency";
-
+import { useRouter } from "next/navigation";
+import { BsChatRightDots } from "react-icons/bs";
+import { BiMap } from "react-icons/bi";
 interface ItemType {
   // 이미지
   imgfile: string;
@@ -60,7 +58,9 @@ interface ItemType {
 interface CardProps {
   item: ItemType;
 }
+
 const AuctionBuy: React.FC<CardProps> = ({ item }) => {
+  const router = useRouter();
   const [isLiked, setIsLiked] = useState<boolean>(item.isLike);
   const [prodType, setProdType] = useState<string>("0");
 
@@ -75,19 +75,28 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
         console.log("좋아요 실패", error);
       });
   };
-
+  const toDetail = () => {
+    router.push(`/detail/auction/${item.auctionPk}`);
+  };
+  const toChat = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    router.push(`dm/${item.auctionPk}/${prodType}`);
+  };
   return (
     <>
-      <div className="flex rounded-lg overflow-hidden shadow-lg bg-white w-[1280px] h-[280px] mt-12 hover:border border-blue-400">
+      <div className="flex rounded-lg overflow-hidden shadow-lg bg-white w-[1280px] h-[280px] mt-12 hover:border border-blue-400 cursor-pointer">
         {/* 카드 이미지 */}
         {item.auctionHistory == "AFTER_CONFIRM" ? (
           <div>
-            <div className="relative w-[300px] h-[270px]">
+            <div className="relative w-[300px] h-[280px]">
               <Image
                 layout="fill"
+                objectFit="cover"
+                objectPosition="center"
                 className="transition-transform transform duration-300 hover:scale-110"
                 src={item.imgfile}
                 alt={item.auctionTitle}
+                onClick={toDetail}
                 style={{ filter: "brightness(50%)" }}
               />
               <div className="absolute top-10 left-[25%]">
@@ -97,12 +106,15 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
           </div>
         ) : (
           <div>
-            <div className="relative w-[300px] h-[270px]">
+            <div className="relative w-[300px] h-[280px]">
               <Image
                 className="transition-transform transform duration-300 hover:scale-110"
                 src={item.imgfile}
                 layout="fill"
+                objectFit="cover"
+                objectPosition="center"
                 alt={item.auctionTitle}
+                onClick={toDetail}
                 style={{ filter: "brightness(50%)" }}
               />
               <div className="absolute top-3 right-4">
@@ -111,7 +123,7 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
             </div>
           </div>
         )}
-        <div className="w-[900px] ml-7">
+        <div className="w-[900px] ml-7" onClick={toDetail}>
           {/* 경매 상태 / 경매 마크 / 남은 시간 카운트*/}
           <div className="flex h-[60px] justify-between items-center">
             <div className="flex text-[22px] gap-4 font-bold">
@@ -120,28 +132,26 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
               </div>
               <div
                 className={clsx(
-                  "flex items-center rounded-lg",
-                  item.auctionHistory == "BEFORE_CONFIRM"
-                    ? "border-red-500 text-red-500"
-                    : "border-black text-black"
+                  "",
+                  item.auctionHistory == "BEFORE_CONFIRM" ? "text-blue-400" : "text-black"
                 )}
               >
                 {item.auctionHistory == "BEFORE_CONFIRM" ? "낙찰" : "구매완료"}
               </div>
             </div>
-            <div className="mr-16 text-xl">
+            <div className="text-xl">
               <span className="font-bold">등록일 :&nbsp;&nbsp;</span>
-              {item.registerDate.toLocaleString()}
+              {new Date(item.registerDate).toLocaleString()}
             </div>
           </div>
           {/* 카드 제목 */}
-          <div className="text-3xl h-[36px] font-bold mt-4 mr-20 whitespace-nowrap overflow-hidden text-ellipsis">
+          <div className="text-5xl h-[70px] font-bold mr-20 whitespace-nowrap overflow-hidden text-ellipsis">
             {item.auctionTitle}
           </div>
 
           {/* 판매자 */}
-          <div className="flex mt-3 text-[22px] font-semibold">
-            <div className="flex items-center">판매자 :&nbsp;</div>
+          {/* <div className="text-[24px] h-[50px] font-semibold">
+            <div className="flex items-center">판매자 페이</div>
             <div>
               <Link
                 href={`/other/${item.ownerNickname}`}
@@ -150,10 +160,10 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
                 <span className="text-3xl font-bold">{item.ownerNickname}</span>
               </Link>
             </div>
-          </div>
+          </div> */}
 
           {/* 경매 시작가 */}
-          <div className="text-xl mt-2">
+          <div className="text-[24px] h-[50px] font-semibold">
             경매 시작가 :{" "}
             <span className="text-2xl font-bold text-customBlue">
               {item.auctionStartPrice.toLocaleString()} <span className="text-black">원</span>
@@ -161,7 +171,7 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
           </div>
 
           {/* 낙찰일시 / 낙찰가 / 채팅 및 확정 버튼*/}
-          <div className="flex text-xl mt-3 mr-14 font-thin justify-between items-center">
+          <div className="flex h-[45px] text-[22px] font-sans justify-between items-center">
             {item.historyDatetime && (
               <div>
                 낙찰일시 :{" "}
@@ -172,7 +182,7 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
               낙찰가 :{" "}
               <span
                 className={clsx(
-                  "font-bold",
+                  "font-bold ml-1",
                   item.auctionHistory == "AFTER_CONFIRM" ? "text-customBlue" : "text-red-500"
                 )}
               >
@@ -180,14 +190,26 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
               </span>
               &nbsp;
             </div>
+          </div>
+          <div className="flex items-center h-[55px] justify-between">
+            <div className="flex">
+              <BiMap size={25} />
+              <span className="ml-2 text-[16px]">
+                {item.mycity}&nbsp;{item.street}&nbsp;{item.zipcode}
+              </span>
+            </div>
             <div className="flex gap-6">
-              {item.auctionHistory == "AFTER_CONFIRM" && (
-                <div className="flex border-2 px-4 py-1 rounded-lg">
-                  <Image width={22} height={10} src={chatImg.src} alt="chat" />{" "}
-                  <Link href={`dm/${item.auctionPk}/${prodType}`}>채팅</Link>
-                </div>
+              <div
+                className="flex items-center border-[0.1px] rounded-lg mb-8 border-gray-300 text-black text-2xl font-bold py-1 px-3 cursor-pointer"
+                onClick={toChat}
+              >
+                <BsChatRightDots size={22} />
+                <span className="ml-2">채팅</span>
+              </div>
+              {/* 확정 메서드 달아줘야함 ex)확정버튼 클릭 시 리디렉션 어디? */}
+              {item.auctionHistory == "BEFORE_CONFIRM" && (
+                <div className="border-2 px-3 mb-8 py-1 text-2xl rounded-lg">확정</div>
               )}
-              <div className="border-2 px-5 py-1 rounded-lg">확정</div>
             </div>
           </div>
         </div>
