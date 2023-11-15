@@ -11,11 +11,15 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import com.example.aucation.auction.api.dto.*;
+import com.example.aucation.auction.db.entity.AuctionHistory;
+import com.example.aucation.auction.db.repository.AuctionHistoryRepository;
 import com.example.aucation.common.dto.StreetResponse;
+import com.example.aucation.common.entity.HistoryStatus;
 import com.example.aucation.common.redis.db.repository.RedisRepository;
 import com.example.aucation.common.service.CommonService;
 import com.example.aucation.common.service.FCMService;
 import com.example.aucation.member.db.entity.Address;
+import com.example.aucation.reauction.api.dto.ReAuctionBidResponse;
 import com.example.aucation.reauction.api.service.ReAucBidPhotoService;
 import com.example.aucation.reauction.api.service.ReAuctionService;
 import com.example.aucation.reauction.db.repository.ReAuctionBidRepository;
@@ -54,7 +58,9 @@ import lombok.extern.slf4j.Slf4j;
 public class AuctionService {
 
 	private final StringRedisTemplate stringRedisTemplate;
+
 	private final ReAuctionService reAuctionService;
+
 	private final AuctionRepository auctionRepository;
 
 	private final MemberRepository memberRepository;
@@ -68,6 +74,8 @@ public class AuctionService {
 	private final CommonService commonService;
 
 	private final RedisRepository redisRepository;
+
+	private final AuctionHistoryRepository auctionHistoryRepository;
 	private final int COUNT_IN_PAGE = 15;
 
 
@@ -372,4 +380,44 @@ public class AuctionService {
 			.build();
 	}
 
+	public AuctionBidResponse confirmBid(Long memberPk, AuctionConfirmRequest request) {
+		log.info("********************** confirmBid start");
+		Auction auction = auctionRepository.findById(request.getAuctionPk())
+				.orElseThrow(()-> new NotFoundException(ApplicationError.NOT_EXIST_AUCTION));
+		Member member = memberRepository.findById(memberPk)
+				.orElseThrow(()->new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+
+		log.info("********************** 선택한 입찰 내역 확인 시도");
+		AuctionHistory auctionHistory = auctionHistoryRepository.findByAuction(auction)
+				.orElseThrow(()-> new NotFoundException(ApplicationError.NOT_EXIST_HISTORY));
+		log.info("********************** 선택한 입찰 내역 확인 완료");
+
+		log.info("********************** 선택한 입찰 내역 상태 확인 시도");
+		if(!auctionHistory.getHistoryStatus().equals(HistoryStatus.BEFORE_CONFIRM)){
+			throw new BadRequestException(ApplicationError.NOT_EXIST_HISTORY);
+		}
+		log.info("********************** 선택한 입찰 내역 상태 확인 완료");
+
+		log.info("********************** 입찰 내역 상태 변경 시도");
+		auctionHistory.updateToConfirm();
+		auctionHistoryRepository.save(auctionHistory);
+		log.info("********************** 입찰 내역 상태 변경 완료 DONE-TIME = {}",LocalDateTime.now());
+
+		log.info("********************** 경매 입찰 등록자 포인트 시도");
+
+		Member owner = auctionHistory.getOwner();
+		log.info("********************** owner ={}, point = {}",
+				owner.getMemberNickname(),owner.getMemberPoint());
+		owner.updatePoint(owner.getMemberPoint() + auction.getAuctionEndPrice());
+		memberRepository.save(owner);
+		log.info("********************** 경매 입찰 등록자 포인트 완료, customer ={}, point = {}",
+				owner.getMemberNickname(),owner.getMemberPoint());
+		log.info("********************** confirmBid end");
+		return AuctionBidResponse.builder()
+				.auctionPk(auction.getId())
+				.auctionTitle(auction.getAuctionTitle())
+				.auctionOwnerNickname(member.getMemberNickname())
+				.auctionConfirmPrice(auction.getAuctionEndPrice())
+				.build();
+	}
 }
