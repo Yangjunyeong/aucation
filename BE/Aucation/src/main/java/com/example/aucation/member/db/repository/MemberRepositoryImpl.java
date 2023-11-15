@@ -489,6 +489,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		JPAQuery<MyLikeItemsResponse> query = jpaQueryFactory
 			.select(
 				Projections.bean(MyLikeItemsResponse.class,
+					qAuction.auctionStartPrice.as("auctionStartPrice"),
 					qAuction.auctionStartDate.as("auctionStartDate"),
 					qAuction.auctionEndDate.as("auctionEndDate"),
 					qAuction.auctionStatus.as("auctionStatus"),
@@ -549,6 +550,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		JPAQuery<MyLikeItemsResponse> query = jpaQueryFactory
 			.select(
 				Projections.bean(MyLikeItemsResponse.class,
+					qDiscount.discountDiscountedPrice.as("auctionStartPrice"),
 					qDiscount.discountStart.as("auctionStartDate"),
 					qDiscount.discountEnd.as("auctionEndDate"),
 					qDiscount.discountTitle.as("auctionTitle"),
@@ -561,7 +563,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qDiscount.address.street.as("street"),
 					qDiscountHistory.historyStatus.as("historyStatus"),
 					qLikeDiscount.createdAt.as("likeDateTime"),
-					qPhoto.imgUrl.min().as("imgfile")
+					qDisPhoto.imgUrl.min().as("imgfile")
 				))
 			.from(qDiscount)
 			.leftJoin(qDisPhoto).on(qDisPhoto.discount.id.eq(qDiscount.id))
