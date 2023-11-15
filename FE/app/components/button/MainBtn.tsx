@@ -9,7 +9,7 @@ interface NavProps {
 const MainBtn: React.FC<NavProps> = ({ children, className }) => {
   return (
     <div // 색상은 아래서 bg 이 부분을 수정하세요
-      className={`bg-custom-btn-gradient text-customBasic py-3 rounded-full cursor-pointer ${className}`}
+      className={`bg-custom-btn-gradient hover:bg-custom-btn-gradient-hover text-customBasic py-3 rounded-full cursor-pointer ${className}`}
     >
       {children}
     </div>

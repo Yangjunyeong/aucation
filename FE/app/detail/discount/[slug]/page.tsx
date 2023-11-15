@@ -87,8 +87,9 @@ const DiscountDetail = () => {
 
         {/* 페이지 상단 타이틀 */}
         <div className="mt-10">
-          <p>{}</p>
           <h2 className="text-4xl font-bold">{dataList.discountTitle}</h2>
+        </div>
+        <div className="mt-3">
           <span className="text-customBlue">할인</span>
           <span className="text-customLightTextColor ml-3">{dataList.discountType}</span>
         </div>
@@ -151,14 +152,14 @@ const DiscountDetail = () => {
 
         >
           <MdPayment size={32} color="#F8F9FB" />
-          <p className="text-2 text-customBasic">입찰하러 가기</p>
+          <p className="text-2 text-customBasic">구매하기</p>
         </div>
 
         {/* 상품소개 */}
         <div className="mt-12 mb-20">
           <h2 className="text-3xl font-bold">상품소개</h2>
           <div className="rounded-lg flex flex-row items-center p-6 bg-gray-100 border border-gray-400 mt-6">
-            <h2 className="text-1xl font-sans text-customLightTextColor">{dataList.discountDetail}</h2>
+            <h2 className="text-1xl text-customLightTextColor">{dataList.discountDetail}</h2>
           </div>
         </div>
 

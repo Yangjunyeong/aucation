@@ -46,7 +46,7 @@ const DiscountListCard: React.FC<CardProps> = ({ item, nowTime }) => {
     router.push(`/bid/${item.discountUUID}`);
   };
   return (
-    <div className=" overflow-hidden h-full w-full rounded-lg shadow-lg bg-white hover:border-sky-500 hover:ring-8 hover:ring-sky-200 hover:ring-opacity-100">
+    <div className=" overflow-hidden h-full w-full rounded-lg shadow-lg bg-white hover:ring-5 hover:ring-customLightBlue hover:ring-opacity-100">
       <div className="h-1/2 relative">
         <Image
           onClick={() => {
@@ -64,15 +64,17 @@ const DiscountListCard: React.FC<CardProps> = ({ item, nowTime }) => {
         </div>
         <div
           onClick={() => EnterBid()}
-          className="rounded-lg absolute bottom-2 left-2 px-3 py-2 bg-customBgBlue hover:bg-custom-btn-gradient-hover text-white cursor-pointer border-1"
+          className="rounded-lg absolute bottom-2 left-2 px-3 py-2 bg-customBgBlue hover:bg-custom-btn-gradient-hover text-customBasic cursor-pointer"
         >
           바로입장
         </div>
       </div>
+
       {/* 본문 */}
-      <div className="h-1/2 px-3 py-2">
-        <div className="flex items-center justify-between text-customLightTextColor">
-          <p> 좋아요: {likeCount} 개</p>
+      <div className="h-1/2 px-3 py-2 flex flex-col place-content-between">
+        {/* 좋아요 */}
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-customGray"> 좋아요 {likeCount} 개</p>
           {/* <p>
             `
             {"reAuctionPk" in item
@@ -82,46 +84,55 @@ const DiscountListCard: React.FC<CardProps> = ({ item, nowTime }) => {
           </p> */}
         </div>
 
-        <div
-          onClick={() => {
-            EnterDetail(item.discountPk);
-          }}
-          className="cursor-pointer flex items-center justify-between h-[25%] font-extrabold text-2xl overflow-hidden"
-        >
-          <p> {item.discountTitle}</p>
-        </div>
-        <div className="text-base text-customLightTextColor mb-1">
-          카테고리: {item.discountType}
-        </div>
-
-        <div className="flex items-center justify-between mb-1 font-bold text-lg text-customLightTextColor ">
-          <p>
-            {" "}
-            {item.discountRate}%{" "}
-            <span className="line-through">{formatKoreanCurrency(item.originalPrice)}</span>
-          </p>
-        </div>
-        <div className="flex items-center justify-between mb-1 font-bold text-2xl">
-          <p>
-            {" "}
-            할인가 :{" "}
-            <span className="text-red-600">{formatKoreanCurrency(item.discountedPrice)}</span>
-          </p>
+        {/* 제목과 카테고리 */}
+        <div>
+          <div
+            onClick={() => {
+              EnterDetail(item.discountPk);
+            }}
+            className="cursor-pointer flex items-center justify-between font-extrabold text-2xl"
+          >
+            <p className="h-[80px] overflow-hidden text-ellipsis break-all"> {item.discountTitle}</p>
+          </div>
+          <div className="text-base text-customGray">
+            카테고리 {item.discountType}
+          </div>
         </div>
 
-        <div className="flex items-center h-1/5 w-full border-2 rounded-3xl bg-customBgLightBlue text-lg">
+        {/* 할인률 */}
+        <div>
+          <div className="flex items-center justify-between font-normal text-sm text-customLightTextColor -mb-2">
+            <p>
+              {/* {item.discountRate}%{" "} */}
+              <div className="inline-block w-[75px]">{""}</div>
+              <span className="line-through text-customGray">{formatKoreanCurrency(item.originalPrice)}</span>
+            </p>
+          </div>
+
+          {/* 가격 */}
+          <div className="flex">
+            <p>
+              <div className="text-customBlue text-2xl font-extrabold inline-block w-[75px]">{item.discountRate}%</div>
+              <span className="text-xl font-bold">{formatKoreanCurrency(item.discountedPrice)}</span> 
+            </p>
+          </div>
+        </div>
+
+        {/* 닉네임 태그 */}
+        <div className="flex items-center w-full rounded-3xl bg-customBgLightBlue py-[3px]">
           <div
             className="bg-customBgBlue flex items-center justify-center
-            h-full rounded-3xl w-[40%] text-white"
+            h-full rounded-3xl w-[40%] text-customBasic ml-1"
           >
             {item.discountOwnerNickname ? "소상공인" : "개인"}
           </div>
-          <div className=" flex items-center w-[60%] justify-start overflow-hidden flex-grow whitespace-nowrap px-2 ">
-            {item.discountOwnerNickname}
+          <div className=" flex items-center w-[60%] justify-start overflow-hidden flex-grow whitespace-nowrap pl-[5px] ">
+            <p className="truncate">{item.discountOwnerNickname}</p>
           </div>
-        </div>
+        </div>  
 
-        <div className="flex items-center justify-between h-1/6 pb-3">
+        {/* 경매종료시간 */}
+        <div className="flex items-center justify-between">
           <AuctionCountDown
             currentTime={nowTime!}
             auctionEndTime={item.discountEnd}

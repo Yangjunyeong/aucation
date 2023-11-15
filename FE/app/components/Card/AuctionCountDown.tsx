@@ -87,12 +87,12 @@ const AuctionCountDown: React.FC<StateCardProps> = ({
       >
         {statusMessage}
       </div>
-      {days > 0 && <div>{days}일</div>}
-      {(days > 0 || hours > 0) && <div>&nbsp;{hours}&nbsp;시간</div>}
-      {(days > 0 || hours > 0 || minutes > 0) && <div>&nbsp;{minutes}&nbsp;분</div>}
+      {days > 0 && <div className=" text-customGray">{days}일</div>}
+      {(days > 0 || hours > 0) && <div className=" text-customGray">&nbsp;{hours}&nbsp;시간</div>}
+      {(days > 0 || hours > 0 || minutes > 0) && <div className=" text-customGray">&nbsp;{minutes}&nbsp;분</div>}
       {nowtime <= endTime && (
-        <div>
-          &nbsp;{seconds}초 <span className="text-customBlue">전</span>
+        <div className=" text-customGray">
+          &nbsp;{seconds}초 <span className=" text-customGray">전</span>
         </div>
       )}
     </span>
