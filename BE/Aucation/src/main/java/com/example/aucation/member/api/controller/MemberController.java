@@ -78,7 +78,7 @@ public class MemberController {
 
 	@GetMapping("/verification/email/{email}")
 	public ResponseEntity<Void> verifyemail(@PathVariable("email") String memberEmail) throws Exception {
-		memberService.verifynick(memberEmail);
+		memberService.validateMemberEmail(memberEmail);
 		return ResponseEntity.ok().build();
 	}
 
