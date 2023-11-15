@@ -31,7 +31,6 @@ import "../../auction/components/Paging.css";
 import { HiBuildingStorefront } from "react-icons/hi2";
 import { BsPersonFill } from "react-icons/bs";
 import { BiWon } from "react-icons/bi";
-import { icons } from "react-icons";
 
 interface userData {
   profileImg: string;
@@ -58,161 +57,161 @@ interface categoryLikeType {
   isLiked: boolean;
 }
 const Shop = () => {
-//   const shopPk = useParams().slug;
-//   // apiData
-//   const [dataList, setDataList] = useState<any>();
-//   // 프로필 이미지/ 네임 / 인포
-//   const router = useRouter();
-//   const [images, setImages] = useState<string>("");
-//   const [imgFile, setImgFile] = useState<string | null>(null);
-//   const imgRef = useRef<HTMLInputElement>(null);
+  //   const shopPk = useParams().slug;
+  //   // apiData
+  //   const [dataList, setDataList] = useState<any>();
+  //   // 프로필 이미지/ 네임 / 인포
+  //   const router = useRouter();
+  //   const [images, setImages] = useState<string>("");
+  //   const [imgFile, setImgFile] = useState<string | null>(null);
+  //   const imgRef = useRef<HTMLInputElement>(null);
 
-//   // 사용자 이름, 정보 , 업데이트 상태
-//   const [username, setUsername] = useState<string>("사용자01");
-//   const [info, setInfo] = useState<string>(
-//     " 안녕하세요 사용자01입니다. 가전제품을 전문적으로 경매합니다. 안녕하가전제품을 전문적으로 경매합니다. 안녕하세요 사용자01입니다. 가전제품을 전문적으로 경매합니다. 안녕하세요 사용자01입니다. 가전제품을 전문적으로 경매합니다. 안녕하세요 사용자01입니다. 가전제품을 전문적으로 경매합니다."
-//   );
-//   const [usernameUpdate, setUsernameUpdate] = useState<boolean>(false);
-//   const [userInfoUpdate, setUserInfoUpdate] = useState<boolean>(false);
+  //   // 사용자 이름, 정보 , 업데이트 상태
+  //   const [username, setUsername] = useState<string>("사용자01");
+  //   const [info, setInfo] = useState<string>(
+  //     " 안녕하세요 사용자01입니다. 가전제품을 전문적으로 경매합니다. 안녕하가전제품을 전문적으로 경매합니다. 안녕하세요 사용자01입니다. 가전제품을 전문적으로 경매합니다. 안녕하세요 사용자01입니다. 가전제품을 전문적으로 경매합니다. 안녕하세요 사용자01입니다. 가전제품을 전문적으로 경매합니다."
+  //   );
+  //   const [usernameUpdate, setUsernameUpdate] = useState<boolean>(false);
+  //   const [userInfoUpdate, setUserInfoUpdate] = useState<boolean>(false);
 
-//   // 소상공인 인증 모달, 포인트 충전 모달
-//   const [isShopModal, setIsShopModal] = useState<boolean>(false); // 소상공인 인증 모달 여부
-//   const [isPointModal, setIsPointModal] = useState<boolean>(false); // 포인트 충전 모달 여부
+  //   // 소상공인 인증 모달, 포인트 충전 모달
+  //   const [isShopModal, setIsShopModal] = useState<boolean>(false); // 소상공인 인증 모달 여부
+  //   const [isPointModal, setIsPointModal] = useState<boolean>(false); // 포인트 충전 모달 여부
 
-//   // 현재 선택된 카테고리 및 카테고리 목록
-//   const [category, setCategory] = useState<string>("경매");
-//   const [secondCategory, setSecondCategory] = useState<any>("판매");
-//   const [thirdCategory, setThirdCategory] = useState<string>("경매전");
-//   const [itemsort, setItemsort] = useState<string>("최신순");
+  //   // 현재 선택된 카테고리 및 카테고리 목록
+  //   const [category, setCategory] = useState<string>("경매");
+  //   const [secondCategory, setSecondCategory] = useState<any>("판매");
+  //   const [thirdCategory, setThirdCategory] = useState<string>("경매전");
+  //   const [itemsort, setItemsort] = useState<string>("최신순");
 
-//   // 현재 페이지
-//   const [pageNumber, setPageNumber] = useState<number>(1);
+  //   // 현재 페이지
+  //   const [pageNumber, setPageNumber] = useState<number>(1);
 
-//   // 소상공인 판단
-//   const [isShop, setIsShop] = useState<string>("소상공인");
+  //   // 소상공인 판단
+  //   const [isShop, setIsShop] = useState<string>("소상공인");
 
-//   const apiUrl: any = {
-//     경매: "members/mypage/auction",
-//     할인: "members/mypage/discount",
-//   };
-//   const categories: any = {
-//     경매: {
-//       판매: ["경매전", "경매중", "경매완료"],
-//     },
-//     할인: {
-//       판매: ["판매중", "예약중", "판매완료"],
-//     },
+  //   const apiUrl: any = {
+  //     경매: "members/mypage/auction",
+  //     할인: "members/mypage/discount",
+  //   };
+  //   const categories: any = {
+  //     경매: {
+  //       판매: ["경매전", "경매중", "경매완료"],
+  //     },
+  //     할인: {
+  //       판매: ["판매중", "예약중", "판매완료"],
+  //     },
 
-//   };
+  //   };
 
-//   // 요소 정렬
-//   const itemsortList: string[] = ["최신순", "저가순", "고가순"];
+  //   // 요소 정렬
+  //   const itemsortList: string[] = ["최신순", "저가순", "고가순"];
 
-//   // 이미지 업로드
-//   const handleImageUpload = (imageFile: File) => {
-//     const formData = new FormData();
-//     formData.append("multipartFile", imageFile);
-//     callApi("post", "members/modify/image", formData)
-//       .then(res => {
-//         console.log("이미지 업로드 성공", res.data);
-//       })
-//       .catch(error => {
-//         console.error("이미지 업로드 실패", error);
-//       });
-//   };
+  //   // 이미지 업로드
+  //   const handleImageUpload = (imageFile: File) => {
+  //     const formData = new FormData();
+  //     formData.append("multipartFile", imageFile);
+  //     callApi("post", "members/modify/image", formData)
+  //       .then(res => {
+  //         console.log("이미지 업로드 성공", res.data);
+  //       })
+  //       .catch(error => {
+  //         console.error("이미지 업로드 실패", error);
+  //       });
+  //   };
 
-//   // 대장 카테고리 핸들러
-//   const categoryHandler = (value: string) => {
-//     console.log(value);
-//     setCategory(value);
-//   };
-//   // 2번째 카테고리 핸들러
-//   const secondCategoryHandler = (value: string) => {
-//     setSecondCategory(value);
-//   };
-//   // 3번째 카테고리 핸들러
-//   const thirdCategoryHandler = (value: string) => {
-//     setThirdCategory(value);
-//   };
+  //   // 대장 카테고리 핸들러
+  //   const categoryHandler = (value: string) => {
+  //     console.log(value);
+  //     setCategory(value);
+  //   };
+  //   // 2번째 카테고리 핸들러
+  //   const secondCategoryHandler = (value: string) => {
+  //     setSecondCategory(value);
+  //   };
+  //   // 3번째 카테고리 핸들러
+  //   const thirdCategoryHandler = (value: string) => {
+  //     setThirdCategory(value);
+  //   };
 
-//   // 요소 정렬
-//   const itemSortHandler = (value: string) => {
-//     console.log(value, "클릭");
-//     setItemsort(value);
-//   };
+  //   // 요소 정렬
+  //   const itemSortHandler = (value: string) => {
+  //     console.log(value, "클릭");
+  //     setItemsort(value);
+  //   };
 
-//   // 좋아요 버튼 누를경우 pk, IsLiked값을 post로 전달
-//   const handleLike = (pk: number, isLiked: boolean) => {
-//     // pk와 isLiked값 post요청 보내기
-//     console.log("좋아요 ");
-//   };
+  //   // 좋아요 버튼 누를경우 pk, IsLiked값을 post로 전달
+  //   const handleLike = (pk: number, isLiked: boolean) => {
+  //     // pk와 isLiked값 post요청 보내기
+  //     console.log("좋아요 ");
+  //   };
 
-//   // 페이지
-//   const handlePageChange = (page: number) => {
-//     setPageNumber(page);
-//     console.log(page);
-//   };
+  //   // 페이지
+  //   const handlePageChange = (page: number) => {
+  //     setPageNumber(page);
+  //     console.log(page);
+  //   };
 
-//   useEffect(() => {
-//     // 브라우저에서 로컬 스토리지에 접근하여 토큰 확인
-//     const accessToken = window.localStorage.getItem("accessToken");
-//     // 토큰이 없는 경우 로그인 페이지로 리다이렉션
-//     if (!accessToken) {
-//       router.push("/login");
-//     } else {
-//       // 토큰이 있다면 마이페이지 조회
-//       // fetchMypage()
-//     }
-//   }, [router]);
+  //   useEffect(() => {
+  //     // 브라우저에서 로컬 스토리지에 접근하여 토큰 확인
+  //     const accessToken = window.localStorage.getItem("accessToken");
+  //     // 토큰이 없는 경우 로그인 페이지로 리다이렉션
+  //     if (!accessToken) {
+  //       router.push("/login");
+  //     } else {
+  //       // 토큰이 있다면 마이페이지 조회
+  //       // fetchMypage()
+  //     }
+  //   }, [router]);
 
-//   // 1번 카테고리 변경 시 2번 카테고리 초기화
-//   useEffect(() => {
-//     if (category !== "좋아요") {
-//       console.log("1번카테고리 변경");
-//       secondCategoryHandler(Object.keys(categories[category])[0]);
-//     } else {
-//       secondCategoryHandler("");
-//     }
-//   }, [category]);
-//   useEffect(() => {
-//     if (category !== "좋아요") {
-//       console.log("2번카테고리 변경");
-//       thirdCategoryHandler(categories[category][secondCategory!][0]);
-//     } else {
-//       console.log("2번카테고리 변경");
-//       thirdCategoryHandler("경매");
-//     }
-//   }, [category, secondCategory]);
+  //   // 1번 카테고리 변경 시 2번 카테고리 초기화
+  //   useEffect(() => {
+  //     if (category !== "좋아요") {
+  //       console.log("1번카테고리 변경");
+  //       secondCategoryHandler(Object.keys(categories[category])[0]);
+  //     } else {
+  //       secondCategoryHandler("");
+  //     }
+  //   }, [category]);
+  //   useEffect(() => {
+  //     if (category !== "좋아요") {
+  //       console.log("2번카테고리 변경");
+  //       thirdCategoryHandler(categories[category][secondCategory!][0]);
+  //     } else {
+  //       console.log("2번카테고리 변경");
+  //       thirdCategoryHandler("경매");
+  //     }
+  //   }, [category, secondCategory]);
 
-//   // 데이터 불러오기
-//   useEffect(() => {
-//     let data: any;
-//     if (category !== "좋아요") {
-//       data = {
-//         productType: category,
-//         productStatus: secondCategory,
-//         auctionStatus: thirdCategory,
-//         productFilter: itemsort,
-//         myPageNum: pageNumber,
-//       };
-//     } else {
-//       data = {
-//         productStatus: thirdCategory,
-//         myPageNum: pageNumber,
-//       };
-//     }
+  //   // 데이터 불러오기
+  //   useEffect(() => {
+  //     let data: any;
+  //     if (category !== "좋아요") {
+  //       data = {
+  //         productType: category,
+  //         productStatus: secondCategory,
+  //         auctionStatus: thirdCategory,
+  //         productFilter: itemsort,
+  //         myPageNum: pageNumber,
+  //       };
+  //     } else {
+  //       data = {
+  //         productStatus: thirdCategory,
+  //         myPageNum: pageNumber,
+  //       };
+  //     }
 
-//     // 유저 데이터 불러오기
-//     callApi("post", `${apiUrl[category]}`, data)
-//       .then(res => {
-//         console.log(res.data);
-//         setDataList(res.data);
-//       })
-//       .catch(err => {
-//         console.log(JSON.stringify(data, null, 2));
-//         console.log(err);
-//       });
-//   }, [thirdCategory]);
+  //     // 유저 데이터 불러오기
+  //     callApi("post", `${apiUrl[category]}`, data)
+  //       .then(res => {
+  //         console.log(res.data);
+  //         setDataList(res.data);
+  //       })
+  //       .catch(err => {
+  //         console.log(JSON.stringify(data, null, 2));
+  //         console.log(err);
+  //       });
+  //   }, [thirdCategory]);
 
   return (
     <div></div>
