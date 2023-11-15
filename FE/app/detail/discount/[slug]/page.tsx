@@ -81,7 +81,7 @@ const DiscountDetail = () => {
           <BackBtn />
           <div className="flex items-center">
             <LikeBtn isLiked={isLiked} likeHandler={likeHandler} />
-            <span className="ml-1">{likeCount}</span>
+            <span className="ml-2 text-2xl">{likeCount}</span>
           </div>
         </div>
 

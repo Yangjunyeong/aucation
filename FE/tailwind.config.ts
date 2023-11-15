@@ -17,6 +17,7 @@ const config: Config = {
         "custom-btn-gradient-red": "linear-gradient(170deg, #f43, #f15)",
         "custom-btn-gradient-red-hover": "linear-gradient(170deg, #8b0000, #e74c3c)",
         "highlight-effect": "linear-gradient(180deg, transparent, transparent, var(--custom-bg-lightblue))",
+        "blue-gradient": "linear-gradient(170deg, #0033CC, #33599CC)",
       },
       backgroundColor: {
         customBasic: "#F8F9FB", // 커스텀 기본 색

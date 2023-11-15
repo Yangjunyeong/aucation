@@ -18,9 +18,9 @@ const LikeBtn: React.FC<LikeBtnProps> = ({ isLiked, likeHandler }) => {
       onClick={() => likeHandler(!isLiked)}
     >
       {isLiked ? (
-        <AiFillHeart size={30} color="red" style={{ cursor: "pointer" }} />
+        <AiFillHeart size={40} color="red" style={{ cursor: "pointer" }} />
       ) : (
-        <AiOutlineHeart size={30} color="red" style={{ cursor: "pointer" }} />
+        <AiOutlineHeart size={40} color="red" style={{ cursor: "pointer" }} />
       )}
     </div>
   );

@@ -104,13 +104,14 @@ const MyPage: NextPage = () => {
   const [myPoint, setMyPoint] = useState(0);
 
   // 현재 선택된 카테고리 및 카테고리 목록
-  const [category, setCategory] = useState<string>("할인");
+  const [category, setCategory] = useState<string>("경매");
   const [secondCategory, setSecondCategory] = useState<any>("판매");
-  const [thirdCategory, setThirdCategory] = useState<string>("판매중");
+  const [thirdCategory, setThirdCategory] = useState<string>("경매전");
   const [itemsort, setItemsort] = useState<string>("최신순");
 
-  // 현재 페이지
+  // 현재 페이지, 총 페이지
   const [pageNumber, setPageNumber] = useState<number>(1);
+  const [totalpage, setTotalpage] = useState<number>(1);
 
   // 소상공인 판단
   const [isShop, setIsShop] = useState<any>("개인");
@@ -127,7 +128,7 @@ const MyPage: NextPage = () => {
   const categories: any = {
     경매: {
       판매: ["경매전", "경매중", "경매완료"],
-      구매: ["낙찰", "경매완료"],
+      구매: ["낙찰", "구매완료"],
     },
     역경매: {
       판매: ["입찰중", "낙찰", "거래완료"],
@@ -147,7 +148,7 @@ const MyPage: NextPage = () => {
   const handleImageUpload = (imageFile: File) => {
     const formData = new FormData();
     formData.append("multipartFile", imageFile);
-    callApi("post", "members/modify/image", formData)
+    callApi("patch", "members/modify/image", formData)
       .then(res => {
         console.log("이미지 업로드 성공", res.data);
       })
@@ -198,7 +199,7 @@ const MyPage: NextPage = () => {
   const handleUsernameChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setUsername(e.target.value);
   };
-  const handleInfoChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const handleInfoChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setInfo(e.target.value);
   };
 
@@ -278,6 +279,7 @@ const MyPage: NextPage = () => {
             setMyPoint(res.data.memberPoint);
             setInfo(res.data.memberDetail);
             setIsShop(res.data.memberRole);
+            setTotalpage(res.data.totalPage);
           })
           .catch(err => {
             console.log(JSON.stringify(data, null, 2));
@@ -370,8 +372,18 @@ const MyPage: NextPage = () => {
     }
   }, [category, secondCategory]);
 
-  // 데이터 불러오기
+  // 3번재 카테고리 바뀔 시 페이지 초기화
   useEffect(() => {
+    setPageNumber(1);
+  }, [thirdCategory]);
+  // 데이터 불러오기
+  const tmp = () => {
+    setDataList({ mypageItems: [] });
+  };
+  useEffect(() => {
+    tmp();
+    console.log(dataList);
+
     let data: any;
     if (category !== "좋아요") {
       data = {
@@ -392,10 +404,12 @@ const MyPage: NextPage = () => {
       .then(res => {
         console.log(res.data);
         setDataList(res.data);
+        setImages(res.data.imgURL);
         setUsername(res.data.memberNickname);
         setMyPoint(res.data.memberPoint);
         setInfo(res.data.memberDetail);
         setIsShop(res.data.memberRole);
+        setTotalpage(res.data.totalPage);
       })
       .catch(err => {
         console.log(JSON.stringify(data, null, 2));
@@ -414,7 +428,7 @@ const MyPage: NextPage = () => {
           <div className="flex">
             {/* 이미지 업로드 */}
             <label htmlFor="img_file">
-              <ImageUpload onImageUpload={handleImageUpload} />
+              <ImageUpload onImageUpload={handleImageUpload} imageURL={images} />
             </label>
             {/* 사용자 이름, 정보 업데이트 */}
             <div className="flex-col ml-10">
@@ -512,9 +526,12 @@ const MyPage: NextPage = () => {
                   <span className="flex items-center" onClick={pointModalHandler}>
                     <BiWon size={25} />
                   </span>
-                <span className="cursor-pointer underline ml-6" onClick={() => setIsOpen(!isOpen)}>
-                  충전하기
-                </span>
+                  <span
+                    className="cursor-pointer underline ml-6"
+                    onClick={() => setIsOpen(!isOpen)}
+                  >
+                    충전하기
+                  </span>
                 </div>
               </div>
               <PaymentModal onClose={() => setIsOpen(false)} isOpen={isOpen} cash={cashHandler} />
@@ -613,6 +630,7 @@ const MyPage: NextPage = () => {
           </div>
 
           {/* 경매 - 판매 */}
+
           {category == "경매" && secondCategory == "판매" && dataList.mypageItems.length > 0 && (
             <div>
               {/* DummyUserData.mypageItems */}
@@ -683,7 +701,7 @@ const MyPage: NextPage = () => {
             <Pagination
               activePage={pageNumber}
               itemsCountPerPage={5}
-              totalItemsCount={999}
+              totalItemsCount={5 * totalpage}
               pageRangeDisplayed={5}
               prevPageText={"‹"}
               nextPageText={"›"}

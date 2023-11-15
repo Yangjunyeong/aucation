@@ -38,7 +38,7 @@ const ButtonGroup = ({ next, previous, goToSlide, ...rest }: any) => {
     carouselState: { currentSlide },
   } = rest;
   return (
-    <div className="items-end text-3xl mb-4 absolute flex top-[570px] left-[1575px] ">
+    <div className="items-end text-3xl mb-4 absolute flex top-[-80px] left-[1380px] ">
       <button className="block p-3" onClick={() => previous()}>
         {" "}
         <BsArrowLeftCircle />
@@ -105,7 +105,7 @@ const PopularBidList: React.FC<OwnProps> = ({
         )}
       </div>
 
-      <div className="h-[600px] relative">
+      <div className="h-[650px] relative">
         {isLoading ? (
           <div className="flex justify-center items-center">
             <ClipLoader color="#247eff" size={200} speedMultiplier={1} />
@@ -124,7 +124,7 @@ const PopularBidList: React.FC<OwnProps> = ({
             {type === "hotAution" &&
               item &&
               item.map((item, idx) => (
-                <div key={idx} className="w-[295px] h-[550px] flex justify-center items-center">
+                <div key={idx} className="w-[295px] h-[600px] flex justify-center items-center">
                   <AuctionListCard item={item as AuctionItem} nowTime={nowTime} />
                 </div>
               ))}
@@ -132,7 +132,7 @@ const PopularBidList: React.FC<OwnProps> = ({
             {type === "reverseAution" &&
               item &&
               item.map((item, idx) => (
-                <div key={idx} className="w-[295px] h-[550px]  flex justify-center items-center">
+                <div key={idx} className="w-[295px] h-[600px]  flex justify-center items-center">
                   <AuctionListCard
                     item={item as ReverseAuctionItem}
                     nowTime={nowTime}
@@ -143,7 +143,7 @@ const PopularBidList: React.FC<OwnProps> = ({
             {type === "discounts" &&
               item &&
               item.map((item, idx) => (
-                <div key={idx} className="w-[295px] h-[550px] flex justify-center items-center">
+                <div key={idx} className="w-[295px] h-[600px] flex justify-center items-center">
                   <DiscountListCard item={item as DiscountItem} nowTime={nowTime} />
                 </div>
               ))}

@@ -40,7 +40,7 @@ const Panmae = () => {
 
   const [transActionLocation, setTransActionLocation] = useState<number[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [isDoingSubmit, setIsDoingSubmit] = useState(false);
   const imgRef = useRef<HTMLInputElement>(null);
   const saveImgFile = () => {
     const file = imgRef.current!.files![0];
@@ -102,14 +102,16 @@ const Panmae = () => {
     setDescription(event.target.value);
   };
   const submitHandler = () => {
+    setIsDoingSubmit(true);
     if (
       !option ||
       !productname ||
       !category ||
-      (hour === 0 && minute === 0) ||
+      // (hour === 0 && minute === 0) ||
       imagefiles.length === 0
     ) {
       alert("필수 항목을 모두 채워주세요!");
+      setIsDoingSubmit(false);
       return;
     }
     if (option !== "할인") {
@@ -151,7 +153,11 @@ const Panmae = () => {
           setLoading(false);
         });
     } else {
-      // if (discountPrice! < price)
+      if (discountPrice! > price) {
+        alert("할인가가 정가보다 높습니다!!");
+        setIsDoingSubmit(false);
+        return;
+      }
       const time = timeToDate(hour, minute);
       const formData = new FormData();
       formData.append("discountTitle", productname);
@@ -414,7 +420,7 @@ const Panmae = () => {
                 className={clsx(`flex text-[var(--c-blue)] ml-10 mt-3`, price ? "invisible" : "")}
               >
                 <AiOutlineStop size={24} />
-                <span>할인 가격을 입력해 주세요</span>
+                <span>할인 가격은 정가 이하로 입력 가능합니다.</span>
               </div>
             </div>
             <div className="text-2xl pl-16 mt-3">원</div>
@@ -452,13 +458,14 @@ const Panmae = () => {
         <div className="w-full h-80 flex items-center justify-end">
           <button
             onClick={submitHandler}
+            disabled={isDoingSubmit}
             className="
             w-1/5 p-10 
             bg-custom-btn-gradient-red
             text-2xl 
             transition duration-300 
             hover:bg-custom-btn-gradient-red-hover 
-            text-white rounded-md text-center my-auto"
+            text-white rounded-md text-center my-auto "
           >
             등록하기
           </button>
