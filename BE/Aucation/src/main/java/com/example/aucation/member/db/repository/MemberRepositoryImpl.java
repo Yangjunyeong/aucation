@@ -551,7 +551,6 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 					qDiscount.discountUUID.as("auctionUUID"),
 					qDiscount.id.as("auctionPk"),
 					qDiscount.owner.id.as("ownerPk"),
-					qAuction.owner.memberNickname.as("ownerNickname"),
 					qDiscount.customer.id.as("customerPk"),
 					qDiscount.address.city.as("mycity"),
 					qDiscount.address.zipcode.as("zipcode"),
