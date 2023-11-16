@@ -85,7 +85,7 @@ const LikeCardCountDown: React.FC<StateCardProps> = ({ auctionStartTime,stateHan
       {(currentTime <= endTime) && <div>&nbsp;{seconds}초 전</div>}
 
       {/* 경매일시 */}
-      {statusMessage == "" && <div>경매 일시 : {StartTime.toLocaleString()}</div>} 
+      {statusMessage == "" && <div className="text-red-500">종료</div>} 
       
     </div>
   );
