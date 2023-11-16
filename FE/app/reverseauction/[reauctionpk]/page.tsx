@@ -62,7 +62,6 @@ const AuctionDetail = () => {
   };
 
   const handleBidModalOpen = () => {
-    console.log('여기임')
     setBidModalOpen(!bidModalOpen);
   };
 
@@ -180,7 +179,7 @@ const AuctionDetail = () => {
             <div className="flex-1 flex justify-end items-end text-customLightTextColor">
               <div className="mr-7 flex gap-2 items-end">
                 <BsFillPersonFill size={25} />
-                {data.reAuctionBidCnt}명 참여중
+                {data.reAuctionBidCnt}명 입찰중
               </div>
               {/* <h3 className="text-1xl font-thin ">경매 시작까지 31분 남음</h3> */}
             </div>

@@ -249,10 +249,18 @@ const MyPage: NextPage = () => {
   };
   // 카드 삭제
   const deleteHandler = (prodPk: number) => {
-    const data = {
-      status: category,
-      prodPk: prodPk,
-    };
+    let data:any;
+    if (category !== "역경매") {
+      data = {
+        status: category,
+        prodPk: prodPk,
+      };
+    } else {
+      data = {
+        status: "입찰",
+        prodPk: prodPk,
+      }
+    }
     console.log(JSON.stringify(data, null, 2));
     callApi("delete", "/members/delete", data)
       .then(res => {
@@ -636,7 +644,7 @@ const MyPage: NextPage = () => {
             </div>
 
             {/* 솔트 */}
-            <div className="flex text-lg font-semibold text-center cursor-pointer text-customGray">
+            {category !== "좋아요" && (<div className="flex text-lg font-semibold text-center cursor-pointer text-customGray">
               {itemsortList.map((item, idx) => (
                 <div key={idx}>
                   <div
@@ -648,7 +656,7 @@ const MyPage: NextPage = () => {
                 </div>
               ))}
               |
-            </div>
+            </div>)}
           </div>
 
           {/* 경매 - 판매 */}
