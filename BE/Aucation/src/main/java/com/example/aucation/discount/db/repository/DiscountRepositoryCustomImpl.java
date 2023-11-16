@@ -190,7 +190,7 @@ public class DiscountRepositoryCustomImpl implements DiscountRepositoryCustom {
 			return new OrderSpecifier<>(Order.DESC, likeCnt);
 		} else {
 			// 기본 정렬 방식
-			return new OrderSpecifier<>(Order.ASC, qDiscount.createdAt);
+			return new OrderSpecifier<>(Order.DESC, qDiscount.createdAt);
 		}
 	}
 }
