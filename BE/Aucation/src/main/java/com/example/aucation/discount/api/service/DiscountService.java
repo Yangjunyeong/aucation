@@ -158,6 +158,18 @@ public class DiscountService {
 		Discount discount = discountRepository.findById(prodPk).orElseThrow(() -> new NotFoundException(
 			ApplicationError.DISCOUNT_NOT_FOUND));
 
+		HistoryStatus historyStatus = HistoryStatus.NOT_SELL;
+		////Discount에서 해당 discout.customer가 존재하는지? (구매했는가?)
+		if(discount.getCustomer()!=null){
+			DiscountHistory discountHistory = discountHistoryRepository.findByDiscountIdAndMemberId(discount.getCustomer().getId(),discount.getId());
+			historyStatus =  discountHistory.getHistoryStatus();
+		}
+
+		//존재한다면 그게 memberPk랑 똑같은지?
+		//존재한다면 ? 구매했다 => 현재 DiscountHistory 상태를 보내준다
+		//존재하지않았다 ? 아직 아무도 존재하지않았다 그냥 값을 던지자
+
+
 		List<DisPhoto> disPhotos = disPhotoService.getPhoto(discount.getId());
 
 		List<String> UUIDImage = disPhotos.stream()
@@ -168,7 +180,7 @@ public class DiscountService {
 		int likeCnt = likeDiscountRepository.countByDiscountAndMember(discount, member);
 
 		boolean discountStatus = discount.getCustomer() != null;
-		return EnterResponse.of(UUIDImage, discount, member, isFalse, likeCnt,discountStatus);
+		return EnterResponse.of(UUIDImage, discount, member, isFalse, likeCnt,discountStatus,historyStatus);
 	}
 
 	public void isSmallBusiness(Member member) {

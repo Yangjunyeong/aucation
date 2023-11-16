@@ -3,6 +3,7 @@ package com.example.aucation.discount.api.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.example.aucation.common.entity.HistoryStatus;
 import com.example.aucation.discount.db.entity.Discount;
 import com.example.aucation.member.db.entity.Address;
 import com.example.aucation.member.db.entity.Member;
@@ -39,8 +40,10 @@ public class EnterResponse {
 	private int discountRate;
 
 	private Address address;
+	private HistoryStatus historyStatus;
 
-	public static EnterResponse of(List<String> uuidImage, Discount discount, Member member,boolean isFalse, int likeCnt, boolean discountStatus) {
+	public static EnterResponse of(List<String> uuidImage, Discount discount, Member member,boolean isFalse, int likeCnt, boolean discountStatus,
+		HistoryStatus historyStatus) {
 		return EnterResponse.builder()
 			.discountImgURL(uuidImage)
 			.discountType(discount.getDiscountType())
@@ -65,6 +68,7 @@ public class EnterResponse {
 			.myNickname(member.getMemberNickname())
 			.address(discount.getAddress())
 			.discountStatus(discountStatus)
+			.historyStatus(historyStatus)
 			.build();
 	}
 }
