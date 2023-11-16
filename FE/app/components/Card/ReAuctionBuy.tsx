@@ -100,7 +100,7 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler, confirmHandler
   };
   return (
     <>
-      <div className="flex rounded-lg overflow-hidden shadow-lg bg-customBasic w-full h-[300px] mt-12 hover:cursor-pointer hover:scale-105 transition-transform duration-300">
+      <div className="flex rounded-lg overflow-hidden shadow-lg bg-customBasic w-full h-[300px] mt-12 hover:cursor-pointer border hover:border-blue-400 transition-all duration-150">
         {/* 카드 이미지 */}
         {item.historyDoneDateTime !== null ? (
           <div>
@@ -165,7 +165,7 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler, confirmHandler
               </div>
             </div>
             <div className="text-customGray text-sm">
-              등록일 :&nbsp;{new Date(item.registerDate).toLocaleString()}
+              등록일 &nbsp;{new Date(item.registerDate).toLocaleString()}
             </div>
           </div>
 
@@ -178,9 +178,12 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler, confirmHandler
           {/* {item.historyDateTime == null && ( */}
           <div>
             <div className="text-[16px] text-customGray mt-1 -mb-1">
-              <span className="ml-[84px]"> </span>
-              시작가 {/* <span className="text-[25px] font-bold text-blue-500"> */}{" "}
-              <span className=" line-through">{formatKoreanCurrency(item.auctionStartPrice)}</span>
+              <span className="ml-[100px]">{" "}</span>
+              시작가{" "}
+              {/* <span className="text-[25px] font-bold text-blue-500"> */}
+                {" "}
+
+                <span className=" line-through">{formatKoreanCurrency(item.auctionStartPrice)}</span>
               {/* </span> */}
             </div>
             {/* )} */}
@@ -203,9 +206,9 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler, confirmHandler
 
             {/* 경매중 - 최저가 */}
             {item.historyDateTime == null && (
-              <div className="text-[22px] font-medium">
+              <div className="flex text-2xl items-center">
                 최저가 &nbsp;
-                <span className="text-3xl font-bold text-red-500">
+                <span className="font-bold text-red-500">
                   {formatKoreanCurrency(item.reAucBidPrice)}
                 </span>
               </div>
@@ -213,7 +216,7 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler, confirmHandler
             {/* 입찰완료/경매종료 - 최종가 */}
             {((item.historyDateTime !== null && item.historyDoneDateTime == null) ||
               item.historyDoneDateTime !== null) && (
-              <div className="text-xl">
+              <div className="flex text-2xl items-center">
                 최종가 &nbsp;
                 <span className="font-bold text-red-500">
                   {formatKoreanCurrency(item.auctionSuccessPay)}
@@ -231,8 +234,8 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler, confirmHandler
           {/* {item.historyDateTime == null && ( */}
 
           <div className="flex">
-            <div className="flex text-[22px] items-center">
-              <span className="font-bold text-red-500">{item.reauctionCount}&nbsp;</span>
+            <div className="flex text-[22px] items-center text-customLightTextColor">
+              <span className="font-bold">{item.reauctionCount}&nbsp;</span>
               {item.historyDateTime == null ? "명 입찰중" : "명 참여"}
             </div>
           </div>
@@ -249,7 +252,8 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler, confirmHandler
             {item.historyDateTime == null && (
               <div className="flex gap-3 mb-8">
                 <span
-                  className="border-[1px] rounded-2xl border-red-500 text-red-500 text-lg font-bold py-1 px-3 cursor-pointer
+                  className="flex items-center border-[1px] rounded-2xl mb-8 border-red-500  text-red-500
+                  text-lg font-bold py-1 px-3 cursor-pointer
                   hover:scale-105 transition-all"
                   onClick={cardDelete}
                 >
@@ -266,7 +270,7 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler, confirmHandler
             )}
             {/* 입찰완료 */}
             {item.historyDateTime !== null && item.historyDoneDateTime == null && (
-              <div className="flex gap-3 mb-8">
+              <div className="flex gap-3">
                 <div
                   className="flex items-center border-[1px] border-customGray text-customLightTextColor 
                   rounded-2xl mb-8  text-lg font-bold py-1 px-3 cursor-pointer

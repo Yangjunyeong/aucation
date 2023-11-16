@@ -55,7 +55,7 @@ const PriceBox: React.FC<PriceBoxProps> = ({
           <div className="border-l border-gray-400 h-20"></div>
           <div className="flex flex-col items-start flex-1 ml-10">
             <h3 className="text-sm text-customGray">입찰단위</h3>
-            <p className="text-xl f ont-semibold text-customLightTextColor">
+            <p className="text-xl font-semibold text-customLightTextColor">
               {bidUnit ? pricetoString(Number(bidUnit)) : "0원"}
             </p>
           </div>
@@ -73,6 +73,7 @@ const PriceBox: React.FC<PriceBoxProps> = ({
           </div>
         </>
       )}
+
     </div>
   );
 };

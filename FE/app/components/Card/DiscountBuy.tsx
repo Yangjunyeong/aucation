@@ -87,11 +87,11 @@ const DiscountBuy: React.FC<CardProps> = ({ item, confirmHandler }) => {
   };
   return (
     <>
-      <div className="flex rounded-lg overflow-hidden shadow-lg bg-white w-[1280px] h-[280px] mt-12 hover:border border-blue-400">
+      <div className="flex rounded-lg overflow-hidden shadow-lg bg-customBasic w-full h-[300px] mt-12 hover:cursor-pointer border hover:border-blue-400 transition-all duration-150">
         {/* 카드 이미지 */}
         {item.historyStatus == "AFTER_CONFIRM" ? (
           <div>
-            <div className="relative w-[300px] h-[280px]">
+            <div className="relative w-[300px] h-[300px]">
               <Image
                 layout="fill"
                 alt={item.discountTitle}
@@ -107,7 +107,7 @@ const DiscountBuy: React.FC<CardProps> = ({ item, confirmHandler }) => {
           </div>
         ) : (
           <div>
-            <div className="relative w-[300px] h-[280px]">
+            <div className="relative w-[300px] h-[300px]">
               <Image
                 layout="fill"
                 alt={item.discountTitle}
@@ -121,26 +121,26 @@ const DiscountBuy: React.FC<CardProps> = ({ item, confirmHandler }) => {
             </div>
           </div>
         )}
-        <div className="w-[900px] ml-7" onClick={toDetail}>
+        <div className="w-full px-5 py-3 flex flex-col justify-between" onClick={toDetail}>
           {/* 경매 상태 / 경매 마크 / 남은 시간 카운트*/}
-          <div className="flex h-[60px] justify-between items-center">
-            <div className="flex text-[22px] gap-4 font-bold">
-              <div className="rounded-lg border-[0.1px] px-3 items-center border-gray-500">
+          <div className="flex justify-between items-center mb-2">
+            <div className="flex text-[16px] gap-4">
+            <div className="rounded-xl border-[0.1px] px-3 items-center border-customGray  text-customGray">
                 할인
               </div>
               {item.historyStatus == "BEFORE_CONFIRM" ? (
-                <span className="text-blue-400">예약중</span>
+                <span className="text-customBlue">예약중</span>
               ) : (
                 <span>구매완료</span>
               )}
             </div>
-            <div className="text-xl">
+            <div className="text-customGray text-sm">
               등록일 :&nbsp;&nbsp;
               {/* {auctionStartTime.toLocaleString()} */}
             </div>
           </div>
           {/* 카드 제목 */}
-          <div className="text-5xl h-[70px] font-bold mr-20 whitespace-nowrap overflow-hidden text-ellipsis">
+          <div className="text-3xl max-h-[100px] font-bold break-all overflow-hidden text-ellipsis">
             {item.discountTitle}
           </div>
 
@@ -179,7 +179,7 @@ const DiscountBuy: React.FC<CardProps> = ({ item, confirmHandler }) => {
           </div>
 
           {/* 낙찰일시 / 낙찰가 / 채팅 및 확정 버튼*/}
-          <div className="flex h-[40px] text-[22px] items-center">
+          <div className="flex h-[40px] text-[22px] items-center text-customGray">
             <div>
               {item.historyStatus == "BEFORE_CONFIRM" ? "예약일" : "구매일시"} : &nbsp;
               {new Date(item.historyDatetime).toLocaleString()}
@@ -187,23 +187,35 @@ const DiscountBuy: React.FC<CardProps> = ({ item, confirmHandler }) => {
           </div>
           {/* 지역 */}
           <div className="flex items-center h-[55px] justify-between">
-            <div className="flex">
+          <div className="flex items-center text-customGray">
               <BiMap size={25} />
               <span className="ml-2 text-[16px]">
                 {item.mycity}&nbsp;{item.street}&nbsp;{item.zipcode}
               </span>
             </div>
-            <div className="flex gap-6">
+            <div className="flex gap-3">
               <div
-                className="flex items-center border-[0.1px] rounded-lg mb-8 border-gray-300 text-black text-2xl font-bold py-1 px-3 cursor-pointer"
+                className="flex items-center border-[1px] border-customGray text-customLightTextColor 
+                rounded-2xl mb-8  text-lg font-bold py-1 px-3 cursor-pointer
+                hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all"
                 onClick={toChat}
               >
                 <BsChatRightDots size={22} />
                 <span className="ml-2">채팅</span>
               </div>
-              {item.historyStatus == ("BEFORE_CONFIRM" || "NOT_SELL") && (
-                <div className="border-2 px-3 mb-8 py-1 text-2xl rounded-lg cursor-pointer" onClick={discountConfirm}>확정</div>
+              {item.historyStatus ==("BEFORE_CONFIRM" || "NOT_SELL")&& (
+                <div className="border-[1px] border-customGray px-3 mb-8 py-1 text-lg rounded-2xl
+                font-bold text-customLightTextColor
+                hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all"
+                onClick={discountConfirm}>
+                 확정
+               </div>
               )}
+
+
+              {/* {item.historyStatus == ("BEFORE_CONFIRM" || "NOT_SELL") && (
+                <div className="border-2 px-3 mb-8 py-1 text-2xl rounded-lg cursor-pointer" onClick={discountConfirm}>확정</div>
+              )} */}
             </div>
           </div>
         </div>

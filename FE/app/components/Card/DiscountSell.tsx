@@ -73,11 +73,11 @@ const DiscountSell: React.FC<CardProps> = ({ item, thirdCategory, deleteHandler 
   };
   return (
     <>
-      <div className="flex rounded-lg overflow-hidden shadow-lg bg-white w-[1280px] h-[280px] mt-12 hover:border border-blue-400">
+      <div className="flex rounded-lg overflow-hidden shadow-lg bg-customBasic w-full h-[300px] mt-12 hover:cursor-pointer border hover:border-blue-400 transition-all duration-150">
         {/* 카드 이미지 */}
         {thirdCategory == "판매완료" ? (
           <div>
-            <div className="relative w-[300px] h-[280px]">
+            <div className="relative w-[300px] h-[300px]">
               <Image
                 layout="fill"
                 alt={item.discountTitle}
@@ -93,7 +93,7 @@ const DiscountSell: React.FC<CardProps> = ({ item, thirdCategory, deleteHandler 
           </div>
         ) : (
           <div>
-            <div className="relative w-[300px] h-[280px]">
+            <div className="relative w-[300px] h-[300px]">
               <Image
                 layout="fill"
                 alt={item.discountTitle}
@@ -107,22 +107,22 @@ const DiscountSell: React.FC<CardProps> = ({ item, thirdCategory, deleteHandler 
             </div>
           </div>
         )}
-        <div className="w-[900px] ml-7" onClick={toDetail}>
+        <div className="w-full px-5 py-3 flex flex-col justify-between" onClick={toDetail}>
           {/* 경매 상태 / 경매 마크 / 남은 시간 카운트*/}
-          <div className="flex h-[60px] justify-between items-center">
-            <div className="flex text-[22px] gap-4 font-bold">
-              <div className="rounded-lg border-[0.1px] px-3 items-center border-gray-500">
+          <div className="flex justify-between items-center mb-2">
+            <div className="flex text-[16px] gap-4">
+              <div className="rounded-xl border-[0.1px] px-3 items-center border-customGray  text-customGray">
                 할인
               </div>
               <div className="">{thirdCategory}</div>
             </div>
             <div className="text-xl">
-              등록일 :&nbsp;&nbsp;
+              {/* 등록일 &nbsp;&nbsp; */}
               {/* {auctionStartTime.toLocaleString()} */}
             </div>
           </div>
           {/* 카드 제목 */}
-          <div className="text-5xl h-[70px] font-bold mr-20 whitespace-nowrap overflow-hidden text-ellipsis">
+          <div className="text-3xl max-h-[100px] font-bold break-all overflow-hidden text-ellipsis">
             {/* 제목 */}
             {item.discountTitle}
           </div>
@@ -141,40 +141,41 @@ const DiscountSell: React.FC<CardProps> = ({ item, thirdCategory, deleteHandler 
             </div>
           )} */}
           {/* 가격 */}
-          <div className="flex h-[55px] text-xl place-items-end">
-            가격 :{" "}
-            <div className="text-black">
-              <div className="flex text-[24px] font-semibold justify-center">
-                {item.discountRate && (
-                  <div className="flex text-red-500">
-                    &nbsp;{item.discountRate.toLocaleString()}%&nbsp;
-                  </div>
-                )}
-              </div>
-              <span className="ml-2 line-through">
-                {formatKoreanCurrency(item.discountPrice).toLocaleString()}
-              </span>
+          <div className="flex text-2xl flex-row place-items-end">
+            {/* 가격 :{" "} */}
+            <div className="flex font-semibold justify-center">
+              {/* 할인율 */}
+              {item.discountRate && (
+                <div className="flex text-red-500">
+                  {item.discountRate.toLocaleString()}%
+                </div>
+              )}
             </div>
-            &nbsp; {"->"}{" "}
-            <span className="text-2xl font-bold">
-              &nbsp;{formatKoreanCurrency(item.discountDiscountedPrice)}
-            </span>
+            {/* 원가 */}
+            <div>
+              <p className="ml-2 line-through text-customGray text-base">
+                {formatKoreanCurrency(item.discountPrice).toLocaleString()}
+              </p>
+              <p className="text-2xl font-bold">
+                &nbsp;{formatKoreanCurrency(item.discountDiscountedPrice)}
+              </p>
+            </div>
           </div>
 
           {/*  / / 채팅 및 신고 버튼 */}
-          <div className="flex text-xl items-center justify-between">
+          <div className="flex text-xl items-center justify-between text-customGray">
             {item.historyDatetime !== null && item.historyDoneDatetime == null && (
-              <div className="flex items-center h-[40px]">
-                낙찰 일시 : <span>{new Date(item.historyDatetime).toLocaleString()}</span>
+              <div className="flex items-center">
+                낙찰 일시  <span>{new Date(item.historyDatetime).toLocaleString()}</span>
               </div>
             )}
             {item.historyDoneDatetime !== null && (
-              <div className="flex items-center h-[40px]">
-                확정 일시 : <span>{new Date(item.historyDoneDatetime).toLocaleString()}</span>
+              <div className="flex items-center">
+                확정 일시  <span>{new Date(item.historyDoneDatetime).toLocaleString()}</span>
               </div>
             )}
             {item.historyDatetime == null && (
-              <div className="flex h-[95px] items-center">
+              <div className="flex h-[50px] items-center text-sm">
                 <div className="flex items-center">
                   <BiMap size={25} />
                   &nbsp;
@@ -187,29 +188,35 @@ const DiscountSell: React.FC<CardProps> = ({ item, thirdCategory, deleteHandler 
               </div>
             )}
             {item.historyDatetime == null && (
-              <div className="flex cursor-pointer border-2 text-red-500 border-red-500 px-4 py-1 rounded-lg" onClick={cardDelete}>
+              <div 
+              className="flex items-center border-[1px] rounded-2xl border-red-500  text-red-500
+              text-lg font-bold py-1 px-3 cursor-pointer
+              hover:scale-105 transition-all"
+              onClick={cardDelete}>
                 삭제하기
               </div>
             )}
           </div>
           {item.historyDatetime !== null && (
-            <div className="flex items-center h-[55px] justify-between">
+            <div className="flex items-center h-[50px] justify-between text-sm">
               <div>
-                <div className="flex items-center mb-2">
+                <div className="flex items-center">
                   <BiMap size={25} />
-                  <span className="ml-2 text-[20px]">
+                  <span className="ml-2">
                     {item.mycity}&nbsp;{item.street}&nbsp;{item.zipcode}
                   </span>
                 </div>
               </div>
-              <div className="flex gap-4">
+              <div className="flex gap-3">
                 {/* <div className="flex items-center border-[0.1px] rounded-lg mb-8 border-red-300 text-red-500 text-2xl font-bold py-1 px-3 cursor-pointer">
                   {" "}
                   <GoReport size={25} color="#EC4747" />
                   <span className="ml-1">신고하기</span>
                 </div> */}
                 <div
-                  className="flex items-center border-[0.1px] rounded-lg mb-8 border-gray-300 text-black text-2xl font-bold py-1 px-3 cursor-pointer"
+                  className="flex items-center border-[1px] border-customGray text-customLightTextColor 
+                  rounded-2xl mb-8  text-lg font-bold py-1 px-3 cursor-pointer
+                  hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all"
                   onClick={toChat}
                 >
                   <BsChatRightDots size={22} />

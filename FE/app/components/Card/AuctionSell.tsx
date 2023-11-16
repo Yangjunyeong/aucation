@@ -104,11 +104,11 @@ const AuctionSell: React.FC<CardProps> = ({ item, deleteHandler}) => {
 
   return (
     <>
-      <div className="flex rounded-lg overflow-hidden shadow-lg bg-white w-[1280px] h-[280px] mt-12 hover:border border-blue-400" >
+      <div className="flex rounded-lg overflow-hidden shadow-lg bg-customBasic w-full h-[300px] mt-12 hover:cursor-pointer border hover:border-blue-400 transition-all duration-150">
         {/* 카드 이미지 */}
         {item.historyDoneDateTime !== null ? (
           <div>
-            <div className="relative w-[300px] h-[280px]">
+            <div className="relative w-[300px] h-[300px]">
               <Image
                 src={item.imgfile}
                 alt={item.auctionTitle}
@@ -125,7 +125,7 @@ const AuctionSell: React.FC<CardProps> = ({ item, deleteHandler}) => {
         ) :  state == "종료" && item.historyDoneDateTime === null ? (
           <div>
             
-            <div className="relative w-[300px] h-[280px]">
+            <div className="relative w-[300px] h-[300px]">
               <Image
                 onClick={toDetail}
                 layout="fill"
@@ -138,7 +138,7 @@ const AuctionSell: React.FC<CardProps> = ({ item, deleteHandler}) => {
         </div>
         ) : (
           <div>
-            <div className="relative w-[300px] h-[280px]">
+            <div className="relative w-[300px] h-[300px]">
               <Image
                 onClick={toDetail}
                 className="transition-transform transform duration-300 hover:scale-110 overflow-hidden"
@@ -152,59 +152,71 @@ const AuctionSell: React.FC<CardProps> = ({ item, deleteHandler}) => {
             </div>
           </div>
         )}
-        <div className="w-[900px] ml-7" onClick={toDetail}>
+
+        {/* 본문 */}
+        <div className="w-full px-5 py-3 flex flex-col justify-between" onClick={toDetail}>
           {/* 경매 상태 / 경매 마크 / 남은 시간 카운트*/}
-          <div className="flex h-[60px] justify-between items-center">
-            <div className="flex text-[22px] gap-4 font-bold">
-              <span className="rounded-lg border-[0.1px] px-3 items-center border-gray-500">경매</span>
-              <span className="font-sans">
+          <div className="flex justify-between items-center mb-2">
+            <div className="flex text-[16px] gap-4">
+              <span className="rounded-xl border-[0.1px] px-3 items-center border-customGray  text-customGray">경매</span>
+              <span className="">
                 {state === "경매시작" && <span className="text-customBlue">경매전</span>}
                 {state === "경매종료" && <span className="text-red-500">경매중</span>}
                 {state === "종료" && <span>경매종료</span>}
               </span>
 
             </div>
-            <div className="text-xl">
+            <div className="text-customLightTextColor text-sm">
               <RowCountDown curTime={new Date()} auctionStartTime={new Date(item.auctionStartDate)} stateHandler={stateHandler} />
             </div>
           </div>
           {/* 카드 제목 */}
-          <div className="text-5xl h-[70px] font-bold mr-20 whitespace-nowrap overflow-hidden text-ellipsis">
+          <div className="text-3xl max-h-[100px] font-bold break-all overflow-hidden text-ellipsis">
             {item.auctionTitle}
           </div>
 
           {/* 경매 시작가 */}
-          <div className="text-[24px] h-[50px] font-semibold">
-            경매시작가 :
+          <div className="text-[22px] font-medium">
+            경매시작가 
             <span
-              className={clsx("text-3xl font-bold", state == "종료" ? "" : "text-customBlue")}
+              className={clsx("text-2xl font-bold", state == "종료" ? "" : "text-customBlue")}
             >
               &nbsp;{formatKoreanCurrency(item.auctionStartPrice)}
             </span>
           </div>
 
           {/* 경매 종료일 / 삭제버튼*/}
-            <div className="flex h-[45px] items-center">
-                {state !== "종료" && (<div className="text-[22px]">경매 등록일 :&nbsp;<span className="text-[24px]">{new Date(item.registerDate).toLocaleString()}</span></div>)}
+            <div className="flex items-center text-customGray">
+                {state !== "종료" && (<div className="text-[22px]">경매 등록일 &nbsp;<span className="text-[22px] ">{new Date(item.registerDate).toLocaleString()}</span></div>)}
                 {state === "종료" && (<div className="flex text-[22px] items-center">최종 입찰가&nbsp;&nbsp;<span className="flex mr-2 font-bold text-red-500 w-[100px] justify-end flex-nowrap overflow-hidden text-ellipsis">{item.auctionSuccessPay?.toLocaleString()}</span>원</div>)}
             </div>
             
             <div className="flex items-center h-[55px] justify-between">
-              <div className="flex">
+              <div className="flex text-sm text-customGray">
                 <BiMap size={25}/><span className="ml-2 text-[16px]">{item.mycity}&nbsp;{item.street}&nbsp;{item.zipcode}</span>
               </div>
                 {state == "경매종료" ? 
-                <div className="border-[0.1px] rounded-lg mb-8 border-red-300 text-red-500 text-2xl font-semibold py-1 px-3 cursor-pointer" onClick={toBid}>
-                  <div className="flex items-center"><RiAuctionLine size={22}/><span className="ml-1">경매장 입장</span></div>
-                </div> : ""}
+                  <div 
+                  className="border-[1px] border-customGray cursor-pointer rounded-2xl 
+                  text-customLightTextColor text-lg font-bold py-1 px-3
+                  hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all"
+                  onClick={toBid}>
+                    <div className="flex items-center"><RiAuctionLine size={22}/><span className="ml-1">경매장 입장</span></div>
+                  </div> : ""
+                }
                 {state == "종료" ?
-                  <div className="flex items-center border-[0.1px] rounded-lg mb-8 border-gray-300 text-black text-2xl font-bold py-1 px-3 cursor-pointer" onClick={toChat}>
+                  <div 
+                  className="flex items-center border-[1px] rounded-2xl mb-8 border-customGray  text-customLightTextColor
+                   text-lg font-bold py-1 px-3 cursor-pointer
+                   hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all"
+                  onClick={toChat}>
                     <BsChatRightDots size={22}/><span className="ml-2">채팅</span>
                   </div>
                   : ""
                 }
               
-              {state == "경매시작" && (<div className="border-[0.1px] mb-8 rounded-lg border-gray-300 text-black text-2xl font-bold py-1 px-3 cursor-pointer" onClick={cardDelete}>
+              {state == "경매시작" && (<div className="flex items-center border-[1px] rounded-2xl border-red-500 text-red-500 text-lg font-bold py-1 px-3 cursor-pointer
+                  hover:scale-105 transition-all" onClick={cardDelete}>
                   삭제하기
               </div>)}
             </div>

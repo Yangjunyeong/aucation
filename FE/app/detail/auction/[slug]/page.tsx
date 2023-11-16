@@ -83,7 +83,7 @@ const AuctionDetail = () => {
 
         {/* 페이지 상단 타이틀 */}
         <div className="mt-10">
-          <h2 className="text-5xl font-bold mb-7">{dataList.auctionTitle}</h2>
+          <h2 className="text-4xl font-bold mb-7">{dataList.auctionTitle}</h2>
           <p className="text-xl">
             {dataList.isAction == 0 ? (
               <span className="text-blue-600 mr-2">경매전</span>
