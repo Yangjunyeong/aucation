@@ -419,8 +419,6 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
 	private Predicate isDiscountMember(MemberPageRequest memberPageRequest, Member member) {
 		if (memberPageRequest.getProductStatus().equals("판매")) {
-			log.info("들어와야함");
-			log.info(String.valueOf(member.getId()));
 			return qDiscount.owner.id.eq(member.getId());
 		} else {
 			return qDiscount.customer.id.eq(member.getId());
@@ -432,25 +430,26 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			return qDiscount.owner.id.eq(member.getId());
 				//.and(qDiscountHistory.id.isNull());
 		} else if ("판매대기".equals(auctionStatus)) {
-			// "판매" 및 "경매중" 경우에 대한 조건 추가
+
 			return qDiscount.owner.id.eq(member.getId())
 				.and(qDiscountHistory.id.isNotNull())
 				.and(qDiscountHistory.historyDoneDatetime.isNull());
 		} else if ("판매완료".equals(auctionStatus)) {
-			// "판매" 및 "경매완료" 경우에 대한 조건 추가
+
 			return qDiscount.owner.id.eq(member.getId())
 				.and(qDiscountHistory.id.isNotNull())
 				.and(qDiscountHistory.historyDoneDatetime.isNotNull());
 		}
-		//역경매 - 구매 : 내가 살려고 경매 자의로 올린것
+
 		else if ("예약중".equals(auctionStatus)) {
 			return qDiscount.customer.id.eq(member.getId())
 				.and(qDiscountHistory.isNotNull())
+				.and(qDiscountHistory.historyStatus.eq(HistoryStatus.BEFORE_CONFIRM))
 				.and(qDiscountHistory.historyDoneDatetime.isNull());
 		} else if ("구매완료".equals(auctionStatus)) {
-			// "구매" 및 "구매완료" 경우에 대한 조건 추가
 			return qDiscount.customer.id.eq(member.getId())
 				.and(qDiscountHistory.isNotNull())
+				.and(qDiscountHistory.historyStatus.eq(HistoryStatus.AFTER_CONFIRM))
 				.and(qDiscountHistory.historyDoneDatetime.isNotNull());
 		}
 		return null;
