@@ -57,9 +57,10 @@ interface ItemType {
 
 interface CardProps {
   item: ItemType;
+  confirmHandler: (type:string, discount?:string ,auctionPk?: number) => void
 }
 
-const AuctionBuy: React.FC<CardProps> = ({ item }) => {
+const AuctionBuy: React.FC<CardProps> = ({ item, confirmHandler }) => {
   const router = useRouter();
   const [isLiked, setIsLiked] = useState<boolean>(item.isLike);
   const [prodType, setProdType] = useState<string>("0");
@@ -81,6 +82,12 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
   const toChat = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     router.push(`dm/${item.auctionPk}/${prodType}`);
+  };
+
+  
+  const auctionConfirm = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    confirmHandler("BID", undefined ,item.auctionPk);
   };
   return (
     <>
@@ -208,7 +215,7 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
               </div>
               {/* 확정 메서드 달아줘야함 ex)확정버튼 클릭 시 리디렉션 어디? */}
               {item.auctionHistory == "BEFORE_CONFIRM" && (
-                <div className="border-2 px-3 mb-8 py-1 text-2xl rounded-lg">확정</div>
+                <div className="border-2 px-3 mb-8 py-1 text-2xl rounded-lg cursor-pointer" onClick={auctionConfirm}>확정</div>
               )}
             </div>
           </div>

@@ -18,7 +18,7 @@ import ReAuctionCarousel from "../components/ReAuctionCarousel";
 import ReAuctionCheckout from "../components/ReAuctionCheckout";
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 import Link from "next/link";
-import CountDown from "@/app/components/Card/ColCountDown";
+import ReAuctionCountDown from "../components/ReAuctionCountDown";
 
 const AuctionDetail = () => {
   const router = useRouter();
@@ -49,8 +49,8 @@ const AuctionDetail = () => {
   //좋아요 토글
   const handleLikeClicked = () => {
     callApi("get", `/auction/like/${reauctionPk}`)
-      .then(res => {
-        toast.success("좋아요 성공.");
+      .then((res) => {
+        toast.success(res.data.message);
       })
       .catch(err => {
         toast.error(err.response.data.message);
@@ -90,12 +90,11 @@ const AuctionDetail = () => {
     formData.append("reAuctionPk", reauctionPk.toString());
     callApi("post", `/reauction/bid`, formData)
       .then(res => {
-        toast.success("입찰에 성공하였습니다.");
+        toast.success(res.data.message);
         handleBidModalOpen();
         router.refresh();
       })
       .catch(err => {
-        console.log(err);
         toast.error(err.response.data.message);
         handleBidModalOpen();
       });
@@ -105,11 +104,9 @@ const AuctionDetail = () => {
     callApi("get", `/auction/${reauctionPk}`, {})
       .then(res => {
         setData(res.data);
-        console.log(res.data);
       })
       .catch(err => {
-        toast.error("부적절한 접근입니다.");
-        console.log(err);
+        toast.error(err.response.data.message);
         router.push("/");
       });
   };
@@ -120,13 +117,11 @@ const AuctionDetail = () => {
       reAuctionBidPk: bidPk,
     })
       .then(res => {
-        console.log(res);
-        toast.success("입찰하였습니다.");
-        router.refresh();
+        toast.success(res.data.message);
+        router.refresh()
       })
       .catch(err => {
         toast.error(err.response.data.message);
-        console.log(err);
       });
   };
 
@@ -157,7 +152,7 @@ const AuctionDetail = () => {
           </div>
           <div className="mt-7 text-xl">
             {data.isAction == 2 ? (
-              <span className="text-red-600 mr-2">역경매 완료</span>
+              <span className="text-red-600 mr-2">종료</span>
             ) : (
               <span className="text-blue-600 mr-2">역경매</span>
             )}
@@ -191,10 +186,10 @@ const AuctionDetail = () => {
               </div>
               <div className="mr-7 flex items-end">
                 <h3 className="flex text-1xl font-thin ">
-                  <CountDown
+                  <ReAuctionCountDown
                     stateHandler={stateHandler}
-                    currentTime={new Date(data.nowTime)}
-                    auctionStartTime={new Date(data.reAuctionEndTime)}
+                    nowTime={data.nowTime}
+                    reAucEndTime={data.reAuctionEndTime}
                   />
                 </h3>
               </div>

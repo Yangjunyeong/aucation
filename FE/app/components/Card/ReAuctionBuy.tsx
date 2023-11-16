@@ -48,9 +48,10 @@ interface ItemType {
 interface CardProps {
   item: ItemType;
   deleteHandler: (prodPk: number) => void;
+  confirmHandler: (type:string, discount?:string ,auctionPk?: number) => void
 }
 
-const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler }) => {
+const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler, confirmHandler }) => {
   const router = useRouter();
   const [isLiked, setIsLiked] = useState<boolean>(item.isLike);
   const [prodType, setProdType] = useState<string>("1");
@@ -74,23 +75,28 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler }) => {
     router.push(`dm/${item.auctionPk}/${prodType}`);
   };
 
-  const toConfirm = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    const data = {
-      reAuctionPk: item.auctionPk,
-    };
-    callApi("post", "/reauction/confirm", data)
-      .then(res => {
-        res.data;
-      })
-      .catch(err => {
-        err;
-      });
-  };
+  // const toConfirm = (e: React.MouseEvent<HTMLDivElement>) => {
+  //   e.stopPropagation();
+  //   const data = {
+  //     reAuctionPk: item.auctionPk,
+  //   };
+  //   callApi("post", "/reauction/confirm", data)
+  //     .then(res => {
+  //       res.data;
+  //     })
+  //     .catch(err => {
+  //       err;
+  //     });
+  // };
 
   const cardDelete = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     deleteHandler(item.auctionPk);
+  };
+
+  const reAuctionConfirm = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    confirmHandler("REVERSE_BID", undefined, item.auctionPk);
   };
   return (
     <>
@@ -274,7 +280,7 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler }) => {
                   className="border-[1px] border-customGray px-3 mb-8 py-1 text-lg rounded-2xl
                  font-bold text-customLightTextColor
                  hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all"
-                  onClick={toConfirm}
+                  onClick={reAuctionConfirm}
                 >
                   확정
                 </div>

@@ -162,7 +162,7 @@ const AuctionDetail = () => {
         />
 
         {/* 입찰버튼 */}
-        <div
+        {state == "경매종료" && (<div
           className="fixed bottom-4 right-4 rounded-xl flex items-center gap-2 p-6  
           text-[22px] mr-64 mb-8 z-50 bg-custom-btn-gradient hover:bg-custom-btn-gradient-hover hover:cursor-pointer shadow-xl"
         >
@@ -170,7 +170,7 @@ const AuctionDetail = () => {
           <Link href={`/bid/${dataList.auctionUuid}`}>
             <p className="text-2 text-customBasic">입찰하러 가기</p>
           </Link>
-        </div>
+        </div>)}
 
         {/* 상품소개 */}
         <div className="mt-12">

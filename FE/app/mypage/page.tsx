@@ -220,11 +220,12 @@ const MyPage: NextPage = () => {
     };
     callApi("post", "shop/verify/business", data)
       .then(res => {
-        console.log(res);
+        toast.success(res.data.message)
+        shopModalHandler()
         localStorage.setItem("role", "소상공인")
       })
       .catch(err => {
-        console.log(err);
+        toast.error(err.response.data.message)
       });
     console.log(shopNum);
   };
@@ -349,6 +350,45 @@ const MyPage: NextPage = () => {
     console.log(page);
   };
 
+  const confirmHandler = (type: string, discountUUID?: string, auctionPk?: number) => {
+    console.log(type, discountUUID,"마이페이지 핸들러")
+    const apiUrl: any = {
+      BID: "/auction/confirm",
+      REVERSE_BID: "/reauction/confirm",
+      DISCOUNT_BID: `/discount/confirm/${discountUUID}`,
+    }
+    let data:any
+    data = {
+      productStatus: secondCategory,
+      auctionStatus: thirdCategory,
+      productFilter: itemsort,
+      myPageNum: pageNumber,
+    }
+    let sendData:any
+    sendData ={
+      auctionPk: auctionPk
+    }
+      callApi(type == "DISCOUNT_BID" ? 'get' : 'post', `${apiUrl[type]}`, type !== "DISCOUNT_BID" ? sendData :"")
+      .then((res) => {
+        tmp();
+        toast.success(res.data.message)
+        callApi("post", `${apiUrl[category]}`, data)
+        .then(res => {
+          setDataList(res.data);
+          setUsername(res.data.memberNickname);
+          setMyPoint(res.data.memberPoint);
+          setInfo(res.data.memberDetail);
+          setIsShop(res.data.memberRole);
+          setTotalpage(res.data.totalPage);
+        })
+        .catch(err => {
+          toast(err.response.data.message)
+        });
+      })
+      .catch((err) => {
+        toast(err.response.data.message)
+      })
+  }
   useEffect(() => {
     // 브라우저에서 로컬 스토리지에 접근하여 토큰 확인
     const accessToken = window.localStorage.getItem("accessToken");
@@ -508,7 +548,7 @@ const MyPage: NextPage = () => {
                             <div className="flex gap-2">
                               <ProfileInput value={shopNum} onChange={shopInputHandler} />
                               <span
-                                className="flex border-2 border-blue-300 px-2 py-1 items-center rounded-lg"
+                                className="flex border-2 border-blue-300 px-2 py-1 items-center rounded-lg cursor-pointer hover:bg-gray-100"
                                 onClick={shopRegistHandler}
                               >
                                 인증
@@ -660,7 +700,6 @@ const MyPage: NextPage = () => {
           </div>
 
           {/* 경매 - 판매 */}
-
           {category == "경매" && secondCategory == "판매" && dataList.mypageItems.length > 0 && (
             <div>
               {/* DummyUserData.mypageItems */}
@@ -675,7 +714,7 @@ const MyPage: NextPage = () => {
             <div>
               {/* dataList.mypageItems? */}
               {dataList.mypageItems?.map((item: any, idx: any) => (
-                <AuctionBuy item={item} key={idx} />
+                <AuctionBuy item={item} key={idx} confirmHandler={confirmHandler}/>
               ))}
             </div>
           )}
@@ -696,7 +735,7 @@ const MyPage: NextPage = () => {
             <div>
               {/* {dataList.mypageItems?.map((item:any, idx:any) => ( */}
               {dataList.mypageItems?.map((item: any, idx: any) => (
-                <ReAuctionBuy item={item} key={idx} deleteHandler={deleteHandler} />
+                <ReAuctionBuy item={item} key={idx} deleteHandler={deleteHandler} confirmHandler={confirmHandler}/>
               ))}
             </div>
           )}
@@ -719,7 +758,7 @@ const MyPage: NextPage = () => {
           {category == "할인" && secondCategory == "구매" && dataList.mypageItems.length > 0 && (
             <div>
               {dataList.mypageItems?.map((item: any, idx: any) => (
-                <DiscountBuy item={item} key={idx} />
+                <DiscountBuy item={item} key={idx} confirmHandler={confirmHandler}/>
               ))}
             </div>
           )}
