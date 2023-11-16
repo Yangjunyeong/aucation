@@ -104,17 +104,18 @@ const DiscountListCard: React.FC<CardProps> = ({ item, nowTime }) => {
           <div className="flex items-center justify-between font-normal text-sm text-customLightTextColor -mb-2">
             <p>
               {/* {item.discountRate}%{" "} */}
-              <div className="inline-block w-[75px]">{""}</div>
-              <span className="line-through text-customGray">{formatKoreanCurrency(item.originalPrice)}</span>
+              {/* <div className="inline-block w-[75px]">{""}</div>
+              <span className="line-through text-customGray">{formatKoreanCurrency(item.originalPrice)}</span> */}
             </p>
           </div>
 
           {/* 가격 */}
-          <div className="flex">
-            <p>
-              <div className="text-customBlue text-2xl font-extrabold inline-block w-[75px]">{item.discountRate}%</div>
-              <span className="text-xl font-bold">{formatKoreanCurrency(item.discountedPrice)}</span> 
-            </p>
+          <div className="flex flex-row gap-1 place-items-end">
+            <div className="text-red-500 text-2xl font-extrabold">{item.discountRate}%</div>
+            <div>
+              <p className="line-through text-customGray -mb-2 text-sm">{formatKoreanCurrency(item.originalPrice)}</p>
+              <p className="text-xl font-bold">{formatKoreanCurrency(item.discountedPrice)}</p> 
+            </div>
           </div>
         </div>
 

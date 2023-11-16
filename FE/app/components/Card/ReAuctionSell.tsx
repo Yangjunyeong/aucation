@@ -78,11 +78,12 @@ const ReAuctionSell: React.FC<CardProps> = ({ item, deleteHandler }) => {
   };
   return (
     <>
-      <div className="flex rounded-lg overflow-hidden shadow-lg bg-white w-[1280px] h-[280px] mt-12 hover:border border-blue-400">
+        {/* w-[1280px] */}
+      <div className="flex rounded-lg overflow-hidden shadow-lg bg-customBasic w-full h-[300px] mt-12 hover:cursor-pointer border hover:border-blue-400 transition-all duration-150">
         {/* 카드 이미지 */}
         {item.historyDoneDateTime !== null ? (
           <div>
-            <div className="relative w-[300px] h-[280px]">
+            <div className="relative w-[300px] h-[300px]">
               <Image
                 layout="fill"
                 alt={item.auctionTitle}
@@ -99,7 +100,7 @@ const ReAuctionSell: React.FC<CardProps> = ({ item, deleteHandler }) => {
           </div>
         ) : (
           <div>
-            <div className="relative w-[300px] h-[280px]">
+            <div className="relative w-[300px] h-[300px]">
               <Image
                 className="transition-transform transform duration-300 hover:scale-110"
                 src={item.imgfile}
@@ -114,14 +115,15 @@ const ReAuctionSell: React.FC<CardProps> = ({ item, deleteHandler }) => {
           </div>
         )}
 
-        <div className="w-[900px] ml-7" onClick={toDetail}>
+{/* [900px] */}
+        <div className="w-full px-5 py-3 flex flex-col justify-between" onClick={toDetail}>
           {/* 경매 상태 / 경매 마크 /*/}
-          <div className="flex h-[60px] justify-between items-center">
-            <div className="flex text-[22px] gap-4 font-bold">
-              <span className="rounded-lg border-[0.1px] px-3 items-center border-gray-500">
+          <div className="flex justify-between items-center">
+            <div className="flex text-[16px] gap-4">
+              <span className="rounded-xl border-[0.1px] px-3 items-center border-customGray  text-customGray">
                 역경매
               </span>
-              <div className="font-sans">
+              <div className="">
                 {item.historyDateTime == null && <span className="text-red-500">입찰중</span>}
                 {item.historyDateTime !== null && item.historyDoneDateTime == null && (
                   <span className="text-customBlue">낙찰</span>
@@ -129,12 +131,12 @@ const ReAuctionSell: React.FC<CardProps> = ({ item, deleteHandler }) => {
                 {item.historyDoneDateTime !== null && <span>거래완료</span>}
               </div>
             </div>
-            <div className="text-xl">
-              등록일 :&nbsp;{new Date(item.registerDate).toLocaleString()}
+            <div className="text-customGray text-sm">
+              등록일 &nbsp;{new Date(item.registerDate).toLocaleString()}
             </div>
           </div>
           {/* 카드 제목 */}
-          <div className="text-5xl h-[70px] font-bold mr-20 whitespace-nowrap overflow-hidden text-ellipsis">
+          <div className="text-3xl max-h-[100px] font-bold break-all overflow-hidden text-ellipsis">
             {item.auctionTitle}
           </div>
 
@@ -150,21 +152,21 @@ const ReAuctionSell: React.FC<CardProps> = ({ item, deleteHandler }) => {
           </div> */}
 
           {/* 입찰가 */}
-          <div className="text-[24px] h-[50px] font-medium">
-            입찰가 :&nbsp;
-            <span className="text-3xl font-bold text-blue-500">
+          <div className="text-xl">
+            입찰가&nbsp;
+            <span className="font-bold text-red-500">
               &nbsp;{formatKoreanCurrency(item.reAucBidPrice)}
             </span>{" "}
           </div>
 
           {/* 입찰날짜 / 삭제버튼*/}
 
-          <div className="flex h-[45px]">
+          <div className="flex  text-customGray">
             <div className="flex text-[22px] items-center">
               {item.historyDateTime === null && (
                 <div>
-                  입찰 날짜 :&nbsp;
-                  <span className="text-[24px]">
+                  입찰 날짜 &nbsp;
+                  <span className="text-[22px]">
                     {new Date(item.reAucBidDateTime).toLocaleString()}
                   </span>
                 </div>
@@ -172,8 +174,8 @@ const ReAuctionSell: React.FC<CardProps> = ({ item, deleteHandler }) => {
               {item.historyDateTime !== null && item.historyDoneDateTime == null && (
                 <div>
                   {" "}
-                  낙찰 날짜 :&nbsp;
-                  <span className="text-[24px]">
+                  낙찰 날짜 &nbsp;
+                  <span className="text-[22px]">
                     {new Date(item.historyDateTime!).toLocaleString()}
                   </span>
                 </div>
@@ -181,8 +183,8 @@ const ReAuctionSell: React.FC<CardProps> = ({ item, deleteHandler }) => {
 
               {item.historyDoneDateTime !== null && (
                 <div>
-                  낙찰 확정일 :&nbsp;
-                  <span className="text-[24px]">
+                  낙찰 확정일 &nbsp;
+                  <span className="text-[22px]">
                     {new Date(item.historyDoneDateTime!).toLocaleString()}
                   </span>
                 </div>
@@ -190,32 +192,41 @@ const ReAuctionSell: React.FC<CardProps> = ({ item, deleteHandler }) => {
             </div>
           </div>
           <div className="flex items-center h-[55px] justify-between">
-            <div className="flex">
+            <div className="flex text-sm text-customGray">
               <BiMap size={25} />
               <span className="ml-2 text-[16px]">
                 {item.mycity}&nbsp;{item.street}&nbsp;{item.zipcode}
               </span>
             </div>
             {item.historyDateTime == null && (
-              <div className="flex gap-5 mb-8 ">
+              <div className="flex gap-3 mb-8 ">
                 <div
-                  className="border-[0.1px] rounded-lg border-red-300 text-red-500 text-2xl font-bold py-1 px-3 cursor-pointer"
+                  className="flex items-center border-[1px] rounded-2xl mb-8 border-red-500  text-red-500
+                  text-lg font-bold py-1 px-3 cursor-pointer
+                  hover:scale-105 transition-all"
                   onClick={cardDelete}
                 >
                   삭제하기
                 </div>
-                <span className="border-[0.1px] border-gray-300 cursor-pointer rounded-lg text-black text-2xl font-bold py-1 px-3">
+                <span className="border-[1px] border-customGray cursor-pointer rounded-2xl 
+                text-customLightTextColor text-lg font-bold py-1 px-3 mb-8
+                hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all">
                   입찰보기
                 </span>
               </div>
             )}
             {item.historyDateTime !== null && (
-              <div
-                className="flex items-center border-[0.1px] rounded-lg mb-8 border-gray-300 text-black text-2xl font-bold py-1 px-3 cursor-pointer"
-                onClick={toChat}
-              >
-                <BsChatRightDots size={22} />
-                <span className="ml-2">채팅</span>
+              <div className="flex gap-3 mb-8 ">
+                <div
+                  className="flex items-center border-[1px] rounded-2xl mb-8 border-customGray  text-customLightTextColor
+                  text-lg font-bold py-1 px-3 cursor-pointer
+                  hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all"
+                 onClick={toChat}
+                >
+                  <BsChatRightDots size={22} />
+                  <span className="ml-2">채팅</span>
+                </div>
+                
               </div>
             )}
           </div>
