@@ -81,6 +81,9 @@ public class DiscountService {
 		List<MultipartFile> multipartFiles) throws
 		IOException {
 
+		if(discountRequest.getDiscountDiscountedPrice()<1000){
+			throw new BadRequestException(ApplicationError.LESS_MORE_THAN_START_PRICE);
+		}
 		// memberPk 검증
 		Member member = memberRepository.findById(memberPk)
 			.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));

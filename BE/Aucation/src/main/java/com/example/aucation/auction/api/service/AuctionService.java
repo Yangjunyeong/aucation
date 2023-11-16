@@ -153,6 +153,10 @@ public class AuctionService {
 	public RegisterResponse register(Long memberPk, RegisterRequest registerRequest, List<MultipartFile> multipartFiles) throws IOException {
 		Member member = memberRepository.findById(memberPk)
 				.orElseThrow(() -> new NotFoundException(ApplicationError.MEMBER_NOT_FOUND));
+
+		if(registerRequest.getAuctionStartPrice()<1000){
+			throw new BadRequestException(ApplicationError.LESS_MORE_THAN_START_PRICE);
+		}
 		String auctionUUID = PasswordGenerator.generate();
 
 		Address address = setMemberAddress(registerRequest.getAuctionMeetingLng(), registerRequest.getAuctionMeetingLat());

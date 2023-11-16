@@ -81,7 +81,8 @@ public enum ApplicationError {
     EARLY_START_AUCTION(HttpStatus.BAD_REQUEST,"P009" , "아직 경매 시작 시간이 아닙니다 경매시작 시간에 맞춰서 경매를 진행해주세요"),
     STARTED_AUCTION(HttpStatus.BAD_REQUEST,"P010","이미 시작된 경매입니다 삭제할수 없습니다"),
     NOT_SELL_REAUCTION(HttpStatus.BAD_REQUEST, "P011","낙찰하기 직전입니다 삭제할수 없습니다" ),
-    NOT_SELL_DISCOUNT(HttpStatus.BAD_REQUEST,"D006" ,"낙찰하기 직전입니다 삭제할수 없습니다");
+    NOT_SELL_DISCOUNT(HttpStatus.BAD_REQUEST,"D006" ,"낙찰하기 직전입니다 삭제할수 없습니다"),
+    LESS_MORE_THAN_START_PRICE(HttpStatus.BAD_REQUEST,"M001","시작하는 항상 1000원 이상입니다" );
 
     private final HttpStatus status;
     private final String code;
