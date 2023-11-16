@@ -161,7 +161,8 @@ public class DiscountService {
 		HistoryStatus historyStatus = HistoryStatus.NOT_SELL;
 		////Discount에서 해당 discout.customer가 존재하는지? (구매했는가?)
 		if(discount.getCustomer()!=null){
-			DiscountHistory discountHistory = discountHistoryRepository.findByDiscountIdAndMemberId(discount.getCustomer().getId(),discount.getId());
+			DiscountHistory discountHistory = discountHistoryRepository.findByDiscountIdAndMemberId(discount.getCustomer().getId(),discount.getId())
+				.orElseThrow(()->new NotFoundException(ApplicationError.DISCOUNT_HISTORY_NOT_FOUND));
 			historyStatus =  discountHistory.getHistoryStatus();
 		}
 
