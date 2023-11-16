@@ -12,6 +12,7 @@ import formatKoreanCurrency from "../../utils/formatKoreanCurrency"
 import {RiAuctionLine} from "react-icons/ri"
 import {BsChatRightDots} from "react-icons/bs"
 import { BiMap } from "react-icons/bi";
+import toast from "react-hot-toast";
 interface ItemType {
   // 이미지
   imgfile: string,
@@ -72,7 +73,6 @@ const AuctionSell: React.FC<CardProps> = ({ item, deleteHandler}) => {
 
   const stateHandler = (state: string) => {
     setState(state);
-    console.log("--------------->", state);
   };
 
   const likeHandler = (newLikeStatus: boolean) => {
@@ -80,10 +80,10 @@ const AuctionSell: React.FC<CardProps> = ({ item, deleteHandler}) => {
 
     callApi("get", `/auction/like/${item.auctionPk}`)
       .then(response => {
-        console.log("좋아요 성공", response);
+        toast.success(response.data.message)
       })
       .catch(error => {
-        console.log("좋아요 실패", error);
+        toast.error(error.response.data.message)
       });
   };
   const toDetail = () => {

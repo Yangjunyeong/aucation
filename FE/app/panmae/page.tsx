@@ -143,7 +143,7 @@ const Panmae = () => {
       });
       callApi("post", "/auction/register", formData)
         .then(res => {
-          console.log(res.data);
+          // console.log(res.data);
           if (option == "BID") {
             router.push(`/detail/auction/${res.data.auctionPk}`);
           } else {
@@ -151,8 +151,8 @@ const Panmae = () => {
           }
         })
         .catch(err => {
-          console.log();
-          console.log(err);
+          // console.log();
+          // console.log(err);
           toast.error(err.response.data.message)
         })
         .finally(() => {
@@ -188,12 +188,13 @@ const Panmae = () => {
       });
       callApi("post", "/discount/register", formData)
         .then(res => {
-          console.log(res);
+          // console.log(res);
           const prodPk = res.data.prodPk;
           router.push(`/detail/discount/${prodPk}`);
         })
         .catch(err => {
-          console.log(err);
+          // console.log(err);
+          toast.error(err.response.data.message)
         })
         .finally(() => {
           setLoading(false);
@@ -204,7 +205,7 @@ const Panmae = () => {
   useEffect(() => {
     // 브라우저에서 로컬 스토리지에 접근하여 토큰 확인
     const accessToken = window.localStorage.getItem("accessToken");
-    console.log(auth);
+    // console.log(auth);
 
     // 토큰이 없는 경우 로그인 페이지로 리다이렉션
     if (!accessToken) {

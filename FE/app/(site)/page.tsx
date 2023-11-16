@@ -14,6 +14,7 @@ import { onMessageFCM } from "../utils/fcm";
 import { useRecoilValue } from "recoil";
 import { authState } from "../store/atoms";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function Home() {
   // const api = axios.create({
@@ -38,12 +39,10 @@ export default function Home() {
     setIsLoading(true);
     callApi("get", "/members/mainPage")
       .then(res => {
-        console.log("홈페이지 데이터", res);
         setData(res.data);
-        console.log("리코일", recoilValue);
       })
       .catch(err => {
-        console.log("홈페이지 데이터 에러", err);
+        toast.error(err.response.data.message)
       })
       .finally(() => {
         setIsLoading(false);

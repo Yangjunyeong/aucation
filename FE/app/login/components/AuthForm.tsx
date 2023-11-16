@@ -59,12 +59,12 @@ const AuthForm = () => {
       },
     })
       .then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         toast.success("회원가입 성공");
         login();
       })
       .catch(err => {
-        console.log(err.response.data);
+        // console.log(err.response.data);
         toast.error(err.response.data.message);
       });
   };
@@ -91,11 +91,11 @@ const AuthForm = () => {
           role: res.data.role,
         });
         toast.success("로그인 성공");
-        console.log(res.data);
+        // console.log(res.data);
         router.push("/");
       })
       .catch(err => {
-        console.log(err);
+        // console.log(err);
         // console.log(err);
         // console.log(err.response);
         toast.error(err.response.data);
@@ -111,12 +111,12 @@ const AuthForm = () => {
       },
     })
       .then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         toast.success("중복된 아이디가 없습니다");
         setVerifyid(true);
       })
       .catch(err => {
-        console.log(err.response.data);
+        // console.log(err.response.data);
         toast.error(err.response.data.message);
         setVerifyid(false);
       });
@@ -130,12 +130,12 @@ const AuthForm = () => {
       },
     })
       .then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         toast.success("중복된 닉네임이 없습니다");
         setVerifynickname(true);
       })
       .catch(err => {
-        console.log(err.response.data);
+        // console.log(err.response.data);
         toast.error(err.response.data.message);
         setVerifynickname(false);
       });
@@ -153,12 +153,12 @@ const AuthForm = () => {
       },
     })
       .then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         toast.success("중복된 이메일이 없습니다");
         setVerifyemail(true);
       })
       .catch(err => {
-        console.log(err.response.data);
+        // console.log(err.response.data);
         toast.error("해당 이메일이 이미 존재합니다");
         setVerifyemail(false);
       });
@@ -177,13 +177,14 @@ const AuthForm = () => {
       },
     })
       .then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         setVerifyCode(res.data.code);
         toast.success("인증번호가 발송되었습니다");
         setVerify(true);
       })
       .catch(err => {
-        console.log(err.response.data);
+        // console.log(err.response.data);
+        toast.error(err.response.data.message)
       });
   };
 
@@ -228,7 +229,7 @@ const AuthForm = () => {
         // success.
         setLat(position.coords.latitude);
         setLng(position.coords.longitude);
-        console.log(position.coords);
+        // console.log(position.coords);
       },
       error => {
         console.warn("Fail to fetch current location", error);

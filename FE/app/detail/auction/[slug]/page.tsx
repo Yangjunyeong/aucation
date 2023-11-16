@@ -20,6 +20,7 @@ import { callApi } from "@/app/utils/api";
 // 타이머
 import CountDown from "@/app/components/Card/ColCountDown";
 import MoonLoader from "react-spinners/MoonLoader";
+import toast from "react-hot-toast";
 
 const AuctionDetail = () => {
   const [dataList, setDataList] = useState<any>();
@@ -48,10 +49,10 @@ const AuctionDetail = () => {
 
     callApi("get", `auction/like/${auctionPk}/`)
       .then(response => {
-        console.log("좋아요 성공", response);
+        toast.success(response.data.message)
       })
       .catch(error => {
-        console.log("좋아요 실패", error);
+        toast.error(error.response.data.message)
       });
   };
 
@@ -61,10 +62,10 @@ const AuctionDetail = () => {
         setDataList(res.data);
         setIsLiked(res.data.isLike);
         setLikeCount(res.data.likeCnt);
-        console.log("디테일 페이지 데이터", res);
+        
       })
       .catch(err => {
-        console.log("디테일 페이지 에러", err);
+        toast.error(err.response.data.message)
         router.push("/");
       });
   }, [auctionPk]);

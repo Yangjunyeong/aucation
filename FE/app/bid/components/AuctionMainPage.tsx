@@ -91,10 +91,10 @@ const AuctionMainPage = () => {
     client.current.connect({}, () => {
       // const _transport = (client.current!.webSocket as any)?._transport.url.split("/")[5];
       client.current!.subscribe(`/topic/sub/${uuid}`, res => {
-        console.log(JSON.parse(res.body));
+        // console.log(JSON.parse(res.body));
         const data = JSON.parse(res.body);
         if (data.messageType == "count") {
-          console.log(data.headCnt, 1231241245125124);
+          // console.log(data.headCnt, 1231241245125124);
           setHeadCnt(data.headCnt);
           return;
         } else if (data.messageType == "error") {
@@ -168,7 +168,6 @@ const AuctionMainPage = () => {
   const bidDataHandler = () => {
     callApi("get", `/auction/place/${uuid}`, {})
       .then(res => {
-        console.log(res.data);
         setDatas((datas: auctionData) => {
           return {
             ...datas,

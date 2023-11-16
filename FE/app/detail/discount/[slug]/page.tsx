@@ -57,10 +57,10 @@ const DiscountDetail = () => {
 
     callApi("get", `/discount/like/${dataList.discountPk}`)
       .then(response => {
-        console.log("좋아요 성공", response);
+        toast.success(response.data.message)
       })
       .catch(error => {
-        console.log("좋아요 실패", error);
+        toast.error(error.response.data.message)
       });
   };
   const discountBuyHandler = () => {
@@ -69,11 +69,10 @@ const DiscountDetail = () => {
     .then((res) => {
       setIsOpen(false)
       toast.success("구매 성공")
-      console.log(res)
+
     })
     .catch((err) => {
       toast.error(err.response.data.message)
-      console.log(err)
     })
   }
 
@@ -83,10 +82,9 @@ const DiscountDetail = () => {
         setDataList(res.data);
         setIsLiked(res.data.like);
         setLikeCount(res.data.likeCnt);
-        console.log(res);
       })
       .catch(err => {
-        console.log(err);
+        toast.error(err.response.data.message)
         router.push("/");
       });
   }, [prodPk]);
@@ -110,6 +108,7 @@ const DiscountDetail = () => {
         <div className="mt-3">
           <span className="text-customBlue">할인</span>
           <span className="text-customLightTextColor ml-3">{dataList.discountType}</span>
+          {dataList.disStatus !== "아무도 사지 않음" && <span className="text-red-500 ml-3">{dataList.disStatus}</span>}
         </div>
         {/* 경매자 프로필 및 경매참여 인원, 경매까지 시간 */}
         <div className="flex mt-10">

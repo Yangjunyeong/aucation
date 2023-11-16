@@ -17,6 +17,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ClipLoader from "react-spinners/ClipLoader";
 import NoResult from "../NoResult";
+import toast from "react-hot-toast";
 
 type PageParams = {
   headerTap: string;
@@ -60,7 +61,6 @@ const AuctionList = ({ params }: { params: PageParams }) => {
 
   const handlePageChange = (page: number) => {
     setPageNumber(page);
-    console.log(page);
   };
 
   const headerHandler = (tap: string) => {
@@ -89,16 +89,13 @@ const AuctionList = ({ params }: { params: PageParams }) => {
       searchType: searchType.id,
       searchKeyword: searchKeyword,
     };
-    console.log(searchFilters);
     callApi("post", `/auction/list/ing/${pageNumber}`, searchFilters)
       .then(response => {
-        console.log("데이터 성공", response.data);
         setData(response.data);
       })
 
       .catch(error => {
-        console.log(searchFilters);
-        console.log("데이터 에러", error);
+        toast.error(error.response.data.message)
       })
       .finally(() => {
         setIsLoading(false); // 데이터 로딩 완료

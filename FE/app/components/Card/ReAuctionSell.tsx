@@ -9,6 +9,7 @@ import formatKoreanCurrency from "../../utils/formatKoreanCurrency";
 import { useRouter } from "next/navigation";
 import { BsChatRightDots } from "react-icons/bs";
 import { BiMap } from "react-icons/bi";
+import toast from "react-hot-toast";
 interface ItemType {
   // v 이미지,제목, 시작가, 판매자, 입찰가, 입찰날짜, 등록일, 좋아요
   imgfile: string;
@@ -57,10 +58,10 @@ const ReAuctionSell: React.FC<CardProps> = ({ item, deleteHandler }) => {
 
     callApi("get", `/auction/like/${item.auctionPk}`)
       .then(response => {
-        console.log("좋아요 성공", response);
+        toast.success(response.data.message)
       })
       .catch(error => {
-        console.log("좋아요 실패", error);
+        toast.error(error.response.data.message)
       });
   };
   const toDetail = () => {
@@ -215,7 +216,7 @@ const ReAuctionSell: React.FC<CardProps> = ({ item, deleteHandler }) => {
                 </span>
               </div>
             )}
-            {item.historyDateTime !== null && (
+            {/* {item.historyDateTime !== null && (
               <div className="flex gap-3 mb-8 ">
                 <div
                   className="flex items-center border-[1px] rounded-2xl mb-8 border-customGray  text-customLightTextColor
@@ -228,7 +229,7 @@ const ReAuctionSell: React.FC<CardProps> = ({ item, deleteHandler }) => {
                 </div>
                 
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>

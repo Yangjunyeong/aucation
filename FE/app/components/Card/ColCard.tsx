@@ -40,7 +40,6 @@ const Card: React.FC<CardProps> = ({ item }) => {
   // 현재 경매 상태
   const stateHandler = (state: string) => {
     setState(state);
-    console.log("--------------->", state);
   };
 
   // 좋아요 상태
@@ -48,10 +47,10 @@ const Card: React.FC<CardProps> = ({ item }) => {
     setIsliked(value);
     if (!value) {
       // pk, isliked 담아서 좋아요 상태변경
-      console.log("싫어요", value);
+  
     } else {
       // pk, isliked 담아서 좋아요 상태 변경
-      console.log("좋아요", value);
+   
     }
   };
 
