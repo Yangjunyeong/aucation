@@ -158,12 +158,18 @@ public class DiscountService {
 		Discount discount = discountRepository.findById(prodPk).orElseThrow(() -> new NotFoundException(
 			ApplicationError.DISCOUNT_NOT_FOUND));
 
-		HistoryStatus historyStatus = HistoryStatus.NOT_SELL;
+		String disStatus ="아무도 사지 않음";
 		////Discount에서 해당 discout.customer가 존재하는지? (구매했는가?)
 		if(discount.getCustomer()!=null){
 			DiscountHistory discountHistory = discountHistoryRepository.findByDiscountIdAndMemberId(discount.getCustomer().getId(),discount.getId())
 				.orElseThrow(()->new NotFoundException(ApplicationError.DISCOUNT_HISTORY_NOT_FOUND));
-			historyStatus =  discountHistory.getHistoryStatus();
+
+			if(discountHistory.getHistoryStatus().equals(HistoryStatus.BEFORE_CONFIRM)){
+				disStatus="거래 대기중";
+			}else if(discountHistory.getHistoryStatus().equals(HistoryStatus.AFTER_CONFIRM)){
+				disStatus="거래 완료";
+			}
+
 		}
 
 		//존재한다면 그게 memberPk랑 똑같은지?
@@ -181,7 +187,7 @@ public class DiscountService {
 		int likeCnt = likeDiscountRepository.countByDiscountAndMember(discount, member);
 
 		boolean discountStatus = discount.getCustomer() != null;
-		return EnterResponse.of(UUIDImage, discount, member, isFalse, likeCnt,discountStatus,historyStatus);
+		return EnterResponse.of(UUIDImage, discount, member, isFalse, likeCnt,discountStatus,disStatus);
 	}
 
 	public void isSmallBusiness(Member member) {

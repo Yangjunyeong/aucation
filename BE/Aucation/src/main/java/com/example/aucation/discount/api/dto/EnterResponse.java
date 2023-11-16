@@ -40,10 +40,10 @@ public class EnterResponse {
 	private int discountRate;
 
 	private Address address;
-	private HistoryStatus historyStatus;
+	private String disStatus;
 
 	public static EnterResponse of(List<String> uuidImage, Discount discount, Member member,boolean isFalse, int likeCnt, boolean discountStatus,
-		HistoryStatus historyStatus) {
+		String disStatus) {
 		return EnterResponse.builder()
 			.discountImgURL(uuidImage)
 			.discountType(discount.getDiscountType())
@@ -68,7 +68,7 @@ public class EnterResponse {
 			.myNickname(member.getMemberNickname())
 			.address(discount.getAddress())
 			.discountStatus(discountStatus)
-			.historyStatus(historyStatus)
+			.disStatus(disStatus)
 			.build();
 	}
 }
