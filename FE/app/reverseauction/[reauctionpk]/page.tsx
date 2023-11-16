@@ -145,11 +145,11 @@ const AuctionDetail = () => {
           {/* 페이지 상단 타이틀 */}
           <div className="mt-10">
             <h2 className="text-4xl font-bold">{data.reAuctionTitle}</h2>
-            {/* {data ? <h1>{data.title}</h1> : <p>Loading...</p>} */}
+            {data ? <h1>{data.title}</h1> : <p>Loading...</p>}
           </div>
-          <div className="mt-10">
+          {/* <div className="mt-10">
             <h2 className="text-5xl font-bold mb-7">{data.reAuctionTitle}</h2>
-          </div>
+          </div> */}
           <div className="mt-7 text-xl">
             {data.isAction == 2 ? (
               <span className="text-red-600 mr-2">종료</span>
