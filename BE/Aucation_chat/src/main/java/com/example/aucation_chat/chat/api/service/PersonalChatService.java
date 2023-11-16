@@ -359,8 +359,8 @@ public class PersonalChatService {
 
 	/** 채팅방 찾기 */
 	private ChatRoom findChatRoom(long prodPk, int prodType) {
-		ChatRoom chatRoom = chatRoomRepository.findByProdPkAndProdType(prodPk, prodType);
-		if (chatRoom == null) { // 채팅한적 없으면 생성
+		Optional<ChatRoom> chatRoom = chatRoomRepository.findByProdPkAndProdType(prodPk, prodType);
+		if (chatRoom.isEmpty()) { // 채팅한적 없으면 생성
 			log.info("************************ 채팅방 생성 !!!!!!!!!");
 
 			String chatSession = PasswordGenerator.generate();
@@ -377,9 +377,9 @@ public class PersonalChatService {
 			chatRoomRepository.save(temp);
 			log.info("************************ 채팅방 저장 !!!!!!!!!");
 
-			chatRoom = temp;
+			return temp;
 		}
-		return chatRoom;
+		return chatRoom.get();
 	}
 
 	/** 참가자가 유효한 멤버인지 검사 */
