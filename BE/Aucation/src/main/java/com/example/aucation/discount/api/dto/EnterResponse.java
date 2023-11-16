@@ -15,6 +15,7 @@ import lombok.Getter;
 public class EnterResponse {
 
 	private String discountTitle;
+	private boolean discountStatus;
 	private String discountType;
 	private double discountLng;
 	private double discountLat;
@@ -39,7 +40,7 @@ public class EnterResponse {
 
 	private Address address;
 
-	public static EnterResponse of(List<String> uuidImage, Discount discount, Member member,boolean isFalse, int likeCnt) {
+	public static EnterResponse of(List<String> uuidImage, Discount discount, Member member,boolean isFalse, int likeCnt, boolean discountStatus) {
 		return EnterResponse.builder()
 			.discountImgURL(uuidImage)
 			.discountType(discount.getDiscountType())
@@ -63,6 +64,7 @@ public class EnterResponse {
 			.memberPk(member.getId())
 			.myNickname(member.getMemberNickname())
 			.address(discount.getAddress())
+			.discountStatus(discountStatus)
 			.build();
 	}
 }

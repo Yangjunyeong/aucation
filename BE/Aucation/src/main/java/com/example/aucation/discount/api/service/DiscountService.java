@@ -167,7 +167,8 @@ public class DiscountService {
 		boolean isFalse = likeDiscountRepository.existsByDiscountAndMember(discount, member);
 		int likeCnt = likeDiscountRepository.countByDiscountAndMember(discount, member);
 
-		return EnterResponse.of(UUIDImage, discount, member, isFalse, likeCnt);
+		boolean discountStatus = discount.getCustomer() != null;
+		return EnterResponse.of(UUIDImage, discount, member, isFalse, likeCnt,discountStatus);
 	}
 
 	public void isSmallBusiness(Member member) {
