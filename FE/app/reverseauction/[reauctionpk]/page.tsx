@@ -62,6 +62,7 @@ const AuctionDetail = () => {
   };
 
   const handleBidModalOpen = () => {
+    console.log('여기임')
     setBidModalOpen(!bidModalOpen);
   };
 
@@ -224,10 +225,11 @@ const AuctionDetail = () => {
 
           {/* 입찰버튼 */}
           {!data.isOwner && data.isAction == 1 && !bidModalOpen && (
-              <div
+            <div
               className="fixed bottom-4 right-4 rounded-xl flex items-center gap-2 p-6  
               text-[22px] mr-64 mb-8 z-50 bg-custom-btn-gradient hover:bg-custom-btn-gradient-hover hover:cursor-pointer shadow-xl"
-              >
+              onClick={handleBidModalOpen}
+            >
               <RiAuctionLine size={32} color="#F8F9FB" />
               <p className="text-2 text-customBasic">입찰하러 가기</p>
             </div>

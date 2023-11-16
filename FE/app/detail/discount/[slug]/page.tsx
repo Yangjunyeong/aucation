@@ -14,9 +14,7 @@ import ColCard from "@/app/components/Card/ColCard";
 import { useEffect, useState } from "react";
 import DetailCarousel from "@/app/detail/components/DetailCarousel";
 
-// 더미데이터 임포트
-import dummyData from "@/app/detail/components/DummyData";
-import imageDataList from "@/app/detail/components/DummyImg";
+
 import { useParams, useRouter } from "next/navigation";
 
 // API 요청
