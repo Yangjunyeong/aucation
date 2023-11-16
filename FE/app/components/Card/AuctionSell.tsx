@@ -66,7 +66,7 @@ const AuctionSell: React.FC<CardProps> = ({ item, deleteHandler}) => {
   const router = useRouter();
   // 경매전, 중, 완료 체크
   const [state, setState] = useState<string>("");
-  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [isLiked, setIsLiked] = useState<boolean>(item.isLike);
   // 채팅방 - 경매0 역경매1 할인2
   const [prodType, setProdType] = useState<string>("0")
 

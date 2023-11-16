@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import clsx from "clsx";
+
 import HeaderTap from "../components/HeaderTap";
 import OrderTypeBtn from "../components/OrderTypeBtn";
 import { orderType, searchType } from "../components/type";
@@ -104,15 +104,15 @@ const AuctionList = ({ params }: { params: PageParams }) => {
         setIsLoading(false); // 데이터 로딩 완료
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategory, selectedOrderType.id, pageNumber]);
+  }, [selectedCategory, selectedOrderType.id, pageNumber, , searchKeyword]);
 
   useEffect(() => {
     fetchAuctionData();
-  }, [fetchAuctionData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory, selectedOrderType.id, pageNumber, searchKeyword]);
 
   const handleSearch = (keyword: string) => {
     setSearchKeyword(keyword); // 상태 업데이트
-    fetchAuctionData(); // 데이터 가져오기
   };
 
   return (
@@ -187,7 +187,7 @@ const AuctionList = ({ params }: { params: PageParams }) => {
         //   width={1536}
         //   height={400} // 여기서 통일된 높이를 사용하세요
         // />
-        <NoResult/>
+        <NoResult />
       )}
 
       <Pagination

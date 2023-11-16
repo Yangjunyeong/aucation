@@ -90,7 +90,7 @@ export default function Home() {
         <PopularBidList
           title={"🛒 소상공인 할인제품"}
           moreShow={true}
-          goUrl={"holding"}
+          goUrl={"discount"}
           type={"discounts"}
           item={data.discounts}
           nowTime={data.nowTime}

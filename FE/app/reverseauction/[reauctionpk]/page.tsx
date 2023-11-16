@@ -18,13 +18,14 @@ import ReAuctionCarousel from "../components/ReAuctionCarousel";
 import ReAuctionCheckout from "../components/ReAuctionCheckout";
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 import Link from "next/link";
+import ReAuctionCountDown from "../components/ReAuctionCountDown";
 
 const AuctionDetail = () => {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [bidModalOpen, setBidModalOpen] = useState<boolean>(false);
   const [data, setData] = useState<any>(null); // 경매 데이터
-
+  const [state, setState] = useState<string>();
   const [price, setPrice] = useState<number>(0);
   const [description, setDescription] = useState<string>("");
 
@@ -34,6 +35,10 @@ const AuctionDetail = () => {
 
   const [bidCnt, setBidCnt] = useState<number>(0);
   const reauctionPk = useParams().reauctionpk;
+
+  const stateHandler = (value: string) => {
+    setState(value);
+  };
   const descriptionhandler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(event.target.value);
   };
@@ -44,8 +49,8 @@ const AuctionDetail = () => {
   //좋아요 토글
   const handleLikeClicked = () => {
     callApi("get", `/auction/like/${reauctionPk}`)
-      .then(res => {
-        toast.success("좋아요 성공.");
+      .then((res) => {
+        toast.success(res.data.message);
       })
       .catch(err => {
         toast.error(err.response.data.message);
@@ -85,12 +90,11 @@ const AuctionDetail = () => {
     formData.append("reAuctionPk", reauctionPk.toString());
     callApi("post", `/reauction/bid`, formData)
       .then(res => {
-        toast.success("입찰에 성공하였습니다.");
+        toast.success(res.data.message);
         handleBidModalOpen();
         router.refresh();
       })
       .catch(err => {
-        console.log(err);
         toast.error(err.response.data.message);
         handleBidModalOpen();
       });
@@ -100,11 +104,9 @@ const AuctionDetail = () => {
     callApi("get", `/auction/${reauctionPk}`, {})
       .then(res => {
         setData(res.data);
-        console.log(res.data);
       })
       .catch(err => {
-        toast.error("부적절한 접근입니다.");
-        console.log(err);
+        toast.error(err.response.data.message);
         router.push("/");
       });
   };
@@ -115,13 +117,11 @@ const AuctionDetail = () => {
       reAuctionBidPk: bidPk,
     })
       .then(res => {
-        console.log(res);
-        toast.success("입찰하였습니다.");
-        router.refresh();
+        toast.success(res.data.message);
+        router.refresh()
       })
       .catch(err => {
         toast.error(err.response.data.message);
-        console.log(err);
       });
   };
 
@@ -147,13 +147,16 @@ const AuctionDetail = () => {
             <h2 className="text-4xl font-bold">{data.reAuctionTitle}</h2>
             {/* {data ? <h1>{data.title}</h1> : <p>Loading...</p>} */}
           </div>
-          <div className="mt-3">
+          <div className="mt-10">
+            <h2 className="text-5xl font-bold mb-7">{data.reAuctionTitle}</h2>
+          </div>
+          <div className="mt-7 text-xl">
             {data.isAction == 2 ? (
-              <span className="text-red-600">역경매 완료</span>
+              <span className="text-red-600 mr-2">종료</span>
             ) : (
-              <span className="text-blue-600">역경매</span>
+              <span className="text-blue-600 mr-2">역경매</span>
             )}
-            <span className="text-customLightTextColor ml-3">{data.reAuctionType}</span>
+            <span>{data.reAuctionType}</span>
           </div>
 
           {/* 경매자 프로필 및 경매참여 인원, 경매까지 시간 */}
@@ -168,7 +171,7 @@ const AuctionDetail = () => {
 
             <div className="ml-4 flex flex-col justify-center flex-1">
               <div>
-                <h3 className="text-xl font-normal mb-1">
+                <h3 className="text-xl font-medium text-customLightTextColor mb-1">
                   {data.reAuctionOwnerMemberRole == "SHOP" ? "소상공인" : "개인판매자"}
                 </h3>
               </div>
@@ -176,15 +179,23 @@ const AuctionDetail = () => {
                 <h2 className="text-2xl font-bold">{data.reAuctionOwnerNickname}</h2>
               </Link>
             </div>
-            <div className="flex-1 flex justify-end items-end text-customLightTextColor">
-              <div className="mr-7 flex gap-2 items-end">
-                <BsFillPersonFill size={25} />
+            <div className="flex-1 flex justify-end items-end space-x-5">
+              <div className=" flex ml-2 text-lg text-customLightTextColor">
+                <BsFillPersonFill size={30} />
                 {data.reAuctionBidCnt}명 참여중
               </div>
-              {/* <h3 className="text-1xl font-thin ">경매 시작까지 31분 남음</h3> */}
+              <div className="mr-7 flex items-end">
+                <h3 className="flex text-1xl font-thin ">
+                  <ReAuctionCountDown
+                    stateHandler={stateHandler}
+                    nowTime={data.nowTime}
+                    reAucEndTime={data.reAuctionEndTime}
+                  />
+                </h3>
+              </div>
             </div>
           </div>
-          <div className="border-t-2 border-customGray mt-10"></div>
+          <div className="border-t-2 border-gray-400 mt-10"></div>
 
           {/* 상품 이미지 및 지도 */}
           <div className="flex flex-row mt-8 gap-3">
@@ -224,10 +235,11 @@ const AuctionDetail = () => {
 
           {/* 입찰버튼 */}
           {!data.isOwner && data.isAction == 1 && !bidModalOpen && (
-              <div
+            <div
               className="fixed bottom-4 right-4 rounded-xl flex items-center gap-2 p-6  
               text-[22px] mr-64 mb-8 z-50 bg-custom-btn-gradient hover:bg-custom-btn-gradient-hover hover:cursor-pointer shadow-xl"
-              >
+              onClick={handleBidModalOpen}
+            >
               <RiAuctionLine size={32} color="#F8F9FB" />
               <p className="text-2 text-customBasic">입찰하러 가기</p>
             </div>

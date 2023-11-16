@@ -57,9 +57,10 @@ interface ItemType {
 
 interface CardProps {
   item: ItemType;
+  confirmHandler: (type:string, discount?:string ,auctionPk?: number) => void
 }
 
-const AuctionBuy: React.FC<CardProps> = ({ item }) => {
+const AuctionBuy: React.FC<CardProps> = ({ item, confirmHandler }) => {
   const router = useRouter();
   const [isLiked, setIsLiked] = useState<boolean>(item.isLike);
   const [prodType, setProdType] = useState<string>("0");
@@ -81,6 +82,12 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
   const toChat = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     router.push(`dm/${item.auctionPk}/${prodType}`);
+  };
+
+  
+  const auctionConfirm = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    confirmHandler("BID", undefined ,item.auctionPk);
   };
   return (
     <>
@@ -219,9 +226,11 @@ const AuctionBuy: React.FC<CardProps> = ({ item }) => {
               {item.auctionHistory == "BEFORE_CONFIRM" && (
                 <div className="border-[1px] border-customGray px-3 mb-8 py-1 text-lg rounded-2xl
                 font-bold text-customLightTextColor
-                hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all">
+                hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all"
+                onClick={auctionConfirm}>
                  확정
                </div>
+                // <div className="border-2 px-3 mb-8 py-1 text-2xl rounded-lg cursor-pointer" onClick={auctionConfirm}>확정</div>
               )}
               
             </div>

@@ -46,7 +46,7 @@ const DropdownButton: React.FC<Props> = ({ options, selectedOption, setSelectedO
         }
       )}
     >
-      <p className="text-customBlue">{selectedOption}</p>
+      <p className="text-customBlue font-semibold">{selectedOption}</p>
       <LuTriangle
         className={`transition-transform duration-300 ease-in-out transform ${
           isShowToggle ? "" : "rotate-180"
@@ -75,7 +75,7 @@ const DropdownButton: React.FC<Props> = ({ options, selectedOption, setSelectedO
             {options.map((option, idx) => (
               <div
                 key={idx} // 호버시 색상의 경우 커스터 마이징 하세요
-                className="hover:bg-gray-200 hover:text-customBlue font-medium rounded cursor-pointer px-1 py-1"
+                className="hover:bg-gray-200 hover:text-customBlue font-normal rounded cursor-pointer px-1 py-1 "
                 onClick={() => handleOptionClick(option)}
               >
                 {option}

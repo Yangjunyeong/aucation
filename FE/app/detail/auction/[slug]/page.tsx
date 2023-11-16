@@ -13,9 +13,7 @@ import StayMap from "../../../components/map/StayMap";
 import ColCard from "@/app/components/Card/ColCard";
 import { useEffect, useState } from "react";
 import DetailCarousel from "../../components/DetailCarousel";
-// 더미데이터 임포트
-import dummyData from "../../components/DummyData";
-import imageDataList from "../../components/DummyImg";
+
 import { useParams, useRouter } from "next/navigation";
 // API 요청
 import { callApi } from "@/app/utils/api";
@@ -73,7 +71,7 @@ const AuctionDetail = () => {
 
   if (dataList) {
     return (
-      <div className="w-full  px-72 py-20" >
+      <div className="w-full  px-72 py-20">
         {/* 좋아요 버튼 및 뒤로가기 버튼 */}
         <div className="flex justify-between">
           <BackBtn />
@@ -85,13 +83,19 @@ const AuctionDetail = () => {
 
         {/* 페이지 상단 타이틀 */}
         <div className="mt-10">
-          <h2 className="text-4xl font-bold">{dataList.auctionTitle}</h2>
-          {/* <span className="text-customBlue">경매</span> */}
+          <h2 className="text-5xl font-bold mb-7">{dataList.auctionTitle}</h2>
+          <p className="text-xl">
+            {dataList.isAction == 0 ? (
+              <span className="text-blue-600 mr-2">경매전</span>
+            ) : dataList.isAction == 1 ? (
+              <span className="text-red-600 mr-2">경매중</span>
+            ) : (
+              <span className="text-red-600 mr-2">경매 완료</span>
+            )}
+            <span className="text-customLightTextColor font-semibold ">{dataList.auctionType}</span>
+          </p>
         </div>
-        <div className="mt-3">
-        <span className="text-customBlue">경매</span>
-          <span className="text-customLightTextColor ml-3">{dataList.auctionType}</span>
-        </div>
+
         {/* 경매자 프로필 및 경매참여 인원, 경매까지 시간 */}
         <div className="flex mt-10">
           <Image
@@ -114,14 +118,19 @@ const AuctionDetail = () => {
               </Link>
             </div>
           </div>
-          <div className="flex-1 flex justify-end items-end">
+          <div className="flex-1 flex justify-end items-end space-x-5">
             {/* 참여중인 인원수 */}
-            <div className="flex w-[120px] items-end text-customLightTextColor">
-              <BsFillPersonFill size={30} />
-              <span className="ml-2">{dataList?.auctionCurCnt}</span>
-            </div>
-            <div className="flex items-end">
-              <h3 className="flex ">
+            {dataList.auctionBidCnt != null && (
+              <div className="flex  items-end">
+                <BsFillPersonFill size={30} />
+                <span className="ml-2 text-lg text-customLightTextColor">
+                  {dataList.auctionBidCnt}명 참여중
+                </span>
+              </div>
+            )}
+
+            <div className="mr-7 flex items-end">
+              <h3 className="flex text-1xl font-thin ">
                 <CountDown
                   stateHandler={stateHandler}
                   currentTime={new Date(dataList.nowTime)}
@@ -153,35 +162,21 @@ const AuctionDetail = () => {
         />
 
         {/* 입찰버튼 */}
-        <div
+        {state == "경매종료" && (<div
           className="fixed bottom-4 right-4 rounded-xl flex items-center gap-2 p-6  
           text-[22px] mr-64 mb-8 z-50 bg-custom-btn-gradient hover:bg-custom-btn-gradient-hover hover:cursor-pointer shadow-xl"
-
         >
           <RiAuctionLine size={32} color="#F8F9FB" />
           <Link href={`/bid/${dataList.auctionUuid}`}>
             <p className="text-2 text-customBasic">입찰하러 가기</p>
           </Link>
-        </div>
+        </div>)}
 
         {/* 상품소개 */}
         <div className="mt-12">
           <h2 className="text-3xl font-bold">상품소개</h2>
           <div className="rounded-lg flex flex-row items-center p-6 bg-gray-100 border border-gray-400 mt-6">
             <h2 className="text-1xl text-customLightTextColor">{dataList.auctionInfo}</h2>
-          </div>
-        </div>
-
-        {/* 경매중인 상품 */}
-        <div className="mt-16">
-          <div className="mb-3">
-            <span className="text-2xl font-bold">{dataList.auctionOwnerNickname}</span>{" "}
-            <span className="text-2xl">님의 경매중인 상품</span>
-          </div>
-          <div className="flex flex-wrap gap-8">
-            {dummyData.map((item, index) => (
-              <ColCard item={item} key={index} />
-            ))}
           </div>
         </div>
       </div>

@@ -208,15 +208,11 @@ const DiscountSell: React.FC<CardProps> = ({ item, thirdCategory, deleteHandler 
                 </div>
               </div>
               <div className="flex gap-3">
-                <div 
-                className="flex items-center border-[1px] rounded-2xl border-customGray  text-customGray
-                text-lg font-bold py-1 px-3 cursor-pointer
-                hover:scale-105 hover:border-red-400 hover:text-red-400 transition-all"
-                >
+                {/* <div className="flex items-center border-[0.1px] rounded-lg mb-8 border-red-300 text-red-500 text-2xl font-bold py-1 px-3 cursor-pointer">
                   {" "}
                   <GoReport size={25} color="#EC4747" />
                   <span className="ml-1">신고하기</span>
-                </div>
+                </div> */}
                 <div
                   className="flex items-center border-[1px] border-customGray text-customLightTextColor 
                   rounded-2xl mb-8  text-lg font-bold py-1 px-3 cursor-pointer
