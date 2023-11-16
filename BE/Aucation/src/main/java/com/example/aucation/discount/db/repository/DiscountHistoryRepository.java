@@ -23,6 +23,7 @@ public interface DiscountHistoryRepository extends JpaRepository<DiscountHistory
 
 	boolean existsDiscountHistoryByDiscount(Discount discount);
 
+	@Modifying
 	@Query("SELECT disHistory FROM DiscountHistory disHistory WHERE disHistory.discount.id = :discountId AND disHistory.customer.id = :memberId")
-	DiscountHistory findByDiscountIdAndMemberId(Long discountId, Long memberId);
+	Optional<DiscountHistory> findByDiscountIdAndMemberId(Long memberId, Long discountId);
 }
