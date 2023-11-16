@@ -16,6 +16,7 @@ import AuctionListCard from "../../components/Card/AutionListCard";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ClipLoader from "react-spinners/ClipLoader";
+import NoResult from "../NoResult";
 
 type PageParams = {
   headerTap: string;
@@ -113,7 +114,7 @@ const ReverseAuctionList = ({ params }: { params: PageParams }) => {
 
   return (
     <div className="px-48 ">
-      <div className="flex flex-row space-x-10 h-[100px] items-center mt-10">
+      <div className="flex flex-row space-x-10 items-baseline mt-10">
         <div className="font-black text-5xl">경매 상품</div>
         {tapList.map((tap: string, idx) => (
           <HeaderTap
@@ -125,7 +126,7 @@ const ReverseAuctionList = ({ params }: { params: PageParams }) => {
         ))}
       </div>
 
-      <div className="flex flex-row h-[75px] items-center justify-between mb-7 mt-2">
+      <div className="flex flex-row h-[75px] items-center justify-between mb-7 mt-4">
         <div className="flex flex-row gap-5">
           <DropdownButton
             options={localCategoryList}
@@ -177,12 +178,7 @@ const ReverseAuctionList = ({ params }: { params: PageParams }) => {
           ))}
         </div>
       ) : (
-        <Image
-          src="/assets/images/noResults.png"
-          alt="검색 결과가 없어요"
-          width={1536}
-          height={400} // 여기서 통일된 높이를 사용하세요
-        />
+        <NoResult/>
       )}
 
       <Pagination

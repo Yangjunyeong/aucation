@@ -130,7 +130,7 @@ const AuctionDetail = () => {
   }, []);
 
   return (
-    <div className="w-full  px-72 py-20" >
+    <div className="w-full px-72 py-20">
       {data && (
         <>
           {/* 좋아요 버튼 및 뒤로가기 버튼 */}
@@ -147,13 +147,13 @@ const AuctionDetail = () => {
             <h2 className="text-4xl font-bold">{data.reAuctionTitle}</h2>
             {/* {data ? <h1>{data.title}</h1> : <p>Loading...</p>} */}
           </div>
-          <div className="mt-5 text-2xl">
+          <div className="mt-3">
             {data.isAction == 2 ? (
-              <span className="text-red-600 mr-2">역경매 완료</span>
+              <span className="text-red-600">역경매 완료</span>
             ) : (
-              <span className="text-blue-600 mr-2">역경매</span>
+              <span className="text-blue-600">역경매</span>
             )}
-            <span>{data.reAuctionType}</span>
+            <span className="text-customLightTextColor ml-3">{data.reAuctionType}</span>
           </div>
 
           {/* 경매자 프로필 및 경매참여 인원, 경매까지 시간 */}
@@ -168,7 +168,7 @@ const AuctionDetail = () => {
 
             <div className="ml-4 flex flex-col justify-center flex-1">
               <div>
-                <h3 className="text-1xl font-thin mb-1">
+                <h3 className="text-xl font-normal mb-1">
                   {data.reAuctionOwnerMemberRole == "SHOP" ? "소상공인" : "개인판매자"}
                 </h3>
               </div>
@@ -176,23 +176,23 @@ const AuctionDetail = () => {
                 <h2 className="text-2xl font-bold">{data.reAuctionOwnerNickname}</h2>
               </Link>
             </div>
-            <div className="flex-1 flex justify-end items-end">
-              <div className="mr-7 flex">
+            <div className="flex-1 flex justify-end items-end text-customLightTextColor">
+              <div className="mr-7 flex gap-2 items-end">
                 <BsFillPersonFill size={25} />
                 {data.reAuctionBidCnt}명 참여중
               </div>
               {/* <h3 className="text-1xl font-thin ">경매 시작까지 31분 남음</h3> */}
             </div>
           </div>
-          <div className="border-t-2 border-gray-400 mt-10"></div>
+          <div className="border-t-2 border-customGray mt-10"></div>
 
           {/* 상품 이미지 및 지도 */}
-          <div className="flex flex-row mt-5">
-            <div className="flex flex-1 flex-col">
+          <div className="flex flex-row mt-8 gap-3">
+            <div className="flex flex-col w-full">
               <h2 className="text-2xl text-left mb-5">상품사진</h2>
               <ReAuctionCarousel imglist={data.reAuctionPhoto} />
             </div>
-            <div className="flex flex-1 flex-col">
+            <div className="flex flex-col w-full">
               <h2 className="text-2xl text-left mb-5">거래 위치(협의가능)</h2>
               <StayMap inputLag={data.reAuctionMeetingLng} inputLat={data.reAuctionMeetingLat} />
             </div>
@@ -224,20 +224,20 @@ const AuctionDetail = () => {
 
           {/* 입찰버튼 */}
           {!data.isOwner && data.isAction == 1 && !bidModalOpen && (
-            <div
-              className="fixed bottom-4 right-4 rounded-lg text-white flex items-center gap-2 p-6 shadow-2xl bg-[var(--c-blue)] shadow-black text-[22px] mr-64 mb-8 z-50 hover:bg-blue-700 hover:cursor-pointer"
-              onClick={handleBidModalOpen}
-            >
-              <RiAuctionLine size={32} color="#ffffff" />
-              <p className="text-2">입찰하러 가기</p>
+              <div
+              className="fixed bottom-4 right-4 rounded-xl flex items-center gap-2 p-6  
+              text-[22px] mr-64 mb-8 z-50 bg-custom-btn-gradient hover:bg-custom-btn-gradient-hover hover:cursor-pointer shadow-xl"
+              >
+              <RiAuctionLine size={32} color="#F8F9FB" />
+              <p className="text-2 text-customBasic">입찰하러 가기</p>
             </div>
           )}
 
           {/* 상품소개 */}
-          <div className="mt-40">
+          <div className="mt-12">
             <h2 className="text-3xl font-bold">상품소개</h2>
             <div className="rounded-lg flex flex-row items-center p-6 bg-gray-100 border border-gray-400 mt-6">
-              <h2 className="text-1xl font-sans">{data.reAuctionInfo}</h2>
+              <h2 className="text-1xl text-customLightTextColor">{data.reAuctionInfo}</h2>
             </div>
           </div>
 

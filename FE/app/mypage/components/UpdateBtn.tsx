@@ -8,7 +8,7 @@ interface UpdateButtonProps {
 const UpdateBtn: React.FC<UpdateButtonProps> = ({ onUpdate, buttonText }) => {
   return (
     <div
-      className="flex h-[30px] text-lg border px-[5px] rounded-sm text-center items-center border-gray-400 cursor-pointer"
+      className="flex text-sm text-customGray border px-[5px] rounded-sm text-center items-center border-customGray cursor-pointer"
       onClick={onUpdate}
     >
       {buttonText}

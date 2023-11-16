@@ -85,9 +85,11 @@ const AuctionDetail = () => {
 
         {/* 페이지 상단 타이틀 */}
         <div className="mt-10">
-          <p>{}</p>
           <h2 className="text-4xl font-bold">{dataList.auctionTitle}</h2>
-          <span className="text-customBlue">경매</span>
+          {/* <span className="text-customBlue">경매</span> */}
+        </div>
+        <div className="mt-3">
+        <span className="text-customBlue">경매</span>
           <span className="text-customLightTextColor ml-3">{dataList.auctionType}</span>
         </div>
         {/* 경매자 프로필 및 경매참여 인원, 경매까지 시간 */}
@@ -166,7 +168,7 @@ const AuctionDetail = () => {
         <div className="mt-12">
           <h2 className="text-3xl font-bold">상품소개</h2>
           <div className="rounded-lg flex flex-row items-center p-6 bg-gray-100 border border-gray-400 mt-6">
-            <h2 className="text-1xl font-sans text-customLightTextColor">{dataList.auctionInfo}</h2>
+            <h2 className="text-1xl text-customLightTextColor">{dataList.auctionInfo}</h2>
           </div>
         </div>
 
@@ -174,7 +176,7 @@ const AuctionDetail = () => {
         <div className="mt-16">
           <div className="mb-3">
             <span className="text-2xl font-bold">{dataList.auctionOwnerNickname}</span>{" "}
-            <span className="text-2xl font-sans">님의 경매중인 상품</span>
+            <span className="text-2xl">님의 경매중인 상품</span>
           </div>
           <div className="flex flex-wrap gap-8">
             {dummyData.map((item, index) => (

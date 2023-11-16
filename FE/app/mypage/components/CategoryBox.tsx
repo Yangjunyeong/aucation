@@ -10,12 +10,12 @@ interface CategoryBoxProps {
 
 const CategoryBox: React.FC<CategoryBoxProps> = ({ name, css, categoryHandler, selectedCategory,dynamicCss}) => {
   let firstCategoryCss = clsx(css, {
-    "border-blue-500 text-3xl text-blue-500": selectedCategory === name,
-    "text-gray-700": selectedCategory !== name,
+    "border-customBlue  text-2xl text-customBlue": selectedCategory === name,
+    "text-customGray": selectedCategory !== name,
   })
   let secondCategoryCss = clsx(css, {
-    "border-blue-500 text-2xl text-blue-500": selectedCategory === name,
-    "text-gray-700": selectedCategory !== name,
+    "border-customBlue  text-2xl text-customBlue": selectedCategory === name,
+    "text-customGray border-customGray": selectedCategory !== name,
   })
 
 

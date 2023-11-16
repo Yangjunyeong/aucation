@@ -50,11 +50,11 @@ const Navbar: React.FC = () => {
   return (
     <div>
       {check && (
-        <div className="w-full h-28 flex flex-row items-center sticky top-0 z-50 bg-customBasic px-48 border-b border-customLightBlue">
-          <div className="w-1/3 ">
+        <div className="w-full h-28 flex flex-row content-center items-center sticky top-0 z-50 bg-customBasic px-48 border-b border-customLightBlue">
+          <div className="w-[250px] ">
             <Link href={`/`} className="flex flex-row">
 
-              <Image src={Logo} alt="로고" className="object-contain" />
+              <Image src={Logo} alt="로고" className="object-cover" />
               
             </Link>
           </div>
