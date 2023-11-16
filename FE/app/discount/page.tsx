@@ -39,7 +39,7 @@ const DiscountList = () => {
 
   const orderTypeList: orderType[] = [
     { id: 1, typeName: "최신순" },
-    { id: 2, typeName: "고가순" },
+    { id: 2, typeName: "할인율순" },
     { id: 3, typeName: "저가순" },
     { id: 4, typeName: "좋아요순" },
   ];
@@ -56,8 +56,8 @@ const DiscountList = () => {
   const fetchAuctionData = useCallback(() => {
     setIsLoading(true);
     const searchFilters = {
-      auctionCatalog: selectedCategory !== "전체" ? selectedCategory : null,
-      auctionCondition: selectedOrderType.id,
+      discountCategory: selectedCategory !== "전체" ? selectedCategory : null,
+      discountCondition: selectedOrderType.id,
       searchType: searchType.id,
       searchKeyword: searchKeyword,
     };
@@ -76,15 +76,15 @@ const DiscountList = () => {
         setIsLoading(false); // 데이터 로딩 완료
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategory, selectedOrderType.id, pageNumber]);
+  }, [selectedCategory, selectedOrderType.id, pageNumber, searchKeyword]);
 
   useEffect(() => {
     fetchAuctionData();
-  }, [fetchAuctionData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory, selectedOrderType.id, pageNumber, searchKeyword]);
 
-  const handleSearch = (keyword: string) => {
+  const handleSearch = async (keyword: string) => {
     setSearchKeyword(keyword); // 상태 업데이트
-    fetchAuctionData(); // 데이터 가져오기
   };
 
   return (
@@ -148,7 +148,7 @@ const DiscountList = () => {
           ))}
         </div>
       ) : (
-        <NoResult/>
+        <NoResult />
       )}
 
       <Pagination
