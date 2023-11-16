@@ -358,7 +358,8 @@ public class PersonalChatService {
 
 
 	/** 채팅방 찾기 */
-	private ChatRoom findChatRoom(long prodPk, int prodType) {
+	@Transactional
+	public ChatRoom findChatRoom(long prodPk, int prodType) {
 		Optional<ChatRoom> chatRoom = chatRoomRepository.findByProdPkAndProdType(prodPk, prodType);
 		if(chatRoom.isPresent()){
 			log.info("************************ 채팅방 있음 !!!!!!!!!");
