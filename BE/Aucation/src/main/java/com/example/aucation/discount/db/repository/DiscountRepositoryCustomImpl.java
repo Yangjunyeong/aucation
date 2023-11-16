@@ -4,6 +4,7 @@ package com.example.aucation.discount.db.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.example.aucation.discount.db.entity.QDiscountHistory;
 import com.example.aucation.disphoto.db.entity.QDisPhoto;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -39,6 +40,8 @@ public class DiscountRepositoryCustomImpl implements DiscountRepositoryCustom {
 	private final QDisPhoto qDisPhoto = QDisPhoto.disPhoto;
 	private final QMember qMember = QMember.member;
 	private final QLikeDiscount qLikeDiscount = QLikeDiscount.likeDiscount;
+
+	private final QDiscountHistory qDiscountHistory = QDiscountHistory.discountHistory;
 
 
 	@Override
@@ -137,7 +140,8 @@ public class DiscountRepositoryCustomImpl implements DiscountRepositoryCustom {
 						)
 				).from(qDiscount)
 				.where(
-						qDiscount.discountEnd.after(LocalDateTime.now())
+					qDiscountHistory.historyStatus.isNull(),
+					qDiscount.discountEnd.after(LocalDateTime.now())
 					,isMyDiscount(member)
 				)
 				.leftJoin(qMember)
@@ -146,9 +150,12 @@ public class DiscountRepositoryCustomImpl implements DiscountRepositoryCustom {
 				.on(qLikeDiscount.discount.eq(qDiscount))
 				.leftJoin(qDisPhoto)
 				.on(qDisPhoto.discount.eq(qDiscount))
+				.leftJoin(qDiscountHistory)
+				.on(qDiscountHistory.discount.eq(qDiscount))
 				.groupBy(qDiscount)
 				.orderBy(new OrderSpecifier<>(Order.DESC, qDiscount.createdAt))
 				.limit(4);
+
 		return query.fetch();
 	}
 
