@@ -105,14 +105,14 @@ const PopularBidList: React.FC<OwnProps> = ({
         )}
       </div>
 
-      <div className="relative">
+      <div className="relative ">
         {isLoading ? (
           <div className="flex justify-center items-center">
             <ClipLoader color="#247eff" size={200} speedMultiplier={1} />
           </div>
         ) : item.length > 0 ? (
           <Carousel
-            className="h-full ml-10 flex pl-5"
+            className="h-full ml-10 flex pl-5 py-3"
             responsive={responsive}
             infinite={true}
             arrows={false}
@@ -151,7 +151,9 @@ const PopularBidList: React.FC<OwnProps> = ({
         ) : (
           // <Image src={"/assets/images/noItems.png"} alt="아이템이 없다" fill />
           <div className="border-2 border-customGray rounded-full flex flex-col justify-center items-center py-10 text-customLightTextColor text-xl">
-            <div className="flex justify-center place-items-center rounded-full w-[100px] h-[100px] border-2 border-customGray text-3xl mb-3 text-red-400 ">{"!"}</div>
+            <div className="flex justify-center place-items-center rounded-full w-[100px] h-[100px] border-2 border-customGray text-3xl mb-3 text-red-400 ">
+              {"!"}
+            </div>
             <div className="text-xl">등록된 물품이 없습니다.</div>
           </div>
         )}

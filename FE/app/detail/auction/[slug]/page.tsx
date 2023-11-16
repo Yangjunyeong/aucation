@@ -71,7 +71,7 @@ const AuctionDetail = () => {
 
   if (dataList) {
     return (
-      <div className="w-full  px-72 py-20" >
+      <div className="w-full  px-72 py-20">
         {/* 좋아요 버튼 및 뒤로가기 버튼 */}
         <div className="flex justify-between">
           <BackBtn />
@@ -83,13 +83,19 @@ const AuctionDetail = () => {
 
         {/* 페이지 상단 타이틀 */}
         <div className="mt-10">
-          <h2 className="text-4xl font-bold">{dataList.auctionTitle}</h2>
-          {/* <span className="text-customBlue">경매</span> */}
+          <h2 className="text-5xl font-bold mb-7">{dataList.auctionTitle}</h2>
+          <p className="text-xl">
+            {dataList.isAction == 0 ? (
+              <span className="text-blue-600 mr-2">경매전</span>
+            ) : dataList.isAction == 1 ? (
+              <span className="text-red-600 mr-2">경매중</span>
+            ) : (
+              <span className="text-red-600 mr-2">경매 완료</span>
+            )}
+            <span className="text-customLightTextColor font-semibold ">{dataList.auctionType}</span>
+          </p>
         </div>
-        <div className="mt-3">
-        <span className="text-customBlue">경매</span>
-          <span className="text-customLightTextColor ml-3">{dataList.auctionType}</span>
-        </div>
+
         {/* 경매자 프로필 및 경매참여 인원, 경매까지 시간 */}
         <div className="flex mt-10">
           <Image
@@ -112,14 +118,19 @@ const AuctionDetail = () => {
               </Link>
             </div>
           </div>
-          <div className="flex-1 flex justify-end items-end">
+          <div className="flex-1 flex justify-end items-end space-x-5">
             {/* 참여중인 인원수 */}
-            <div className="flex w-[120px] items-end text-customLightTextColor">
-              <BsFillPersonFill size={30} />
-              <span className="ml-2">{dataList?.auctionCurCnt}</span>
-            </div>
-            <div className="flex items-end">
-              <h3 className="flex ">
+            {dataList.auctionBidCnt != null && (
+              <div className="flex  items-end">
+                <BsFillPersonFill size={30} />
+                <span className="ml-2 text-lg text-customLightTextColor">
+                  {dataList.auctionBidCnt}명 참여중
+                </span>
+              </div>
+            )}
+
+            <div className="mr-7 flex items-end">
+              <h3 className="flex text-1xl font-thin ">
                 <CountDown
                   stateHandler={stateHandler}
                   currentTime={new Date(dataList.nowTime)}
@@ -154,7 +165,6 @@ const AuctionDetail = () => {
         <div
           className="fixed bottom-4 right-4 rounded-xl flex items-center gap-2 p-6  
           text-[22px] mr-64 mb-8 z-50 bg-custom-btn-gradient hover:bg-custom-btn-gradient-hover hover:cursor-pointer shadow-xl"
-
         >
           <RiAuctionLine size={32} color="#F8F9FB" />
           <Link href={`/bid/${dataList.auctionUuid}`}>
