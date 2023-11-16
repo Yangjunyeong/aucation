@@ -13,9 +13,6 @@ import defaultprofile from "@/app/images/defaultprofile.png";
 import ProfileInput from "./components/ProfileInput";
 import UpdateBtn from "./components/UpdateBtn";
 
-// 더미
-import DummyUserData from "./components/DummyUserData";
-
 // 카테고리 박스
 import CategoryBox from "./components/CategoryBox";
 
@@ -23,7 +20,6 @@ import CategoryBox from "./components/CategoryBox";
 import "../utils/pricecal";
 
 // 카드 컴포넌트 (세로, 경매 판매/구매, 좋아요, 역경매 - 판매/구매)
-import ColCard from "../components/Card/ColCard";
 import AuctionSell from "../components/Card/AuctionSell";
 import AuctionBuy from "../components/Card/AuctionBuy";
 import LikeCard from "../components/Card/LikeCard";
@@ -351,7 +347,7 @@ const MyPage: NextPage = () => {
   };
 
   const confirmHandler = (type: string, discountUUID?: string, auctionPk?: number) => {
-    console.log(type, discountUUID,"마이페이지 핸들러")
+    console.log(type, discountUUID, auctionPk,"마이페이지 핸들러")
     const apiUrl: any = {
       BID: "/auction/confirm",
       REVERSE_BID: "/reauction/confirm",
@@ -364,16 +360,21 @@ const MyPage: NextPage = () => {
       productFilter: itemsort,
       myPageNum: pageNumber,
     }
-    let sendData:any
-    sendData ={
+    let auctionData:any
+    auctionData ={
       auctionPk: auctionPk
     }
-      callApi(type == "DISCOUNT_BID" ? 'get' : 'post', `${apiUrl[type]}`, type !== "DISCOUNT_BID" ? sendData :"")
+    let reAuctionData : any
+    reAuctionData={
+      reAuctionPk: auctionPk
+    }
+      callApi(type == "DISCOUNT_BID" ? 'get' : 'post', `${apiUrl[type]}`, type == "BID" ? auctionData : type == "REVERSE_BID" ? reAuctionData : "")
       .then((res) => {
         tmp();
         toast.success(res.data.message)
         callApi("post", `${apiUrl[category]}`, data)
         .then(res => {
+          tmp()
           setDataList(res.data);
           setUsername(res.data.memberNickname);
           setMyPoint(res.data.memberPoint);
@@ -382,10 +383,12 @@ const MyPage: NextPage = () => {
           setTotalpage(res.data.totalPage);
         })
         .catch(err => {
+          console.log("컨펌 후 데이터 로딩 에러...",err)
           toast(err.response.data.message)
         });
       })
       .catch((err) => {
+        console.log("컨펌x", err)
         toast(err.response.data.message)
       })
   }

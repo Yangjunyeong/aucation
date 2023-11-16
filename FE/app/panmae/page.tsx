@@ -14,7 +14,6 @@ import TypeOfSales from "./components/TypeOfSales";
 import TimeInput from "./components/TimeInput";
 import { BsFillXCircleFill } from "react-icons/bs";
 import { callApi } from "../utils/api";
-import axios from "axios";
 import { set } from "react-hook-form";
 import ClipLoader from "react-spinners/ClipLoader";
 import { useRecoilValue } from "recoil";
