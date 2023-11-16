@@ -234,7 +234,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
 		query.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
-			.orderBy(chooseFilter(memberPageRequest.getProductFilter()));
+			.orderBy(chooseReverseFilter(memberPageRequest.getProductFilter()));
 
 		List<MyReverseItemsResponse> result = query.fetch();
 
@@ -469,6 +469,21 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		}
 		return null;
 	}
+
+	private OrderSpecifier chooseReverseFilter(String productFilter) {
+		if (productFilter.equals("최신순")) {
+			// 높은 가격 순
+			return new OrderSpecifier<>(Order.DESC, qAuction.auctionStartDate);
+		} else if (productFilter.equals("고가순")) {
+			// 낮은 가격 순
+			return new OrderSpecifier<>(Order.DESC, qAuction.auctionStartPrice);
+		} else if (productFilter.equals("저가순")) {
+			// 기본 정렬 방식
+			return new OrderSpecifier<>(Order.ASC, qAuction.auctionStartPrice);
+		}
+		return null;
+	}
+
 
 	private OrderSpecifier chooseDiscount(String productFilter) {
 		if (productFilter.equals("최신순")) {
