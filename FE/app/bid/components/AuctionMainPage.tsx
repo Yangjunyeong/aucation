@@ -192,13 +192,15 @@ const AuctionMainPage = () => {
         setHeadCnt(res.data.headCnt);
       })
       .catch(err => {
-        if (err.response.data.code == "P002") {
-          toast.error(err.response.data.message);
-          router.push("/");
-        } else if (err.response.data.code == "P009") {
-          toast.error(err.response.data.message);
-          router.push("/");
-        }
+        router.push("/");
+        return;
+        // if (err.response.data.code == "P002") {
+        //   toast.error(err.response.data.message);
+        //   router.push("/");
+        // } else if (err.response.data.code == "P009") {
+        //   toast.error(err.response.data.message);
+        //   router.push("/");
+        // }
       });
   };
 

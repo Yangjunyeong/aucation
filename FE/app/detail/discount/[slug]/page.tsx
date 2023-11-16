@@ -30,6 +30,9 @@ import MoonLoader from "react-spinners/MoonLoader";
 import { HiBuildingStorefront } from "react-icons/hi2";
 import { MdPayment } from "react-icons/md";
 import Link from "next/link";
+
+// 모달
+import DiscountBuyModal from "../../components/DiscountBuyModal";
 // 카운트
 const DiscountDetail = () => {
   const [dataList, setDataList] = useState<any>();
@@ -42,6 +45,8 @@ const DiscountDetail = () => {
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [likeCount, setLikeCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  // 모달
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const stateHandler = (value: string) => {
     setState(value);
@@ -59,6 +64,15 @@ const DiscountDetail = () => {
         console.log("좋아요 실패", error);
       });
   };
+  const discountBuyHandler = () => {
+    callApi('get',`/discount/purchase/${dataList.discountUUID}`)
+    .then((res) => {
+      console.log(res)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  }
 
   useEffect(() => {
     callApi("get", `/discount/place/${prodPk}`)
@@ -148,15 +162,16 @@ const DiscountDetail = () => {
 
         {/* 입찰버튼 */}
         <div
-          className="fixed bottom-4 right-4 rounded-xl flex items-center gap-2 p-6  
-          text-[22px] mr-64 mb-8 z-50 bg-custom-btn-gradient hover:bg-custom-btn-gradient-hover hover:cursor-pointer shadow-xl"
+          className="fixed bottom-4 right-4 rounded-lg text-white flex items-center gap-2 p-6 shadow-2xl shadow-black text-[22px] mr-64 mb-8 z-50 cursor-pointer"
+          style={{
+            backgroundColor: "var(--c-blue)",
+          }}
+          onClick={()=>setIsOpen(!isOpen)}
         >
-          <Link href={`/bid/${dataList.discountUUID}`} className="flex">
-          <MdPayment size={32} color="#F8F9FB" />
-            <p className="text-2 text-customBasic">구매하러 가기</p>
-          </Link>
+          <MdPayment size={32} color="#ffffff" />
+            <p className="text-2">구매하러 가기</p>
         </div>
-
+        <DiscountBuyModal onClose={() => setIsOpen(false)} isOpen={isOpen} memberPoint={dataList.memberPoint} discountDiscountedPrice={dataList.discountDiscountedPrice} buyHandler={discountBuyHandler}/>
         {/* 상품소개 */}
         <div className="mt-12 mb-20">
           <h2 className="text-3xl font-bold">상품소개</h2>

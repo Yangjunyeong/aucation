@@ -13,8 +13,6 @@ import defaultprofile from "@/app/images/defaultprofile.png";
 import ProfileInput from "./components/ProfileInput";
 import UpdateBtn from "./components/UpdateBtn";
 
-// 모달 컨텐츠
-import Modal from "@/app/components/Modal";
 // 더미
 import DummyUserData from "./components/DummyUserData";
 
@@ -223,6 +221,7 @@ const MyPage: NextPage = () => {
     callApi("post", "shop/verify/business", data)
       .then(res => {
         console.log(res);
+        localStorage.setItem("role", "소상공인")
       })
       .catch(err => {
         console.log(err);
@@ -428,14 +427,9 @@ const MyPage: NextPage = () => {
       });
   }, [thirdCategory, itemsort, pageNumber]);
 
-  const tmp2 = () => {
-    console.log(categories[category][secondCategory], category, secondCategory, thirdCategory);
-  };
-
   if (dataList) {
     return (
       <div className="w-full px-80 py-20">
-        <div onClick={tmp2}>버튼</div>
         <Script src="https://cdn.iamport.kr/v1/iamport.js" />
         {/* 프로필 영역 */}
         {/* 결제 */}
@@ -458,10 +452,18 @@ const MyPage: NextPage = () => {
                     )}
                   </span>
                   {/* 유저네임/ 유저네임 인풋 */}
-                  <div className="flex text-lg max-w-[200px] items-center align-bottom">
-                    {!usernameUpdate && <div className="font-bold whitespace-nowrap overflow-hidden text-ellipsis">{username}</div>}
+                  <div className="flex text-lg max-w-[250px] items-center align-bottom">
+                    {!usernameUpdate && (
+                      <div className="font-bold whitespace-nowrap overflow-hidden text-ellipsis">
+                        {username}
+                      </div>
+                    )}
                     {usernameUpdate && (
-                      <ProfileInput value={username} onChange={handleUsernameChange} size="medium" />
+                      <ProfileInput
+                        value={username}
+                        onChange={handleUsernameChange}
+                        size="medium"
+                      />
                     )}
                   </div>
                   {/* 수정버튼 */}
@@ -481,14 +483,12 @@ const MyPage: NextPage = () => {
                 {isShop !== "SHOP" ? (
                   <div className="flex items-center">
                     소상공인 이신가요? &nbsp;
-                    <Link
-                      href={"/mypage"}
-                      className="text-customBlue text-lg hover:underline"
+                    <span
+                      className="text-customBlue text-lg h font-bold hover:underline cursor-pointer"
+                      onClick={shopModalHandler}
                     >
-                      <span className="text-customBlue font-bold" onClick={shopModalHandler}>
-                        인증하기
-                      </span>
-                    </Link>
+                      인증하기
+                    </span>
                     {isShopModal && (
                       <div className="absolute z-1 mt-[200px] right-[360px]">
                         <div className="relative bg-white rounded-lg border-4 border-blue-300 p-6 ">
@@ -577,9 +577,7 @@ const MyPage: NextPage = () => {
           <div className="flex mt-20 gap-3 items-center">
             <h2 className="font-semibold text-2xl">{category} 상품</h2>
             {/* 상품개수 바인딩 */}
-            <h2 className="text-red-600  text-2xl font-bold ml-2">
-              {dataList.mypageItems?.length}
-            </h2>
+            <h2 className="text-red-600  text-2xl font-bold ml-2">{dataList.count}</h2>
             {/* 카테고리 - 판매/구매 */}
             <div className={clsx("flex gap-3 items-center", category !== "좋아요" ? "" : "hidden")}>
               {category !== "좋아요" && (
@@ -718,29 +716,43 @@ const MyPage: NextPage = () => {
             </div>
           )}
           <div className="flex">
-
-          {/* 좋아요 */}
-          {category == "좋아요" && (
-            <div className="flex flex-wrap gap-[26px]">
-              {dataList.mypageItems?.map((item: any, idx: any) => (
-                <LikeCard item={item} key={idx} />
-              ))}
-            </div>
-          )}
+            {/* 좋아요 */}
+            {category == "좋아요" && (
+              <div className="flex flex-wrap gap-[26px]">
+                {dataList.mypageItems?.map((item: any, idx: any) => (
+                  <LikeCard item={item} key={idx} />
+                ))}
+              </div>
+            )}
           </div>
 
           {/* 페이지 네이션 */}
-          <div className="flex justify-center mt-4">
-            <Pagination
-              activePage={pageNumber}
-              itemsCountPerPage={5}
-              totalItemsCount={5 * totalpage}
-              pageRangeDisplayed={5}
-              prevPageText={"‹"}
-              nextPageText={"›"}
-              onChange={handlePageChange}
-            />
-          </div>
+          {category !== "좋아요" && (
+            <div className="flex justify-center mt-4">
+              <Pagination
+                activePage={pageNumber}
+                itemsCountPerPage={5}
+                totalItemsCount={5 * totalpage}
+                pageRangeDisplayed={5}
+                prevPageText={"‹"}
+                nextPageText={"›"}
+                onChange={handlePageChange}
+              />
+            </div>
+          )}
+          {category == "좋아요" && (
+            <div className="flex justify-center mt-4">
+              <Pagination
+                activePage={pageNumber}
+                itemsCountPerPage={8}
+                totalItemsCount={8 * totalpage}
+                pageRangeDisplayed={5}
+                prevPageText={"‹"}
+                nextPageText={"›"}
+                onChange={handlePageChange}
+              />
+            </div>
+          )}
         </div>
       </div>
     );
