@@ -11,5 +11,5 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
 	Optional<ChatRoom> findByChatSession(String chatSession);
 
-	ChatRoom findByProdPkAndProdType(long prodPk, int prodType);
+	Optional<ChatRoom> findByProdPkAndProdType(long prodPk, int prodType);
 }
