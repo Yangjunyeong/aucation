@@ -35,7 +35,7 @@ const LikeCard: React.FC<LikeCardProps> = ({ item }) => {
   const [state, setState] = useState<string>("");
   const stateHandler = (state: string) => {
     setState(state);
-    console.log("--------------->", state);
+
   };
   const toAuctionDetail = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();

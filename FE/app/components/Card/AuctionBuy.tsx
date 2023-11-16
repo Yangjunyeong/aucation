@@ -10,6 +10,7 @@ import formatKoreanCurrency from "../../utils/formatKoreanCurrency";
 import { useRouter } from "next/navigation";
 import { BsChatRightDots } from "react-icons/bs";
 import { BiMap } from "react-icons/bi";
+import toast from "react-hot-toast";
 interface ItemType {
   // 이미지
   imgfile: string;
@@ -70,10 +71,10 @@ const AuctionBuy: React.FC<CardProps> = ({ item, confirmHandler }) => {
 
     callApi("get", `/auction/like/${item.auctionPk}`)
       .then(response => {
-        console.log("좋아요 성공", response);
+        toast.success(response.data.message)
       })
       .catch(error => {
-        console.log("좋아요 실패", error);
+        toast.error(error.response.data.message)
       });
   };
   const toDetail = () => {

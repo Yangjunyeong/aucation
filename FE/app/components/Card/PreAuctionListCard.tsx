@@ -11,6 +11,7 @@ import formatKoreanCurrency from "@/app/utils/formatKoreanCurrency";
 import { callApi } from "@/app/utils/api";
 import AuctionCountDown from "./AuctionCountDown";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 interface CardProps {
   item: PreAuctionItem;
   nowTime: Date | null;
@@ -32,10 +33,10 @@ const PreAuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
 
     callApi("get", `/auction/like/${item.auctionPk}`, { auctionPk: item.auctionPk })
       .then(response => {
-        console.log("좋아요 성공", response);
+        toast.success(response.data.message)
       })
       .catch(error => {
-        console.log("좋아요 실패", error);
+        toast.error(error.response.data.message)
       });
   };
   const EnterDetail = (pk: number) => {

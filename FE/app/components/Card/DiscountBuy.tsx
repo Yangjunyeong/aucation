@@ -52,10 +52,10 @@ const DiscountBuy: React.FC<CardProps> = ({ item, confirmHandler }) => {
 
     callApi("get", `/discount/like/${item.discountPk}`)
       .then(response => {
-        console.log("좋아요 성공", response);
+        toast.success(response.data.message)
       })
       .catch(error => {
-        console.log("좋아요 실패", error);
+        toast.error(error.response.data.message)
       });
   };
   const toDetail = () => {
@@ -82,7 +82,7 @@ const DiscountBuy: React.FC<CardProps> = ({ item, confirmHandler }) => {
 
   const discountConfirm = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
-    console.log('클릭21')
+  
     confirmHandler("DISCOUNT_BID", item.discountUUID);
   };
   return (

@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import sellfinish from "@/app/images/sellfinish.png";
 import { BsChatRightDots } from "react-icons/bs";
 import { BiMap } from "react-icons/bi";
+import toast from "react-hot-toast";
 interface ItemType {
   // v 이미지,제목, 시작가, 판매자, 입찰가, 입찰날짜, 등록일, 좋아요
   imgfile: string;
@@ -60,10 +61,10 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler, confirmHandler
 
     callApi("get", `/auction/like/${item.auctionPk}`)
       .then(response => {
-        console.log("좋아요 성공", response);
+        toast.success(response.data.message)
       })
       .catch(error => {
-        console.log("좋아요 실패", error);
+        toast.error(error.response.data.message)
       });
   };
   const toDetail = () => {
@@ -291,7 +292,7 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler, confirmHandler
               </div>
             )}
             {/* 경매종료 */}
-            {item.historyDoneDateTime !== null && (
+            {/* {item.historyDoneDateTime !== null && (
               <div className="flex gap-3 mb-8">
                 <div
                   className="flex items-center border-[1px] rounded-2xl mb-8 border-customGray  text-customLightTextColor
@@ -303,7 +304,7 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler, confirmHandler
                   <span className="ml-2">채팅</span>
                 </div>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>

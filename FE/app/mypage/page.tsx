@@ -143,10 +143,10 @@ const MyPage: NextPage = () => {
     formData.append("multipartFile", imageFile);
     callApi("patch", "members/modify/image", formData)
       .then(res => {
-        console.log("이미지 업로드 성공", res.data);
+        toast.success(res.data.message)
       })
       .catch(error => {
-        console.error("이미지 업로드 실패", error);
+        toast.error(error.response.data.message)
       });
   };
 
@@ -160,31 +160,29 @@ const MyPage: NextPage = () => {
     setUserInfoUpdate(true);
   };
   const handleNameUpdateConfirm = () => {
-    console.log(username);
     setUsernameUpdate(false);
     let data = {
       memberNickname: username,
     };
     callApi("patch", "members/modify/nickname", data)
       .then(res => {
-        console.log(res.data);
+        toast.success(res.data.message)
       })
       .catch(err => {
-        console.log(err);
+        toast.error(err.response.data.message)
       });
   };
   const handleInfoUpdateConfirm = () => {
-    console.log(info);
     setUserInfoUpdate(false);
     let data = {
       memberDetail: info,
     };
     callApi("patch", "members/modify/detail", data)
       .then(res => {
-        console.log(res.data);
+        toast.success(res.data.message)
       })
       .catch(err => {
-        console.log(err);
+        toast.error(err.response.data.message)
       });
   };
 
@@ -198,7 +196,6 @@ const MyPage: NextPage = () => {
 
   // 모달 핸들러
   const pointModalHandler = () => {
-    console.log("클릭");
     setIsPointModal(!isPointModal);
   };
   const shopModalHandler = () => {
@@ -223,12 +220,10 @@ const MyPage: NextPage = () => {
       .catch(err => {
         toast.error(err.response.data.message)
       });
-    console.log(shopNum);
   };
 
   // 대장 카테고리 핸들러
   const categoryHandler = (value: string) => {
-    console.log(value);
     setCategory(value);
   };
   // 2번째 카테고리 핸들러
@@ -258,7 +253,6 @@ const MyPage: NextPage = () => {
         prodPk: prodPk,
       }
     }
-    console.log(JSON.stringify(data, null, 2));
     callApi("delete", "/members/delete", data)
       .then(res => {
         let data: any;
@@ -275,10 +269,9 @@ const MyPage: NextPage = () => {
             myPageNum: pageNumber,
           };
         }
-        console.log(res);
+        toast.success(res.data.message)
         callApi("post", `${apiUrl[category]}`, data)
           .then(res => {
-            console.log(res.data);
             setDataList(res.data);
             setUsername(res.data.memberNickname);
             setMyPoint(res.data.memberPoint);
@@ -287,13 +280,11 @@ const MyPage: NextPage = () => {
             setTotalpage(res.data.totalPage);
           })
           .catch(err => {
-            console.log(JSON.stringify(data, null, 2));
-            console.log(err);
+            toast.error(err.response.data.message)
           });
       })
       .catch(err => {
-        console.log(JSON.stringify(data, null, 2));
-        console.log(err);
+        toast.error(err.response.data.message)
       });
   };
 
@@ -316,21 +307,18 @@ const MyPage: NextPage = () => {
     };
     const callback = (response: RequestPayResponse) => {
       const { success, error_msg } = response;
-      console.log(myPoint, response.paid_amount, "여기임");
       if (success) {
         toast.success("결제 성공");
         callApi("post", "/verifyIamport", {
           amount: response.paid_amount,
           impUID: response.imp_uid,
         })
-          .then(res => {
-            console.log(res.data);
+          .then(() => {
             setIsOpen(false);
             setMyPoint(data.amount + myPoint);
           })
           .catch(err => {
-            console.log(JSON.stringify(data, null, 2));
-            console.log(err);
+            toast.error(err.response.data.message)
           });
       } else {
         toast.error(`결제 실패: ${error_msg}`);
@@ -343,11 +331,9 @@ const MyPage: NextPage = () => {
   // 페이지
   const handlePageChange = (page: number) => {
     setPageNumber(page);
-    console.log(page);
   };
 
   const confirmHandler = (type: string, discountUUID?: string, auctionPk?: number) => {
-    console.log(type, discountUUID, auctionPk,"마이페이지 핸들러")
     const apiUrl: any = {
       BID: "/auction/confirm",
       REVERSE_BID: "/reauction/confirm",
@@ -383,12 +369,10 @@ const MyPage: NextPage = () => {
           setTotalpage(res.data.totalPage);
         })
         .catch(err => {
-          console.log("컨펌 후 데이터 로딩 에러...",err)
           toast(err.response.data.message)
         });
       })
       .catch((err) => {
-        console.log("컨펌x", err)
         toast(err.response.data.message)
       })
   }
@@ -407,7 +391,6 @@ const MyPage: NextPage = () => {
   // 1번 카테고리 변경 시 2번 카테고리 초기화
   useEffect(() => {
     if (category !== "좋아요") {
-      console.log("1번카테고리 변경");
       const firstCategory = Object.keys(categories[category])[0];
       secondCategoryHandler(firstCategory);
     } else {
@@ -417,7 +400,6 @@ const MyPage: NextPage = () => {
 
   useEffect(() => {
     if (category !== "좋아요") {
-      console.log("2번 카테고리 변경");
       const secondCategoryData = categories[category][secondCategory];
       if (secondCategoryData && secondCategoryData.length > 0) {
         const defaultThirdCategory = secondCategoryData[0];
@@ -443,7 +425,6 @@ const MyPage: NextPage = () => {
   };
   useEffect(() => {
     tmp();
-    console.log(dataList);
 
     let data: any;
     if (category !== "좋아요") {
@@ -459,11 +440,9 @@ const MyPage: NextPage = () => {
         myPageNum: pageNumber,
       };
     }
-    console.log(apiUrl[category], data, "주소랑 데이터");
     // 유저 데이터 불러오기
     callApi("post", `${apiUrl[category]}`, data)
       .then(res => {
-        console.log(res.data);
         setDataList(res.data);
         setImages(res.data.imgURL);
         setUsername(res.data.memberNickname);
@@ -473,8 +452,7 @@ const MyPage: NextPage = () => {
         setTotalpage(res.data.totalPage);
       })
       .catch(err => {
-        console.log(JSON.stringify(data, null, 2));
-        console.log(err);
+        toast.error(err.response.data.message)
       });
   }, [thirdCategory, itemsort, pageNumber]);
 

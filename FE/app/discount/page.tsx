@@ -16,6 +16,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ClipLoader from "react-spinners/ClipLoader";
 import NoResult from "../auction/NoResult";
+import toast from "react-hot-toast";
 
 const DiscountList = () => {
   const router = useRouter();
@@ -50,7 +51,7 @@ const DiscountList = () => {
 
   const handlePageChange = (page: number) => {
     setPageNumber(page);
-    console.log(page);
+    // console.log(page);
   };
 
   const fetchAuctionData = useCallback(() => {
@@ -61,16 +62,17 @@ const DiscountList = () => {
       searchType: searchType.id,
       searchKeyword: searchKeyword,
     };
-    console.log(searchFilters);
+    // console.log(searchFilters);
     callApi("post", `/discount/list/${pageNumber}`, searchFilters)
       .then(response => {
-        console.log("데이터 성공", response.data);
+        // console.log("데이터 성공", response.data);
         setData(response.data);
       })
 
       .catch(error => {
-        console.log(searchFilters);
-        console.log("데이터 에러", error);
+        toast.error(error.response.data.message)
+        // console.log(searchFilters);
+        // console.log("데이터 에러", error);
       })
       .finally(() => {
         setIsLoading(false); // 데이터 로딩 완료
