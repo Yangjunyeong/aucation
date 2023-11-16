@@ -21,6 +21,7 @@ import { useRecoilValue } from "recoil";
 import { authState } from "../store/atoms";
 import { useRouter } from "next/navigation";
 import { timeToDate } from "../utils/timetodate";
+import toast from "react-hot-toast";
 
 const Panmae = () => {
   const router = useRouter();
@@ -115,6 +116,11 @@ const Panmae = () => {
       return;
     }
     if (option !== "할인") {
+      if (option == "BID" && price < 1000) {
+        toast.error("경매가는 천원 이상이어야 합니다")
+        setIsDoingSubmit(false);
+        return;
+      }
       const formData = new FormData();
       formData.append("auctionStatus", option);
       formData.append("auctionTitle", productname);
@@ -148,6 +154,7 @@ const Panmae = () => {
         .catch(err => {
           console.log();
           console.log(err);
+          toast.error(err.response.data.message)
         })
         .finally(() => {
           setLoading(false);

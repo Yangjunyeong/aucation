@@ -41,8 +41,9 @@ interface ItemType {
 
 interface CardProps {
   item: ItemType;
+  confirmHandler: (type: string, UUID: string) => void
 }
-const DiscountBuy: React.FC<CardProps> = ({ item }) => {
+const DiscountBuy: React.FC<CardProps> = ({ item, confirmHandler }) => {
   const router = useRouter();
   const [isLiked, setIsLiked] = useState<boolean>(item.isLike);
   const [prodType, setProdType] = useState<string>("2");
@@ -66,18 +67,24 @@ const DiscountBuy: React.FC<CardProps> = ({ item }) => {
     router.push(`dm/${item.discountPk}/${prodType}`);
   };
 
-  const toConfirm = (e:React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation()
-    callApi('get', `/discount/confirm/${item.discountUUID}`)
-    .then((res) => {
-      toast.success(res.data.message)
-      console.log(res)
-    })
-    .catch((err) => {
-      toast.error(err.response.data.message)
-      console.log(err)
-    })
-  }
+  // const toConfirm = (e:React.MouseEvent<HTMLDivElement>) => {
+  //   e.stopPropagation()
+  //   callApi('get', `/discount/confirm/${item.discountUUID}`)
+  //   .then((res) => {
+  //     toast.success(res.data.message)
+  //     console.log(res)
+  //   })
+  //   .catch((err) => {
+  //     toast.error(err.response.data.message)
+  //     console.log(err)
+  //   })
+  // }
+
+  const discountConfirm = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    console.log('클릭21')
+    confirmHandler("DISCOUNT_BID", item.discountUUID);
+  };
   return (
     <>
       <div className="flex rounded-lg overflow-hidden shadow-lg bg-white w-[1280px] h-[280px] mt-12 hover:border border-blue-400">
@@ -194,8 +201,8 @@ const DiscountBuy: React.FC<CardProps> = ({ item }) => {
                 <BsChatRightDots size={22} />
                 <span className="ml-2">채팅</span>
               </div>
-              {item.historyStatus == "BEFORE_CONFIRM" && (
-                <div className="border-2 px-3 mb-8 py-1 text-2xl rounded-lg cursor-pointer" onClick={toConfirm}>확정</div>
+              {item.historyStatus == ("BEFORE_CONFIRM" || "NOT_SELL") && (
+                <div className="border-2 px-3 mb-8 py-1 text-2xl rounded-lg cursor-pointer" onClick={discountConfirm}>확정</div>
               )}
             </div>
           </div>

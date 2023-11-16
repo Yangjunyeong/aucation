@@ -62,12 +62,12 @@ const DiscountListCard: React.FC<CardProps> = ({ item, nowTime }) => {
         <div className="absolute top-2 right-2">
           <LikeBtn isLiked={isLiked} likeHandler={likeHandler} />
         </div>
-        <div
+        {/* <div
           onClick={() => EnterBid()}
           className="rounded-lg absolute bottom-2 left-2 px-3 py-2 bg-customBgBlue hover:bg-custom-btn-gradient-hover text-customBasic cursor-pointer"
         >
           바로입장
-        </div>
+        </div> */}
       </div>
 
       {/* 본문 */}

@@ -97,7 +97,7 @@ const PopularBidList: React.FC<OwnProps> = ({
         <div className="text-3xl font-bold pl-14 ">{title}</div>
         {moreShow && (
           <Link
-            href={`/auction/${goUrl}`}
+            href={goUrl ==='discount' ? `/${goUrl}`: `/auction/${goUrl}`}
             className="text-customLightTextColor text-lg hover:text-xl hover:underline"
           >
             더 보기

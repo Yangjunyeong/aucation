@@ -331,7 +331,6 @@ const AuthForm = () => {
           <div
             className="
               flex
-              h-24
             "
           >
             <Input
