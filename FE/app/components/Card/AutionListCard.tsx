@@ -94,8 +94,7 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime, type = "auction" 
         )}
       </div>
       {/* 본문 */}
-      <div className="h-1/2 px-3 py-2 flex flex-col place-content-between bg-customBasic">
-
+      <div className="h-1/2 px-3 pt-2 pb-3 flex flex-col place-content-between bg-customBasic">
         {/* 좋아요 */}
         <div className="flex items-center justify-between">
           <p className="text-sm text-customGray"> 좋아요 {likeCount} 개</p>
@@ -115,7 +114,10 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime, type = "auction" 
             }}
             className="cursor-pointer flex items-center justify-between font-extrabold text-2xl"
           >
-            <p className="max-h-[80px] overflow-hidden text-ellipsis break-all"> {"reAuctionPk" in item ? item.reAuctionTitle : item.auctionTitle}</p>
+            <p className="max-h-[80px] overflow-hidden text-ellipsis break-all">
+              {" "}
+              {"reAuctionPk" in item ? item.reAuctionTitle : item.auctionTitle}
+            </p>
           </div>
           <div className="text-base text-customGray">
             카테고리 {"reAuctionPk" in item ? item.reAuctionType : item.auctionType}
@@ -126,7 +128,7 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime, type = "auction" 
         <div>
           <div className="flex items-center justify-between text-sm text-customGray -mb-1">
             <p>
-              시작가 {" "}
+              시작가{" "}
               {formatKoreanCurrency(
                 "reAuctionPk" in item ? item.reAuctionStartPrice : item.auctionStartPrice
               )}
@@ -146,17 +148,19 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime, type = "auction" 
         </div>
 
         {/* 닉네임 태그 */}
-        <div className="flex items-center w-full rounded-3xl bg-customBgLightBlue py-[3px]">
+        <div className="flex items-center w-full rounded-3xl bg-customBgLightBlue h-[13%]">
           <div
             className="bg-customBgBlue flex items-center justify-center
-            h-full rounded-3xl w-[40%] text-customBasic ml-1"
+            h-full rounded-3xl w-[40%] text-customBasic ml-1 "
           >
             {("reAuctionPk" in item ? item.reAuctionOwnerIsShop : item.auctionOwnerIsShop)
               ? "소상공인"
               : "개인"}
           </div>
           <div className=" flex items-center w-[60%] justify-start overflow-hidden flex-grow whitespace-nowrap pl-[5px]">
-            <p className="truncate">{"reAuctionPk" in item ? item.reAuctionOwnerNickname : item.auctionOwnerNickname}</p>
+            <p className="truncate">
+              {"reAuctionPk" in item ? item.reAuctionOwnerNickname : item.auctionOwnerNickname}
+            </p>
           </div>
         </div>
 
