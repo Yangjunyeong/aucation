@@ -101,15 +101,15 @@ const ReverseAuctionList = ({ params }: { params: PageParams }) => {
         setIsLoading(false); // 데이터 로딩 완료
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategory, selectedOrderType.id, pageNumber]);
+  }, [selectedCategory, selectedOrderType.id, pageNumber, searchKeyword]);
 
   useEffect(() => {
     fetchAuctionData();
-  }, [fetchAuctionData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory, selectedOrderType.id, pageNumber, searchKeyword]);
 
-  const handleSearch = (keyword: string) => {
+  const handleSearch = async (keyword: string) => {
     setSearchKeyword(keyword); // 상태 업데이트
-    fetchAuctionData(); // 데이터 가져오기
   };
 
   return (
@@ -178,7 +178,7 @@ const ReverseAuctionList = ({ params }: { params: PageParams }) => {
           ))}
         </div>
       ) : (
-        <NoResult/>
+        <NoResult />
       )}
 
       <Pagination
