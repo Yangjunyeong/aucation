@@ -15,6 +15,8 @@ import javax.persistence.Table;
 
 import org.springframework.data.annotation.CreatedDate;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -45,9 +47,11 @@ public class ChatRoom {
 	private int prodType; // 판매타입에 따라 조회해야할 테이블이 달라짐
 
 	////////////////////////////////////////////////////
+	@JsonManagedReference
 	@OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
 	List<ChatParticipant> chatParticipants = new ArrayList<ChatParticipant>();
 
+	@JsonManagedReference
 	@OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
 	List<ChatMessage> chatMessages = new ArrayList<ChatMessage>();
 
