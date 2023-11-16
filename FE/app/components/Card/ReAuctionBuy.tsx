@@ -80,7 +80,7 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler }) => {
   };
   return (
     <>
-      <div className="flex rounded-lg overflow-hidden shadow-lg bg-white w-[1280px] h-[300px] mt-12 hover:border border-blue-400">
+      <div className="flex rounded-lg overflow-hidden shadow-lg bg-customBasic w-full h-[300px] mt-12 hover:cursor-pointer hover:scale-105 transition-transform duration-300">
         {/* 카드 이미지 */}
         {item.historyDoneDateTime !== null ? (
           <div>
@@ -128,76 +128,82 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler }) => {
           </div>
         )}
 
-        <div className="w-[900px] ml-7" onClick={toDetail}>
+                {/* 본문 */}
+        <div className="w-full px-5 py-3 flex flex-col justify-between" onClick={toDetail}>
           {/* 경매 상태 / 경매 마크 /*/}
-          <div className="flex h-[60px] justify-between items-center">
-            <div className="flex text-[22px] gap-4 font-bold">
-              <div className="rounded-lg border-[0.1px] px-3 items-center border-gray-500">
+          <div className="flex justify-between items-center mb-2">
+            <div className="flex text-[16px] gap-4">
+              <div className="rounded-xl border-[0.1px] px-3 items-center border-customGray  text-customGray">
                 역경매
               </div>
-              <div className="font-sans">
-                {item.historyDateTime == null && <span className="text-red-500">경매중</span>}
+              <div className="">
+                {item.historyDateTime == null && <span className="text-red-500 ">경매중</span>}
                 {item.historyDateTime !== null && item.historyDoneDateTime == null && (
                   <span className="text-customBlue">입찰완료</span>
                 )}
                 {item.historyDoneDateTime !== null && <span>경매종료</span>}
               </div>
             </div>
-            <div className="text-xl">
+            <div className="text-customGray text-sm">
               등록일 :&nbsp;{new Date(item.registerDate).toLocaleString()}
             </div>
           </div>
+
           {/* 카드 제목 */}
-          <div className="text-5xl h-[70px] font-bold mr-20 whitespace-nowrap overflow-hidden text-ellipsis">
+          <div className="text-3xl max-h-[100px] font-bold break-all overflow-hidden text-ellipsis">
             {item.auctionTitle}
           </div>
 
           {/* 시작가/ 입찰완료, 경매종료도 시작가 출력 */}
           {/* {item.historyDateTime == null && ( */}
-          <div className="text-[22px] h-[37.5px]">
-            시작가 :{" "}
-            <span className="text-[25px] font-bold text-blue-500">
-              {" "}
-              {formatKoreanCurrency(item.auctionStartPrice)}
-            </span>
-          </div>
-          {/* )} */}
+          <div>
+            <div className="text-[16px] text-customGray mt-1 -mb-1">
+              <span className="ml-[84px]">{" "}</span>
+              시작가{" "}
+              {/* <span className="text-[25px] font-bold text-blue-500"> */}
+                {" "}
 
-          {/* 입찰완료/경매종료 - 판매자 */}
-          {/* {((item.historyDateTime !== null && item.historyDoneDateTime == null) ||
-            item.historyDoneDateTime !== null) && (
-            <div className="flex h-[45px]">
-              <div className="flex items-center">판매자 :&nbsp;</div>
-              <div>
-                <Link
-                  href={`/other/${item.customerNickname}`}
-                  className="text-customLightTextColor text-lg hover:underline"
-                >
-                  <span className="text-3xl font-bold">{item.customerNickname}</span>
-                </Link>
+                <span className=" line-through">{formatKoreanCurrency(item.auctionStartPrice)}</span>
+              {/* </span> */}
+            </div>
+            {/* )} */}
+
+            {/* 입찰완료/경매종료 - 판매자 */}
+            {/* {((item.historyDateTime !== null && item.historyDoneDateTime == null) ||
+              item.historyDoneDateTime !== null) && (
+              <div className="flex h-[45px]">
+                <div className="flex items-center">판매자 :&nbsp;</div>
+                <div>
+                  <Link
+                    href={`/other/${item.customerNickname}`}
+                    className="text-customLightTextColor text-lg hover:underline"
+                  >
+                    <span className="text-3xl font-bold">{item.customerNickname}</span>
+                  </Link>
+                </div>
               </div>
-            </div>
-          )} */}
+            )} */}
 
-          {/* 경매중 - 최저가 */}
-          {item.historyDateTime == null && (
-            <div className="text-[22px] h-[37.5px] font-medium">
-              최저가 :&nbsp;
-              <span className="text-3xl font-bold text-red-500">
-                {formatKoreanCurrency(item.reAucBidPrice)}
-              </span>
-            </div>
-          )}
-          {/* 입찰완료/경매종료 - 최종가 */}
-          {((item.historyDateTime !== null && item.historyDoneDateTime == null) ||
-            item.historyDoneDateTime !== null) && (
-            <div className="text-xl">
-              최종가 :&nbsp;
-              <span className="text-3xl font-bold text-red-500">
-                {formatKoreanCurrency(item.auctionSuccessPay)}
-              </span>
-            </div>
-          )}
+            {/* 경매중 - 최저가 */}
+            {item.historyDateTime == null && (
+              <div className="text-[22px] font-medium">
+                최저가 &nbsp;
+                <span className="text-3xl font-bold text-red-500">
+                  {formatKoreanCurrency(item.reAucBidPrice)}
+                </span>
+              </div>
+            )}
+            {/* 입찰완료/경매종료 - 최종가 */}
+            {((item.historyDateTime !== null && item.historyDoneDateTime == null) ||
+              item.historyDoneDateTime !== null) && (
+              <div className="text-xl">
+                최종가 &nbsp;
+                <span className="font-bold text-red-500">
+                  {formatKoreanCurrency(item.auctionSuccessPay)}
+                </span>
+              </div>
+            )}
+          </div>
           {/*               <div className="flex text-[22px] items-center text-red-500">
                   확정일 :&nbsp;
                   <span className="text-[28px]">
@@ -206,53 +212,65 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler }) => {
                 </div> */}
           {/* 입찰날짜, 입찰완료, 경매종료도 출력*/}
           {/* {item.historyDateTime == null && ( */}
-          <div className="flex h-[40px]">
+
+          <div className="flex">
             <div className="flex text-[22px] items-center">
-              <span className="font-bold text-red-500 text-[25px]">{item.reauctionCount}&nbsp;</span>
+              <span className="font-bold text-red-500">{item.reauctionCount}&nbsp;</span>
               {item.historyDateTime == null ? "명 입찰중" : "명 참여"}
             </div>
           </div>
           {/* )} */}
 
           <div className="flex items-center h-[55px] justify-between">
-            <div className="flex">
+            <div className="flex text-sm text-customGray">
               <BiMap size={25} />
-              <span className="ml-2 text-[16px]">
+              <span className="ml-2">
                 {item.mycity}&nbsp;{item.street}&nbsp;{item.zipcode}
               </span>
             </div>
             {/* 경매중 */}
             {item.historyDateTime == null && (
-              <div className="flex gap-5 mb-8">
+              <div className="flex gap-3 mb-8">
                 <span
-                  className="border-[0.1px] rounded-lg border-red-300 text-red-500 text-2xl font-bold py-1 px-3 cursor-pointer"
+                  className="border-[1px] rounded-2xl border-red-500 text-red-500 text-lg font-bold py-1 px-3 cursor-pointer
+                  hover:scale-105 transition-all"
                   onClick={cardDelete}
                 >
                   삭제하기
                 </span>
-                <span className="border-[0.1px] border-gray-300 cursor-pointer rounded-lg text-black text-2xl font-bold py-1 px-3">
+                <span className="border-[1px] border-customGray cursor-pointer rounded-2xl 
+                text-customLightTextColor text-lg font-bold py-1 px-3
+                hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all">
                   입찰보기
                 </span>
               </div>
             )}
             {/* 입찰완료 */}
             {item.historyDateTime !== null && item.historyDoneDateTime == null && (
-              <div className="flex gap-5 mb-8">
+              <div className="flex gap-3 mb-8">
                 <div
-                  className="flex items-center border-[0.1px] rounded-lg mb-8 border-gray-300 text-black text-2xl font-bold py-1 px-3 cursor-pointer"
+                  className="flex items-center border-[1px] border-customGray text-customLightTextColor 
+                  rounded-2xl mb-8  text-lg font-bold py-1 px-3 cursor-pointer
+                  hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all"
                   onClick={toChat}
                 >
                   <BsChatRightDots size={22} />
                   <span className="ml-2">채팅</span>
                 </div>
-                <div className="border-2 px-3 mb-8 py-1 text-2xl rounded-lg">확정</div>
+                <div className="border-[1px] border-customGray px-3 mb-8 py-1 text-lg rounded-2xl
+                 font-bold text-customLightTextColor
+                 hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all">
+                  확정
+                </div>
               </div>
             )}
             {/* 경매종료 */}
             {item.historyDoneDateTime !== null && (
-              <div className="flex gap-5 mb-8">
+              <div className="flex gap-3 mb-8">
                 <div
-                  className="flex items-center border-[0.1px] rounded-lg mb-8 border-gray-300 text-black text-2xl font-bold py-1 px-3 cursor-pointer"
+                  className="flex items-center border-[1px] rounded-2xl mb-8 border-customGray  text-customLightTextColor
+                   text-lg font-bold py-1 px-3 cursor-pointer
+                   hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all"
                   onClick={toChat}
                 >
                   <BsChatRightDots size={22} />

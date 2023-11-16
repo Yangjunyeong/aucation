@@ -65,7 +65,7 @@ export default function Home() {
       <div>
         <Banner />
       </div>
-      <div className="h-[800px]">
+      <div className="">
         <PopularBidList
           title={"🔥 현재 인기 경매"}
           type={"hotAution"}

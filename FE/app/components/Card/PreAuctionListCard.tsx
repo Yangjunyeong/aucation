@@ -61,7 +61,7 @@ const PreAuctionListCard: React.FC<CardProps> = ({ item, nowTime }) => {
           </div>
         </div>
         {/* 본문 */}
-        <div className="h-1/2 px-3 py-2 flex flex-col place-content-between">
+        <div className="h-1/2 px-3 py-2 flex flex-col place-content-between bg-customBasic">
           <div className="flex items-center justify-between">
             <p className="text-sm text-customGray">좋아요 {likeCount} 개</p>
           </div>

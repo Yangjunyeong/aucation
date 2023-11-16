@@ -94,7 +94,7 @@ const AuctionListCard: React.FC<CardProps> = ({ item, nowTime, type = "auction" 
         )}
       </div>
       {/* 본문 */}
-      <div className="h-1/2 px-3 py-2 flex flex-col place-content-between">
+      <div className="h-1/2 px-3 py-2 flex flex-col place-content-between bg-customBasic">
 
         {/* 좋아요 */}
         <div className="flex items-center justify-between">

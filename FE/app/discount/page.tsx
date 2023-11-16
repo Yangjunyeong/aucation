@@ -15,6 +15,7 @@ import DiscountListCard from "@/app/components/Card/DiscountListCard";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ClipLoader from "react-spinners/ClipLoader";
+import NoResult from "../auction/NoResult";
 
 const DiscountList = () => {
   const router = useRouter();
@@ -88,11 +89,11 @@ const DiscountList = () => {
 
   return (
     <div className="px-48 ">
-      <div className="flex flex-row space-x-10 h-[100px] items-center mt-10">
+      <div className="flex flex-row space-x-10 items-baseline mt-10">
         <div className="font-black text-5xl">소상공인 할인제품</div>
       </div>
 
-      <div className="flex flex-row h-[75px] items-center justify-between mb-7 mt-2">
+      <div className="flex flex-row h-[75px] items-center justify-between mb-7 mt-4">
         <div className="flex flex-row space-x-8">
           <DropdownButton
             options={localCategoryList}
@@ -147,12 +148,7 @@ const DiscountList = () => {
           ))}
         </div>
       ) : (
-        <Image
-          src="/assets/images/noResults.png"
-          alt="검색 결과가 없어요"
-          width={1536}
-          height={400} // 여기서 통일된 높이를 사용하세요
-        />
+        <NoResult/>
       )}
 
       <Pagination
