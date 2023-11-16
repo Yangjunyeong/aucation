@@ -13,9 +13,7 @@ import StayMap from "../../../components/map/StayMap";
 import ColCard from "@/app/components/Card/ColCard";
 import { useEffect, useState } from "react";
 import DetailCarousel from "../../components/DetailCarousel";
-// 더미데이터 임포트
-import dummyData from "../../components/DummyData";
-import imageDataList from "../../components/DummyImg";
+
 import { useParams, useRouter } from "next/navigation";
 // API 요청
 import { callApi } from "@/app/utils/api";
@@ -169,19 +167,6 @@ const AuctionDetail = () => {
           <h2 className="text-3xl font-bold">상품소개</h2>
           <div className="rounded-lg flex flex-row items-center p-6 bg-gray-100 border border-gray-400 mt-6">
             <h2 className="text-1xl text-customLightTextColor">{dataList.auctionInfo}</h2>
-          </div>
-        </div>
-
-        {/* 경매중인 상품 */}
-        <div className="mt-16">
-          <div className="mb-3">
-            <span className="text-2xl font-bold">{dataList.auctionOwnerNickname}</span>{" "}
-            <span className="text-2xl">님의 경매중인 상품</span>
-          </div>
-          <div className="flex flex-wrap gap-8">
-            {dummyData.map((item, index) => (
-              <ColCard item={item} key={index} />
-            ))}
           </div>
         </div>
       </div>

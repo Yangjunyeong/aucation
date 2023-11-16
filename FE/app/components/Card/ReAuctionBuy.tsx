@@ -74,6 +74,20 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler }) => {
     router.push(`dm/${item.auctionPk}/${prodType}`);
   };
 
+  const toConfirm = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    const data = {
+      reAuctionPk: item.auctionPk,
+    };
+    callApi("post", "/reauction/confirm", data)
+      .then(res => {
+        res.data;
+      })
+      .catch(err => {
+        err;
+      });
+  };
+
   const cardDelete = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     deleteHandler(item.auctionPk);
@@ -128,7 +142,7 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler }) => {
           </div>
         )}
 
-                {/* 본문 */}
+        {/* 본문 */}
         <div className="w-full px-5 py-3 flex flex-col justify-between" onClick={toDetail}>
           {/* 경매 상태 / 경매 마크 /*/}
           <div className="flex justify-between items-center mb-2">
@@ -158,12 +172,9 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler }) => {
           {/* {item.historyDateTime == null && ( */}
           <div>
             <div className="text-[16px] text-customGray mt-1 -mb-1">
-              <span className="ml-[84px]">{" "}</span>
-              시작가{" "}
-              {/* <span className="text-[25px] font-bold text-blue-500"> */}
-                {" "}
-
-                <span className=" line-through">{formatKoreanCurrency(item.auctionStartPrice)}</span>
+              <span className="ml-[84px]"> </span>
+              시작가 {/* <span className="text-[25px] font-bold text-blue-500"> */}{" "}
+              <span className=" line-through">{formatKoreanCurrency(item.auctionStartPrice)}</span>
               {/* </span> */}
             </div>
             {/* )} */}
@@ -238,9 +249,11 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler }) => {
                 >
                   삭제하기
                 </span>
-                <span className="border-[1px] border-customGray cursor-pointer rounded-2xl 
+                <span
+                  className="border-[1px] border-customGray cursor-pointer rounded-2xl 
                 text-customLightTextColor text-lg font-bold py-1 px-3
-                hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all">
+                hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all"
+                >
                   입찰보기
                 </span>
               </div>
@@ -257,9 +270,12 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler }) => {
                   <BsChatRightDots size={22} />
                   <span className="ml-2">채팅</span>
                 </div>
-                <div className="border-[1px] border-customGray px-3 mb-8 py-1 text-lg rounded-2xl
+                <div
+                  className="border-[1px] border-customGray px-3 mb-8 py-1 text-lg rounded-2xl
                  font-bold text-customLightTextColor
-                 hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all">
+                 hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all"
+                  onClick={toConfirm}
+                >
                   확정
                 </div>
               </div>
