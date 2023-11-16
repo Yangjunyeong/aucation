@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import javax.transaction.Transactional;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.aucation_chat.auction.db.entity.Auction;
 import com.example.aucation_chat.auction.db.entity.AuctionHistory;
@@ -33,6 +33,7 @@ import com.example.aucation_chat.common.error.NotFoundException;
 import com.example.aucation_chat.common.redis.dto.RedisChatMessage;
 import com.example.aucation_chat.common.util.DateFormatPattern;
 import com.example.aucation_chat.common.util.PasswordGenerator;
+import com.example.aucation_chat.common.util.RandomNumberUtil;
 import com.example.aucation_chat.discount.db.entity.Discount;
 import com.example.aucation_chat.discount.db.entity.DiscountHistory;
 import com.example.aucation_chat.discount.db.repository.DiscountHistoryRepository;
@@ -100,7 +101,7 @@ public class PersonalChatService {
 			AuctionHistory history = isEndAuction(auction);
 
 			// prodPk 랑 prodType을 가지는 채팅방 조회
-			log.info("************************ 채팅방 찾기");
+			log.info("************************ Find Chat Room: prodPk={}, prodType={}", prodPk, type);
 			chatRoom = findChatRoom(prodPk, type);
 
 			// 내가 정당한 참여자인지 검사
@@ -145,7 +146,7 @@ public class PersonalChatService {
 			DiscountHistory history = isEndDiscount(discount);
 
 			// prodPk 랑 prodType을 가지는 채팅방 조회
-			log.info("************************ 채팅방 찾기");
+			log.info("************************ Find Chat Room: prodPk={}, prodType={}", prodPk, type);
 			chatRoom = findChatRoom(prodPk, type);
 
 			// 내가 정당한 참여자인지 검사
@@ -368,7 +369,7 @@ public class PersonalChatService {
 		else { // 채팅한적 없으면 생성
 			log.info("************************ 채팅방 생성 !!!!!!!!!");
 
-			String chatSession = PasswordGenerator.generate();
+			String chatSession = RandomNumberUtil.getRandomNumber();
 			log.info("************************ 세션 생성 = {} !!!!!!!!!", chatSession);
 
 			ChatRoom temp = ChatRoom.builder()
