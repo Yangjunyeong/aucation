@@ -60,7 +60,7 @@ public class PersonalChatService {
 	private final RedisTemplate<String, String> myStringRedisTemplate;
 
 	//////////////////////////////////////////////////////////////////
-	@Transactional
+	// @Transactional
 	public PersonalChatEnterResponse enter(PersonalChatEnterRequest request) {
 		log.info("************************ 개인채팅방 enter 시작 !!!!!!!");
 
@@ -369,7 +369,11 @@ public class PersonalChatService {
 				.prodPk(prodPk)
 				.prodType(prodType)
 				.build();
+			log.info("************************ 채팅방 만듬 !!!!!!!!!");
+
 			chatRoomRepository.save(temp);
+			log.info("************************ 채팅방 저장 !!!!!!!!!");
+
 			chatRoom = temp;
 		}
 		return chatRoom;

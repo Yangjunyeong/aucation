@@ -47,11 +47,11 @@ public class Auction{
 	private LocalDateTime auctionStartDate;
 	private LocalDateTime auctionEndDate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="auction_owner_pk")
 	private Member owner;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="auction_customer_pk")
 	private Member customer;
 }
