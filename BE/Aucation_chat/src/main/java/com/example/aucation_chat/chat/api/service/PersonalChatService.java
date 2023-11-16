@@ -363,6 +363,8 @@ public class PersonalChatService {
 			log.info("************************ 채팅방 생성 !!!!!!!!!");
 
 			String chatSession = PasswordGenerator.generate();
+			log.info("************************ 세션 생성 = {} !!!!!!!!!", chatSession);
+
 			ChatRoom temp = ChatRoom.builder()
 				.chatSession(chatSession)
 				.chatCreate(LocalDateTime.now())
