@@ -64,6 +64,7 @@ import com.example.aucation.member.db.entity.SocialType;
 import com.example.aucation.member.db.repository.MemberRepository;
 import com.example.aucation.photo.db.repository.PhotoRepository;
 import com.example.aucation.reauction.api.service.ReAuctionService;
+import com.example.aucation.reauction.db.entity.ReAuctionBid;
 import com.example.aucation.reauction.db.repository.ReAucBidPhotoRepository;
 import com.example.aucation.reauction.db.repository.ReAuctionBidRepository;
 
@@ -118,7 +119,7 @@ public class MemberService {
 
 	private static final String AUCTION = "경매";
 	private static final String RE_AUCTION = "역경매";
-	private static final String DISCOUNT = "할인";
+	private static final String CONFIRM = "입찰";
 
 	private static final String SUCCESS_REMOVE_ITEMS = "성공적으로 상품을 삭제하였습니다";
 
@@ -340,7 +341,19 @@ public class MemberService {
 
 			auctionRepository.deleteById(auction.getId());
 			return DeleteResponse.builder().message(SUCCESS_REMOVE_ITEMS).build();
+		}else if (deleteRequest.getStatus().equals(CONFIRM)){
+			Auction auction = auctionRepository.findById(deleteRequest.getProdPk())
+				.orElseThrow(() -> new BadRequestException(ApplicationError.NOT_EXIST_AUCTION));
+
+			ReAuctionBid reAuctionBid = reAuctionBidRepository.findById(auction.getId())
+				.orElseThrow(() -> new BadRequestException(ApplicationError.NOT_EXIST_AUCTION));
+
+
+			reAucBidPhotoRepository.deleteByReAictionIdAndMemberId(reAuctionBid.getId(),member.getId());
+			reAuctionBidRepository.deleteByReAuctionIdAndMemberId(auction.getId(),member.getId());
+			return DeleteResponse.builder().message(SUCCESS_REMOVE_ITEMS).build();
 		}
+
 		Discount discount = discountRepository.findById(deleteRequest.getProdPk())
 			.orElseThrow(() -> new NotFoundException(ApplicationError.DISCOUNT_NOT_FOUND));
 
