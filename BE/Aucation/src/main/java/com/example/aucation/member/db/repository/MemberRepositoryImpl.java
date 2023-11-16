@@ -257,11 +257,11 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
 		if(memberPageRequest.getProductStatus().equals("구매")){
 			if(memberPageRequest.getAuctionStatus().equals("경매중")){
-				return qAuction.customer.id.eq((Long)null);
+				return null;
 			}
 			return qAuction.customer.id.eq(qReAuctionBid.member.id);
 		}
-		return null;
+		return qReAuctionBid.member.id.eq(id);
 	}
 
 	private Predicate isAuctionHistory(MemberPageRequest memberPageRequest, Member member) {
