@@ -25,6 +25,8 @@ public interface ReAuctionBidRepository  extends JpaRepository<ReAuctionBid,Long
 	void deleteByAuctionAndAuctionId(Long id);
 
 	@Modifying
-	@Query("DELETE FROM ReAuctionBid r WHERE r.id = :reAuctionBidId AND r.member.id = :memberId")
-	void deleteByReAuctionIdAndMemberId(Long reAuctionBidId, Long memberId);
+	@Query("DELETE FROM ReAuctionBid r WHERE r.auction.id = :auctionId AND r.member.id = :memberId")
+	void deleteByReAuctionIdAndMemberId(Long auctionId, Long memberId);
+
+	Optional<ReAuctionBid> findReAuctionBidByAuctionId(Long auction);
 }

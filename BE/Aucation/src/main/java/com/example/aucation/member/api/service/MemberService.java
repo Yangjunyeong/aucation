@@ -345,12 +345,12 @@ public class MemberService {
 			Auction auction = auctionRepository.findById(deleteRequest.getProdPk())
 				.orElseThrow(() -> new BadRequestException(ApplicationError.NOT_EXIST_AUCTION));
 
-			ReAuctionBid reAuctionBid = reAuctionBidRepository.findById(auction.getId())
+			ReAuctionBid reAuctionBid = reAuctionBidRepository.findReAuctionBidByAuctionId(auction.getId())
 				.orElseThrow(() -> new BadRequestException(ApplicationError.NOT_EXIST_AUCTION));
 
-
-			reAucBidPhotoRepository.deleteByReAictionIdAndMemberId(reAuctionBid.getId(),member.getId());
+			reAucBidPhotoRepository.deleteByReAictionIdAndMemberId(reAuctionBid.getId());
 			reAuctionBidRepository.deleteByReAuctionIdAndMemberId(auction.getId(),member.getId());
+
 			return DeleteResponse.builder().message(SUCCESS_REMOVE_ITEMS).build();
 		}
 

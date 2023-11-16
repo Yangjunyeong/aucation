@@ -22,6 +22,6 @@ public interface ReAucBidPhotoRepository extends JpaRepository<ReAucBidPhoto,Lon
 	void deleteByAuctionId(Long id);
 
 	@Modifying
-	@Query("DELETE FROM ReAucBidPhoto a WHERE a.reAuctionBid.id = :reAuctionBid AND a.reAuctionBid.member.id = :memberId")
-	void deleteByReAictionIdAndMemberId(Long reAuctionBid, Long memberId);
+	@Query("DELETE FROM ReAucBidPhoto a WHERE a.reAuctionBid.id = :reAuctionBid")
+	void deleteByReAictionIdAndMemberId(Long reAuctionBid);
 }
