@@ -522,7 +522,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
 		List<MyLikeItemsResponse> result = query.fetch();
 
-		double totalPage = Math.ceil((double)count / 5);
+		double totalPage = Math.ceil((double)count / pageable.getPageSize());
 
 		return MyLikeResponse.builder()
 			.memberRole(member.getMemberRole())
