@@ -119,13 +119,14 @@ public class PersonalChatService {
 			prodName = auction.getAuctionTitle();
 			log.info("************************ 물품 이름 " + prodName);
 
-			sellerImageURL = auction.getOwner().getImageURL();
+			Member owner = auction.getOwner();
+			sellerImageURL = owner.getImageURL();
 			log.info("************************ 프사 주소 " + sellerImageURL);
 
-			sellerNickName = auction.getOwner().getMemberNickname();
+			sellerNickName = owner.getMemberNickname();
 			log.info("************************ 파는사람 닉네임 " + sellerNickName);
 
-			sellerPk = auction.getOwner().getMemberPk();
+			sellerPk = owner.getMemberPk();
 			if (type == 1) { // 역경매일 때 채팅가져오기
 				prodType = "역경매";
 				chatList = getChatList("chat-re-bid:", chatRoom.getChatSession());
