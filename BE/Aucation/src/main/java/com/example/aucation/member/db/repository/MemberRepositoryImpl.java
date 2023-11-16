@@ -284,9 +284,9 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 	private Predicate chooseReverseStatus(String auctionStatus, Member member) {
 		//역경매 - 판매 : 내가 팔려고 경매 참여하는것
 		if ("입찰중".equals(auctionStatus)) {
-			return qAuction.customer.id.eq(member.getId())
-				.and(qAuctionHistory.isNull())
-				.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
+			return qAuctionHistory.isNull()
+					.and(qReAuctionBid.member.id.eq(member.getId()))
+					.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
 		} else if ("낙찰".equals(auctionStatus)) {
 			// "판매" 및 "경매중" 경우에 대한 조건 추가
 			return qAuction.customer.id.eq(member.getId())
