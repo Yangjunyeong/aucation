@@ -6,5 +6,5 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum HistoryStatus {
-	NOT_SELL, BEFORE_CONFIRM, AFTER_CONFIRM, REPORT;
+	BEFORE_CONFIRM, AFTER_CONFIRM, REPORT;
 }
