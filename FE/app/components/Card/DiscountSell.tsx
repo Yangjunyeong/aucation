@@ -203,11 +203,11 @@ const DiscountSell: React.FC<CardProps> = ({ item, thirdCategory, deleteHandler 
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="flex items-center border-[0.1px] rounded-lg mb-8 border-red-300 text-red-500 text-2xl font-bold py-1 px-3 cursor-pointer">
+                {/* <div className="flex items-center border-[0.1px] rounded-lg mb-8 border-red-300 text-red-500 text-2xl font-bold py-1 px-3 cursor-pointer">
                   {" "}
                   <GoReport size={25} color="#EC4747" />
                   <span className="ml-1">신고하기</span>
-                </div>
+                </div> */}
                 <div
                   className="flex items-center border-[0.1px] rounded-lg mb-8 border-gray-300 text-black text-2xl font-bold py-1 px-3 cursor-pointer"
                   onClick={toChat}

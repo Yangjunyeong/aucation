@@ -10,6 +10,7 @@ import { BiMap } from "react-icons/bi";
 import { useRouter } from "next/navigation";
 import { BsChatRightDots } from "react-icons/bs";
 import clsx from "clsx";
+import toast from "react-hot-toast";
 interface ItemType {
   // 이미지, 등록일 x, 제목 x, 정가, 할인가, 좋아요, 할인률
   imgfile: string;
@@ -65,6 +66,18 @@ const DiscountBuy: React.FC<CardProps> = ({ item }) => {
     router.push(`dm/${item.discountPk}/${prodType}`);
   };
 
+  const toConfirm = (e:React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+    callApi('get', `/discount/confirm/${item.discountUUID}`)
+    .then((res) => {
+      toast.success(res.data.message)
+      console.log(res)
+    })
+    .catch((err) => {
+      toast.error(err.response.data.message)
+      console.log(err)
+    })
+  }
   return (
     <>
       <div className="flex rounded-lg overflow-hidden shadow-lg bg-white w-[1280px] h-[280px] mt-12 hover:border border-blue-400">
@@ -182,7 +195,7 @@ const DiscountBuy: React.FC<CardProps> = ({ item }) => {
                 <span className="ml-2">채팅</span>
               </div>
               {item.historyStatus == "BEFORE_CONFIRM" && (
-                <div className="border-2 px-3 mb-8 py-1 text-2xl rounded-lg">확정</div>
+                <div className="border-2 px-3 mb-8 py-1 text-2xl rounded-lg cursor-pointer" onClick={toConfirm}>확정</div>
               )}
             </div>
           </div>

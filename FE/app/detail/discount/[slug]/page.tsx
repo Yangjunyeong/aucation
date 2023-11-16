@@ -31,6 +31,7 @@ import Link from "next/link";
 
 // 모달
 import DiscountBuyModal from "../../components/DiscountBuyModal";
+import toast from "react-hot-toast";
 // 카운트
 const DiscountDetail = () => {
   const [dataList, setDataList] = useState<any>();
@@ -63,11 +64,15 @@ const DiscountDetail = () => {
       });
   };
   const discountBuyHandler = () => {
+
     callApi('get',`/discount/purchase/${dataList.discountUUID}`)
     .then((res) => {
+      setIsOpen(false)
+      toast.success("구매 성공")
       console.log(res)
     })
     .catch((err) => {
+      toast.error(err.response.data.message)
       console.log(err)
     })
   }
