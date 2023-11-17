@@ -288,7 +288,6 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 		//역경매 - 구매 : 내가 살려고 경매 자의로 올린것
 		} else if ("경매중".equals(auctionStatus)) {
 			return qAuction.owner.id.eq(member.getId())
-				.and(qReAuctionBid.isNull())
 				.and(qAuctionHistory.isNull())
 				.and(qAuction.auctionStatus.eq(AuctionStatus.REVERSE_BID));
 
