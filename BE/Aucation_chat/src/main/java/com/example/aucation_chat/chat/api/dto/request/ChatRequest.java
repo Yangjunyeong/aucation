@@ -1,4 +1,4 @@
-package com.example.aucation_chat.chat.request;
+package com.example.aucation_chat.chat.api.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,8 +11,8 @@ import lombok.Setter;
 @AllArgsConstructor
 /** 채팅방에 보낼 내용 */
 public class ChatRequest {  
-	private String sender;
-	private String content;
+	private long memberPk;	// 보낸사람 pk
+	private String content;		// 채팅내용
 }
 
 

@@ -10,7 +10,7 @@ RUN ./gradlew bootJar
 
 FROM openjdk:11
 COPY --from=builder build/libs/*.jar app.jar
-EXPOSE 8001
+EXPOSE 9001
 
 ARG SERVER_MODE
 RUN echo "$SERVER_MODE"
