@@ -143,10 +143,10 @@ const MyPage: NextPage = () => {
     formData.append("multipartFile", imageFile);
     callApi("patch", "members/modify/image", formData)
       .then(res => {
-        toast.success(res.data.message)
+        toast.success(res.data.message);
       })
       .catch(error => {
-        toast.error(error.response.data.message)
+        toast.error(error.response.data.message);
       });
   };
 
@@ -166,10 +166,10 @@ const MyPage: NextPage = () => {
     };
     callApi("patch", "members/modify/nickname", data)
       .then(res => {
-        toast.success(res.data.message)
+        toast.success(res.data.message);
       })
       .catch(err => {
-        toast.error(err.response.data.message)
+        toast.error(err.response.data.message);
       });
   };
   const handleInfoUpdateConfirm = () => {
@@ -179,10 +179,10 @@ const MyPage: NextPage = () => {
     };
     callApi("patch", "members/modify/detail", data)
       .then(res => {
-        toast.success(res.data.message)
+        toast.success(res.data.message);
       })
       .catch(err => {
-        toast.error(err.response.data.message)
+        toast.error(err.response.data.message);
       });
   };
 
@@ -213,12 +213,12 @@ const MyPage: NextPage = () => {
     };
     callApi("post", "shop/verify/business", data)
       .then(res => {
-        toast.success(res.data.message)
-        shopModalHandler()
-        localStorage.setItem("role", "소상공인")
+        toast.success(res.data.message);
+        shopModalHandler();
+        localStorage.setItem("role", "소상공인");
       })
       .catch(err => {
-        toast.error(err.response.data.message)
+        toast.error(err.response.data.message);
       });
   };
 
@@ -241,18 +241,25 @@ const MyPage: NextPage = () => {
   };
   // 카드 삭제
   const deleteHandler = (prodPk: number) => {
-    let data:any;
+    let data: any;
     if (category !== "역경매") {
       data = {
         status: category,
         prodPk: prodPk,
       };
-    } else {
+    } else if (secondCategory == "판매") {
       data = {
         status: "입찰",
         prodPk: prodPk,
-      }
+      };
+    } else {
+      data = {
+        status: "역경매",
+        prodPk: prodPk,
+      };
     }
+
+    // console.log("삭제할때 데이터", JSON.stringify(data, null, 2));
     callApi("delete", "/members/delete", data)
       .then(res => {
         let data: any;
@@ -269,7 +276,7 @@ const MyPage: NextPage = () => {
             myPageNum: pageNumber,
           };
         }
-        toast.success(res.data.message)
+        toast.success(res.data.message);
         callApi("post", `${apiUrl[category]}`, data)
           .then(res => {
             setDataList(res.data);
@@ -280,11 +287,11 @@ const MyPage: NextPage = () => {
             setTotalpage(res.data.totalPage);
           })
           .catch(err => {
-            toast.error(err.response.data.message)
+            toast.error(err.response.data.message);
           });
       })
       .catch(err => {
-        toast.error(err.response.data.message)
+        toast.error(err.response.data.message);
       });
   };
 
@@ -318,7 +325,7 @@ const MyPage: NextPage = () => {
             setMyPoint(data.amount + myPoint);
           })
           .catch(err => {
-            toast.error(err.response.data.message)
+            toast.error(err.response.data.message);
           });
       } else {
         toast.error(`결제 실패: ${error_msg}`);
@@ -338,44 +345,48 @@ const MyPage: NextPage = () => {
       BID: "/auction/confirm",
       REVERSE_BID: "/reauction/confirm",
       DISCOUNT_BID: `/discount/confirm/${discountUUID}`,
-    }
-    let data:any
+    };
+    let data: any;
     data = {
       productStatus: secondCategory,
       auctionStatus: thirdCategory,
       productFilter: itemsort,
       myPageNum: pageNumber,
-    }
-    let auctionData:any
-    auctionData ={
-      auctionPk: auctionPk
-    }
-    let reAuctionData : any
-    reAuctionData={
-      reAuctionPk: auctionPk
-    }
-      callApi(type == "DISCOUNT_BID" ? 'get' : 'post', `${apiUrl[type]}`, type == "BID" ? auctionData : type == "REVERSE_BID" ? reAuctionData : "")
-      .then((res) => {
+    };
+    let auctionData: any;
+    auctionData = {
+      auctionPk: auctionPk,
+    };
+    let reAuctionData: any;
+    reAuctionData = {
+      reAuctionPk: auctionPk,
+    };
+    callApi(
+      type == "DISCOUNT_BID" ? "get" : "post",
+      `${apiUrl[type]}`,
+      type == "BID" ? auctionData : type == "REVERSE_BID" ? reAuctionData : ""
+    )
+      .then(res => {
         tmp();
-        toast.success(res.data.message)
+        toast.success(res.data.message);
         callApi("post", `${apiUrl[category]}`, data)
-        .then(res => {
-          tmp()
-          setDataList(res.data);
-          setUsername(res.data.memberNickname);
-          setMyPoint(res.data.memberPoint);
-          setInfo(res.data.memberDetail);
-          setIsShop(res.data.memberRole);
-          setTotalpage(res.data.totalPage);
-        })
-        .catch(err => {
-          toast(err.response.data.message)
-        });
+          .then(res => {
+            tmp();
+            setDataList(res.data);
+            setUsername(res.data.memberNickname);
+            setMyPoint(res.data.memberPoint);
+            setInfo(res.data.memberDetail);
+            setIsShop(res.data.memberRole);
+            setTotalpage(res.data.totalPage);
+          })
+          .catch(err => {
+            toast(err.response.data.message);
+          });
       })
-      .catch((err) => {
-        toast(err.response.data.message)
-      })
-  }
+      .catch(err => {
+        toast(err.response.data.message);
+      });
+  };
   useEffect(() => {
     // 브라우저에서 로컬 스토리지에 접근하여 토큰 확인
     const accessToken = window.localStorage.getItem("accessToken");
@@ -441,8 +452,10 @@ const MyPage: NextPage = () => {
       };
     }
     // 유저 데이터 불러오기
+    console.log(JSON.stringify(data, null, 2), "보내는 데이터");
     callApi("post", `${apiUrl[category]}`, data)
       .then(res => {
+        console.log(res.data);
         setDataList(res.data);
         setImages(res.data.imgURL);
         setUsername(res.data.memberNickname);
@@ -452,7 +465,7 @@ const MyPage: NextPage = () => {
         setTotalpage(res.data.totalPage);
       })
       .catch(err => {
-        toast.error(err.response.data.message)
+        toast.error(err.response.data.message);
       });
   }, [thirdCategory, itemsort, pageNumber]);
 
@@ -665,19 +678,24 @@ const MyPage: NextPage = () => {
             </div>
 
             {/* 솔트 */}
-            {category !== "좋아요" && (<div className="flex text-lg font-semibold text-center cursor-pointer text-customGray">
-              {itemsortList.map((item, idx) => (
-                <div key={idx}>
-                  <div
-                    className={clsx("text-lg", itemsort == item ? "font-bold text-customBlue" : "")}
-                    onClick={() => itemSortHandler(item)}
-                  >
-                    <span>|</span>&nbsp;{item}&nbsp;
+            {category !== "좋아요" && (
+              <div className="flex text-lg font-semibold text-center cursor-pointer text-customGray">
+                {itemsortList.map((item, idx) => (
+                  <div key={idx}>
+                    <div
+                      className={clsx(
+                        "text-lg",
+                        itemsort == item ? "font-bold text-customBlue" : ""
+                      )}
+                      onClick={() => itemSortHandler(item)}
+                    >
+                      <span>|</span>&nbsp;{item}&nbsp;
+                    </div>
                   </div>
-                </div>
-              ))}
-              |
-            </div>)}
+                ))}
+                |
+              </div>
+            )}
           </div>
 
           {/* 경매 - 판매 */}
@@ -695,7 +713,7 @@ const MyPage: NextPage = () => {
             <div>
               {/* dataList.mypageItems? */}
               {dataList.mypageItems?.map((item: any, idx: any) => (
-                <AuctionBuy item={item} key={idx} confirmHandler={confirmHandler}/>
+                <AuctionBuy item={item} key={idx} confirmHandler={confirmHandler} />
               ))}
             </div>
           )}
@@ -716,7 +734,12 @@ const MyPage: NextPage = () => {
             <div>
               {/* {dataList.mypageItems?.map((item:any, idx:any) => ( */}
               {dataList.mypageItems?.map((item: any, idx: any) => (
-                <ReAuctionBuy item={item} key={idx} deleteHandler={deleteHandler} confirmHandler={confirmHandler}/>
+                <ReAuctionBuy
+                  item={item}
+                  key={idx}
+                  deleteHandler={deleteHandler}
+                  confirmHandler={confirmHandler}
+                />
               ))}
             </div>
           )}
@@ -739,7 +762,7 @@ const MyPage: NextPage = () => {
           {category == "할인" && secondCategory == "구매" && dataList.mypageItems.length > 0 && (
             <div>
               {dataList.mypageItems?.map((item: any, idx: any) => (
-                <DiscountBuy item={item} key={idx} confirmHandler={confirmHandler}/>
+                <DiscountBuy item={item} key={idx} confirmHandler={confirmHandler} />
               ))}
             </div>
           )}

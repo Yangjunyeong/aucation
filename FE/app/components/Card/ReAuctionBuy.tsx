@@ -261,7 +261,7 @@ const ReAuctionBuy: React.FC<CardProps> = ({ item, deleteHandler, confirmHandler
                   삭제하기
                 </span>
                 <span
-                  className="border-[1px] border-customGray cursor-pointer rounded-2xl 
+                  className="border-[1px] mb-8 border-customGray cursor-pointer rounded-2xl 
                 text-customLightTextColor text-lg font-bold py-1 px-3
                 hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all"
                 >

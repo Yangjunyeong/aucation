@@ -58,10 +58,10 @@ const ReAuctionSell: React.FC<CardProps> = ({ item, deleteHandler }) => {
 
     callApi("get", `/auction/like/${item.auctionPk}`)
       .then(response => {
-        toast.success(response.data.message)
+        toast.success(response.data.message);
       })
       .catch(error => {
-        toast.error(error.response.data.message)
+        toast.error(error.response.data.message);
       });
   };
   const toDetail = () => {
@@ -79,7 +79,7 @@ const ReAuctionSell: React.FC<CardProps> = ({ item, deleteHandler }) => {
   };
   return (
     <>
-        {/* w-[1280px] */}
+      {/* w-[1280px] */}
       <div className="flex rounded-lg overflow-hidden shadow-lg bg-customBasic w-full h-[300px] mt-12 hover:cursor-pointer border hover:border-blue-400 transition-all duration-150">
         {/* 카드 이미지 */}
         {item.historyDoneDateTime !== null ? (
@@ -116,7 +116,7 @@ const ReAuctionSell: React.FC<CardProps> = ({ item, deleteHandler }) => {
           </div>
         )}
 
-{/* [900px] */}
+        {/* [900px] */}
         <div className="w-full px-5 py-3 flex flex-col justify-between" onClick={toDetail}>
           {/* 경매 상태 / 경매 마크 /*/}
           <div className="flex justify-between items-center">
@@ -209,27 +209,28 @@ const ReAuctionSell: React.FC<CardProps> = ({ item, deleteHandler }) => {
                 >
                   삭제하기
                 </div>
-                <span className="border-[1px] border-customGray cursor-pointer rounded-2xl 
+                <span
+                  className="border-[1px] border-customGray cursor-pointer rounded-2xl 
                 text-customLightTextColor text-lg font-bold py-1 px-3 mb-8
-                hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all">
+                hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all"
+                >
                   입찰보기
                 </span>
               </div>
             )}
-            {/* {item.historyDateTime !== null && (
+            {item.historyDateTime !== null && item.historyDoneDateTime == null && (
               <div className="flex gap-3 mb-8 ">
                 <div
                   className="flex items-center border-[1px] rounded-2xl mb-8 border-customGray  text-customLightTextColor
                   text-lg font-bold py-1 px-3 cursor-pointer
                   hover:scale-105 hover:text-customBlue hover:border-customBlue transition-all"
-                 onClick={toChat}
+                  onClick={toChat}
                 >
                   <BsChatRightDots size={22} />
                   <span className="ml-2">채팅</span>
                 </div>
-                
               </div>
-            )} */}
+            )}
           </div>
         </div>
       </div>

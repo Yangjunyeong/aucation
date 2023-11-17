@@ -26,7 +26,7 @@ const ReAuctionCheckout: React.FC<ReAuctionCheckoutProps> = ({
   };
   return (
     <div className="mt-4 w-full border-2 border-blue-400 h-[650px] flex">
-      <div className="w-1/2 flex flex-col items-center justify-evenly">
+      <div className="w-1/2 flex flex-col items-center justify-evenly overflow-hidden">
         <Image alt="상품이미지" src={data.bidPhotos[0]} width={550} height={600} />
         <button
           onClick={onClick}
