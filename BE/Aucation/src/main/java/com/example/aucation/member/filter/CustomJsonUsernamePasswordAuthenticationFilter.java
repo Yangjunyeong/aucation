@@ -26,6 +26,7 @@ public class CustomJsonUsernamePasswordAuthenticationFilter extends AbstractAuth
 	private static final String USERNAME_KEY = "memberId";
 	private static final String PASSWORD_KEY = "memberPw";
 
+
 	private static final AntPathRequestMatcher DEFAULT_LOGIN_PATH_REQUEST_MATCHER
 		= new AntPathRequestMatcher(DEFAULT_LOGIN_REQUEST_URL, HTTP_METHOD);
 

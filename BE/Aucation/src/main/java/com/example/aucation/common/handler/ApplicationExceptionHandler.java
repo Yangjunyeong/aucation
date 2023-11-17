@@ -1,6 +1,7 @@
 package com.example.aucation.common.handler;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -25,9 +26,11 @@ public class ApplicationExceptionHandler {
         return ResponseEntity.internalServerError().body(ErrorResponse.create());
     }
 
-    // @MessageExceptionHandler(Exception.class)
-    // protected ResponseEntity<ErrorResponse> handleMessageException(Exception exception) {
-    //     log.info("{}: {}", exception.getClass().getSimpleName(), exception.getMessage(), exception);
-    //     return ResponseEntity.internalServerError().body(ErrorResponse.create());
-    // }
+    @MessageExceptionHandler(Exception.class)
+    protected void handleMessageException(Exception exception) {
+        log.info("{}: {}", exception.getClass().getSimpleName(), exception.getMessage(), exception);
+        log.info("여기를 들리나?");
+
+        //return ResponseEntity.internalServerError().body(ErrorResponse.create());
+    }
 }

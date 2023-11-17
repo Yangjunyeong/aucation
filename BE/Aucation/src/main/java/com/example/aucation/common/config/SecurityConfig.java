@@ -55,9 +55,13 @@ public class SecurityConfig {
 			.mvcMatchers("/").permitAll()
 			.mvcMatchers("/docs/index.html").permitAll()
 			.mvcMatchers(HttpMethod.POST,"/api/v1/members").permitAll()
+			.mvcMatchers(HttpMethod.GET,"/api/v1/members/mainPage").permitAll()
 			.mvcMatchers("/api/v1/members/signup").permitAll()
-			.mvcMatchers(HttpMethod.POST,"/api/v1/members/verification/**").permitAll()
+			.mvcMatchers("/api/v1/members/login").permitAll()
+			.mvcMatchers(HttpMethod.GET,"/api/v1/members/verification/**").permitAll()
+			.mvcMatchers(HttpMethod.GET,"/api/v1/members/certification/**").permitAll()
 			.mvcMatchers("/ws/**").permitAll()
+			.mvcMatchers("/auc-server/**").permitAll()
 			.anyRequest().authenticated()
 			.and()
 			.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class)
@@ -69,10 +73,10 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfiguration() {
 		CorsConfiguration configuration =new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("http://localhost:8080","https://aucation.co.kr","https://www.aucation.co.kr"));
+		configuration.setAllowedOrigins(List.of("https://localhost:8001","https://localhost:3000","http://localhost:3000","http://localhost:8001","https://aucation.co.kr","https://www.aucation.co.kr"));
 		configuration.addAllowedHeader("*");
 		configuration.setAllowedMethods(List.of(
-			HttpMethod.GET.name(),HttpMethod.PATCH.name(),HttpMethod.PUT.name(),HttpMethod.POST.name(),HttpMethod.OPTIONS.name()
+			HttpMethod.DELETE.name(),HttpMethod.GET.name(),HttpMethod.PATCH.name(),HttpMethod.PUT.name(),HttpMethod.POST.name(),HttpMethod.OPTIONS.name()
 		));
 		configuration.setAllowCredentials(true);
 		configuration.setExposedHeaders(List.of("Authorization","Authorization-refresh"));

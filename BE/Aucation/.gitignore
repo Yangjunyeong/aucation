@@ -4,7 +4,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-
+**/resources
 ### STS ###
 .apt_generated
 .classpath
@@ -16,7 +16,7 @@ build/
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
-
+**/generated
 ### IntelliJ IDEA ###
 .idea
 *.iws
@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+**/application.yml
+**/generated

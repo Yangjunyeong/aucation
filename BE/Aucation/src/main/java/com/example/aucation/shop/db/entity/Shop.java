@@ -22,7 +22,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@AttributeOverride(name = "id",column = @Column(name="shop_pk"))
+@AttributeOverride(name = "id", column = @Column(name = "shop_pk"))
 public class Shop extends BaseEntity {
 
 	private String ShopName;
