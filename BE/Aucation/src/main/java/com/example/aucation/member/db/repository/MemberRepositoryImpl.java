@@ -185,7 +185,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			.select(
 				Projections.bean(MyReverseItemsResponse.class,
 					qAuction.auctionTitle.as("auctionTitle"),
-					qAuction.auctionStartPrice.as("auctionStarePrice"),
+					qAuction.auctionStartPrice.as("auctionStartPrice"),
 					qAuction.auctionEndPrice.as("auctionSuccessPay"),
 					qAuction.owner.id.as("ownerPk"),
 					qAuction.customer.id.as("customerPk"),
@@ -262,23 +262,6 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			return qAuction.customer.id.eq(qReAuctionBid.member.id);
 		}
 		return qReAuctionBid.member.id.eq(id);
-	}
-
-	private Predicate isAuctionHistory(MemberPageRequest memberPageRequest, Member member) {
-		if (memberPageRequest.getProductStatus().equals("구매")) {
-			return qAuction.eq(qAuctionHistory.auction).and(qAuctionHistory.customer.id.eq(member.getId()));
-		} else {
-			return qAuction.eq(qAuctionHistory.auction).and(qAuctionHistory.owner.id.eq(member.getId()));
-		}
-	}
-
-	private Predicate isReAuction(MemberPageRequest memberPageRequest, Member member) {
-
-		if (memberPageRequest.getProductStatus().equals("구매")) {
-			return qAuction.eq(qReAuctionBid.auction).and(qReAuctionBid.member.id.eq(member.getId()));
-		} else {
-			return qAuction.eq(qAuctionHistory.auction);
-		}
 	}
 
 	private Predicate chooseReverseStatus(String auctionStatus, Member member) {
