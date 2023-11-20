@@ -166,23 +166,24 @@ _-  -_
 
 **Backend - Springboot**
 
-- | Java | openjdk : 11.0.20 |
-  | Spring Boot | 2.7.17 |
-  | Gradle | 8.3.0 |
-  | Spring Security | 5.7.11 |
-  | JPA | 2.2.3 |
-  | Hibernate | 5.6.15 |
-  | IntelliJ Ultimate | - |
-  | JWT | 4.2.1 |
-  | sockjs | 1.1.2 |
-  | websocket | 2.3.3-1 |
-  | FCM | 9.1.1 |
-  | QueryDsl | 5.0.0 |
-  | lombok | 1.18.30 |
-
+```
+  | Java            | openjdk : 11.0.20 |
+  | Spring Boot     | 2.7.17            |
+  | Gradle          | 8.3.0             |
+  | Spring Security | 5.7.11            |
+  | JPA             | 2.2.3             |
+  | Hibernate       | 5.6.15            |
+  | IntelliJ        | -                 |
+  | JWT             | 4.2.1             |
+  | sockjs          | 1.1.2             |
+  | websocket       | 2.3.3-1           |
+  | FCM             | 9.1.1             |
+  | QueryDsl        | 5.0.0             |
+  | lombok          | 1.18.30           |
+```
 **Frontend**
 
--     "@next/bundle-analyzer": "^14.0.1",
+     "@next/bundle-analyzer": "^14.0.1",
   
       "@stomp/stompjs": "^7.0.0",
   
