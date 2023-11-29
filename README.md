@@ -227,6 +227,8 @@ SSAFY 9기 2학기 자율 프로젝트
 - NGINX
 - SSL
 - Docker
+- Jenkins
+- DockerCompose
 
 ## ✔ 협업 툴
 
@@ -274,11 +276,17 @@ SSAFY 9기 2학기 자율 프로젝트
 
 ## 👪 팀 소개
 
-| <img src="README_assets/9dd0b75adc8eb6ba2457245d16f2388abd692eab.jpg" title="" alt="임규돈.jpg" width="125"> | <img title="" src="README_assets/5b8192677d5567e495aca5054962468752394796.jpg" alt="정재욱.jpg" width="127"> | <img title="" src="README_assets/b580dae3f8659811ebcec8e3fbed4b31ce0ce453.jpg" alt="이진서.jpg" width="127"> |
-| --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| [임규돈](https://github.com/Devwooki)<br>팀장 : BE 개발                                                          | [정재욱](https://github.com/yeongkyo1997) <br> BE 개발 및 배포                                                    | [이진서](https://github.com/wnstj7788) <br> BE 개발 및 디자인                                                      |
-| <img title="" src="README_assets/259203f5b4e7a056763e3a53caeab531de794915.jpg" alt="양준영.jpg" width="123"> | <img title="" src="README_assets/aa516d08bf6dcd21977b5709a3e8011ffb7eedc2.png" alt="천지호.png" width="125"> | <img title="" src="README_assets/930fe6795c06528e83fad50f8c9d58a92c39d214.jpg" alt="여현빈.jpg" width="129"> |
-| [양준영](https://github.com/dayoung100) <br> FE 개발 및 발표                                                      | [천지호](https://github.com/ztarhyuk127) <br> FE 개발 및 디자인                                                    | [여현빈](https://github.com/godzz733) <br> FE 개발                                                             |
+| <img src="README_assets/9dd0b75adc8eb6ba2457245d16f2388abd692eab.jpg" title="" alt="임규돈.jpg" width="125"> | <img title="" src="README_assets/5b8192677d5567e495aca5054962468752394796.jpg" alt="정재욱.jpg" width="127">     | <img title="" src="README_assets/b580dae3f8659811ebcec8e3fbed4b31ce0ce453.jpg" alt="이진서.jpg" width="127"> |
+| --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| [임규돈](https://github.com/Devwooki)<br>팀장 : BE 개발                                                          | [정재욱](https://github.com/yeongkyo1997) <br> BE 개발 및 배포                                                        | [이진서](https://github.com/wnstj7788) <br> BE 개발 및 디자인                                                      |
+| <img title="" src="README_assets/259203f5b4e7a056763e3a53caeab531de794915.jpg" alt="양준영.jpg" width="123"> | <img title="" src="README_assets/a757cb6d8c3f383321671d30cbabb05b68dcd53c.png" alt="Frame 1.png" width="127"> | <img title="" src="README_assets/930fe6795c06528e83fad50f8c9d58a92c39d214.jpg" alt="여현빈.jpg" width="129"> |
+| [양준영](https://github.com/dayoung100) <br> FE 개발 및 발표                                                      | [천지호](https://github.com/ztarhyuk127) <br> FE 개발 및 디자인                                                        | [여현빈](https://github.com/godzz733) <br> FE 개발                                                             |
+
+
+
+
+
+
 
 ## 프로젝트 상세 설명
 
